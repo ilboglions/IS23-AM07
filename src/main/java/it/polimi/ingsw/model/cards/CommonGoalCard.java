@@ -13,7 +13,7 @@ public abstract class CommonGoalCard {
     public CommonGoalCard(int nPlayers) throws tooManyPlayersException {
         tokenStack = new Stack<>();
 
-        if(TokenPoint.values().length < nPlayers) throw new tooManyPlayersException();
+        if(TokenPoint.values().length < nPlayers) throw new tooManyPlayersException("Max excepted players: "+TokenPoint.values().length+" players received: "+nPlayers);
         for(int i= TokenPoint.values().length  - 1; i >TokenPoint.values().length - nPlayers; i--) {
             tokenStack.push( new ScoringToken(TokenPoint.values()[i]));
         }
