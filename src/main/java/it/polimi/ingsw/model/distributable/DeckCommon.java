@@ -17,7 +17,7 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
 
     @Override
     public ArrayList<CommonGoalCard> draw(int nElements, int nPlayers) {
-        ArrayList<CommonGoalCard> selected = new ArrayList<CommonGoalCard>();
+        ArrayList<CommonGoalCard> selected = new ArrayList<>();
         Gson gson = new Gson();
         try {
             JsonArray jsonArray = gson.fromJson(new FileReader("cards/confFiles/commonCards.json"), JsonArray.class);
@@ -25,7 +25,7 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
             jsonArray.forEach( el -> {
                 try {
                     selected.add(createCard(el.getAsJsonObject(), nPlayers));
-                } catch (tooManyPlayersException | NegativeFieldException e) {
+                } catch (tooManyPlayersException | NegativeFieldException | IllegalArgumentException e ) {
                     throw new RuntimeException(e);
                 }
             });
@@ -35,7 +35,7 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
         return selected;
     }
 
-    private CommonGoalCard createCard(JsonObject asJsonObject, int nPlayers) throws tooManyPlayersException, NegativeFieldException {
+    private CommonGoalCard createCard(JsonObject asJsonObject, int nPlayers) throws tooManyPlayersException, NegativeFieldException, IllegalArgumentException {
         boolean sameTiles;
         int nCols;
         int maxTilesFrule;
@@ -51,14 +51,20 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
             case "CheckPattern" -> {
                 asJsonObject.get("Attributes").getAsJsonObject().get("pattern").getAsJsonArray()
                         .forEach(
-                                el -> {
-                                    pattern.add(gson.fromJson(el.getAsString(), Coordinates.class));
-                                }
+                                el -> pattern.add(gson.fromJson(el.getAsString(), Coordinates.class))
                         );
                 sameTiles = gson.fromJson(asJsonObject.get("Attributes").getAsJsonObject().get("sameTiles").getAsString(), Boolean.class);
 
                 return new CheckPattern(nPlayers, pattern, sameTiles);
             }
+            case "FiveXTiles" -> {
+
+                sameTiles = gson.fromJson(asJsonObject.get("Attributes").getAsJsonObject().get("sameTiles").getAsString(), Boolean.class);
+
+                return new FiveXTiles(nPlayers, sameTiles);
+
+            }
+
             case "FullColumns" -> {
 
                 sameTiles = gson.fromJson(asJsonObject.get("Attributes").getAsJsonObject().get("sameTiles").getAsString(), Boolean.class);
@@ -83,9 +89,19 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
 
                 return new NadiacentElements(nPlayers,nGroups, nElems);
             }
-            default -> {
-                return null;
+
+            case "NequalsSquare" -> {
+
+                int nSquares = gson.fromJson(asJsonObject.get("Attributes").getAsJsonObject().get("nElems").getAsString(), Integer.class);
+                int squareDim = gson.fromJson(asJsonObject.get("Attributes").getAsJsonObject().get("nGroups").getAsString(), Integer.class);
+
+                return new NequalsSquares(nPlayers, nSquares, squareDim);
             }
+            case "NsameTiles" -> {
+                int nTiles = gson.fromJson(asJsonObject.get("Attributes").getAsJsonObject().get("nTiles").getAsString(), Integer.class);
+                return new NsameTiles(nPlayers, nTiles);
+            }
+            default -> throw new IllegalArgumentException();
         }
     }
 
@@ -93,6 +109,6 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
     @Override
     public void shuffle() {
 
-        return;
+
     }
 }
