@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model.cards;
 
+import it.polimi.ingsw.model.coordinate.Coordinates;
 import java.util.ArrayList;
 
 public class checkPattern extends CommonGoalCard{
