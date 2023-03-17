@@ -10,6 +10,7 @@ import it.polimi.ingsw.model.coordinates.Coordinates;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class DeckCommon implements Distributable<CommonGoalCard>{
 
@@ -19,16 +20,28 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
     public ArrayList<CommonGoalCard> draw(int nElements, int nPlayers) {
         ArrayList<CommonGoalCard> selected = new ArrayList<>();
         Gson gson = new Gson();
+        Random randGenerator = new Random();
+        ArrayList<Integer> generatedCardsIndex = new ArrayList<>();
+        int extractedCardInex;
         try {
-            JsonArray jsonArray = gson.fromJson(new FileReader("cards/confFiles/commonCards.json"), JsonArray.class);
+            JsonArray jsonCards = gson.fromJson(new FileReader("cards/confFiles/commonCards.json"), JsonArray.class);
             // 2implement: just draw 2 numbers and then creates only that two cards!
-            jsonArray.forEach( el -> {
+            for( int i = 0; i < nElements; i++){
+                do {
+                    extractedCardInex = randGenerator.nextInt(jsonCards.size());
+                }while (generatedCardsIndex.contains(extractedCardInex));
+
+                generatedCardsIndex.add(extractedCardInex);
+
                 try {
-                    selected.add(createCard(el.getAsJsonObject(), nPlayers));
+                    selected.add(createCard(jsonCards.get(i).getAsJsonObject(), nPlayers));
                 } catch (tooManyPlayersException | NegativeFieldException | IllegalArgumentException e ) {
                     throw new RuntimeException(e);
                 }
-            });
+
+
+            }
+
         } catch (FileNotFoundException e){
             return null;
         }
