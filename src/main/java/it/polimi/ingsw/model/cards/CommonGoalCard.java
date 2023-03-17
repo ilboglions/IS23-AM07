@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model.cards;
 
+import it.polimi.ingsw.model.cards.exceptions.tooManyPlayersException;
 import it.polimi.ingsw.model.tokens.ScoringToken;
 import it.polimi.ingsw.model.tokens.TokenPoint;
 
