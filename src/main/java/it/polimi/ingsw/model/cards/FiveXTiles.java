@@ -19,22 +19,27 @@ public class FiveXTiles extends  CommonGoalCard{
         ArrayList<ItemTile> parentTiles= new ArrayList<>();
         for( int r  = 0; r < bookshelf.getRows(); r++){
             for( int c = 0; c < bookshelf.getColumns(); c++){
-                if(bookshelf.getItemType(new Coordinates(r,c)) != null ){
-                            ItemTile refTile = bookshelf.getItemType(new Coordinates(r,c));
-                            parentTiles.add(bookshelf.getItemType(new Coordinates(r, c + 2)));
-                            parentTiles.add(bookshelf.getItemType(new Coordinates(r+2, c)));
-                            parentTiles.add(bookshelf.getItemType(new Coordinates(r+1, c+1)));
-                            parentTiles.add(bookshelf.getItemType(new Coordinates(r+2, c+2)));
+                if(bookshelf.getItemTile(new Coordinates(r,c)).isEmpty()) continue;
 
-                            if ( !(parentTiles.contains(null)) )
-                                if(!sameTiles) return true;
+                ItemTile refTile = bookshelf.getItemTile(new Coordinates(r,c)).get();
 
-                            Optional<ItemTile> brokenItem = parentTiles.stream().filter(tile -> !tile.equals(refTile)).findAny();
-                            if (brokenItem.isEmpty())
-                                return true;
+                bookshelf.getItemTile(new Coordinates(r, c + 2)).ifPresent(parentTiles::add);
+                bookshelf.getItemTile(new Coordinates(r+2, c)).ifPresent(parentTiles::add);
+                bookshelf.getItemTile(new Coordinates(r+1, c+1)).ifPresent(parentTiles::add);
+                bookshelf.getItemTile(new Coordinates(r+2, c+2)).ifPresent(parentTiles::add);
+
+                if ( parentTiles.size() != 4 ) continue;
+
+                if (!sameTiles) return true;
+
+                Optional<ItemTile> brokenItem = parentTiles.stream().filter(tile -> !tile.equals(refTile)).findAny();
+                if (brokenItem.isEmpty())
+                    return true;
+
+                parentTiles.clear();
+
 
                 }
-            }
         }
 
         return false;
