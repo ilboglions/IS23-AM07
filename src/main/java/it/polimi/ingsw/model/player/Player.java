@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model.player;
 
+import it.polimi.ingsw.model.bookshelf.PlayerBookshelf;
+import it.polimi.ingsw.model.coordinate.Coordinates;
 import it.polimi.ingsw.model.tokens.ScoringToken;
 
 import java.util.ArrayList;
@@ -7,13 +9,13 @@ import java.util.ArrayList;
 public class Player {
     private final String nickname;
     private PersonalGoalCard personalCard;
-    private final PersonalBookshelf bookshelf;
+    private final PlayerBookshelf bookshelf;
     private final ArrayList<ScoringToken> tokenAcquired;
     private int points;
 
     public Player(String nickname) {
         this.nickname = nickname;
-        this.bookshelf = new PersonalBookshelf();
+        this.bookshelf = new PlayerBookshelf();
         this.tokenAcquired = new ArrayList<ScoringToken>();
         this.points = 0;
     }
@@ -26,7 +28,7 @@ public class Player {
         return personalCard;
     }
 
-    public PersonalBookshelf getBookshelf() {
+    public PlayerBookshelf getBookshelf() {
         return bookshelf;
     }
 
@@ -36,10 +38,12 @@ public class Player {
 
     public int calculatePointsPersonalGoalCard() {
         int count = 0;
+        Coordinates c;
 
-        for(int i=0; i<bookshelf.rows; i++) {
-            for(int j=0; j<bookshelf.columns; j++) {
-                if(personalCard.getCardBookshelf()[i][j] != null && bookshelf[i][j] == personalCard.getCardBookshelf()[i][j])
+        for(int i=0; i<bookshelf.getRows(); i++) {
+            for(int j=0; j<bookshelf.getColumns(); j++) {
+                c = new Coordinates(i,j);
+                if(personalCard.getCardBookshelf().getItemTile(c).isPresent() && bookshelf.getItemTile(c).equals(personalCard.getCardBookshelf().getItemTile(c)))
                     count++;
             }
         }

@@ -3,6 +3,8 @@ package it.polimi.ingsw.model.bookshelf;
 import it.polimi.ingsw.model.coordinate.Coordinates;
 import it.polimi.ingsw.model.tiles.ItemTile;
 
+import java.util.Optional;
+
 public abstract class Bookshelf {
     protected ItemTile[][] tiles;
     private final int rows;
@@ -22,7 +24,7 @@ public abstract class Bookshelf {
         return this.columns;
     }
 
-    public ItemTile getItemType(Coordinates c) {
-        return tiles[c.getX()][c.getY()];
+    public Optional<ItemTile> getItemTile(Coordinates c) {
+        return Optional.ofNullable(tiles[c.getX()][c.getY()]);
     }
 }
