@@ -1,6 +1,6 @@
-package it.polimi.ingsw.model.cards;
+package it.polimi.ingsw.model.cards.common;
 
-import it.polimi.ingsw.model.bookshelf.PlayerBookshelf;
+import it.polimi.ingsw.model.bookshelf.Bookshelf;
 import it.polimi.ingsw.model.cards.exceptions.tooManyPlayersException;
 import it.polimi.ingsw.model.coordinate.Coordinates;
 import it.polimi.ingsw.model.tiles.ItemTile;
@@ -15,7 +15,7 @@ public class FiveXTiles extends  CommonGoalCard{
         this.sameTiles = sameTiles;
     }
 
-    public boolean verifyConstraint(PlayerBookshelf bookshelf){
+    public boolean verifyConstraint(Bookshelf bookshelf){
         ArrayList<ItemTile> parentTiles= new ArrayList<>();
         for( int r  = 0; r < bookshelf.getRows(); r++){
             for( int c = 0; c < bookshelf.getColumns(); c++){
@@ -30,7 +30,7 @@ public class FiveXTiles extends  CommonGoalCard{
 
                 if ( parentTiles.size() != 4 ) continue;
 
-                if (!sameTiles) return true;
+                if (!this.sameTiles) return true;
 
                 Optional<ItemTile> brokenItem = parentTiles.stream().filter(tile -> !tile.equals(refTile)).findAny();
                 if (brokenItem.isEmpty())

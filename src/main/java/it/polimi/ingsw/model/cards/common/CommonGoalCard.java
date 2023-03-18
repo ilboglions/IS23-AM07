@@ -1,4 +1,4 @@
-package it.polimi.ingsw.model.cards;
+package it.polimi.ingsw.model.cards.common;
 
 import it.polimi.ingsw.model.bookshelf.PlayerBookshelf;
 import it.polimi.ingsw.model.cards.exceptions.tooManyPlayersException;

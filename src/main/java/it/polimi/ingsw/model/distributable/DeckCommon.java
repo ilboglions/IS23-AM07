@@ -2,7 +2,7 @@ package it.polimi.ingsw.model.distributable;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import it.polimi.ingsw.model.cards.*;
+import it.polimi.ingsw.model.cards.common.*;
 import it.polimi.ingsw.model.cards.exceptions.NegativeFieldException;
 import it.polimi.ingsw.model.cards.exceptions.tooManyPlayersException;
 import it.polimi.ingsw.model.coordinate.Coordinates;

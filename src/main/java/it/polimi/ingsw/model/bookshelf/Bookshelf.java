@@ -3,6 +3,8 @@ package it.polimi.ingsw.model.bookshelf;
 import it.polimi.ingsw.model.coordinate.Coordinates;
 import it.polimi.ingsw.model.tiles.ItemTile;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 public abstract class Bookshelf {
@@ -24,6 +26,20 @@ public abstract class Bookshelf {
         return this.columns;
     }
 
+    public Map<ItemTile, Integer> getAllItemTiles() {
+        Map<ItemTile, Integer> bookshelfMap = new HashMap<>();
+        for( int i = 0 ; i < this.rows; i++){
+            for( int j = 0; j < this.columns; j++){
+                this.getItemTile(new Coordinates(i,j))
+                        .ifPresent(
+                                el -> {
+                                    int val = bookshelfMap.get(el) != null ? bookshelfMap.get(el) : 0;
+                                    bookshelfMap.put(el, val+1 );
+                                });
+            }
+        }
+        return bookshelfMap;
+    }
     public Optional<ItemTile> getItemTile(Coordinates c) {
         return Optional.ofNullable(tiles[c.getX()][c.getY()]);
     }

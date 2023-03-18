@@ -1,6 +1,6 @@
-package it.polimi.ingsw.model.cards;
+package it.polimi.ingsw.model.cards.common;
 
-import it.polimi.ingsw.model.bookshelf.PlayerBookshelf;
+import it.polimi.ingsw.model.bookshelf.Bookshelf;
 import it.polimi.ingsw.model.cards.exceptions.NegativeFieldException;
 import it.polimi.ingsw.model.cards.exceptions.tooManyPlayersException;
 import it.polimi.ingsw.model.coordinate.Coordinates;
@@ -20,27 +20,27 @@ public class FullColumns extends CommonGoalCard{
         this.maxTilesFrule = maxTilesFrule;
     }
 
-    public boolean verifyConstraint(PlayerBookshelf bookshelf){
+    public boolean verifyConstraint(Bookshelf bookshelf){
 
         int foundColumns;
         ArrayList<ItemTile> parentTiles= new ArrayList<>();
 
         foundColumns = 0;
 
-        //how many equals/different tiles?
-        int distinctElements = this.sameTiles ? (bookshelf.getRows()  - this.maxTilesFrule)  : this.maxTilesFrule;
+        //how many equals/different tiles? equals -> how many equals?
+        int distinctElements = this.sameTiles ? (bookshelf.getRows()  - this.maxTilesFrule)  : bookshelf.getRows();
 
         for( int c  = 0; c < bookshelf.getColumns(); c++){
 
             int r  = 0;
-            while(r < bookshelf.getColumns() && bookshelf.getItemTile(new Coordinates(r,c)).isPresent()){
+            while(r < bookshelf.getRows() && bookshelf.getItemTile(new Coordinates(r,c)).isPresent()){
 
                 parentTiles.add(bookshelf.getItemTile(new Coordinates(r,c)).get());
 
                 r++;
             }
 
-            foundColumns =  (  parentTiles.size() == bookshelf.getRows() && parentTiles.stream().distinct().count() == distinctElements) ? foundColumns + 1 : foundColumns;
+            foundColumns =  (  parentTiles.size() == bookshelf.getRows() && parentTiles.stream().distinct().count() >= distinctElements) ? foundColumns + 1 : foundColumns;
 
             if ( foundColumns == this.nCols) return true;
 

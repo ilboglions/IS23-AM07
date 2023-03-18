@@ -1,6 +1,6 @@
 package it.polimi.ingsw.model.game;
 
-import it.polimi.ingsw.model.cards.CommonGoalCard;
+import it.polimi.ingsw.model.cards.common.CommonGoalCard;
 import it.polimi.ingsw.model.coordinate.Coordinates;
 import it.polimi.ingsw.model.distributable.DeckCommon;
 import it.polimi.ingsw.model.tokens.ScoringToken;
