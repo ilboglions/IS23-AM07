@@ -16,7 +16,7 @@ public class NsameTiles extends  CommonGoalCard{
     public boolean verifyConstraint(Bookshelf bookshelf){
 
         for (ItemTile item : ItemTile.values()){
-            if (bookshelf.getAllItemTiles().get(item) > this.nTiles)
+            if (bookshelf.getAllItemTiles().get(item) >= this.nTiles)
                 return true;
         }
 
