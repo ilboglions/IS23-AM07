@@ -7,21 +7,21 @@ import it.polimi.ingsw.model.tokens.ScoringToken;
 import java.util.ArrayList;
 
 public class Player {
-    private final String nickname;
+    private final String username;
     private PersonalGoalCard personalCard;
     private final PlayerBookshelf bookshelf;
     private final ArrayList<ScoringToken> tokenAcquired;
     private int points;
 
-    public Player(String nickname) {
-        this.nickname = nickname;
+    public Player(String username) {
+        this.username = username;
         this.bookshelf = new PlayerBookshelf();
         this.tokenAcquired = new ArrayList<ScoringToken>();
         this.points = 0;
     }
 
-    public String getNickname() {
-        return nickname;
+    public String getUsername() {
+        return username;
     }
 
     public PersonalGoalCard getPersonalCard() {
@@ -30,6 +30,10 @@ public class Player {
 
     public PlayerBookshelf getBookshelf() {
         return bookshelf;
+    }
+
+    public ArrayList<ScoringToken> getTokenAcquired() {
+        return tokenAcquired;
     }
 
     public int getPoints() {

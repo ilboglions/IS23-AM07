@@ -3,10 +3,14 @@ package it.polimi.ingsw.model.game;
 import it.polimi.ingsw.model.cards.common.CommonGoalCard;
 import it.polimi.ingsw.model.coordinate.Coordinates;
 import it.polimi.ingsw.model.distributable.DeckCommon;
+import it.polimi.ingsw.model.game.exceptions.InvalidPlayerException;
+import it.polimi.ingsw.model.player.Player;
+import it.polimi.ingsw.model.tiles.ItemTile;
 import it.polimi.ingsw.model.tokens.ScoringToken;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Optional;
 
 public class Game implements GameController{
 
@@ -21,14 +25,15 @@ public class Game implements GameController{
     private DeckPersonal deckPersonal;
     private DeckCommon deckCommon;
     private BagHolder bagHolder;
-    public boolean getState() {
-        return false;
-    }
 
-    public Game(int numPlayers) {
+    public Game(int numPlayers, Player host) {
         this.numPlayers = numPlayers;
+        this.players = new ArrayList<Player>();
+
+        this.players.add(host);
     }
-    public void setState(boolean newState) {
+    public void setIsStarted(boolean newState) {
+        isStarted = newState;
     }
 
     public void start() {
@@ -38,10 +43,12 @@ public class Game implements GameController{
         return 0;
     }
 
-    public ArrayList<ScoringToken> getPlayerTokens(String player) {
-        Player current = searchPlayer(player);
-        ArrayList<ScoringToken> currentToken = current.getTokenAcquired().clone();  // clone the scoring tokens of the player not to expose the rep
-        return currentToken;
+    public ArrayList<ScoringToken> getPlayerTokens(String player) throws InvalidPlayerException {
+        Optional<Player> current = searchPlayer(player);
+        if(current.isEmpty())
+            throw new InvalidPlayerException();
+
+        return new ArrayList<ScoringToken>(current.get().getTokenAcquired());
     }
 
     public int getPlayerTurn() {
@@ -60,7 +67,7 @@ public class Game implements GameController{
         return null;
     }
 
-    public void refilLivingRoom() {
+    public void refillLivingRoom() {
 
     }
 
@@ -91,16 +98,26 @@ public class Game implements GameController{
     }
     private boolean userUsed(String user) {
         for(int i=0; i<players.size(); i++) {
-            if(players.get(i).getUsername.equals(user)) // if there is a player with the same user
+            if(players.get(i).getUsername().equals(user)) // if there is a player with the same user
                 return true;    // true: there is already a player with the same username
         }
         return false;   //there are no players with this user
     }
 
-    private Player searchPlayer(String username) {}
-    public boolean getIsStarted() {}
+    public Optional<Player> searchPlayer(String username) {
+
+        for(Player player : players) {
+            if(player.getUsername().equals(username))
+                return Optional.of(player);
+        }
+
+        return Optional.empty();
+    }
+    public boolean getIsStarted() {
+        return isStarted;
+    }
 
     private void setPlayerTurn() {}
-    private void drawCommongGoalCards() {}
+    private void drawCommonGoalCards() {}
 
 }
