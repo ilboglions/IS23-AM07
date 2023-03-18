@@ -13,7 +13,7 @@ public interface GameController {
     public int getPlayerPoints();
     public ArrayList<ScoringToken> getPlayerTokens(String player);
     public int getPlayerTurn();
-    public void moveTile(ArrayList<Coordinates> source, ArrayList<Coordinates> destination);
+    public void moveTiles(ArrayList<Coordinates> source, ArrayList<Coordinates> destination);
     public ArrayList<Coordinates> getLivingRoomCoordinates();
     public ArrayList<ItemTile> getItemTiles(ArrayList<Coordinates> coo);
     public void refilLivingRoom();

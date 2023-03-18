@@ -25,12 +25,13 @@ public class Game implements GameController{
         return false;
     }
 
+    public Game(int numPlayers) {
+        this.numPlayers = numPlayers;
+    }
     public void setState(boolean newState) {
-
     }
 
     public void start() {
-
     }
 
     public int getPlayerPoints() {
@@ -38,14 +39,16 @@ public class Game implements GameController{
     }
 
     public ArrayList<ScoringToken> getPlayerTokens(String player) {
-        return null;
+        Player current = searchPlayer(player);
+        ArrayList<ScoringToken> currentToken = current.getTokenAcquired().clone();  // clone the scoring tokens of the player not to expose the rep
+        return currentToken;
     }
 
     public int getPlayerTurn() {
         return 0;
     }
 
-    public void moveTile(ArrayList<Coordinates> source, ArrayList<Coordinates> destination) {
+    public void moveTiles(ArrayList<Coordinates> source, ArrayList<Coordinates> destination) {
 
     }
 
@@ -73,7 +76,27 @@ public class Game implements GameController{
 
     }
 
-    public boolean addPlayer(String username) {}
+    public boolean addPlayer(Player newPlayer) {
+        if(newPlayer == null) {
+            throw new NullPointerException();
+        } else {
+            if(!userUsed(newPlayer.getUsername())) {
+                players.add(newPlayer); // player added to game active player
+                return true;    // true means that the player has been added and no problem occured
+            } else {
+                return false;   // false: the player has not been added to the game
+            }
+        }
+
+    }
+    private boolean userUsed(String user) {
+        for(int i=0; i<players.size(); i++) {
+            if(players.get(i).getUsername.equals(user)) // if there is a player with the same user
+                return true;    // true: there is already a player with the same username
+        }
+        return false;   //there are no players with this user
+    }
+
     private Player searchPlayer(String username) {}
     public boolean getIsStarted() {}
 
