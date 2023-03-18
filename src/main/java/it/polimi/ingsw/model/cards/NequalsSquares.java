@@ -7,8 +7,8 @@ public class NequalsSquares extends CommonGoalCard{
 
     private final int nSquares;
     private final int squareDim;
-    public NequalsSquares(int nPlayers, int nSquares, int squareDim) throws tooManyPlayersException, NegativeFieldException {
-        super(nPlayers);
+    public NequalsSquares(int nPlayers, String description , int nSquares, int squareDim) throws tooManyPlayersException, NegativeFieldException {
+        super(nPlayers, description);
         if(nSquares <= 0 || squareDim <= 0) throw new NegativeFieldException("can't assign negative parameters!");
         this.nSquares = nSquares;
         this.squareDim = squareDim;

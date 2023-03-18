@@ -2,6 +2,7 @@ package it.polimi.ingsw.model.bookshelf;
 
 import it.polimi.ingsw.model.bookshelf.exceptions.NotEmptyException;
 import it.polimi.ingsw.model.coordinate.Coordinates;
+import it.polimi.ingsw.model.tiles.ItemTile;
 
 public class PlayerBookshelf extends Bookshelf{
 

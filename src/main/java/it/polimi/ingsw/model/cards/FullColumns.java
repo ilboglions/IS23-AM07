@@ -7,8 +7,8 @@ public class FullColumns extends CommonGoalCard{
     private final int nCols;
     private final boolean sameTiles;
     private final int maxTilesFrule;
-    public FullColumns(int nPlayers, int nCols, boolean sameTiles, int maxTilesFrule) throws tooManyPlayersException, NegativeFieldException {
-        super(nPlayers);
+    public FullColumns(int nPlayers, String description , int nCols, boolean sameTiles, int maxTilesFrule) throws tooManyPlayersException, NegativeFieldException {
+        super(nPlayers,description);
         if( nCols <= 0 || maxTilesFrule <= 0 ) throw new NegativeFieldException("can't assign negative parameters!");
         this.nCols = nCols;
         this.sameTiles = sameTiles;

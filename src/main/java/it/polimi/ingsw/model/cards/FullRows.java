@@ -7,8 +7,8 @@ public class FullRows extends CommonGoalCard{
     private final int nRows;
     private final boolean sameTiles;
     private final int maxTilesFrule;
-    public FullRows(int nPlayers, int nRows, boolean sameTiles, int maxTilesFrule) throws tooManyPlayersException, NegativeFieldException {
-        super(nPlayers);
+    public FullRows(int nPlayers,  String description ,int nRows, boolean sameTiles, int maxTilesFrule) throws tooManyPlayersException, NegativeFieldException {
+        super(nPlayers, description);
         if( nRows <= 0 || maxTilesFrule <= 0 ) throw new NegativeFieldException("can't assign negative paramaters!");
         this.nRows = nRows;
         this.sameTiles = sameTiles;

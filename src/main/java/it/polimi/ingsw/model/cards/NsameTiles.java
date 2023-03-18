@@ -5,8 +5,8 @@ import it.polimi.ingsw.model.cards.exceptions.tooManyPlayersException;
 
 public class NsameTiles extends  CommonGoalCard{
     private final int nTiles;
-    public NsameTiles(int nPlayers, int nTiles) throws tooManyPlayersException, NegativeFieldException {
-        super(nPlayers);
+    public NsameTiles(int nPlayers, String description , int nTiles) throws tooManyPlayersException, NegativeFieldException {
+        super(nPlayers, description);
         if( nTiles <= 0) throw new NegativeFieldException("can't assign negative parameters!");
         this.nTiles = nTiles;
     }

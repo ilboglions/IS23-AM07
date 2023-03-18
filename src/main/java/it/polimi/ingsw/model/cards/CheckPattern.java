@@ -7,9 +7,9 @@ import java.util.ArrayList;
 public class CheckPattern extends CommonGoalCard{
     private final ArrayList<Coordinates> pattern;
     private final boolean sameTiles;
-    public CheckPattern(int nPlayers, ArrayList<Coordinates> pattern, boolean sameTiles) throws tooManyPlayersException {
+    public CheckPattern(int nPlayers, String description, ArrayList<Coordinates> pattern, boolean sameTiles) throws tooManyPlayersException {
 
-        super(nPlayers);
+        super(nPlayers, description);
 
         this.pattern = new ArrayList<Coordinates>();
         this.pattern.addAll(pattern);
