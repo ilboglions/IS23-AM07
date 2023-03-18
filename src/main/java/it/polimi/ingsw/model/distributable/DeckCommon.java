@@ -5,7 +5,7 @@ import com.google.gson.JsonObject;
 import it.polimi.ingsw.model.cards.*;
 import it.polimi.ingsw.model.cards.exceptions.NegativeFieldException;
 import it.polimi.ingsw.model.cards.exceptions.tooManyPlayersException;
-import it.polimi.ingsw.model.coordinates.Coordinates;
+import it.polimi.ingsw.model.coordinate.Coordinates;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -55,10 +55,11 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
         int nRows;
         int nGroups;
         int nElems;
-
-        String objectType = asJsonObject.get("cardType").getAsString();
-        ArrayList<Coordinates> pattern = new ArrayList<>();
         Gson gson = new Gson();
+        String objectType = asJsonObject.get("cardType").getAsString();
+        String description= gson.fromJson(asJsonObject.get("Attributes").getAsJsonObject().get("description").getAsString(), String.class);
+        ArrayList<Coordinates> pattern = new ArrayList<>();
+
 
         switch (objectType) {
             case "CheckPattern" -> {
@@ -68,13 +69,13 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
                         );
                 sameTiles = gson.fromJson(asJsonObject.get("Attributes").getAsJsonObject().get("sameTiles").getAsString(), Boolean.class);
 
-                return new CheckPattern(nPlayers, pattern, sameTiles);
+                return new CheckPattern(nPlayers, description, pattern, sameTiles);
             }
             case "FiveXTiles" -> {
 
                 sameTiles = gson.fromJson(asJsonObject.get("Attributes").getAsJsonObject().get("sameTiles").getAsString(), Boolean.class);
 
-                return new FiveXTiles(nPlayers, sameTiles);
+                return new FiveXTiles(nPlayers, description, sameTiles);
 
             }
 
@@ -84,7 +85,7 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
                 nCols = gson.fromJson(asJsonObject.get("Attributes").getAsJsonObject().get("nCols").getAsString(), Integer.class);
                 maxTilesFrule = gson.fromJson(asJsonObject.get("Attributes").getAsJsonObject().get("maxTilesFrule").getAsString(), Integer.class);
 
-                return new FullColumns(nPlayers, nCols, sameTiles, maxTilesFrule);
+                return new FullColumns(nPlayers, description,nCols, sameTiles, maxTilesFrule);
             }
             case "FullRows" -> {
 
@@ -92,7 +93,7 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
                 nRows = gson.fromJson(asJsonObject.get("Attributes").getAsJsonObject().get("nRows").getAsString(), Integer.class);
                 maxTilesFrule = gson.fromJson(asJsonObject.get("Attributes").getAsJsonObject().get("maxTilesFrule").getAsString(), Integer.class);
 
-                return new FullRows(nPlayers, nRows, sameTiles, maxTilesFrule);
+                return new FullRows(nPlayers,description, nRows, sameTiles, maxTilesFrule);
             }
 
             case "NadiacentElements" -> {
@@ -100,7 +101,7 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
                 nElems = gson.fromJson(asJsonObject.get("Attributes").getAsJsonObject().get("nElems").getAsString(), Integer.class);
                 nGroups = gson.fromJson(asJsonObject.get("Attributes").getAsJsonObject().get("nGroups").getAsString(), Integer.class);
 
-                return new NadiacentElements(nPlayers,nGroups, nElems);
+                return new NadiacentElements(nPlayers,description,nGroups, nElems);
             }
 
             case "NequalsSquare" -> {
@@ -108,11 +109,11 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
                 int nSquares = gson.fromJson(asJsonObject.get("Attributes").getAsJsonObject().get("nElems").getAsString(), Integer.class);
                 int squareDim = gson.fromJson(asJsonObject.get("Attributes").getAsJsonObject().get("nGroups").getAsString(), Integer.class);
 
-                return new NequalsSquares(nPlayers, nSquares, squareDim);
+                return new NequalsSquares(nPlayers,description, nSquares, squareDim);
             }
             case "NsameTiles" -> {
                 int nTiles = gson.fromJson(asJsonObject.get("Attributes").getAsJsonObject().get("nTiles").getAsString(), Integer.class);
-                return new NsameTiles(nPlayers, nTiles);
+                return new NsameTiles(nPlayers, description,nTiles);
             }
             default -> throw new IllegalArgumentException();
         }
