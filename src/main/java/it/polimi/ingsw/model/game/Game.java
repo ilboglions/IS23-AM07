@@ -35,7 +35,7 @@ public class Game implements GameController{
         this.players = new ArrayList<Player>();
         this.livingRoom = new LivingRoomBoard();
         this.deckCommon = new DeckCommon(numPlayers);
-        this.deckPersonal = new DeckPersonal("cards/confFiles/personalCards.json");
+        this.deckPersonal = new DeckPersonal("cards/confFiles/personalCards.json", "cards/confFiles/pointsReference.json");
         this.bagHolder = new BagHolder();
         this.isStarted = false;
         this.isBookshelfComplete = false;
