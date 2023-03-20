@@ -23,18 +23,15 @@ public class LivingRoomBoard {
         SlotType slotType;
         //read a json file with the configuration of the board, from the file you will have coordinates and type
         Gson gson = new Gson();
-        try {
-            JsonLivingBoardCell[][] jsonCells = gson.fromJson(new FileReader("livingRoom/livingRoomBoardPattern.json"), JsonLivingBoardCell[][].class);
-            for(int i=0; i<9; i++) {
-                for(int j=0; j<9; j++) {
-                    row = jsonCells[i][j].row;
-                    col = jsonCells[i][j].col;
-                    slotType = jsonCells[i][j].slotType;
-                    slot[row][col] = new Slot(slotType, Optional.empty());
-                }
+
+        JsonLivingBoardCell[][] jsonCells = gson.fromJson(new FileReader("livingRoom/livingRoomBoardPattern.json"), JsonLivingBoardCell[][].class);
+        for(int i=0; i<9; i++) {
+            for(int j=0; j<9; j++) {
+                row = jsonCells[i][j].row;
+                col = jsonCells[i][j].col;
+                slotType = jsonCells[i][j].slotType;
+                slot[row][col] = new Slot(slotType, Optional.empty());
             }
-        } catch(FileNotFoundException e) {
-            throw new FileNotFoundException();
         }
     }
 

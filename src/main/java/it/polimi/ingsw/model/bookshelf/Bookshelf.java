@@ -40,7 +40,11 @@ public abstract class Bookshelf {
         }
         return bookshelfMap;
     }
-    public Optional<ItemTile> getItemTile(Coordinates c) {
+    public Optional<ItemTile> getItemTile(Coordinates c) throws IndexOutOfBoundsException{
+        if(c.getX() >= columns || c.getY() >= rows) {
+            throw new IndexOutOfBoundsException("Given coordinates are out of range");
+        }
+
         return Optional.ofNullable(tiles[c.getX()][c.getY()]);
     }
 }

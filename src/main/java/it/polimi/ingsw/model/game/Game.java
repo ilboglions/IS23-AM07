@@ -3,22 +3,26 @@ package it.polimi.ingsw.model.game;
 import it.polimi.ingsw.model.cards.common.CommonGoalCard;
 import it.polimi.ingsw.model.coordinate.Coordinates;
 import it.polimi.ingsw.model.distributable.DeckCommon;
+import it.polimi.ingsw.model.distributable.DeckPersonal;
 import it.polimi.ingsw.model.game.exceptions.InvalidPlayerException;
+import it.polimi.ingsw.model.livingRoom.LivingRoomBoard;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.model.tiles.ItemTile;
 import it.polimi.ingsw.model.tokens.ScoringToken;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 public class Game implements GameController{
 
-    private LivingRoom livingRoom;
-    private ArrayList<Player> players;
-    private ArrayList<CommonGoalCard> commonGoalCards;
-    private Map<Integer, Integer> stdPointsReference;
-    private int numPlayers;
+    private final LivingRoomBoard livingRoom;
+    private final ArrayList<Player> players;
+    private final ArrayList<CommonGoalCard> commonGoalCards;
+    private final Map<Integer, Integer> stdPointsReference;
+    private final int numPlayers;
     private boolean isStarted;
     private int playerTurn;
     private boolean isBookshelfComplete;
@@ -26,10 +30,23 @@ public class Game implements GameController{
     private DeckCommon deckCommon;
     private BagHolder bagHolder;
 
-    public Game(int numPlayers, Player host) {
+    public Game(int numPlayers, Player host) throws FileNotFoundException {
         this.numPlayers = numPlayers;
         this.players = new ArrayList<Player>();
+        this.livingRoom = new LivingRoomBoard();
+        this.deckCommon = new DeckCommon(numPlayers);
+        this.deckPersonal = new DeckPersonal("cards/confFiles/personalCards.json");
+        this.bagHolder = new BagHolder();
+        this.isStarted = false;
+        this.isBookshelfComplete = false;
+        this.playerTurn = -1; //game not started
+        this.stdPointsReference = new HashMap<>();
 
+        this.stdPointsReference.put(3, 2); //3 adjacent 2 points
+        this.stdPointsReference.put(4, 3); //4 adjacent 3 points
+        this.stdPointsReference.put(5, 5); //5 adjacent 5 points
+        this.stdPointsReference.put(6, 8); //6 or more adjacent 8 points
+        this.commonGoalCards = deckCommon.draw(2);
         this.players.add(host);
     }
     public void setIsStarted(boolean newState) {
@@ -118,6 +135,5 @@ public class Game implements GameController{
     }
 
     private void setPlayerTurn() {}
-    private void drawCommonGoalCards() {}
 
 }
