@@ -16,40 +16,40 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
 
 
     int nPlayers;
+    String configuration;
 
-    public DeckCommon(int nPlayers){
+    public DeckCommon(int nPlayers, String configuration){
         this.nPlayers = nPlayers;
+        this.configuration = configuration;
     }
 
 
-    public ArrayList<CommonGoalCard> draw(int nElements) {
+    public ArrayList<CommonGoalCard> draw(int nElements) throws FileNotFoundException {
         ArrayList<CommonGoalCard> selected = new ArrayList<>();
         Gson gson = new Gson();
         Random randGenerator = new Random();
         ArrayList<Integer> generatedCardsIndex = new ArrayList<>();
         int extractedCardInex;
-        try {
-            JsonArray jsonCards = gson.fromJson(new FileReader("cards/confFiles/commonCards.json"), JsonArray.class);
-            // 2implement: just draw 2 numbers and then creates only that two cards!
-            for( int i = 0; i < nElements; i++){
-                do {
-                    extractedCardInex = randGenerator.nextInt(jsonCards.size());
-                }while (generatedCardsIndex.contains(extractedCardInex));
 
-                generatedCardsIndex.add(extractedCardInex);
+        JsonArray jsonCards = gson.fromJson(new FileReader(this.configuration), JsonArray.class);
 
-                try {
-                    selected.add(createCard(jsonCards.get(i).getAsJsonObject(), nPlayers));
-                } catch (tooManyPlayersException | NegativeFieldException | IllegalArgumentException e ) {
-                    throw new RuntimeException(e);
-                }
+        for( int i = 0; i < nElements; i++){
+            do {
+                extractedCardInex = randGenerator.nextInt(jsonCards.size());
+            }while (generatedCardsIndex.contains(extractedCardInex));
 
+            generatedCardsIndex.add(extractedCardInex);
 
+            try {
+                selected.add(createCard(jsonCards.get(i).getAsJsonObject(), nPlayers));
+            } catch (tooManyPlayersException | NegativeFieldException | IllegalArgumentException e ) {
+                return null;
             }
 
-        } catch (FileNotFoundException e){
-            return null;
+
         }
+
+
         return selected;
     }
 
