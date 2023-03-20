@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model.distributable;
 
+import it.polimi.ingsw.model.distributable.exception.NumElementsNegativeException;
+
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
@@ -15,6 +17,6 @@ public interface Distributable<T> {
      * @throws FileNotFoundException - some implementation of Distributable interface had to deal with configuration files,
      *  so exception is thrown if the configuration file can not be found.
      */
-    ArrayList<T> draw(int nElements) throws FileNotFoundException;
+    ArrayList<T> draw(int nElements) throws FileNotFoundException, NumElementsNegativeException;
 
 }

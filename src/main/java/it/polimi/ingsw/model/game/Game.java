@@ -2,6 +2,7 @@ package it.polimi.ingsw.model.game;
 
 import it.polimi.ingsw.model.cards.common.CommonGoalCard;
 import it.polimi.ingsw.model.coordinate.Coordinates;
+import it.polimi.ingsw.model.distributable.BagHolder;
 import it.polimi.ingsw.model.distributable.DeckCommon;
 import it.polimi.ingsw.model.distributable.DeckPersonal;
 import it.polimi.ingsw.model.game.exceptions.InvalidPlayerException;
@@ -34,7 +35,7 @@ public class Game implements GameController{
         this.numPlayers = numPlayers;
         this.players = new ArrayList<Player>();
         this.livingRoom = new LivingRoomBoard();
-        this.deckCommon = new DeckCommon(numPlayers);
+        this.deckCommon = new DeckCommon(numPlayers,"cards/confFiles/commonCards.json");
         this.deckPersonal = new DeckPersonal("cards/confFiles/personalCards.json", "cards/confFiles/pointsReference.json");
         this.bagHolder = new BagHolder();
         this.isStarted = false;
