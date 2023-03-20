@@ -15,9 +15,14 @@ import java.util.Random;
 public class DeckCommon implements Distributable<CommonGoalCard>{
 
 
+    int nPlayers;
 
-    @Override
-    public ArrayList<CommonGoalCard> draw(int nElements, int nPlayers) {
+    public DeckCommon(int nPlayers){
+        this.nPlayers = nPlayers;
+    }
+
+
+    public ArrayList<CommonGoalCard> draw(int nElements) {
         ArrayList<CommonGoalCard> selected = new ArrayList<>();
         Gson gson = new Gson();
         Random randGenerator = new Random();
@@ -120,9 +125,6 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
     }
 
 
-    @Override
-    public void shuffle() {
 
 
-    }
 }

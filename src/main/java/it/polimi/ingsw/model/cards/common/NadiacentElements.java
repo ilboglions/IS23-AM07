@@ -6,12 +6,11 @@ import it.polimi.ingsw.model.cards.exceptions.NegativeFieldException;
 import it.polimi.ingsw.model.coordinate.Coordinates;
 import it.polimi.ingsw.model.tiles.ItemTile;
 
-import java.util.ArrayList;
 
 public class NadiacentElements extends CommonGoalCard{
 
-    private int nGroups;
-    private int nElems;
+    private final int nGroups;
+    private final int nElems;
 
     public NadiacentElements(int nPlayers, String description ,int nGroups, int nElems) throws tooManyPlayersException, NegativeFieldException {
         super(nPlayers, description);
@@ -59,14 +58,14 @@ public class NadiacentElements extends CommonGoalCard{
         if( bookshelf.getItemTile(tmpCoords).isPresent() ){
             nextTile = bookshelf.getItemTile(tmpCoords).get();
             if( nextTile.equals(refTile) )
-                tmpSum += search4Groups(nextTile,bookshelf,tmpCoords);
+                tmpSum += 1 + search4Groups(nextTile,bookshelf,tmpCoords);
         }
         //bottom side
         tmpCoords = new Coordinates( refCoords.getX(), refCoords.getY()+1);
         if( bookshelf.getItemTile(tmpCoords).isPresent() ){
             nextTile = bookshelf.getItemTile(tmpCoords).get();
             if( nextTile.equals(refTile) )
-                tmpSum += search4Groups(nextTile,bookshelf,tmpCoords);
+                tmpSum += 1 + search4Groups(nextTile,bookshelf,tmpCoords);
         }
 
         return tmpSum;

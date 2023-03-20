@@ -3,6 +3,6 @@ package it.polimi.ingsw.model.distributable;
 import java.util.ArrayList;
 
 public interface Distributable<T> {
-    ArrayList<T> draw(int nElements,int nPlayers);
-    void shuffle();
+    ArrayList<T> draw(int nElements);
+
 }
