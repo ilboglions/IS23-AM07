@@ -44,7 +44,7 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
      * @return an ArrayList that contains the drawn elements
      * @throws FileNotFoundException if the configuration cannot be found, this exception is thrown
      */
-    public ArrayList<CommonGoalCard> draw(int nElements) throws FileNotFoundException {
+    public ArrayList<CommonGoalCard> draw(int nElements) throws FileNotFoundException, NegativeFieldException, tooManyPlayersException {
         ArrayList<CommonGoalCard> selected = new ArrayList<>();
         Gson gson = new Gson();
         Random randGenerator = new Random();
@@ -60,12 +60,7 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
 
             generatedCardsIndex.add(extractedCardInex);
 
-            try {
-                selected.add(createCard(jsonCards.get(i).getAsJsonObject(), nPlayers));
-            } catch (tooManyPlayersException | NegativeFieldException | IllegalArgumentException e ) {
-                return null;
-            }
-
+            selected.add(createCard(jsonCards.get(i).getAsJsonObject(), nPlayers));
 
         }
 

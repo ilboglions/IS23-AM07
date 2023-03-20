@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model.player;
 
 import it.polimi.ingsw.model.bookshelf.PlayerBookshelf;
+import it.polimi.ingsw.model.cards.personal.PersonalGoalCard;
 import it.polimi.ingsw.model.coordinate.Coordinates;
 import it.polimi.ingsw.model.tokens.ScoringToken;
 
@@ -47,7 +48,7 @@ public class Player {
         for(int i=0; i<bookshelf.getRows(); i++) {
             for(int j=0; j<bookshelf.getColumns(); j++) {
                 c = new Coordinates(i,j);
-                if(personalCard.getCardBookshelf().getItemTile(c).isPresent() && bookshelf.getItemTile(c).equals(personalCard.getCardBookshelf().getItemTile(c)))
+                if(personalCard.getBookshelf().getItemTile(c).isPresent() && bookshelf.getItemTile(c).equals(personalCard.getBookshelf().getItemTile(c)))
                     count++;
             }
         }

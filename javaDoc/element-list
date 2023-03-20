@@ -1,0 +1,17 @@
+it.polimi.ingsw
+it.polimi.ingsw.model.bookshelf
+it.polimi.ingsw.model.bookshelf.exceptions
+it.polimi.ingsw.model.cards.common
+it.polimi.ingsw.model.cards.exceptions
+it.polimi.ingsw.model.cards.personal
+it.polimi.ingsw.model.coordinate
+it.polimi.ingsw.model.distributable
+it.polimi.ingsw.model.distributable.exception
+it.polimi.ingsw.model.game
+it.polimi.ingsw.model.game.exceptions
+it.polimi.ingsw.model.livingRoom
+it.polimi.ingsw.model.lobby
+it.polimi.ingsw.model.lobby.exceptions
+it.polimi.ingsw.model.player
+it.polimi.ingsw.model.tiles
+it.polimi.ingsw.model.tokens
