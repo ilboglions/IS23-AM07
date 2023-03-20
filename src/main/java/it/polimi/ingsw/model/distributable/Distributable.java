@@ -18,6 +18,9 @@ public interface Distributable<T> {
      * @return an ArrayList that contains the drawn elements
      * @throws FileNotFoundException - some implementation of Distributable interface had to deal with configuration files,
      *  so exception is thrown if the configuration file can not be found.
+     * @throws NegativeFieldException - some implementation need to initialize elements to draw, based on the configuration file, if some negative field is
+     * insert, this exception will be thrown
+     * @throws tooManyPlayersException as NegativeField exception, this is thrown if some configurations of the game are not permitted, because of the number of players exceeded
      */
     ArrayList<T> draw(int nElements) throws FileNotFoundException, NegativeFieldException, tooManyPlayersException, NumElementsNegativeException;
 
