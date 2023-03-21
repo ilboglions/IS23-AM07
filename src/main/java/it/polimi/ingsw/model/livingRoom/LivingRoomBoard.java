@@ -45,6 +45,9 @@ public class LivingRoomBoard {
     public boolean addTile(Coordinates coo,ItemTile itemTile) {
         int x,y; // x -> col , y -> row
         Optional<ItemTile> newTile = Optional.of(itemTile);
+        if(coo == null) {
+            throw new NullPointerException("Coordinates object is null");
+        }
         x = coo.getX();
         y = coo.getY();
         if(slot[y][x].getItemTile().isPresent()) {  // if there is already a tile in this slot then u can't add a new tile
@@ -55,6 +58,16 @@ public class LivingRoomBoard {
         }
     }
 
+    public void removeTile(Coordinates coo) {
+        int row, col;
+        if(coo == null)
+            throw new NullPointerException("Coordinates object is null");
+        else {
+            row = coo.getY();
+            col = coo.getX();
+            slot[row][col].setItemTile(Optional.empty());
+        }
+    }
     private class JsonLivingBoardCell {
         public int row,col;
         public SlotType slotType;

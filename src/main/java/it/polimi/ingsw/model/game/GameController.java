@@ -1,6 +1,9 @@
 package it.polimi.ingsw.model.game;
 
+import it.polimi.ingsw.model.bookshelf.exceptions.NotEnoughSpaceException;
 import it.polimi.ingsw.model.coordinate.Coordinates;
+import it.polimi.ingsw.model.game.exceptions.EmptySlotException;
+import it.polimi.ingsw.model.game.exceptions.InvalidCooException;
 import it.polimi.ingsw.model.game.exceptions.InvalidPlayerException;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.model.tiles.ItemTile;
@@ -16,7 +19,8 @@ public interface GameController {
     public int getPlayerPoints();
     public ArrayList<ScoringToken> getPlayerTokens(String player) throws InvalidPlayerException;
     public int getPlayerTurn();
-    public void moveTiles(ArrayList<Coordinates> source, ArrayList<Coordinates> destination);
+    public void moveTiles(ArrayList<Coordinates> source, int column) throws InvalidCooException, EmptySlotException, NotEnoughSpaceException;
+
     public ArrayList<Coordinates> getLivingRoomCoordinates();
     public ArrayList<ItemTile> getItemTiles(ArrayList<Coordinates> coo);
     public void refillLivingRoom();
