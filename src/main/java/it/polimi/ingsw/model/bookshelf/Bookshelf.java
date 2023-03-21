@@ -75,10 +75,10 @@ public abstract class Bookshelf {
      * @throws IndexOutOfBoundsException if the index required is outside the matrix domain
      */
     public Optional<ItemTile> getItemTile(Coordinates c) throws IndexOutOfBoundsException{
-        if(c.getX() >= columns || c.getY() >= rows) {
+        if(c.getColumn() >= columns || c.getRow() >= rows) {
             throw new IndexOutOfBoundsException("Given coordinates are out of range");
         }
 
-        return Optional.ofNullable(tiles[c.getX()][c.getY()]);
+        return Optional.ofNullable(tiles[c.getRow()][c.getColumn()]);
     }
 }

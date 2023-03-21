@@ -25,9 +25,7 @@ public class NequalsSquares extends CommonGoalCard{
         ArrayList<ItemTile> parentTiles= new ArrayList<>();
         Set<Coordinates> toRemove = new HashSet<>();
         HashMap<Coordinates,ItemTile> squareMap = new HashMap<>();
-        int foundSquares;
 
-        foundSquares = 0;
         for( int r  = 0; r < bookshelf.getRows(); r++){
             for( int c = 0; c < bookshelf.getColumns(); c++){
                 if(bookshelf.getItemTile(new Coordinates(r,c)).isEmpty()) continue;
@@ -55,18 +53,16 @@ public class NequalsSquares extends CommonGoalCard{
 
         //make it possible to found squares with same elements
         squareMap.forEach(
-                (coord, tile) -> {
-                    squareMap.forEach(
-                            (c2, t2) ->{
-                                if( !coord.equals(c2)){
-                                    double dist = Math.abs( Math.sqrt( Math.pow(coord.getX() - c2.getX(),2) + Math.pow(coord.getY() - c2.getY(),2) ) );
-                                    if(dist < squareDim ){
-                                        toRemove.add(coord);
-                                    }
+                (coord, tile) -> squareMap.forEach(
+                        (c2, t2) ->{
+                            if( !coord.equals(c2)){
+                                double dist = Math.abs( Math.sqrt( Math.pow(coord.getRow() - c2.getRow(),2) + Math.pow(coord.getColumn() - c2.getColumn(),2) ) );
+                                if(dist < squareDim ){
+                                    toRemove.add(coord);
                                 }
                             }
-                    );
-                }
+                        }
+                )
         );
 
         return squareMap.keySet().size() - toRemove.size() >= nSquares;

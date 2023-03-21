@@ -15,7 +15,7 @@ public class CardBookshelf extends Bookshelf{
      */
     public CardBookshelf(Map<Coordinates, ItemTile> pattern) {
         for(Map.Entry<Coordinates, ItemTile> tileEntry : pattern.entrySet()) {
-            this.tiles[tileEntry.getKey().getY()][tileEntry.getKey().getX()] = tileEntry.getValue();
+            this.tiles[tileEntry.getKey().getRow()][tileEntry.getKey().getColumn()] = tileEntry.getValue();
         }
     }
 }

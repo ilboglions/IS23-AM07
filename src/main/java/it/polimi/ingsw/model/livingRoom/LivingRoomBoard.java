@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public class LivingRoomBoard {
 
-    private Slot[][] slot;
+    private final Slot[][] slot;
     private final static int rows = 9;
     private final static int cols = 9;
     public LivingRoomBoard() throws FileNotFoundException {
@@ -39,18 +39,18 @@ public class LivingRoomBoard {
         if(coo == null)
             throw new NullPointerException("Given coordinates are null");
         else {
-            return slot[coo.getY()][coo.getX()].getItemTile();
+            return slot[coo.getRow()][coo.getColumn()].getItemTile();
         }
     }
     public boolean addTile(Coordinates coo,ItemTile itemTile) {
-        int x,y; // x -> col , y -> row
+        int row,col;
         Optional<ItemTile> newTile = Optional.of(itemTile);
-        x = coo.getX();
-        y = coo.getY();
-        if(slot[y][x].getItemTile().isPresent()) {  // if there is already a tile in this slot then u can't add a new tile
+        row = coo.getRow();
+        col = coo.getColumn();
+        if(slot[row][col].getItemTile().isPresent()) {  // if there is already a tile in this slot then u can't add a new tile
             return false;
         } else { // add a new tile, the spot is empty
-            slot[y][x].setItemTile(newTile);
+            slot[row][col].setItemTile(newTile);
             return true;
         }
     }

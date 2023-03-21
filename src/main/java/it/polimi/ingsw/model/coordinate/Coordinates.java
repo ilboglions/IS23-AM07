@@ -10,35 +10,35 @@ public class Coordinates {
     /**
      * the attributes are the position of the coordinate in x and y axes
      */
-    private final int x,y;
+    private final int row,column;
 
     /**
      * creates an immutable object representing the coordinate point
-     * @param x - the x coordinate to be assigned
-     * @param y - the y coordinate to be assigned
+     * @param row - the x coordinate to be assigned
+     * @param column - the y coordinate to be assigned
      */
-    public Coordinates(int x, int y) {
-        if(x < 0 || y < 0 || x > 8 || y > 8) {
+    public Coordinates(int row, int column) {
+        if(row < 0 || column < 0 || row > 8 || column > 8) {
             throw new IndexOutOfBoundsException("Given coordinates are out of range");
         }
-        this.x = x;
-        this.y = y;
+        this.row = row;
+        this.column = column;
     }
 
     /**
      *
      * @return the x coordinate
      */
-    public int getX() {
-        return x;
+    public int getColumn() {
+        return column;
     }
 
     /**
      *
      * @return the y coordinate
      */
-    public int getY() {
-        return y;
+    public int getRow() {
+        return row;
     }
 
     /**
@@ -51,11 +51,11 @@ public class Coordinates {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Coordinates that = (Coordinates) o;
-        return x == that.x && y == that.y;
+        return row == that.row && column == that.column;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(x, y);
+        return Objects.hash(row, column);
     }
 }

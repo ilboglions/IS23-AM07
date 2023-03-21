@@ -6,6 +6,10 @@ import it.polimi.ingsw.model.cards.exceptions.NegativeFieldException;
 import it.polimi.ingsw.model.coordinate.Coordinates;
 import it.polimi.ingsw.model.tiles.ItemTile;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+
 
 public class NadiacentElements extends CommonGoalCard{
 
@@ -22,7 +26,8 @@ public class NadiacentElements extends CommonGoalCard{
     public boolean verifyConstraint(Bookshelf bookshelf){
 
         int foundGroups;
-
+        Set<Coordinates> visitedCoords = new HashSet<>();
+        Set<Coordinates> tmpCoords;
         foundGroups = 0;
         for( int r  = 0; r < bookshelf.getRows(); r++){
             for( int c = 0; c < bookshelf.getColumns(); c++){
@@ -30,7 +35,11 @@ public class NadiacentElements extends CommonGoalCard{
 
                 ItemTile refTile = bookshelf.getItemTile(new Coordinates(r,c)).get();
 
-                foundGroups = search4Groups(refTile, bookshelf, new Coordinates(r,c)) >= nElems ? foundGroups + 1 : foundGroups;
+                if( visitedCoords.contains(new Coordinates(r,c)))  continue;
+
+                tmpCoords = search4Groups(refTile, bookshelf, new Coordinates(r,c));
+                visitedCoords.addAll(tmpCoords);
+                foundGroups = tmpCoords.size() == nElems ? foundGroups + 1 : foundGroups;
 
                 if ( foundGroups == this.nGroups)
                     return true;
@@ -41,34 +50,36 @@ public class NadiacentElements extends CommonGoalCard{
     }
 
 
-    private int search4Groups( ItemTile refTile, Bookshelf bookshelf, Coordinates refCoords){
+    private Set<Coordinates> search4Groups( ItemTile refTile, Bookshelf bookshelf, Coordinates refCoords){
 
-        int tmpSum = 0;
         ItemTile nextTile;
         Coordinates tmpCoords;
+        Set<Coordinates> coordSet = new HashSet<>();
         // base case
-        if( refCoords.getX() > bookshelf.getRows() || refCoords.getY() > bookshelf.getColumns()) return 0;
+        if( refCoords.getRow() > bookshelf.getRows() || refCoords.getColumn() > bookshelf.getColumns()) return coordSet;
 
 
 
         // general Case
-
+        coordSet.add(refCoords);
         //right side
-        tmpCoords = new Coordinates( refCoords.getX() + 1 , refCoords.getY());
+        tmpCoords = new Coordinates( refCoords.getRow() + 1 , refCoords.getColumn());
         if( bookshelf.getItemTile(tmpCoords).isPresent() ){
             nextTile = bookshelf.getItemTile(tmpCoords).get();
             if( nextTile.equals(refTile) )
-                tmpSum += 1 + search4Groups(nextTile,bookshelf,tmpCoords);
+
+                coordSet.addAll(search4Groups(nextTile,bookshelf,tmpCoords));
+
         }
         //bottom side
-        tmpCoords = new Coordinates( refCoords.getX(), refCoords.getY()+1);
+        tmpCoords = new Coordinates( refCoords.getRow(), refCoords.getColumn()+1);
         if( bookshelf.getItemTile(tmpCoords).isPresent() ){
             nextTile = bookshelf.getItemTile(tmpCoords).get();
             if( nextTile.equals(refTile) )
-                tmpSum += 1 + search4Groups(nextTile,bookshelf,tmpCoords);
+                coordSet.addAll(search4Groups(nextTile,bookshelf,tmpCoords));
         }
 
-        return tmpSum;
+        return coordSet;
 
     }
 }

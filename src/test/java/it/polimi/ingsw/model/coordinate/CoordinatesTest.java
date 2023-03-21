@@ -24,14 +24,14 @@ public class CoordinatesTest {
         Coordinates test2 = new Coordinates(0,8);
         Coordinates test3 = new Coordinates(8,0);
         Coordinates test4 = new Coordinates(3,5);
-        assertEquals(0,test1.getX());
-        assertEquals(0,test1.getY());
-        assertEquals(0,test2.getX());
-        assertEquals(8,test2.getY());
-        assertEquals(8,test3.getX());
-        assertEquals(0,test3.getY());
-        assertEquals(3,test4.getX());
-        assertEquals(5,test4.getY());
+        assertEquals(0,test1.getRow());
+        assertEquals(0,test1.getColumn());
+        assertEquals(0,test2.getRow());
+        assertEquals(8,test2.getColumn());
+        assertEquals(8,test3.getRow());
+        assertEquals(0,test3.getColumn());
+        assertEquals(3,test4.getRow());
+        assertEquals(5,test4.getColumn());
 
     }
 
