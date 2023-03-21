@@ -1,10 +1,13 @@
 package it.polimi.ingsw.model.game;
 
+import it.polimi.ingsw.model.bookshelf.exceptions.NotEnoughSpaceException;
 import it.polimi.ingsw.model.cards.common.CommonGoalCard;
 import it.polimi.ingsw.model.coordinate.Coordinates;
 import it.polimi.ingsw.model.distributable.BagHolder;
 import it.polimi.ingsw.model.distributable.DeckCommon;
 import it.polimi.ingsw.model.distributable.DeckPersonal;
+import it.polimi.ingsw.model.game.exceptions.EmptySlotException;
+import it.polimi.ingsw.model.game.exceptions.InvalidCooException;
 import it.polimi.ingsw.model.game.exceptions.InvalidPlayerException;
 import it.polimi.ingsw.model.livingRoom.LivingRoomBoard;
 import it.polimi.ingsw.model.player.Player;
@@ -73,8 +76,36 @@ public class Game implements GameController{
         return 0;
     }
 
-    public void moveTiles(ArrayList<Coordinates> source, ArrayList<Coordinates> destination) {
+    public void moveTiles(ArrayList<Coordinates> source, int column) throws InvalidCooException, EmptySlotException, NotEnoughSpaceException {
+        /*
+            checks done:
+             - source LivingRoomBoard slot actually have a tile
+             - destination coordinates refer to only a commong column
+         */
 
+        ArrayList<ItemTile> temp = new ArrayList<ItemTile>(); // tile to be added to the playerBookshelf
+        Optional<ItemTile> tile;
+        Player currPlayer = players.get(getPlayerTurn()); // current player
+        if(source == null || source.contains(null)) {
+            throw new NullPointerException("Source is/contains null");
+        } else if (source.isEmpty()) {
+            throw new InvalidCooException("Source list is empty");
+        }
+
+
+        for(int i=0; i<source.size(); i++) {
+            tile = livingRoom.getTile(source.get(i));
+            if(tile.isEmpty())
+                throw new EmptySlotException("Trying to retrieve a tile from a empty slot");
+            else {
+                temp.add(i, tile.get()); //we are assured that the value is present by the previous if statement
+            }
+        }
+        /*
+            now we should have validated the source coordinates
+            and retrieved tiles in the temp list
+         */
+        currPlayer.getBookshelf().insertItemTile(column,temp);
     }
 
     public ArrayList<Coordinates> getLivingRoomCoordinates() {
