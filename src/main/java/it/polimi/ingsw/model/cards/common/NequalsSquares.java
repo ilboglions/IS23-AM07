@@ -6,8 +6,7 @@ import it.polimi.ingsw.model.cards.exceptions.tooManyPlayersException;
 import it.polimi.ingsw.model.coordinate.Coordinates;
 import it.polimi.ingsw.model.tiles.ItemTile;
 
-import java.util.ArrayList;
-import java.util.Optional;
+import java.util.*;
 
 public class NequalsSquares extends CommonGoalCard{
 
@@ -24,6 +23,8 @@ public class NequalsSquares extends CommonGoalCard{
     public boolean verifyConstraint(Bookshelf bookshelf){
 
         ArrayList<ItemTile> parentTiles= new ArrayList<>();
+        Set<Coordinates> toRemove = new HashSet<>();
+        HashMap<Coordinates,ItemTile> squareMap = new HashMap<>();
         int foundSquares;
 
         foundSquares = 0;
@@ -42,9 +43,9 @@ public class NequalsSquares extends CommonGoalCard{
                 if ( parentTiles.size() != this.squareDim*this.squareDim ) continue;
 
                 Optional<ItemTile> brokenItem = parentTiles.stream().filter(tile -> !tile.equals(refTile)).findAny();
-                foundSquares = brokenItem.isEmpty() ? foundSquares + 1 : foundSquares;
-                if ( foundSquares == this.nSquares)
-                    return true;
+
+                if(brokenItem.isEmpty() )
+                    squareMap.put(new Coordinates(r,c), refTile);
                 // clear parentTiles array
                 parentTiles.clear();
 
@@ -52,6 +53,22 @@ public class NequalsSquares extends CommonGoalCard{
             }
         }
 
-        return false;
+        //make it possible to found squares with same elements
+        squareMap.forEach(
+                (coord, tile) -> {
+                    squareMap.forEach(
+                            (c2, t2) ->{
+                                if( !coord.equals(c2)){
+                                    double dist = Math.abs( Math.sqrt( Math.pow(coord.getX() - c2.getX(),2) + Math.pow(coord.getY() - c2.getY(),2) ) );
+                                    if(dist < squareDim ){
+                                        toRemove.add(coord);
+                                    }
+                                }
+                            }
+                    );
+                }
+        );
+
+        return squareMap.keySet().size() - toRemove.size() >= nSquares;
     }
 }

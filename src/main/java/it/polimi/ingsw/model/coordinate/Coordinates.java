@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model.coordinate;
 
+import java.util.Objects;
+
 /**
  * the Coordinates class is a useful and immutable class used in many method
  */
@@ -37,5 +39,23 @@ public class Coordinates {
      */
     public int getY() {
         return y;
+    }
+
+    /**
+     * override of the classical equals method
+     * @param o the object to be compared with
+     * @return true, if elements are the same class and contains the same attributes
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Coordinates that = (Coordinates) o;
+        return x == that.x && y == that.y;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y);
     }
 }
