@@ -23,48 +23,37 @@ public class NequalsSquares extends CommonGoalCard{
     public boolean verifyConstraint(Bookshelf bookshelf){
 
         ArrayList<ItemTile> parentTiles= new ArrayList<>();
-        Set<Coordinates> toRemove = new HashSet<>();
-        HashMap<Coordinates,ItemTile> squareMap = new HashMap<>();
+        int nFoundSquares = 0;
+        boolean validSquare;
 
         for( int r  = 0; r < bookshelf.getRows(); r++){
             for( int c = 0; c < bookshelf.getColumns(); c++){
                 if(bookshelf.getItemTile(new Coordinates(r,c)).isEmpty()) continue;
 
                 ItemTile refTile = bookshelf.getItemTile(new Coordinates(r,c)).get();
+                validSquare = true;
+                for (int i = r; i < r + this.squareDim + 1 && i < bookshelf.getRows() && validSquare; i++){
+                    for( int j = c; j <  c + this.squareDim + 1 && j < bookshelf.getColumns() && validSquare; j++){
 
-                for (int i = r; i < this.squareDim; i++){
-                    for( int j = c; j < this.squareDim; j++){
-                        bookshelf.getItemTile(new Coordinates(i, j)).ifPresent(parentTiles::add);
+                        if( (i > r + this.squareDim || j > c + this.squareDim )  && bookshelf.getItemTile(new Coordinates(i, j)).isPresent() ) {
+                            if (bookshelf.getItemTile(new Coordinates(i, j)).get().equals(refTile))
+                                validSquare = false;
+                        } else {
+                            bookshelf.getItemTile(new Coordinates(i, j)).ifPresent(parentTiles::add);
+                        }
                     }
                 }
 
                 if ( parentTiles.size() != this.squareDim*this.squareDim ) continue;
 
                 Optional<ItemTile> brokenItem = parentTiles.stream().filter(tile -> !tile.equals(refTile)).findAny();
-
-                if(brokenItem.isEmpty() )
-                    squareMap.put(new Coordinates(r,c), refTile);
-                // clear parentTiles array
-                parentTiles.clear();
-
+                if (brokenItem.isPresent())
+                    nFoundSquares++;
 
             }
         }
 
-        //make it possible to found squares with same elements
-        squareMap.forEach(
-                (coord, tile) -> squareMap.forEach(
-                        (c2, t2) ->{
-                            if( !coord.equals(c2)){
-                                double dist = Math.abs( Math.sqrt( Math.pow(coord.getRow() - c2.getRow(),2) + Math.pow(coord.getColumn() - c2.getColumn(),2) ) );
-                                if(dist < squareDim ){
-                                    toRemove.add(coord);
-                                }
-                            }
-                        }
-                )
-        );
 
-        return squareMap.keySet().size() - toRemove.size() >= nSquares;
+        return nFoundSquares >= nSquares;
     }
 }

@@ -1,5 +1,21 @@
-{
-  "0": {
+[
+  {
+    "cardType": "checkPattern",
+    "Attributes": {},
+    "description": "jECKBI",
+    "pattern": [
+        "(0,1)",
+        "(1,1)",
+        "(2,3)"
+      ],
+    "sameTiles": "true",
+    "nCols": {},
+    "maxTilesFrule": {},
+    "nRows": {},
+    "nElems": {},
+    "nTiles": {}
+  },
+  {
     "cardType": "checkPattern",
     "Attributes": {},
     "description": "jECKBI",
@@ -15,7 +31,7 @@
     "nElems": {},
     "nTiles": {}
   },
-  "1": {
+  {
     "cardType": "checkPattern",
     "Attributes": {},
     "description": "jECKBI",
@@ -31,23 +47,7 @@
     "nElems": {},
     "nTiles": {}
   },
-  "2": {
-    "cardType": "checkPattern",
-    "Attributes": {},
-    "description": "jECKBI",
-    "pattern": {
-      "0": "(0,1)",
-      "1": "(1,1)",
-      "2": "(2,3)"
-    },
-    "sameTiles": "true",
-    "nCols": {},
-    "maxTilesFrule": {},
-    "nRows": {},
-    "nElems": {},
-    "nTiles": {}
-  },
-  "3": {
+  {
     "cardType": "checkPattern",
     "Attributes": {},
     "description": "jECKBI",
@@ -63,4 +63,4 @@
     "nElems": {},
     "nTiles": {}
   }
-}
+]
