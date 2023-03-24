@@ -2,6 +2,8 @@ package it.polimi.ingsw.model.game;
 
 import it.polimi.ingsw.model.bookshelf.exceptions.NotEnoughSpaceException;
 import it.polimi.ingsw.model.cards.common.CommonGoalCard;
+import it.polimi.ingsw.model.cards.exceptions.NegativeFieldException;
+import it.polimi.ingsw.model.cards.exceptions.PlayersNumberOutOfRange;
 import it.polimi.ingsw.model.coordinate.Coordinates;
 import it.polimi.ingsw.model.distributable.BagHolder;
 import it.polimi.ingsw.model.distributable.DeckCommon;
@@ -34,7 +36,7 @@ public class Game implements GameController{
     private DeckCommon deckCommon;
     private BagHolder bagHolder;
 
-    public Game(int numPlayers, Player host) throws FileNotFoundException {
+    public Game(int numPlayers, Player host) throws FileNotFoundException, NegativeFieldException, PlayersNumberOutOfRange {
         this.numPlayers = numPlayers;
         this.players = new ArrayList<Player>();
         this.livingRoom = new LivingRoomBoard();

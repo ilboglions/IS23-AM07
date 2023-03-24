@@ -4,7 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import it.polimi.ingsw.model.cards.common.*;
 import it.polimi.ingsw.model.cards.exceptions.NegativeFieldException;
-import it.polimi.ingsw.model.cards.exceptions.tooManyPlayersException;
+import it.polimi.ingsw.model.cards.exceptions.PlayersNumberOutOfRange;
 import it.polimi.ingsw.model.coordinate.Coordinates;
 
 import java.io.FileNotFoundException;
@@ -44,7 +44,7 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
      * @return an ArrayList that contains the drawn elements
      * @throws FileNotFoundException if the configuration cannot be found, this exception is thrown
      */
-    public ArrayList<CommonGoalCard> draw(int nElements) throws FileNotFoundException, NegativeFieldException, tooManyPlayersException {
+    public ArrayList<CommonGoalCard> draw(int nElements) throws FileNotFoundException, NegativeFieldException, PlayersNumberOutOfRange {
         ArrayList<CommonGoalCard> selected = new ArrayList<>();
         Gson gson = new Gson();
         Random randGenerator = new Random();
@@ -73,11 +73,11 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
      * @param cardConfiguration the jsonObject that represent the configuration card
      * @param nPlayers the players that are playing the game, necessary for the card's creation
      * @return the CommonGoalCard, with the right configuration given
-     * @throws tooManyPlayersException if the number of players exceed the limit, this exception will be thrown
+     * @throws PlayersNumberOutOfRange if the number of players exceed the limit, this exception will be thrown
      * @throws NegativeFieldException if the JsonObject contains a negative field, NegativeFieldException will be thrown
      * @throws IllegalArgumentException if the JsonObject doesn't match the right pattern, an IllegalArgumentException will be thrown
      */
-    private CommonGoalCard createCard(JsonObject cardConfiguration, int nPlayers) throws tooManyPlayersException, NegativeFieldException, IllegalArgumentException {
+    private CommonGoalCard createCard(JsonObject cardConfiguration, int nPlayers) throws PlayersNumberOutOfRange, NegativeFieldException, IllegalArgumentException {
         boolean sameTiles;
         int nCols;
         int maxTilesFrule;

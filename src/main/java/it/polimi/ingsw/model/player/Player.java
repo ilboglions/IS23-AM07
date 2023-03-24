@@ -6,6 +6,7 @@ import it.polimi.ingsw.model.coordinate.Coordinates;
 import it.polimi.ingsw.model.tokens.ScoringToken;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Player {
     private final String username;
@@ -17,7 +18,7 @@ public class Player {
     public Player(String username) {
         this.username = username;
         this.bookshelf = new PlayerBookshelf();
-        this.tokenAcquired = new ArrayList<ScoringToken>();
+        this.tokenAcquired = new ArrayList<>();
         this.points = 0;
     }
 
@@ -75,5 +76,18 @@ public class Player {
 
     public void assignPersonalCard(PersonalGoalCard card) {
         this.personalCard = card;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Player player = (Player) o;
+        return Objects.equals(username, player.username);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(username);
     }
 }

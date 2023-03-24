@@ -1,7 +1,7 @@
 package it.polimi.ingsw.model.cards.common;
 
 import it.polimi.ingsw.model.bookshelf.PlayerBookshelf;
-import it.polimi.ingsw.model.cards.exceptions.tooManyPlayersException;
+import it.polimi.ingsw.model.cards.exceptions.PlayersNumberOutOfRange;
 import it.polimi.ingsw.model.tokens.ScoringToken;
 import it.polimi.ingsw.model.tokens.TokenPoint;
 
@@ -25,12 +25,13 @@ public abstract class CommonGoalCard {
      * The card constructor creates the card and assign the ScoringToken's stack based on the number of players
      * @param nPlayers represents the numbers of players that are playing the game, necessary for the tokens to be assigned at the card
      * @param description it is used for explain the card's constraint
-     * @throws tooManyPlayersException when nPlayers exceed the numbers of the tile, tooManyPlayersException will be thrown
+     * @throws PlayersNumberOutOfRange when nPlayers exceed the numbers of the tile, tooManyPlayersException will be thrown
      */
-    public CommonGoalCard(int nPlayers , String description) throws tooManyPlayersException {
+    public CommonGoalCard(int nPlayers , String description) throws PlayersNumberOutOfRange {
+        if(nPlayers < 2) throw new PlayersNumberOutOfRange("Min excepted players: 2 players received: "+nPlayers);
         tokenStack = new Stack<>();
         this.description = description;
-        if(TokenPoint.values().length < nPlayers) throw new tooManyPlayersException("Max excepted players: "+TokenPoint.values().length+" players received: "+nPlayers);
+        if(TokenPoint.values().length < nPlayers) throw new PlayersNumberOutOfRange("Max excepted players: "+TokenPoint.values().length+" players received: "+nPlayers);
         for(int i= TokenPoint.values().length  - 1; i >TokenPoint.values().length - nPlayers; i--) {
             tokenStack.push( new ScoringToken(TokenPoint.values()[i]));
         }

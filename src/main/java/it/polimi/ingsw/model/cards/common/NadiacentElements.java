@@ -1,12 +1,11 @@
 package it.polimi.ingsw.model.cards.common;
 
 import it.polimi.ingsw.model.bookshelf.Bookshelf;
-import it.polimi.ingsw.model.cards.exceptions.tooManyPlayersException;
+import it.polimi.ingsw.model.cards.exceptions.PlayersNumberOutOfRange;
 import it.polimi.ingsw.model.cards.exceptions.NegativeFieldException;
 import it.polimi.ingsw.model.coordinate.Coordinates;
 import it.polimi.ingsw.model.tiles.ItemTile;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,7 +15,7 @@ public class NadiacentElements extends CommonGoalCard{
     private final int nGroups;
     private final int nElems;
 
-    public NadiacentElements(int nPlayers, String description ,int nGroups, int nElems) throws tooManyPlayersException, NegativeFieldException {
+    public NadiacentElements(int nPlayers, String description ,int nGroups, int nElems) throws PlayersNumberOutOfRange, NegativeFieldException {
         super(nPlayers, description);
         if( nGroups <= 0 || nElems <= 0 ) throw new NegativeFieldException("can't assign negative paramaters!");
         this.nGroups = nGroups;

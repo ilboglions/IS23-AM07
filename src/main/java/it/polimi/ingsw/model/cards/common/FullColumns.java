@@ -2,7 +2,7 @@ package it.polimi.ingsw.model.cards.common;
 
 import it.polimi.ingsw.model.bookshelf.Bookshelf;
 import it.polimi.ingsw.model.cards.exceptions.NegativeFieldException;
-import it.polimi.ingsw.model.cards.exceptions.tooManyPlayersException;
+import it.polimi.ingsw.model.cards.exceptions.PlayersNumberOutOfRange;
 import it.polimi.ingsw.model.coordinate.Coordinates;
 import it.polimi.ingsw.model.tiles.ItemTile;
 
@@ -12,7 +12,7 @@ public class FullColumns extends CommonGoalCard{
     private final int nCols;
     private final boolean sameTiles;
     private final int maxTilesFrule;
-    public FullColumns(int nPlayers, String description , int nCols, boolean sameTiles, int maxTilesFrule) throws tooManyPlayersException, NegativeFieldException {
+    public FullColumns(int nPlayers, String description , int nCols, boolean sameTiles, int maxTilesFrule) throws PlayersNumberOutOfRange, NegativeFieldException {
         super(nPlayers,description);
         if( nCols <= 0 || maxTilesFrule <= 0 ) throw new NegativeFieldException("can't assign negative parameters!");
         this.nCols = nCols;

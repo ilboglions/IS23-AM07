@@ -1,7 +1,7 @@
 package it.polimi.ingsw.model.cards.common;
 
 import it.polimi.ingsw.model.bookshelf.Bookshelf;
-import it.polimi.ingsw.model.cards.exceptions.tooManyPlayersException;
+import it.polimi.ingsw.model.cards.exceptions.PlayersNumberOutOfRange;
 import it.polimi.ingsw.model.coordinate.Coordinates;
 import it.polimi.ingsw.model.tiles.ItemTile;
 
@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public class FiveXTiles extends  CommonGoalCard{
     private final boolean sameTiles;
-    public FiveXTiles(int nPlayers, String description ,boolean sameTiles) throws tooManyPlayersException {
+    public FiveXTiles(int nPlayers, String description ,boolean sameTiles) throws PlayersNumberOutOfRange {
         super(nPlayers, description);
         this.sameTiles = sameTiles;
     }
