@@ -17,10 +17,7 @@ import it.polimi.ingsw.model.tiles.ItemTile;
 import it.polimi.ingsw.model.tokens.ScoringToken;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class Game implements GameController{
 
@@ -60,10 +57,21 @@ public class Game implements GameController{
     }
 
     public void start() {
+        Random random = new Random();
+
+        int firstPlayerIndex = random.nextInt(this.numPlayers);
+        Collections.rotate(players, -firstPlayerIndex);
+        this.isStarted = true;
+        this.playerTurn = 0;
     }
 
-    public int getPlayerPoints() {
-        return 0;
+    public int getPlayerPoints(String username) throws InvalidPlayerException {
+        Optional<Player> player = searchPlayer(username);
+
+        if(player.isEmpty())
+            throw new InvalidPlayerException();
+
+        return player.get().getPoints();
     }
 
     public ArrayList<ScoringToken> getPlayerTokens(String player) throws InvalidPlayerException {
@@ -75,7 +83,7 @@ public class Game implements GameController{
     }
 
     public int getPlayerTurn() {
-        return 0;
+        return playerTurn;
     }
 
     public void moveTiles(ArrayList<Coordinates> source, int column) throws InvalidCooException, EmptySlotException, NotEnoughSpaceException {
@@ -126,6 +134,11 @@ public class Game implements GameController{
     }
 
     public boolean checkBookshelfComplete() {
+        for(Player player : players) {
+            if(player.getBookshelf().checkComplete())
+                return true;
+        }
+
         return false;
     }
 
@@ -150,6 +163,7 @@ public class Game implements GameController{
         }
 
     }
+
     private boolean userUsed(String user) {
         for(int i=0; i<players.size(); i++) {
             if(players.get(i).getUsername().equals(user)) // if there is a player with the same user
@@ -171,6 +185,8 @@ public class Game implements GameController{
         return isStarted;
     }
 
-    private void setPlayerTurn() {}
+    private void setPlayerTurn() {
+        this.playerTurn = (this.playerTurn + 1) % this.numPlayers;
+    }
 
 }
