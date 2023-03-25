@@ -81,4 +81,19 @@ public abstract class Bookshelf {
 
         return Optional.ofNullable(tiles[c.getRow()][c.getColumn()]);
     }
+
+    public int nElementsOverlapped(Bookshelf bookshelf) {
+        int count = 0;
+        Coordinates c;
+
+        for(int i=0; i < this.rows; i++) {
+            for(int j=0; j < this.columns; j++) {
+                c = new Coordinates(i,j);
+                if(bookshelf.getItemTile(c).isPresent() && this.getItemTile(c).isPresent() && bookshelf.getItemTile(c).get().equals(this.getItemTile(c).get()))
+                    count++;
+            }
+        }
+
+        return count;
+    }
 }

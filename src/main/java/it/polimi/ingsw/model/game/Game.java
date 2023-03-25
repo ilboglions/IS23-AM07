@@ -38,7 +38,7 @@ public class Game implements GameController{
 
     public Game(int numPlayers, Player host) throws FileNotFoundException, NegativeFieldException, PlayersNumberOutOfRange {
         this.numPlayers = numPlayers;
-        this.players = new ArrayList<Player>();
+        this.players = new ArrayList<>();
         this.livingRoom = new LivingRoomBoard();
         this.deckCommon = new DeckCommon(numPlayers,"cards/confFiles/commonCards.json");
         this.deckPersonal = new DeckPersonal("cards/confFiles/personalCards.json", "cards/confFiles/pointsReference.json");
@@ -71,7 +71,7 @@ public class Game implements GameController{
         if(current.isEmpty())
             throw new InvalidPlayerException();
 
-        return new ArrayList<ScoringToken>(current.get().getTokenAcquired());
+        return new ArrayList<>(current.get().getTokenAcquired());
     }
 
     public int getPlayerTurn() {
@@ -83,10 +83,10 @@ public class Game implements GameController{
             checks done:
              - source LivingRoomBoard slot actually have a tile
              - column is in the proper range
-             - destination coordinates refer to only a commong column
+             - destination coordinates refer to only a common column
          */
 
-        ArrayList<ItemTile> temp = new ArrayList<ItemTile>(); // tile to be added to the playerBookshelf
+        ArrayList<ItemTile> temp = new ArrayList<>(); // tile to be added to the playerBookshelf
         Optional<ItemTile> tile;
         Player currPlayer = players.get(getPlayerTurn()); // current player
         if(source == null || source.contains(null)) {
@@ -143,7 +143,7 @@ public class Game implements GameController{
         } else {
             if(!userUsed(newPlayer.getUsername())) {
                 players.add(newPlayer); // player added to game active player
-                return true;    // true means that the player has been added and no problem occured
+                return true;    // true means that the player has been added and no problem occurred
             } else {
                 return false;   // false: the player has not been added to the game
             }
