@@ -82,6 +82,7 @@ public class Game implements GameController{
         /*
             checks done:
              - source LivingRoomBoard slot actually have a tile
+             - column is in the proper range
              - destination coordinates refer to only a commong column
          */
 
@@ -93,19 +94,21 @@ public class Game implements GameController{
         } else if (source.isEmpty()) {
             throw new InvalidCooException("Source list is empty");
         }
-
+        if(!(column >= 0 && column < 6)) {
+            throw new InvalidCooException("Selected column is out of range");
+        }
 
         for(int i=0; i<source.size(); i++) {
             tile = livingRoom.getTile(source.get(i));
             if(tile.isEmpty())
                 throw new EmptySlotException("Trying to retrieve a tile from a empty slot");
-            else {
+            else
                 temp.add(i, tile.get()); //we are assured that the value is present by the previous if statement
-            }
+
         }
         /*
             now we should have validated the source coordinates
-            and retrieved tiles in the temp list
+            and have the requested tiles in the temp list
          */
         currPlayer.getBookshelf().insertItemTile(column,temp);
     }
