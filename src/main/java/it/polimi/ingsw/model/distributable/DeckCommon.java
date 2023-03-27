@@ -5,8 +5,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import it.polimi.ingsw.model.cards.common.*;
 import it.polimi.ingsw.model.exceptions.NegativeFieldException;
-import it.polimi.ingsw.model.exceptions.NotEnoughCardsException;
 import it.polimi.ingsw.model.exceptions.PlayersNumberOutOfRange;
+import it.polimi.ingsw.model.exceptions.NotEnoughCardsException;
 import it.polimi.ingsw.model.coordinate.Coordinates;
 
 import java.io.FileNotFoundException;
