@@ -4,8 +4,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import it.polimi.ingsw.model.cards.common.*;
-import it.polimi.ingsw.model.cards.exceptions.NegativeFieldException;
-import it.polimi.ingsw.model.cards.exceptions.PlayersNumberOutOfRange;
+import it.polimi.ingsw.model.exceptions.NegativeFieldException;
+import it.polimi.ingsw.model.exceptions.PlayersNumberOutOfRange;
 import it.polimi.ingsw.model.coordinate.Coordinates;
 
 import java.io.FileNotFoundException;
@@ -131,7 +131,7 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
                 nElems = gson.fromJson(cardConfiguration.get("Attributes").getAsJsonObject().get("nElems").getAsString(), Integer.class);
                 nGroups = gson.fromJson(cardConfiguration.get("Attributes").getAsJsonObject().get("nGroups").getAsString(), Integer.class);
 
-                return new NadiacentElements(nPlayers,description,nGroups, nElems);
+                return new NadjacentElements(nPlayers,description,nGroups, nElems);
             }
 
             case "NequalsSquare" -> {

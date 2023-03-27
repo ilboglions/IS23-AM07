@@ -12,6 +12,7 @@ import it.polimi.ingsw.model.exceptions.EmptySlotException;
 import it.polimi.ingsw.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.model.exceptions.InvalidPlayerException;
 import it.polimi.ingsw.model.livingRoom.LivingRoomBoard;
+import it.polimi.ingsw.model.livingRoom.exceptions.NotEnoughTilesException;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.model.tiles.ItemTile;
 import it.polimi.ingsw.model.tokens.ScoringToken;
@@ -36,7 +37,7 @@ public class Game implements GameController{
     public Game(int numPlayers, Player host) throws FileNotFoundException, NegativeFieldException, PlayersNumberOutOfRange {
         this.numPlayers = numPlayers;
         this.players = new ArrayList<>();
-        this.livingRoom = new LivingRoomBoard();
+        this.livingRoom = new LivingRoomBoard(numPlayers);
         this.deckCommon = new DeckCommon(numPlayers,"cards/confFiles/commonCards.json");
         this.deckPersonal = new DeckPersonal("cards/confFiles/personalCards.json", "cards/confFiles/pointsReference.json");
         this.bagHolder = new BagHolder();
@@ -112,7 +113,6 @@ public class Game implements GameController{
                 throw new EmptySlotException("Trying to retrieve a tile from a empty slot");
             else
                 temp.add(i, tile.get()); //we are assured that the value is present by the previous if statement
-
         }
         /*
             now we should have validated the source coordinates
@@ -130,7 +130,18 @@ public class Game implements GameController{
     }
 
     public void refillLivingRoom() {
-
+        // here we don't do the check if the livingBoard actually needs to be refilled, before changing the turn the controller calls for the check
+        ArrayList<ItemTile> removed, useToRefill, fromBag;
+        removed = livingRoom.emptyBoard();
+        try {
+            useToRefill = bagHolder.draw(livingRoom.getNumCells() - removed.size());
+            useToRefill.addAll(0,removed);
+            livingRoom.refillBoard(useToRefill);
+        } catch (NegativeFieldException e) {
+            throw new RuntimeException(e.getMessage()+ "\n Removed tiles are more than the number of livingBoard cells");
+        } catch (NotEnoughTilesException e) {
+            throw new RuntimeException(e.getMessage() + "\n refillBoard did not receive enough tile to refill the board");
+        }
     }
 
     public boolean checkBookshelfComplete() {
@@ -138,7 +149,6 @@ public class Game implements GameController{
             if(player.getBookshelf().checkComplete())
                 return true;
         }
-
         return false;
     }
 
