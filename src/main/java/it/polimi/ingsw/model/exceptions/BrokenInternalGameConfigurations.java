@@ -1,4 +1,4 @@
-package it.polimi.ingsw.model.lobby.exceptions;
+package it.polimi.ingsw.model.exceptions;
 
 public class BrokenInternalGameConfigurations extends Exception {
     public BrokenInternalGameConfigurations(){

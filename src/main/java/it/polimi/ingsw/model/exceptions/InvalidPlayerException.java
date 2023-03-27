@@ -1,4 +1,4 @@
-package it.polimi.ingsw.model.game.exceptions;
+package it.polimi.ingsw.model.exceptions;
 
 public class InvalidPlayerException extends Exception{
     public InvalidPlayerException() {

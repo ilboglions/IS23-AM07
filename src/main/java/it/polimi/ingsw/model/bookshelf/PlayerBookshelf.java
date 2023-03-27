@@ -1,6 +1,6 @@
 package it.polimi.ingsw.model.bookshelf;
 
-import it.polimi.ingsw.model.bookshelf.exceptions.NotEnoughSpaceException;
+import it.polimi.ingsw.model.exceptions.NotEnoughSpaceException;
 import it.polimi.ingsw.model.coordinate.Coordinates;
 import it.polimi.ingsw.model.tiles.ItemTile;
 

@@ -1,7 +1,7 @@
 package it.polimi.ingsw.model.cards.common;
 
 import it.polimi.ingsw.model.bookshelf.PlayerBookshelf;
-import it.polimi.ingsw.model.cards.exceptions.PlayersNumberOutOfRange;
+import it.polimi.ingsw.model.exceptions.PlayersNumberOutOfRange;
 import it.polimi.ingsw.model.tokens.ScoringToken;
 import it.polimi.ingsw.model.tokens.TokenPoint;
 

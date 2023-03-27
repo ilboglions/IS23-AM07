@@ -1,4 +1,4 @@
-package it.polimi.ingsw.model.cards.exceptions;
+package it.polimi.ingsw.model.exceptions;
 
 public class NegativeFieldException extends Exception{
     public NegativeFieldException(String message) {

@@ -1,4 +1,4 @@
-package it.polimi.ingsw.model.livingRoom.exception;
+package it.polimi.ingsw.model.exceptions;
 
 public class SlotFullException extends Exception{
 

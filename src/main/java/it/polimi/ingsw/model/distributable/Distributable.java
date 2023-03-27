@@ -1,8 +1,8 @@
 package it.polimi.ingsw.model.distributable;
 
-import it.polimi.ingsw.model.cards.exceptions.NegativeFieldException;
-import it.polimi.ingsw.model.cards.exceptions.PlayersNumberOutOfRange;
-import it.polimi.ingsw.model.distributable.exception.NumElementsNegativeException;
+import it.polimi.ingsw.model.exceptions.NegativeFieldException;
+import it.polimi.ingsw.model.exceptions.PlayersNumberOutOfRange;
+import it.polimi.ingsw.model.exceptions.NotEnoughCardsException;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -22,6 +22,6 @@ public interface Distributable<T> {
      * insert, this exception will be thrown
      * @throws PlayersNumberOutOfRange as NegativeField exception, this is thrown if some configurations of the game are not permitted, because of the number of players exceeded
      */
-    ArrayList<T> draw(int nElements) throws FileNotFoundException, NegativeFieldException, PlayersNumberOutOfRange, NumElementsNegativeException;
+    ArrayList<T> draw(int nElements) throws FileNotFoundException, PlayersNumberOutOfRange, NotEnoughCardsException, NegativeFieldException;
 
 }

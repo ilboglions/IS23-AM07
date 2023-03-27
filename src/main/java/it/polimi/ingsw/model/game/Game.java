@@ -1,16 +1,16 @@
 package it.polimi.ingsw.model.game;
 
-import it.polimi.ingsw.model.bookshelf.exceptions.NotEnoughSpaceException;
+import it.polimi.ingsw.model.exceptions.NotEnoughSpaceException;
 import it.polimi.ingsw.model.cards.common.CommonGoalCard;
-import it.polimi.ingsw.model.cards.exceptions.NegativeFieldException;
-import it.polimi.ingsw.model.cards.exceptions.PlayersNumberOutOfRange;
+import it.polimi.ingsw.model.exceptions.NegativeFieldException;
+import it.polimi.ingsw.model.exceptions.PlayersNumberOutOfRange;
 import it.polimi.ingsw.model.coordinate.Coordinates;
 import it.polimi.ingsw.model.distributable.BagHolder;
 import it.polimi.ingsw.model.distributable.DeckCommon;
 import it.polimi.ingsw.model.distributable.DeckPersonal;
-import it.polimi.ingsw.model.game.exceptions.EmptySlotException;
-import it.polimi.ingsw.model.game.exceptions.InvalidCooException;
-import it.polimi.ingsw.model.game.exceptions.InvalidPlayerException;
+import it.polimi.ingsw.model.exceptions.EmptySlotException;
+import it.polimi.ingsw.model.exceptions.InvalidCoordinatesException;
+import it.polimi.ingsw.model.exceptions.InvalidPlayerException;
 import it.polimi.ingsw.model.livingRoom.LivingRoomBoard;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.model.tiles.ItemTile;
@@ -86,7 +86,7 @@ public class Game implements GameController{
         return playerTurn;
     }
 
-    public void moveTiles(ArrayList<Coordinates> source, int column) throws InvalidCooException, EmptySlotException, NotEnoughSpaceException {
+    public void moveTiles(ArrayList<Coordinates> source, int column) throws InvalidCoordinatesException, EmptySlotException, NotEnoughSpaceException {
         /*
             checks done:
              - source LivingRoomBoard slot actually have a tile
@@ -100,10 +100,10 @@ public class Game implements GameController{
         if(source == null || source.contains(null)) {
             throw new NullPointerException("Source is/contains null");
         } else if (source.isEmpty()) {
-            throw new InvalidCooException("Source list is empty");
+            throw new InvalidCoordinatesException("Source list is empty");
         }
         if(!(column >= 0 && column < 6)) {
-            throw new InvalidCooException("Selected column is out of range");
+            throw new InvalidCoordinatesException("Selected column is out of range");
         }
 
         for(int i=0; i<source.size(); i++) {

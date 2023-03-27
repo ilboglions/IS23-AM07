@@ -2,8 +2,8 @@ package it.polimi.ingsw.model.livingRoom;
 
 import com.google.gson.Gson;
 import it.polimi.ingsw.model.coordinate.Coordinates;
-import it.polimi.ingsw.model.livingRoom.exception.InvalidNumPlayersException;
-import it.polimi.ingsw.model.livingRoom.exception.SlotFullException;
+import it.polimi.ingsw.model.exceptions.PlayersNumberOutOfRange;
+import it.polimi.ingsw.model.exceptions.SlotFullException;
 import it.polimi.ingsw.model.tiles.ItemTile;
 
 import java.io.FileNotFoundException;
@@ -41,7 +41,7 @@ public class LivingRoomBoard {
         slots.
     */
 
-    public LivingRoomBoard(int numPlayers) throws FileNotFoundException, InvalidNumPlayersException {
+    public LivingRoomBoard(int numPlayers) throws FileNotFoundException, PlayersNumberOutOfRange {
         //create the pattern of the living room board
         //let's create the pattern per rows
         slot = new Slot[rows][cols];
@@ -52,7 +52,7 @@ public class LivingRoomBoard {
         Gson gson = new Gson();
 
         if(numPlayers <= 0) {
-            throw new InvalidNumPlayersException("numPlayers is negative !!");
+            throw new PlayersNumberOutOfRange("numPlayers is negative !!");
         } else if(numPlayers == 3) {
             confFilePath = "src/main/java/it/polimi/ingsw/model/livingRoom/confFiles/3PlayersPattern.json";
         } else if(numPlayers >= 4) {

@@ -1,12 +1,7 @@
 package it.polimi.ingsw.model.lobby;
 
-import it.polimi.ingsw.model.cards.exceptions.NegativeFieldException;
-import it.polimi.ingsw.model.cards.exceptions.PlayersNumberOutOfRange;
+import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.game.Game;
-import it.polimi.ingsw.model.lobby.exceptions.BrokenInternalGameConfigurations;
-import it.polimi.ingsw.model.lobby.exceptions.NicknameAlreadyUsedException;
-import it.polimi.ingsw.model.lobby.exceptions.NoAvailableGameException;
-import it.polimi.ingsw.model.lobby.exceptions.NoAvailablePlayerException;
 import it.polimi.ingsw.model.player.Player;
 
 import java.io.FileNotFoundException;
@@ -39,10 +34,10 @@ public class Lobby {
      * the method add a player to one of the available games
      * @param playerName the player to be added to the game
      * @throws NoAvailableGameException if no game is available
-     * @throws NoAvailablePlayerException if the player is not in waiting list or the player nickname is already taken in the game
+     * @throws InvalidPlayerException if the player is not in waiting list or the player nickname is already taken in the game
      *
      */
-    public Game addPlayerToGame(String playerName) throws NoAvailableGameException, NoAvailablePlayerException {
+    public Game addPlayerToGame(String playerName) throws NoAvailableGameException, InvalidPlayerException {
         Game result = games.stream()
                             .filter(tmp -> !tmp.getIsStarted())
                             .findFirst()
@@ -54,11 +49,11 @@ public class Lobby {
             valid = result.addPlayer(op.get());
         }
         else {
-            throw new NoAvailablePlayerException();
+            throw new InvalidPlayerException();
         }
 
         if(!valid)
-            throw new NoAvailablePlayerException();
+            throw new InvalidPlayerException();
 
         waitingPlayers.remove(op.get());
 
@@ -72,14 +67,14 @@ public class Lobby {
      * @return the Game instance
      * @throws PlayersNumberOutOfRange if the player's number is out of the specific range
      * @throws BrokenInternalGameConfigurations if some internal configurations are broken
-     * @throws NoAvailablePlayerException if the host player cannot be found
+     * @throws InvalidPlayerException if the host player cannot be found
      *
      */
-    public Game createGame(int nPlayers, String hostNickname) throws PlayersNumberOutOfRange, BrokenInternalGameConfigurations, NoAvailablePlayerException {
+    public Game createGame(int nPlayers, String hostNickname) throws PlayersNumberOutOfRange, BrokenInternalGameConfigurations, InvalidPlayerException {
 
         Optional<Player> host =  waitingPlayers.stream().filter(p -> p.getUsername().equals(hostNickname)).findFirst();
         if( host.isEmpty())
-            throw new NoAvailablePlayerException();
+            throw new InvalidPlayerException();
         try{
             Game newGame = new Game(nPlayers, host.get());
             games.add(newGame);

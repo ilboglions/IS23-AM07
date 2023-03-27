@@ -1,9 +1,8 @@
 package it.polimi.ingsw.model.distributable;
 
-import it.polimi.ingsw.model.distributable.exception.NumElementsNegativeException;
+import it.polimi.ingsw.model.exceptions.NegativeFieldException;
 import it.polimi.ingsw.model.tiles.ItemTile;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -26,10 +25,10 @@ public class BagHolder implements Distributable {
     }
 
     @Override
-    public ArrayList<ItemTile> draw(int nElements) throws NumElementsNegativeException {
+    public ArrayList<ItemTile> draw(int nElements) throws NegativeFieldException {
         ArrayList<ItemTile> selected;
         if(nElements < 0) {
-            throw new NumElementsNegativeException("Num elements to be drawn is negative");
+            throw new NegativeFieldException("Num elements to be drawn is negative");
         } else {
             selected = new ArrayList<ItemTile>();
             for(int i=0; i<nElements; i++) {

@@ -1,8 +1,8 @@
 package it.polimi.ingsw.model.cards.common;
 
 import it.polimi.ingsw.model.bookshelf.Bookshelf;
-import it.polimi.ingsw.model.cards.exceptions.PlayersNumberOutOfRange;
-import it.polimi.ingsw.model.cards.exceptions.NegativeFieldException;
+import it.polimi.ingsw.model.exceptions.PlayersNumberOutOfRange;
+import it.polimi.ingsw.model.exceptions.NegativeFieldException;
 import it.polimi.ingsw.model.coordinate.Coordinates;
 import it.polimi.ingsw.model.tiles.ItemTile;
 
