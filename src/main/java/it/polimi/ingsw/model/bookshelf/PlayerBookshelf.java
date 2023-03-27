@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model.bookshelf;
 
 import it.polimi.ingsw.model.bookshelf.exceptions.NotEnoughSpaceException;
+import it.polimi.ingsw.model.coordinate.Coordinates;
 import it.polimi.ingsw.model.tiles.ItemTile;
 
 import java.util.ArrayList;
@@ -46,5 +47,23 @@ public class PlayerBookshelf extends Bookshelf{
         }
 
         return count;
+    }
+
+    /**
+     * This method checks if the bookshelf is complete, in other words it checks if in every index of the matrix there is an ItemTile
+     * @return if the bookshelf is complete or not
+     */
+    public boolean checkComplete() {
+        Coordinates c;
+
+        for(int i=0; i < this.rows; i++) {
+            for(int j=0; j < this.columns; j++) {
+                c = new Coordinates(i,j);
+                if(this.getItemTile(c).isEmpty())
+                    return false;
+            }
+        }
+
+        return true;
     }
 }

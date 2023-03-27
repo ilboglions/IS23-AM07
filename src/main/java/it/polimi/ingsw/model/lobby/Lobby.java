@@ -42,7 +42,7 @@ public class Lobby {
      * @throws NoAvailablePlayerException if the player is not in waiting list or the player nickname is already taken in the game
      *
      */
-    public void addPlayerToGame(String playerName) throws NoAvailableGameException, NoAvailablePlayerException {
+    public Game addPlayerToGame(String playerName) throws NoAvailableGameException, NoAvailablePlayerException {
         Game result = games.stream()
                             .filter(tmp -> !tmp.getIsStarted())
                             .findFirst()
@@ -62,7 +62,7 @@ public class Lobby {
 
         waitingPlayers.remove(op.get());
 
-
+        return result;
     }
 
     /**

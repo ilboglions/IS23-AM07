@@ -16,7 +16,7 @@ public interface GameController {
     public boolean getIsStarted();
     public void setIsStarted(boolean newState);
     public void start();
-    public int getPlayerPoints();
+    public int getPlayerPoints(String player) throws InvalidPlayerException;
     public ArrayList<ScoringToken> getPlayerTokens(String player) throws InvalidPlayerException;
     public int getPlayerTurn();
     public void moveTiles(ArrayList<Coordinates> source, int column) throws InvalidCooException, EmptySlotException, NotEnoughSpaceException;

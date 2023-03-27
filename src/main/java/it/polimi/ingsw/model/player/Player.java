@@ -46,16 +46,8 @@ public class Player {
     }
 
     private int calculatePointsPersonalGoalCard() {
-        int count = 0;
-        Coordinates c;
 
-        for(int i=0; i<bookshelf.getRows(); i++) {
-            for(int j=0; j<bookshelf.getColumns(); j++) {
-                c = new Coordinates(i,j);
-                if(personalCard.getBookshelf().getItemTile(c).isPresent() && bookshelf.getItemTile(c).equals(personalCard.getBookshelf().getItemTile(c)))
-                    count++;
-            }
-        }
+        int count = bookshelf.nElementsOverlapped(personalCard.getBookshelf());
 
         return personalCard.getPointsReference().get(count);
     }

@@ -17,10 +17,7 @@ import it.polimi.ingsw.model.tiles.ItemTile;
 import it.polimi.ingsw.model.tokens.ScoringToken;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class Game implements GameController{
 
@@ -38,7 +35,7 @@ public class Game implements GameController{
 
     public Game(int numPlayers, Player host) throws FileNotFoundException, NegativeFieldException, PlayersNumberOutOfRange {
         this.numPlayers = numPlayers;
-        this.players = new ArrayList<Player>();
+        this.players = new ArrayList<>();
         this.livingRoom = new LivingRoomBoard();
         this.deckCommon = new DeckCommon(numPlayers,"cards/confFiles/commonCards.json");
         this.deckPersonal = new DeckPersonal("cards/confFiles/personalCards.json", "cards/confFiles/pointsReference.json");
@@ -60,10 +57,21 @@ public class Game implements GameController{
     }
 
     public void start() {
+        Random random = new Random();
+
+        int firstPlayerIndex = random.nextInt(this.numPlayers);
+        Collections.rotate(players, -firstPlayerIndex);
+        this.isStarted = true;
+        this.playerTurn = 0;
     }
 
-    public int getPlayerPoints() {
-        return 0;
+    public int getPlayerPoints(String username) throws InvalidPlayerException {
+        Optional<Player> player = searchPlayer(username);
+
+        if(player.isEmpty())
+            throw new InvalidPlayerException();
+
+        return player.get().getPoints();
     }
 
     public ArrayList<ScoringToken> getPlayerTokens(String player) throws InvalidPlayerException {
@@ -71,21 +79,22 @@ public class Game implements GameController{
         if(current.isEmpty())
             throw new InvalidPlayerException();
 
-        return new ArrayList<ScoringToken>(current.get().getTokenAcquired());
+        return new ArrayList<>(current.get().getTokenAcquired());
     }
 
     public int getPlayerTurn() {
-        return 0;
+        return playerTurn;
     }
 
     public void moveTiles(ArrayList<Coordinates> source, int column) throws InvalidCooException, EmptySlotException, NotEnoughSpaceException {
         /*
             checks done:
              - source LivingRoomBoard slot actually have a tile
-             - destination coordinates refer to only a commong column
+             - column is in the proper range
+             - destination coordinates refer to only a common column
          */
 
-        ArrayList<ItemTile> temp = new ArrayList<ItemTile>(); // tile to be added to the playerBookshelf
+        ArrayList<ItemTile> temp = new ArrayList<>(); // tile to be added to the playerBookshelf
         Optional<ItemTile> tile;
         Player currPlayer = players.get(getPlayerTurn()); // current player
         if(source == null || source.contains(null)) {
@@ -93,19 +102,21 @@ public class Game implements GameController{
         } else if (source.isEmpty()) {
             throw new InvalidCooException("Source list is empty");
         }
-
+        if(!(column >= 0 && column < 6)) {
+            throw new InvalidCooException("Selected column is out of range");
+        }
 
         for(int i=0; i<source.size(); i++) {
             tile = livingRoom.getTile(source.get(i));
             if(tile.isEmpty())
                 throw new EmptySlotException("Trying to retrieve a tile from a empty slot");
-            else {
+            else
                 temp.add(i, tile.get()); //we are assured that the value is present by the previous if statement
-            }
+
         }
         /*
             now we should have validated the source coordinates
-            and retrieved tiles in the temp list
+            and have the requested tiles in the temp list
          */
         currPlayer.getBookshelf().insertItemTile(column,temp);
     }
@@ -123,6 +134,11 @@ public class Game implements GameController{
     }
 
     public boolean checkBookshelfComplete() {
+        for(Player player : players) {
+            if(player.getBookshelf().checkComplete())
+                return true;
+        }
+
         return false;
     }
 
@@ -140,13 +156,14 @@ public class Game implements GameController{
         } else {
             if(!userUsed(newPlayer.getUsername())) {
                 players.add(newPlayer); // player added to game active player
-                return true;    // true means that the player has been added and no problem occured
+                return true;    // true means that the player has been added and no problem occurred
             } else {
                 return false;   // false: the player has not been added to the game
             }
         }
 
     }
+
     private boolean userUsed(String user) {
         for(int i=0; i<players.size(); i++) {
             if(players.get(i).getUsername().equals(user)) // if there is a player with the same user
@@ -168,6 +185,8 @@ public class Game implements GameController{
         return isStarted;
     }
 
-    private void setPlayerTurn() {}
+    private void setPlayerTurn() {
+        this.playerTurn = (this.playerTurn + 1) % this.numPlayers;
+    }
 
 }

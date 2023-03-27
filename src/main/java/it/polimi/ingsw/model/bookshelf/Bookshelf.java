@@ -18,11 +18,11 @@ public abstract class Bookshelf {
     /**
      * the number of rows of the bookshelf
      */
-    private final int rows;
+    protected final int rows;
     /**
      * the number of columns of the bookshelf
      */
-    private final int columns;
+    protected final int columns;
 
     /**
      * the constructor initialize the bookshelf
@@ -80,5 +80,25 @@ public abstract class Bookshelf {
         }
 
         return Optional.ofNullable(tiles[c.getRow()][c.getColumn()]);
+    }
+
+    /**
+     * Method to calculate the number of ItemTiles that are in the same position and equal between this bookshelf and the one passed as parameter
+     * @param bookshelf the bookshelf to check the elements on
+     * @return an int that is the number of ItemTile in the same position and equal between the two bookshelf
+     */
+    public int nElementsOverlapped(Bookshelf bookshelf) {
+        int count = 0;
+        Coordinates c;
+
+        for(int i=0; i < this.rows; i++) {
+            for(int j=0; j < this.columns; j++) {
+                c = new Coordinates(i,j);
+                if(bookshelf.getItemTile(c).isPresent() && this.getItemTile(c).isPresent() && bookshelf.getItemTile(c).get().equals(this.getItemTile(c).get()))
+                    count++;
+            }
+        }
+
+        return count;
     }
 }
