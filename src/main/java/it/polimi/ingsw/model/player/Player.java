@@ -1,8 +1,10 @@
 package it.polimi.ingsw.model.player;
 
+import it.polimi.ingsw.model.bookshelf.Bookshelf;
 import it.polimi.ingsw.model.bookshelf.PlayerBookshelf;
 import it.polimi.ingsw.model.cards.personal.PersonalGoalCard;
 import it.polimi.ingsw.model.coordinate.Coordinates;
+import it.polimi.ingsw.model.tiles.ItemTile;
 import it.polimi.ingsw.model.tokens.ScoringToken;
 
 import java.util.*;

@@ -2,6 +2,7 @@ package it.polimi.ingsw.model.distributable;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import it.polimi.ingsw.model.cards.common.*;
 import it.polimi.ingsw.model.cards.exceptions.NegativeFieldException;
 import it.polimi.ingsw.model.cards.exceptions.PlayersNumberOutOfRange;
@@ -87,14 +88,14 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
         Gson gson = new Gson();
         String objectType = cardConfiguration.get("cardType").getAsString();
         String description= gson.fromJson(cardConfiguration.get("Attributes").getAsJsonObject().get("description").getAsString(), String.class);
-        ArrayList<Coordinates> pattern = new ArrayList<>();
-
+        ArrayList<ArrayList<Coordinates>> pattern = new ArrayList<>();
+        TypeToken<ArrayList<Coordinates>> coordArrType = new TypeToken<>(){};
 
         switch (objectType) {
             case "CheckPattern" -> {
                 cardConfiguration.get("Attributes").getAsJsonObject().get("pattern").getAsJsonArray()
                         .forEach(
-                                el -> pattern.add(gson.fromJson(el.getAsString(), Coordinates.class))
+                                el -> pattern.add(gson.fromJson(el.getAsString(), coordArrType))
                         );
                 sameTiles = gson.fromJson(cardConfiguration.get("Attributes").getAsJsonObject().get("sameTiles").getAsString(), Boolean.class);
 
