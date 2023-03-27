@@ -1,16 +1,11 @@
 package it.polimi.ingsw.model.game;
 
-import it.polimi.ingsw.model.exceptions.NotEnoughSpaceException;
+import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.cards.common.CommonGoalCard;
-import it.polimi.ingsw.model.exceptions.NegativeFieldException;
-import it.polimi.ingsw.model.exceptions.PlayersNumberOutOfRange;
 import it.polimi.ingsw.model.coordinate.Coordinates;
 import it.polimi.ingsw.model.distributable.BagHolder;
 import it.polimi.ingsw.model.distributable.DeckCommon;
 import it.polimi.ingsw.model.distributable.DeckPersonal;
-import it.polimi.ingsw.model.exceptions.EmptySlotException;
-import it.polimi.ingsw.model.exceptions.InvalidCoordinatesException;
-import it.polimi.ingsw.model.exceptions.InvalidPlayerException;
 import it.polimi.ingsw.model.livingRoom.LivingRoomBoard;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.model.tiles.ItemTile;
@@ -33,12 +28,12 @@ public class Game implements GameController{
     private DeckCommon deckCommon;
     private BagHolder bagHolder;
 
-    public Game(int numPlayers, Player host) throws FileNotFoundException, NegativeFieldException, PlayersNumberOutOfRange {
+    public Game(int numPlayers, Player host) throws FileNotFoundException, NegativeFieldException, PlayersNumberOutOfRange, NotEnoughCardsException {
         this.numPlayers = numPlayers;
         this.players = new ArrayList<>();
         this.livingRoom = new LivingRoomBoard();
         this.deckCommon = new DeckCommon(numPlayers,"cards/confFiles/commonCards.json");
-        this.deckPersonal = new DeckPersonal("cards/confFiles/personalCards.json", "cards/confFiles/pointsReference.json");
+        this.deckPersonal = new DeckPersonal("../cards/confFiles/personalCards.json", "cards/confFiles/pointsReference.json");
         this.bagHolder = new BagHolder();
         this.isStarted = false;
         this.isBookshelfComplete = false;

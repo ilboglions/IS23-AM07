@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import it.polimi.ingsw.model.cards.personal.PersonalGoalCard;
 import it.polimi.ingsw.model.coordinate.Coordinates;
+import it.polimi.ingsw.model.exceptions.NotEnoughCardsException;
 import it.polimi.ingsw.model.tiles.ItemTile;
 
 import java.io.FileNotFoundException;
@@ -47,7 +48,7 @@ public class DeckPersonal implements Distributable<PersonalGoalCard> {
      * @throws FileNotFoundException if the configuration cannot be found, this exception is thrown
      */
     @Override
-    public ArrayList<PersonalGoalCard> draw(int nElements) throws FileNotFoundException {
+    public ArrayList<PersonalGoalCard> draw(int nElements) throws FileNotFoundException, NotEnoughCardsException {
         ArrayList<PersonalGoalCard> selected = new ArrayList<>();
         TypeToken<Map<Coordinates, ItemTile>> mapType = new TypeToken<>(){};
         TypeToken<Map<Integer, Integer>> pointsReferenceMapType = new TypeToken<>(){};
@@ -59,6 +60,8 @@ public class DeckPersonal implements Distributable<PersonalGoalCard> {
 
         JsonArray jsonCards = gson.fromJson(new FileReader(configurationFile), JsonArray.class);
         Map<Integer, Integer> pointsReference = gson.fromJson(new FileReader(pointsReferenceFile), pointsReferenceMapType);
+
+        if(jsonCards.size() < nElements) throw new NotEnoughCardsException("error! only "+jsonCards.size()+" cards available");
 
         for( int i = 0; i < nElements; i++){
             do {

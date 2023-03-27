@@ -4,8 +4,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import it.polimi.ingsw.model.cards.common.*;
-import it.polimi.ingsw.model.cards.exceptions.NegativeFieldException;
-import it.polimi.ingsw.model.cards.exceptions.PlayersNumberOutOfRange;
+import it.polimi.ingsw.model.exceptions.NegativeFieldException;
+import it.polimi.ingsw.model.exceptions.NotEnoughCardsException;
+import it.polimi.ingsw.model.exceptions.PlayersNumberOutOfRange;
 import it.polimi.ingsw.model.coordinate.Coordinates;
 
 import java.io.FileNotFoundException;
@@ -45,7 +46,7 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
      * @return an ArrayList that contains the drawn elements
      * @throws FileNotFoundException if the configuration cannot be found, this exception is thrown
      */
-    public ArrayList<CommonGoalCard> draw(int nElements) throws FileNotFoundException, NegativeFieldException, PlayersNumberOutOfRange {
+    public ArrayList<CommonGoalCard> draw(int nElements) throws FileNotFoundException, NegativeFieldException, PlayersNumberOutOfRange, NotEnoughCardsException {
         ArrayList<CommonGoalCard> selected = new ArrayList<>();
         Gson gson = new Gson();
         Random randGenerator = new Random();
@@ -53,6 +54,7 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
         int extractedCardInex;
 
         JsonArray jsonCards = gson.fromJson(new FileReader(this.configuration), JsonArray.class);
+        if(jsonCards.size() < nElements) throw new NotEnoughCardsException("error! only "+jsonCards.size()+" cards available");
 
         for( int i = 0; i < nElements; i++){
             do {
@@ -91,6 +93,8 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
         ArrayList<ArrayList<Coordinates>> pattern = new ArrayList<>();
         TypeToken<ArrayList<Coordinates>> coordArrType = new TypeToken<>(){};
 
+
+
         switch (objectType) {
             case "CheckPattern" -> {
                 cardConfiguration.get("Attributes").getAsJsonObject().get("pattern").getAsJsonArray()
@@ -106,6 +110,12 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
                 sameTiles = gson.fromJson(cardConfiguration.get("Attributes").getAsJsonObject().get("sameTiles").getAsString(), Boolean.class);
 
                 return new FiveXTiles(nPlayers, description, sameTiles);
+
+            }
+
+            case "MarioPyramid" -> {
+
+                return new MarioPyramid(nPlayers, description);
 
             }
 
@@ -126,12 +136,12 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
                 return new FullRows(nPlayers,description, nRows, sameTiles, maxTilesFrule);
             }
 
-            case "NadiacentElements" -> {
+            case "NadjacentElements" -> {
 
                 nElems = gson.fromJson(cardConfiguration.get("Attributes").getAsJsonObject().get("nElems").getAsString(), Integer.class);
                 nGroups = gson.fromJson(cardConfiguration.get("Attributes").getAsJsonObject().get("nGroups").getAsString(), Integer.class);
 
-                return new NadiacentElements(nPlayers,description,nGroups, nElems);
+                return new NadjacentElements(nPlayers,description,nGroups, nElems);
             }
 
             case "NequalsSquare" -> {

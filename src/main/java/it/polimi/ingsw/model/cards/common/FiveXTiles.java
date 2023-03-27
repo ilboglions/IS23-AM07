@@ -8,13 +8,24 @@ import it.polimi.ingsw.model.tiles.ItemTile;
 import java.util.ArrayList;
 import java.util.Optional;
 
+/**
+ * FiveXtiles is a common card that requires an X made of 5 tiles as the goal.
+ */
 public class FiveXTiles extends  CommonGoalCard{
+    /**
+     * if true, the constraint will verify that all the tiles following it are of the same type
+     */
     private final boolean sameTiles;
     public FiveXTiles(int nPlayers, String description ,boolean sameTiles) throws PlayersNumberOutOfRange {
         super(nPlayers, description);
         this.sameTiles = sameTiles;
     }
 
+    /**
+     * check that exists at least one X formed by five tiles
+     * @param bookshelf the bookshelf to be checked
+     * @return true, if exists at least one X as scripted
+     */
     public boolean verifyConstraint(Bookshelf bookshelf){
         ArrayList<ItemTile> parentTiles= new ArrayList<>();
         for( int r  = 0; r < bookshelf.getRows(); r++){
