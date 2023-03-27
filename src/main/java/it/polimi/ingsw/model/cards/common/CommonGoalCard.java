@@ -28,6 +28,7 @@ public abstract class CommonGoalCard {
      * @throws PlayersNumberOutOfRange when nPlayers exceed the numbers of the tile, tooManyPlayersException will be thrown
      */
     public CommonGoalCard(int nPlayers , String description) throws PlayersNumberOutOfRange {
+        if(description == null) throw new IllegalArgumentException("Description cannot be null");
         if(nPlayers < 2) throw new PlayersNumberOutOfRange("Min excepted players: 2 players received: "+nPlayers);
         tokenStack = new Stack<>();
         this.description = description;

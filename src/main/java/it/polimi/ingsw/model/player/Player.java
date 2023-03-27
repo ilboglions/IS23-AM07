@@ -11,6 +11,8 @@ import java.util.*;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import static it.polimi.ingsw.model.utilities.UtilityFunctions.findAdjacentElements;
+
 public class Player {
     private final String username;
     private PersonalGoalCard personalCard;
@@ -53,13 +55,13 @@ public class Player {
     }
 
     private int calculatePointsAdjacent(Bookshelf bookshelf, Map<Integer, Integer> adjacentPointReference) {
-        Map<ItemTile, List<List<Coordinates>>> totalGroups = searchAdjacentGroups(bookshelf);
+        Map<ItemTile, List<List<Coordinates>>> totalGroups = searchAdjacentGroups(bookshelf, Collections.min(adjacentPointReference.keySet()));
         int totalPoints = 0;
 
         for (List<List<Coordinates>> groups : totalGroups.values()) {
             for (List<Coordinates> group : groups) {
-                if (group.size() >= 6) {
-                    totalPoints += adjacentPointReference.get(6);
+                if (group.size() >= Collections.max(adjacentPointReference.keySet()) ) {
+                    totalPoints += adjacentPointReference.get(Collections.max(adjacentPointReference.keySet()));
                 } else {
                     totalPoints += adjacentPointReference.getOrDefault(group.size(), 0);
                 }
@@ -69,7 +71,7 @@ public class Player {
         return totalPoints;
     }
 
-    private static Map<ItemTile, List<List<Coordinates>>> searchAdjacentGroups(Bookshelf bookshelf) {
+    private Map<ItemTile, List<List<Coordinates>>> searchAdjacentGroups(Bookshelf bookshelf, int minGroupSize) {
         Map<ItemTile, List<List<Coordinates>>> result = new HashMap<>();
         Set<Coordinates> visited = new HashSet<>();
 
@@ -79,11 +81,9 @@ public class Player {
             for (int i = 0; i < bookshelf.getRows(); i++) {
                 for (int j = 0; j < bookshelf.getColumns(); j++) {
                     if (bookshelf.getItemTile(new Coordinates(i,j)).isPresent() && bookshelf.getItemTile(new Coordinates(i,j)).get().equals(itemTile) && !visited.contains(new Coordinates(i,j))) {
-                        List<Coordinates> adjacencyGroup = new ArrayList<>();
+                        List<Coordinates> adjacencyGroup =  findAdjacentElements(bookshelf, i, j, itemTile, visited);
 
-                        recursiveSearch(bookshelf, i, j, itemTile, adjacencyGroup, visited);
-
-                        if (adjacencyGroup.size() >= 3) {
+                        if (adjacencyGroup.size() >= minGroupSize) {
                             groups.add(adjacencyGroup);
                         }
                     }
@@ -94,18 +94,7 @@ public class Player {
         return result;
     }
 
-    private static void recursiveSearch(Bookshelf bookshelf, int row, int col, ItemTile itemTile, List<Coordinates> group, Set<Coordinates> visited) {
-        if (row < 0 || row >= bookshelf.getRows() || col < 0 || col >= bookshelf.getColumns() || visited.contains(new Coordinates(row,col)) || bookshelf.getItemTile(new Coordinates(row,col)).isEmpty()
-                || (bookshelf.getItemTile(new Coordinates(row,col)).isPresent() && !bookshelf.getItemTile(new Coordinates(row,col)).get().equals(itemTile))) {
-            return;
-        }
 
-        group.add(new Coordinates(row, col));
-        visited.add(new Coordinates(row,col));
-
-        recursiveSearch(bookshelf, row + 1, col, itemTile, group, visited);
-        recursiveSearch(bookshelf, row, col + 1, itemTile, group, visited);
-    }
 
     public int updatePoints(Map<Integer, Integer> adjacentPointReference) {
         int total = 0;
