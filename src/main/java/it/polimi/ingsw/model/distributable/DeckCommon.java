@@ -12,6 +12,7 @@ import it.polimi.ingsw.model.coordinate.Coordinates;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Random;
 
 /**
@@ -34,7 +35,11 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
      * @param nPlayers the number of players of the actual game
      * @param configuration the path to the json configuration file
      */
-    public DeckCommon(int nPlayers, String configuration){
+    public DeckCommon(int nPlayers, String configuration) throws PlayersNumberOutOfRange {
+        if(nPlayers < 2 || nPlayers > 4)
+            throw new PlayersNumberOutOfRange("Expected min 2 and max 4 players, you gave " + nPlayers);
+        Objects.requireNonNull(configuration, "You passed a null instead of a String for the configuration file");
+
         this.nPlayers = nPlayers;
         this.configuration = configuration;
     }
@@ -52,6 +57,9 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
         Random randGenerator = new Random();
         ArrayList<Integer> generatedCardsIndex = new ArrayList<>();
         int extractedCardInex;
+
+        if(nElements < 0)
+            throw new NegativeFieldException("You can't draw a negative number of cards");
 
         JsonArray jsonCards = gson.fromJson(new FileReader(this.configuration), JsonArray.class);
         if(jsonCards.size() < nElements) throw new NotEnoughCardsException("error! only "+jsonCards.size()+" cards available");
@@ -89,7 +97,7 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
         int nElems;
         Gson gson = new Gson();
         String objectType = cardConfiguration.get("cardType").getAsString();
-        String description= gson.fromJson(cardConfiguration.get("Attributes").getAsJsonObject().get("description").getAsString(), String.class);
+        String description= cardConfiguration.get("description").getAsString();
         ArrayList<ArrayList<Coordinates>> pattern = new ArrayList<>();
         TypeToken<ArrayList<Coordinates>> coordArrType = new TypeToken<>(){};
 
@@ -99,15 +107,15 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
             case "CheckPattern" -> {
                 cardConfiguration.get("Attributes").getAsJsonObject().get("pattern").getAsJsonArray()
                         .forEach(
-                                el -> pattern.add(gson.fromJson(el.getAsString(), coordArrType))
+                                el -> pattern.add(gson.fromJson(el, coordArrType))
                         );
-                sameTiles = gson.fromJson(cardConfiguration.get("Attributes").getAsJsonObject().get("sameTiles").getAsString(), Boolean.class);
+                sameTiles = gson.fromJson(cardConfiguration.get("Attributes").getAsJsonObject().get("sameTiles"), Boolean.class);
 
                 return new CheckPattern(nPlayers, description, pattern, sameTiles);
             }
             case "FiveXTiles" -> {
 
-                sameTiles = gson.fromJson(cardConfiguration.get("Attributes").getAsJsonObject().get("sameTiles").getAsString(), Boolean.class);
+                sameTiles = gson.fromJson(cardConfiguration.get("Attributes").getAsJsonObject().get("sameTiles"), Boolean.class);
 
                 return new FiveXTiles(nPlayers, description, sameTiles);
 
@@ -121,38 +129,38 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
 
             case "FullColumns" -> {
 
-                sameTiles = gson.fromJson(cardConfiguration.get("Attributes").getAsJsonObject().get("sameTiles").getAsString(), Boolean.class);
-                nCols = gson.fromJson(cardConfiguration.get("Attributes").getAsJsonObject().get("nCols").getAsString(), Integer.class);
-                maxTilesFrule = gson.fromJson(cardConfiguration.get("Attributes").getAsJsonObject().get("maxTilesFrule").getAsString(), Integer.class);
+                sameTiles = gson.fromJson(cardConfiguration.get("Attributes").getAsJsonObject().get("sameTiles"), Boolean.class);
+                nCols = gson.fromJson(cardConfiguration.get("Attributes").getAsJsonObject().get("nCols"), Integer.class);
+                maxTilesFrule = gson.fromJson(cardConfiguration.get("Attributes").getAsJsonObject().get("maxTilesFrule"), Integer.class);
 
                 return new FullColumns(nPlayers, description,nCols, sameTiles, maxTilesFrule);
             }
             case "FullRows" -> {
 
-                sameTiles = gson.fromJson(cardConfiguration.get("Attributes").getAsJsonObject().get("sameTiles").getAsString(), Boolean.class);
-                nRows = gson.fromJson(cardConfiguration.get("Attributes").getAsJsonObject().get("nRows").getAsString(), Integer.class);
-                maxTilesFrule = gson.fromJson(cardConfiguration.get("Attributes").getAsJsonObject().get("maxTilesFrule").getAsString(), Integer.class);
+                sameTiles = gson.fromJson(cardConfiguration.get("Attributes").getAsJsonObject().get("sameTiles"), Boolean.class);
+                nRows = gson.fromJson(cardConfiguration.get("Attributes").getAsJsonObject().get("nRows"), Integer.class);
+                maxTilesFrule = gson.fromJson(cardConfiguration.get("Attributes").getAsJsonObject().get("maxTilesFrule"), Integer.class);
 
                 return new FullRows(nPlayers,description, nRows, sameTiles, maxTilesFrule);
             }
 
             case "NadjacentElements" -> {
 
-                nElems = gson.fromJson(cardConfiguration.get("Attributes").getAsJsonObject().get("nElems").getAsString(), Integer.class);
-                nGroups = gson.fromJson(cardConfiguration.get("Attributes").getAsJsonObject().get("nGroups").getAsString(), Integer.class);
+                nElems = gson.fromJson(cardConfiguration.get("Attributes").getAsJsonObject().get("nElems"), Integer.class);
+                nGroups = gson.fromJson(cardConfiguration.get("Attributes").getAsJsonObject().get("nGroups"), Integer.class);
 
                 return new NadjacentElements(nPlayers,description,nGroups, nElems);
             }
 
-            case "NequalsSquare" -> {
+            case "NequalsSquares" -> {
 
-                int nSquares = gson.fromJson(cardConfiguration.get("Attributes").getAsJsonObject().get("nElems").getAsString(), Integer.class);
-                int squareDim = gson.fromJson(cardConfiguration.get("Attributes").getAsJsonObject().get("nGroups").getAsString(), Integer.class);
+                int nSquares = gson.fromJson(cardConfiguration.get("Attributes").getAsJsonObject().get("nSquares"), Integer.class);
+                int squareDim = gson.fromJson(cardConfiguration.get("Attributes").getAsJsonObject().get("squareDim"), Integer.class);
 
                 return new NequalsSquares(nPlayers,description, nSquares, squareDim);
             }
             case "NsameTiles" -> {
-                int nTiles = gson.fromJson(cardConfiguration.get("Attributes").getAsJsonObject().get("nTiles").getAsString(), Integer.class);
+                int nTiles = gson.fromJson(cardConfiguration.get("Attributes").getAsJsonObject().get("nTiles"), Integer.class);
                 return new NsameTiles(nPlayers, description,nTiles);
             }
             default -> throw new IllegalArgumentException();

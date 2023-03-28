@@ -1,6 +1,6 @@
 package it.polimi.ingsw.model.lobby;
 
-import it.polimi.ingsw.model.cards.exceptions.NegativeFieldException;
+import it.polimi.ingsw.model.exceptions.NegativeFieldException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

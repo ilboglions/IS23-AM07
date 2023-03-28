@@ -1,9 +1,6 @@
 package it.polimi.ingsw.model.distributable;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import it.polimi.ingsw.model.cards.personal.PersonalGoalCard;
 import it.polimi.ingsw.model.coordinate.Coordinates;
@@ -12,10 +9,7 @@ import it.polimi.ingsw.model.tiles.ItemTile;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 /**
  * DeckPersonal is an implementation of the Distributable interface, it deals with personalCards,
@@ -37,6 +31,9 @@ public class DeckPersonal implements Distributable<PersonalGoalCard> {
      * @param pointsReferenceFile used to create a reference for the points
      */
     public DeckPersonal(String configurationFile, String pointsReferenceFile) {
+        Objects.requireNonNull(configurationFile, "You passed a null instead of a String for the configuration file");
+        Objects.requireNonNull(pointsReferenceFile, "You passed a null instead of a String for the points reference file");
+
         this.configurationFile = configurationFile;
         this.pointsReferenceFile = pointsReferenceFile;
     }
@@ -70,7 +67,7 @@ public class DeckPersonal implements Distributable<PersonalGoalCard> {
 
             generatedCardsIndex.add(extractedCardIndex);
 
-            JsonObject extractedCard = jsonCards.get(i).getAsJsonObject();
+            JsonElement extractedCard = jsonCards.get(i);
             Map<Coordinates, ItemTile> pattern = gson.fromJson(extractedCard, mapType);
 
             selected.add(new PersonalGoalCard(pattern, pointsReference));
