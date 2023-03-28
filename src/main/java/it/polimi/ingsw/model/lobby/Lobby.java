@@ -70,7 +70,7 @@ public class Lobby {
      * @throws InvalidPlayerException if the host player cannot be found
      *
      */
-    public Game createGame(int nPlayers, String hostNickname) throws PlayersNumberOutOfRange, BrokenInternalGameConfigurations, InvalidPlayerException {
+    public Game createGame(int nPlayers, String hostNickname) throws PlayersNumberOutOfRange, BrokenInternalGameConfigurations, InvalidPlayerException, NotEnoughCardsException {
 
         Optional<Player> host =  waitingPlayers.stream().filter(p -> p.getUsername().equals(hostNickname)).findFirst();
         if( host.isEmpty())
@@ -80,6 +80,7 @@ public class Lobby {
             games.add(newGame);
             return newGame;
         }  catch (NegativeFieldException | FileNotFoundException e) {
+            System.out.println(e);
             throw new BrokenInternalGameConfigurations();
         }
 

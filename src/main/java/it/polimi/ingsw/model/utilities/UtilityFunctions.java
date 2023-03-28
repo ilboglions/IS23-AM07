@@ -10,6 +10,15 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class UtilityFunctions {
+    /**
+     * findAdjacentElements is a recursive function used to find all same elements that are adjacent.
+     * @param bookshelf the bookshelf to search in
+     * @param row the row-coordinate to check
+     * @param col the col-coordinate to check
+     * @param itemTile the tile used for reference
+     * @param visited a set containing all the Coordinates already visited
+     * @return a list of coordinates that are adjacent
+     */
     public static List<Coordinates> findAdjacentElements(Bookshelf bookshelf, int row, int col, ItemTile itemTile, Set<Coordinates> visited) {
 
         List<Coordinates> group = new ArrayList<>();
