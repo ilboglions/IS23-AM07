@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model.cards.common;
 
 import it.polimi.ingsw.model.bookshelf.Bookshelf;
+import it.polimi.ingsw.model.exceptions.NotEnoughSpaceException;
 import it.polimi.ingsw.model.exceptions.PlayersNumberOutOfRange;
 import it.polimi.ingsw.model.exceptions.NegativeFieldException;
 import it.polimi.ingsw.model.coordinate.Coordinates;
@@ -26,7 +27,10 @@ public class NadjacentElements extends CommonGoalCard{
         this.nElems = nElems;
     }
 
-    public boolean verifyConstraint(Bookshelf bookshelf){
+    public boolean verifyConstraint(Bookshelf bookshelf) throws NotEnoughSpaceException{
+
+
+        if(nGroups * nElems > bookshelf.getColumns()*bookshelf.getRows() ) throw new NotEnoughSpaceException( nGroups+" groups of minimum "+nElems+" tiles can't be found! not enough tile!" );
 
         Set<Coordinates> visitedCoords = new HashSet<>();
         List<List<Coordinates>> groups = new ArrayList<>();

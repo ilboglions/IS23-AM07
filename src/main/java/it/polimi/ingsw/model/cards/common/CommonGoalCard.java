@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model.cards.common;
 
 import it.polimi.ingsw.model.bookshelf.PlayerBookshelf;
+import it.polimi.ingsw.model.exceptions.NotEnoughSpaceException;
 import it.polimi.ingsw.model.exceptions.PlayersNumberOutOfRange;
 import it.polimi.ingsw.model.tokens.ScoringToken;
 import it.polimi.ingsw.model.tokens.TokenPoint;
@@ -53,7 +54,7 @@ public abstract class CommonGoalCard {
      * @param bookshelf the player bookshelf to verify
      * @return true, if the bookshelf passed the verification, false instead
      */
-    public boolean verifyConstraint(PlayerBookshelf bookshelf) {
+    public boolean verifyConstraint(PlayerBookshelf bookshelf) throws NotEnoughSpaceException {
         return true;
     }
 

@@ -2,6 +2,7 @@ package it.polimi.ingsw.model.cards.common;
 
 import it.polimi.ingsw.model.bookshelf.Bookshelf;
 import it.polimi.ingsw.model.exceptions.NegativeFieldException;
+import it.polimi.ingsw.model.exceptions.NotEnoughSpaceException;
 import it.polimi.ingsw.model.exceptions.PlayersNumberOutOfRange;
 import it.polimi.ingsw.model.coordinate.Coordinates;
 import it.polimi.ingsw.model.tiles.ItemTile;
@@ -20,11 +21,13 @@ public class NequalsSquares extends CommonGoalCard{
     }
 
 
-    public boolean verifyConstraint(Bookshelf bookshelf){
+    public boolean verifyConstraint(Bookshelf bookshelf) throws NotEnoughSpaceException {
 
         ArrayList<ItemTile> parentTiles= new ArrayList<>();
         int nFoundSquares = 0;
         boolean validSquare;
+
+        if(nSquares * (squareDim + 1) * (squareDim + 1) > bookshelf.getColumns()*bookshelf.getRows() ) throw  new NotEnoughSpaceException(nSquares+" squares of dimension "+squareDim+" can't be found! not enough tile!" );
 
         for( int r  = 0; r < bookshelf.getRows() && nFoundSquares < nSquares; r++){
             for( int c = 0; c < bookshelf.getColumns() && nFoundSquares < nSquares; c++){

@@ -42,7 +42,7 @@ public class NequalsSquaresTest {
     }
     @Test
     @DisplayName("Check constraints")
-    void checkConstriaints() throws NegativeFieldException, PlayersNumberOutOfRange, FileNotFoundException {
+    void checkConstraints() throws NegativeFieldException, PlayersNumberOutOfRange, FileNotFoundException {
             Gson gson = new Gson();
 
             JsonArray jsonCards = gson.fromJson(new FileReader("testConfFiles/bookshelf4NequalsSquares.json"), JsonArray.class);

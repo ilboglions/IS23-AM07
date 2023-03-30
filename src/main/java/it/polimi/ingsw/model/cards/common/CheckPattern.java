@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model.cards.common;
 
 import it.polimi.ingsw.model.bookshelf.Bookshelf;
+import it.polimi.ingsw.model.exceptions.NotEnoughSpaceException;
 import it.polimi.ingsw.model.exceptions.PlayersNumberOutOfRange;
 import it.polimi.ingsw.model.coordinate.Coordinates;
 import it.polimi.ingsw.model.tiles.ItemTile;
@@ -22,7 +23,10 @@ public class CheckPattern extends CommonGoalCard{
 
     }
 
-    public boolean verifyConstraint(Bookshelf bookshelf){
+    public boolean verifyConstraint(Bookshelf bookshelf) throws NotEnoughSpaceException {
+
+        if ( pattern.stream().anyMatch( el -> el.stream().anyMatch( e -> e.getRow() >= bookshelf.getRows() || e.getColumn() >= bookshelf.getColumns()) ) )
+            throw new NotEnoughSpaceException("can't check a pattern containing a coordinate out of bookshelf's range!");
 
         ArrayList<ArrayList<Coordinates>> verifiedPatterns =  pattern.stream().filter(el -> el.stream().allMatch(e  -> bookshelf.getItemTile(e).isPresent())).collect(Collectors.toCollection(ArrayList::new));
 

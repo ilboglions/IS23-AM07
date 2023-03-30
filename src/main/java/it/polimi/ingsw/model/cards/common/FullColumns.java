@@ -2,6 +2,7 @@ package it.polimi.ingsw.model.cards.common;
 
 import it.polimi.ingsw.model.bookshelf.Bookshelf;
 import it.polimi.ingsw.model.exceptions.NegativeFieldException;
+import it.polimi.ingsw.model.exceptions.NotEnoughSpaceException;
 import it.polimi.ingsw.model.exceptions.PlayersNumberOutOfRange;
 import it.polimi.ingsw.model.coordinate.Coordinates;
 import it.polimi.ingsw.model.tiles.ItemTile;
@@ -9,8 +10,17 @@ import it.polimi.ingsw.model.tiles.ItemTile;
 import java.util.ArrayList;
 
 public class FullColumns extends CommonGoalCard{
+    /**
+     * the number of columns to be checked
+     */
     private final int nCols;
+    /**
+     * used to specify if the columns should contain equals tiles
+     */
     private final boolean sameTiles;
+    /**
+     * the max number of tiles that are admitted
+     */
     private final int maxTilesFrule;
     public FullColumns(int nPlayers, String description , int nCols, boolean sameTiles, int maxTilesFrule) throws PlayersNumberOutOfRange, NegativeFieldException {
         super(nPlayers,description);
@@ -20,13 +30,22 @@ public class FullColumns extends CommonGoalCard{
         this.maxTilesFrule = maxTilesFrule;
     }
 
-    public boolean verifyConstraint(Bookshelf bookshelf){
+    /**
+     * verify that exists at least nCols columns that follow the constraint. If sameTiles is true, the rows should have a number of same tiles specified in the field maxTilesFRule
+     * @param bookshelf the bookshelf to be checked
+     * @return true, if the constraint is followed
+     * @throws NotEnoughSpaceException if the bookshelf doesn't have enough space for the constraint verification
+     */
+    public boolean verifyConstraint(Bookshelf bookshelf) throws NotEnoughSpaceException {
 
         int foundColumns;
         ArrayList<ItemTile> parentTiles= new ArrayList<>();
 
-        foundColumns = 0;
 
+        if(nCols >= bookshelf.getColumns()) throw new NotEnoughSpaceException("can't check "+nCols+" rows, only "+bookshelf.getColumns()+" available!");
+
+
+        foundColumns = 0;
         //how many equals/different tiles? equals -> how many equals?
         int distinctElements = this.sameTiles ? (bookshelf.getRows()  - this.maxTilesFrule)  : bookshelf.getRows();
 

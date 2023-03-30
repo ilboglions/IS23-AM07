@@ -2,6 +2,7 @@ package it.polimi.ingsw.model.cards.common;
 
 import it.polimi.ingsw.model.bookshelf.Bookshelf;
 import it.polimi.ingsw.model.exceptions.NegativeFieldException;
+import it.polimi.ingsw.model.exceptions.NotEnoughSpaceException;
 import it.polimi.ingsw.model.exceptions.PlayersNumberOutOfRange;
 import it.polimi.ingsw.model.coordinate.Coordinates;
 import it.polimi.ingsw.model.tiles.ItemTile;
@@ -21,11 +22,12 @@ public class FullRows extends CommonGoalCard{
 
     }
 
-    public boolean verifyConstraint(Bookshelf bookshelf){
+    public boolean verifyConstraint(Bookshelf bookshelf) throws NotEnoughSpaceException {
 
         int foundRows;
         ArrayList<ItemTile> parentTiles= new ArrayList<>();
 
+        if(nRows >= bookshelf.getRows()) throw new NotEnoughSpaceException("can't check "+nRows+" rows, only "+bookshelf.getRows()+" available!");
         foundRows = 0;
 
         //how many equals/different tiles? equals -> how many equals?

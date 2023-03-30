@@ -56,13 +56,13 @@ public class PlayerBookshelf extends Bookshelf{
     public boolean checkComplete() {
         Coordinates c;
 
-        for(int i=0; i < this.rows; i++) {
-            for(int j=0; j < this.columns; j++) {
-                c = new Coordinates(i,j);
-                if(this.getItemTile(c).isEmpty())
-                    return false;
-            }
+
+        for(int j=0; j < this.columns; j++) {
+            c = new Coordinates(this.rows-1,j);
+            if(this.getItemTile(c).isEmpty())
+                return false;
         }
+
 
         return true;
     }

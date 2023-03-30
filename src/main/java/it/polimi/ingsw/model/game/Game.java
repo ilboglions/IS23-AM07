@@ -34,7 +34,7 @@ public class Game implements GameController{
         this.players = new ArrayList<>();
         this.livingRoom = new LivingRoomBoard(numPlayers);
         this.deckCommon = new DeckCommon(numPlayers,"cards/confFiles/commonCards.json");
-        this.deckPersonal = new DeckPersonal("../cards/confFiles/personalCards.json", "cards/confFiles/pointsReference.json");
+        this.deckPersonal = new DeckPersonal("cards/confFiles/personalCards.json", "cards/confFiles/pointsReference.json");
         this.bagHolder = new BagHolder();
         this.isStarted = false;
         this.isBookshelfComplete = false;
@@ -177,7 +177,7 @@ public class Game implements GameController{
         return false;   //there are no players with this user
     }
 
-    public Optional<Player> searchPlayer(String username) {
+    private Optional<Player> searchPlayer(String username) {
 
         for(Player player : players) {
             if(player.getUsername().equals(username))
