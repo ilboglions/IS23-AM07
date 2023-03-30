@@ -32,7 +32,15 @@ public class CoordinatesTest {
         assertEquals(0,test3.getColumn());
         assertEquals(3,test4.getRow());
         assertEquals(5,test4.getColumn());
+    }
 
+    @Test
+    @DisplayName("Test equals method")
+    void testEquals() {
+        Coordinates test = new Coordinates(0,0);
+
+        assertEquals(test, new Coordinates(0, 0));
+        assertNotEquals(test, new Coordinates(1, 3));
     }
 
 }

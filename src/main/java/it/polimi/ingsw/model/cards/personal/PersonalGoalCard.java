@@ -6,6 +6,7 @@ import it.polimi.ingsw.model.tiles.ItemTile;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * PersonalGoalCard represent the card assigned to a specific player. They represent a pattern that should be respected for earning more points
@@ -26,6 +27,9 @@ public class PersonalGoalCard{
      * @param pointsReference is the parameter to be assigned to the point reference attribute
      */
     public PersonalGoalCard(Map<Coordinates, ItemTile> pattern, Map<Integer,Integer> pointsReference){
+        Objects.requireNonNull(pattern, "You passed a null instead of a pattern Map");
+        Objects.requireNonNull(pointsReference, "You passed a null instead of a pointsReference Map");
+
         bookshelf = new CardBookshelf(pattern);
         this.pointsReference = new HashMap<>(pointsReference);
     }
@@ -37,12 +41,10 @@ public class PersonalGoalCard{
     public CardBookshelf getBookshelf() {
 
         Map<Coordinates, ItemTile> tempPattern = new HashMap<>();
-        Coordinates tempCoord;
         for( int r = 0; r < bookshelf.getRows(); r++){
             for( int c = 0; c < bookshelf.getColumns(); c++){
-                tempCoord = new Coordinates(r,c);
-                Coordinates finalTempCoord = tempCoord;
-                this.bookshelf.getItemTile(tempCoord).ifPresent(el -> tempPattern.put(finalTempCoord, el));
+                Coordinates tempCoord = new Coordinates(r,c);
+                this.bookshelf.getItemTile(tempCoord).ifPresent(el -> tempPattern.put(tempCoord, el));
             }
         }
         return new CardBookshelf(tempPattern);

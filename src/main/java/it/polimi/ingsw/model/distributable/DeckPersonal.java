@@ -31,11 +31,8 @@ public class DeckPersonal implements Distributable<PersonalGoalCard> {
      * @param pointsReferenceFile used to create a reference for the points
      */
     public DeckPersonal(String configurationFile, String pointsReferenceFile) {
-        Objects.requireNonNull(configurationFile, "You passed a null instead of a String for the configuration file");
-        Objects.requireNonNull(pointsReferenceFile, "You passed a null instead of a String for the points reference file");
-
-        this.configurationFile = configurationFile;
-        this.pointsReferenceFile = pointsReferenceFile;
+        this.configurationFile = Objects.requireNonNull(configurationFile, "You passed a null instead of a String for the configuration file");
+        this.pointsReferenceFile = Objects.requireNonNull(pointsReferenceFile, "You passed a null instead of a String for the points reference file");
     }
 
     /**

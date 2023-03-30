@@ -177,7 +177,7 @@ public class Game implements GameController{
         return false;   //there are no players with this user
     }
 
-    private Optional<Player> searchPlayer(String username) {
+    public Optional<Player> searchPlayer(String username) {
 
         for(Player player : players) {
             if(player.getUsername().equals(username))

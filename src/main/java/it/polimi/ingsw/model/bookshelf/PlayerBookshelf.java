@@ -5,18 +5,28 @@ import it.polimi.ingsw.model.coordinate.Coordinates;
 import it.polimi.ingsw.model.tiles.ItemTile;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * the player bookshelf extends the bookshelf class, it is a mutable class, used for stores players tiles
  */
 public class PlayerBookshelf extends Bookshelf{
+    private static final int MAXTILES = 3;
+
     /**
      * the method make it possible to insert items in a column
      * @param column the columns where items will be inserted
-     * @param orderedTiles the tiles, in order of insertion
+     * @param orderedTiles the tiles, in order of insertion, the first one will go to the bottom and above all the others
      * @throws NotEnoughSpaceException if the column is full, no item will be added
      */
     public void insertItemTile(int column, ArrayList<ItemTile> orderedTiles) throws NotEnoughSpaceException {
+        Objects.requireNonNull(orderedTiles);
+        if(orderedTiles.size() > MAXTILES)
+            throw new IllegalArgumentException("The maximum number of tiles to insert inside the bookshelf is " + MAXTILES + "you passed " + orderedTiles.size());
+
+        if(column < 0 || column >= this.columns)
+            throw new IllegalArgumentException("Column number needs to be > 0 and < " + this.columns);
+
         if(checkFreeSpace(column) >= orderedTiles.size()) {
             int firstFreeIndex = 0;
 
@@ -56,13 +66,11 @@ public class PlayerBookshelf extends Bookshelf{
     public boolean checkComplete() {
         Coordinates c;
 
-
         for(int j=0; j < this.columns; j++) {
             c = new Coordinates(this.rows-1,j);
             if(this.getItemTile(c).isEmpty())
                 return false;
         }
-
 
         return true;
     }
