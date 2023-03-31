@@ -38,10 +38,9 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
     public DeckCommon(int nPlayers, String configuration) throws PlayersNumberOutOfRange {
         if(nPlayers < 2 || nPlayers > 4)
             throw new PlayersNumberOutOfRange("Expected min 2 and max 4 players, you gave " + nPlayers);
-        Objects.requireNonNull(configuration, "You passed a null instead of a String for the configuration file");
 
         this.nPlayers = nPlayers;
-        this.configuration = configuration;
+        this.configuration = Objects.requireNonNull(configuration, "You passed a null instead of a String for the configuration file");
     }
 
 
@@ -89,6 +88,8 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
      * @throws IllegalArgumentException if the JsonObject doesn't match the right pattern, an IllegalArgumentException will be thrown
      */
     private CommonGoalCard createCard(JsonObject cardConfiguration, int nPlayers) throws PlayersNumberOutOfRange, NegativeFieldException, IllegalArgumentException {
+        Objects.requireNonNull(cardConfiguration, "You passed a null instead of a JsonObject");
+
         boolean sameTiles;
         int nCols;
         int maxTilesFrule;

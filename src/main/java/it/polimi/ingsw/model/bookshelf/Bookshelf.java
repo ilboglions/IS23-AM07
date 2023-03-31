@@ -5,6 +5,7 @@ import it.polimi.ingsw.model.tiles.ItemTile;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -75,6 +76,7 @@ public abstract class Bookshelf {
      * @throws IndexOutOfBoundsException if the index required is outside the matrix domain
      */
     public Optional<ItemTile> getItemTile(Coordinates c) throws IndexOutOfBoundsException{
+        Objects.requireNonNull(c, "You passed a null instead of a Coordinates object");
         if(c.getColumn() >= columns || c.getRow() >= rows) {
             throw new IndexOutOfBoundsException("Given coordinates are out of range");
         }
@@ -88,6 +90,7 @@ public abstract class Bookshelf {
      * @return an int that is the number of ItemTile in the same position and equal between the two bookshelf
      */
     public int nElementsOverlapped(Bookshelf bookshelf) {
+        Objects.requireNonNull(bookshelf, "You passed a null instead of a Bookshelf object");
         int count = 0;
         Coordinates c;
 

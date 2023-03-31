@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model.distributable;
 import it.polimi.ingsw.model.exceptions.NegativeFieldException;
 import it.polimi.ingsw.model.tiles.ItemTile;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class BagHolderTest {
 
     @Test
+    @DisplayName("Test all the exceptions")
     void testExceptions() {
         assertThrows(NegativeFieldException.class, ()-> {
             BagHolder test = new BagHolder();
@@ -18,6 +20,7 @@ class BagHolderTest {
     }
 
     @Test
+    @DisplayName("Test the limits cases of draw method")
     void draw() throws NegativeFieldException {
         BagHolder test = new BagHolder();
 

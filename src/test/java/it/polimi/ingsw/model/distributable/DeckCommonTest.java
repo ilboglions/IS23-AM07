@@ -4,6 +4,7 @@ import it.polimi.ingsw.model.cards.common.CommonGoalCard;
 import it.polimi.ingsw.model.exceptions.NegativeFieldException;
 import it.polimi.ingsw.model.exceptions.NotEnoughCardsException;
 import it.polimi.ingsw.model.exceptions.PlayersNumberOutOfRange;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileNotFoundException;
@@ -14,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class DeckCommonTest {
 
     @Test
+    @DisplayName("Test all the exceptions")
     void testExceptions() {
         assertThrows(FileNotFoundException.class, ()->{
             DeckCommon test = new DeckCommon(3, "");
@@ -43,6 +45,7 @@ class DeckCommonTest {
     }
 
     @Test
+    @DisplayName("Test the limits cases of draw method")
     void draw() throws PlayersNumberOutOfRange, NegativeFieldException, FileNotFoundException, NotEnoughCardsException {
         DeckCommon test = new DeckCommon(3, "src/test/java/it/polimi/ingsw/model/distributable/testConfFiles/deckCommonTest.json");
         ArrayList<CommonGoalCard> selected = test.draw(13);
