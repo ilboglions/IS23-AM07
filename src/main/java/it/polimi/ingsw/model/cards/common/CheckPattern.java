@@ -9,9 +9,27 @@ import it.polimi.ingsw.model.tiles.ItemTile;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
+/**
+ * the CheckPattern common card is used to verify that a certain pattern is respected in the card.
+ */
 public class CheckPattern extends CommonGoalCard{
+    /**
+     * contains all the possible pattern to be found, just one of this pattern should be verified
+     */
     private final ArrayList<ArrayList<Coordinates>> pattern;
+    /**
+     * the sameTiles attribute specify if the tiles in the pattern should be of the same type
+     */
     private final boolean sameTiles;
+
+    /**
+     * the constructor of the card
+     * @param nPlayers the number of player
+     * @param description the description of the card
+     * @param pattern the possible patterns to verify
+     * @param sameTiles true, if the tiles should be the same for all the pattern
+     * @throws PlayersNumberOutOfRange if the players number do not respect the specific
+     */
     public CheckPattern(int nPlayers, String description, ArrayList<ArrayList<Coordinates>> pattern, boolean sameTiles) throws PlayersNumberOutOfRange {
 
         super(nPlayers, description);

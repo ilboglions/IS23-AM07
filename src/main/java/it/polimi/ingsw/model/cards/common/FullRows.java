@@ -9,10 +9,33 @@ import it.polimi.ingsw.model.tiles.ItemTile;
 
 import java.util.ArrayList;
 
+/**
+ * the fullRows common card check that a bookshelf contains a minimum of nRows full rows which follow a specific rule
+ */
 public class FullRows extends CommonGoalCard{
+    /**
+     * the number of rows to be found
+     */
     private final int nRows;
+    /**
+     * if true, the constraint require a minimum of bookshelf.getRows - maxTilesFRule equal tiles, otherwise all the tiles should be different
+     */
     private final boolean sameTiles;
+    /**
+     * the maximum of possible different tiles in a single row
+     */
     private final int maxTilesFrule;
+
+    /**
+     * the constructor of the card
+     * @param nPlayers the number of player, used for the stack of points
+     * @param description the description of the card
+     * @param nRows the number of rows to be found
+     * @param sameTiles if true, the constraint require a minimum of bookshelf.getRows - maxTilesFRule equal tiles, otherwise all the tiles should be different
+     * @param maxTilesFrule the maximum of possible different tiles in a single row
+     * @throws PlayersNumberOutOfRange if the number of player is out of the permitted range
+     * @throws NegativeFieldException if some field is negative
+     */
     public FullRows(int nPlayers,  String description ,int nRows, boolean sameTiles, int maxTilesFrule) throws PlayersNumberOutOfRange, NegativeFieldException {
         super(nPlayers, description);
         if( nRows <= 0 || maxTilesFrule <= 0 ) throw new NegativeFieldException("can't assign negative parameters!");
@@ -22,6 +45,12 @@ public class FullRows extends CommonGoalCard{
 
     }
 
+    /**
+     * verify, if sameTiles is true, that at least nRows row have rows - maxTileFRule same tiles, otherwise that exists at least nRows rows with all different tiles
+     * @param bookshelf the bookshelf to be checked
+     * @return true, if the bookshelf follows the constraint
+     * @throws NotEnoughSpaceException if the nRows parameter is bigger than the number of rows of the bookshelf
+     */
     public boolean verifyConstraint(Bookshelf bookshelf) throws NotEnoughSpaceException {
 
         int foundRows;

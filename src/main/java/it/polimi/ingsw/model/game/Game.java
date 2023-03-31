@@ -15,7 +15,7 @@ import it.polimi.ingsw.model.tokens.ScoringToken;
 import java.io.FileNotFoundException;
 import java.util.*;
 
-public class Game implements GameController{
+public class Game implements GameModelInterface {
 
     private final LivingRoomBoard livingRoom;
     private final ArrayList<Player> players;
@@ -48,13 +48,15 @@ public class Game implements GameController{
         this.commonGoalCards = deckCommon.draw(2);
         this.players.add(host);
     }
+
+    //trashit
     public void setIsStarted(boolean newState) {
         isStarted = newState;
     }
 
-    public void start() {
+    public void start() throws NotAllPlayersHaveJoinedException{
         Random random = new Random();
-
+        if (players.size() < numPlayers) throw new NotAllPlayersHaveJoinedException("player connected: "+players.size()+" players required: "+numPlayers);
         int firstPlayerIndex = random.nextInt(this.numPlayers);
         Collections.rotate(players, -firstPlayerIndex);
         this.isStarted = true;
@@ -78,8 +80,8 @@ public class Game implements GameController{
         return new ArrayList<>(current.get().getTokenAcquired());
     }
 
-    public int getPlayerTurn() {
-        return playerTurn;
+    public String getPlayerInTurn() {
+        return players.get(playerTurn).getUsername();
     }
 
     public void moveTiles(ArrayList<Coordinates> source, int column) throws InvalidCoordinatesException, EmptySlotException, NotEnoughSpaceException {
@@ -92,13 +94,13 @@ public class Game implements GameController{
 
         ArrayList<ItemTile> temp = new ArrayList<>(); // tile to be added to the playerBookshelf
         Optional<ItemTile> tile;
-        Player currPlayer = players.get(getPlayerTurn()); // current player
+        Player currPlayer = players.get(playerTurn); // current player
         if(source == null || source.contains(null)) {
             throw new NullPointerException("Source is/contains null");
         } else if (source.isEmpty()) {
             throw new InvalidCoordinatesException("Source list is empty");
         }
-        if(!(column >= 0 && column < 6)) {
+        if(!(column >= 0 && column < currPlayer.getBookshelf().getColumns())) {
             throw new InvalidCoordinatesException("Selected column is out of range");
         }
 
@@ -177,7 +179,7 @@ public class Game implements GameController{
         return false;   //there are no players with this user
     }
 
-    private Optional<Player> searchPlayer(String username) {
+    public Optional<Player> searchPlayer(String username) {
 
         for(Player player : players) {
             if(player.getUsername().equals(username))

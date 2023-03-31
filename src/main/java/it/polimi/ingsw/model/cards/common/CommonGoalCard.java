@@ -7,6 +7,7 @@ import it.polimi.ingsw.model.tokens.ScoringToken;
 import it.polimi.ingsw.model.tokens.TokenPoint;
 
 import java.util.EmptyStackException;
+import java.util.Objects;
 import java.util.Stack;
 
 /**
@@ -28,11 +29,11 @@ public abstract class CommonGoalCard {
      * @param description it is used for explain the card's constraint
      * @throws PlayersNumberOutOfRange when nPlayers exceed the numbers of the tile, tooManyPlayersException will be thrown
      */
-    public CommonGoalCard(int nPlayers , String description) throws PlayersNumberOutOfRange {
-        if(description == null) throw new IllegalArgumentException("Description cannot be null");
+    public CommonGoalCard(int nPlayers , String description) throws PlayersNumberOutOfRange, NullPointerException{
+
         if(nPlayers < 2) throw new PlayersNumberOutOfRange("Min excepted players: 2 players received: "+nPlayers);
         tokenStack = new Stack<>();
-        this.description = description;
+        this.description = Objects.requireNonNull(description);
         if(TokenPoint.values().length < nPlayers) throw new PlayersNumberOutOfRange("Max excepted players: "+TokenPoint.values().length+" players received: "+nPlayers);
         for(int i= TokenPoint.values().length  - 1; i >TokenPoint.values().length - nPlayers; i--) {
             tokenStack.push( new ScoringToken(TokenPoint.values()[i]));
