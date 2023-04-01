@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model.bookshelf;
 
 import it.polimi.ingsw.model.coordinate.Coordinates;
+import it.polimi.ingsw.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.model.tiles.ItemTile;
 
 import java.util.HashMap;
@@ -58,12 +59,16 @@ public abstract class Bookshelf {
         Map<ItemTile, Integer> bookshelfMap = new HashMap<>();
         for( int i = 0 ; i < this.rows; i++){
             for( int j = 0; j < this.columns; j++){
-                this.getItemTile(new Coordinates(i,j))
-                        .ifPresent(
-                                el -> {
-                                    int val = bookshelfMap.get(el) != null ? bookshelfMap.get(el) : 0;
-                                    bookshelfMap.put(el, val+1 );
-                                });
+                try {
+                    this.getItemTile(new Coordinates(i,j))
+                            .ifPresent(
+                                    el -> {
+                                        int val = bookshelfMap.get(el) != null ? bookshelfMap.get(el) : 0;
+                                        bookshelfMap.put(el, val+1 );
+                                    });
+                } catch (InvalidCoordinatesException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
         return bookshelfMap;
@@ -96,7 +101,11 @@ public abstract class Bookshelf {
 
         for(int i=0; i < this.rows; i++) {
             for(int j=0; j < this.columns; j++) {
-                c = new Coordinates(i,j);
+                try {
+                    c = new Coordinates(i,j);
+                } catch (InvalidCoordinatesException e) {
+                    throw new RuntimeException(e);
+                }
                 if(bookshelf.getItemTile(c).isPresent() && this.getItemTile(c).isPresent() && bookshelf.getItemTile(c).get().equals(this.getItemTile(c).get()))
                     count++;
             }

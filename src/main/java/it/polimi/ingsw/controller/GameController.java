@@ -9,13 +9,17 @@ import java.util.ArrayList;
 
 public class GameController {
     private final GameModelInterface gameModel;
-    private final GameView gameview;
+
+    public GameController(GameModelInterface gameModel) {
+        this.gameModel = gameModel;
+    }
+    //private final GameView gameview;
 
 
-    public GameController(GameModelInterface gameModel, GameView gameview) {
+    /*public GameController(GameModelInterface gameModel, GameView gameview) {
         this.gameModel = gameModel;
         this.gameview = gameview;
-    }
+    }*/
 
     public boolean getIsStarted(){
         return gameModel.getIsStarted();

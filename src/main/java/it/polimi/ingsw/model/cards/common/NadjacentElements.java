@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model.cards.common;
 
 import it.polimi.ingsw.model.bookshelf.Bookshelf;
+import it.polimi.ingsw.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.model.exceptions.NotEnoughSpaceException;
 import it.polimi.ingsw.model.exceptions.PlayersNumberOutOfRange;
 import it.polimi.ingsw.model.exceptions.NegativeFieldException;
@@ -35,21 +36,26 @@ public class NadjacentElements extends CommonGoalCard{
         Set<Coordinates> visitedCoords = new HashSet<>();
         List<List<Coordinates>> groups = new ArrayList<>();
 
-        for( int r  = 0; r < bookshelf.getRows(); r++){
-            for( int c = 0; c < bookshelf.getColumns(); c++){
-                if(bookshelf.getItemTile(new Coordinates(r,c)).isEmpty()) continue;
+        try{
+            for( int r  = 0; r < bookshelf.getRows(); r++){
+                for( int c = 0; c < bookshelf.getColumns(); c++){
+                    if(bookshelf.getItemTile(new Coordinates(r,c)).isEmpty()) continue;
 
-                ItemTile refTile = bookshelf.getItemTile(new Coordinates(r,c)).get();
+                    ItemTile refTile = bookshelf.getItemTile(new Coordinates(r,c)).get();
 
-                List<Coordinates> adjacencyGroup = findAdjacentElements(bookshelf,r, c,refTile, visitedCoords);
-                if(adjacencyGroup.size() >= nElems){
-                    groups.add(adjacencyGroup);
-                    if ( groups.size() == this.nGroups)
-                        return true;
+                    List<Coordinates> adjacencyGroup = findAdjacentElements(bookshelf,r, c,refTile, visitedCoords);
+                    if(adjacencyGroup.size() >= nElems){
+                        groups.add(adjacencyGroup);
+                        if ( groups.size() == this.nGroups)
+                            return true;
+                    }
+
                 }
-
             }
+        } catch (InvalidCoordinatesException e){
+            throw new RuntimeException(e);
         }
+
 
         return false;
     }

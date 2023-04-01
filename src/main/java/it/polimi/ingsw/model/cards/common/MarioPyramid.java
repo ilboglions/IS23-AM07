@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model.cards.common;
 
 import it.polimi.ingsw.model.bookshelf.PlayerBookshelf;
+import it.polimi.ingsw.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.model.exceptions.PlayersNumberOutOfRange;
 import it.polimi.ingsw.model.coordinate.Coordinates;
 
@@ -44,23 +45,27 @@ public class MarioPyramid extends CommonGoalCard{
         if(reverse) startColumn = bookshelf.getColumns() - 1;
         else startColumn = 0;
 
-        while(r < bookshelf.getRows() && bookshelf.getItemTile(new Coordinates(r,startColumn)).isPresent()) r++;
+        try{
+            while(r < bookshelf.getRows() && bookshelf.getItemTile(new Coordinates(r,startColumn)).isPresent()) r++;
 
-        refRow = r;
-       if(reverse){
-           for(c = startColumn; c >= 0 && refRow >= 0; c--){
-               if ( !(bookshelf.getItemTile(new Coordinates( refRow , c)).isEmpty() && bookshelf.getItemTile(new Coordinates( refRow - 1 , c)).isPresent()))
-                   return false;
-               refRow--;
-           }
-           return true;
-       }
+            refRow = r;
+            if(reverse){
+                for(c = startColumn; c >= 0 && refRow >= 0; c--){
+                    if ( !(bookshelf.getItemTile(new Coordinates( refRow , c)).isEmpty() && bookshelf.getItemTile(new Coordinates( refRow - 1 , c)).isPresent()))
+                        return false;
+                    refRow--;
+                }
+                return true;
+            }
 
-       for(c = 1; c < bookshelf.getColumns() && refRow >= 0; c++){
-           if ( !(bookshelf.getItemTile(new Coordinates( refRow , c)).isEmpty() && bookshelf.getItemTile(new Coordinates( refRow - 1 , c)).isPresent()))
-               return false;
-           refRow--;
-       }
+            for(c = 1; c < bookshelf.getColumns() && refRow >= 0; c++){
+                if ( !(bookshelf.getItemTile(new Coordinates( refRow , c)).isEmpty() && bookshelf.getItemTile(new Coordinates( refRow - 1 , c)).isPresent()))
+                    return false;
+                refRow--;
+            }
+        }catch (InvalidCoordinatesException e ){
+            throw new RuntimeException(e);
+        }
 
        return true;
 

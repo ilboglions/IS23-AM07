@@ -2,6 +2,7 @@ package it.polimi.ingsw.model.utilities;
 
 import it.polimi.ingsw.model.bookshelf.Bookshelf;
 import it.polimi.ingsw.model.coordinate.Coordinates;
+import it.polimi.ingsw.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.model.tiles.ItemTile;
 
 import java.util.ArrayList;
@@ -11,6 +12,10 @@ import java.util.stream.Collectors;
 
 public class UtilityFunctions {
     /**
+     * defines the max players number
+     */
+    public static final int MAX_PLAYERS = 4;
+    /**
      * findAdjacentElements is a recursive function used to find all same elements that are adjacent.
      * @param bookshelf the bookshelf to search in
      * @param row the row-coordinate to check
@@ -19,7 +24,7 @@ public class UtilityFunctions {
      * @param visited a set containing all the Coordinates already visited
      * @return a list of coordinates that are adjacent
      */
-    public static List<Coordinates> findAdjacentElements(Bookshelf bookshelf, int row, int col, ItemTile itemTile, Set<Coordinates> visited) {
+    public static List<Coordinates> findAdjacentElements(Bookshelf bookshelf, int row, int col, ItemTile itemTile, Set<Coordinates> visited) throws InvalidCoordinatesException {
 
         List<Coordinates> group = new ArrayList<>();
         if (row < 0 || row >= bookshelf.getRows() || col < 0 || col >= bookshelf.getColumns() || visited.contains(new Coordinates(row,col)) || bookshelf.getItemTile(new Coordinates(row,col)).isEmpty()

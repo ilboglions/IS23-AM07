@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model.cards.common;
 
 import it.polimi.ingsw.model.bookshelf.Bookshelf;
+import it.polimi.ingsw.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.model.exceptions.NegativeFieldException;
 import it.polimi.ingsw.model.exceptions.NotEnoughSpaceException;
 import it.polimi.ingsw.model.exceptions.PlayersNumberOutOfRange;
@@ -62,21 +63,25 @@ public class FullRows extends CommonGoalCard{
         //how many equals/different tiles? equals -> how many equals?
         int distinctElements = this.sameTiles ? (bookshelf.getRows()  - this.maxTilesFrule)  : bookshelf.getRows();
 
-        for( int r  = 0; r < bookshelf.getRows(); r++){
+        try {
+            for (int r = 0; r < bookshelf.getRows(); r++) {
 
-            int c  = 0;
-            while(c < bookshelf.getColumns() && bookshelf.getItemTile(new Coordinates(r,c)).isPresent()){
+                int c = 0;
+                while (c < bookshelf.getColumns() && bookshelf.getItemTile(new Coordinates(r, c)).isPresent()) {
 
-                parentTiles.add(bookshelf.getItemTile(new Coordinates(r,c)).get());
+                    parentTiles.add(bookshelf.getItemTile(new Coordinates(r, c)).get());
 
-                c++;
+                    c++;
+                }
+
+                foundRows = (parentTiles.size() == bookshelf.getRows() && parentTiles.stream().distinct().count() >= distinctElements) ? foundRows + 1 : foundRows;
+
+                if (foundRows == this.nRows) return true;
+
+                parentTiles.clear();
             }
-
-            foundRows =  (  parentTiles.size() == bookshelf.getRows() && parentTiles.stream().distinct().count() >= distinctElements) ? foundRows + 1 : foundRows;
-
-            if ( foundRows == this.nRows) return true;
-
-            parentTiles.clear();
+        }catch (InvalidCoordinatesException e){
+            throw new RuntimeException(e);
         }
 
         return false;

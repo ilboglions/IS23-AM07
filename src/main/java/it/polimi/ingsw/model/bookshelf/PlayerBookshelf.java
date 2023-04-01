@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model.bookshelf;
 
+import it.polimi.ingsw.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.model.exceptions.NotEnoughSpaceException;
 import it.polimi.ingsw.model.coordinate.Coordinates;
 import it.polimi.ingsw.model.tiles.ItemTile;
@@ -67,7 +68,11 @@ public class PlayerBookshelf extends Bookshelf{
         Coordinates c;
 
         for(int j=0; j < this.columns; j++) {
-            c = new Coordinates(this.rows-1,j);
+            try {
+                c = new Coordinates(this.rows-1,j);
+            } catch (InvalidCoordinatesException e) {
+                throw new RuntimeException(e);
+            }
             if(this.getItemTile(c).isEmpty())
                 return false;
         }

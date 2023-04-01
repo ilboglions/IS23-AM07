@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model.coordinate;
 
+import it.polimi.ingsw.model.exceptions.InvalidCoordinatesException;
+
 import java.util.Objects;
 
 /**
@@ -17,9 +19,9 @@ public class Coordinates {
      * @param row - the x coordinate to be assigned
      * @param column - the y coordinate to be assigned
      */
-    public Coordinates(int row, int column) {
-        if(row < 0 || column < 0 || row > 8 || column > 8) {
-            throw new IndexOutOfBoundsException("Given coordinates are out of range");
+    public Coordinates(int row, int column) throws InvalidCoordinatesException {
+        if(row < 0 || column < 0 || row > 8 || column > 8){
+            throw new InvalidCoordinatesException("Given coordinates are out of range");
         }
         this.row = row;
         this.column = column;

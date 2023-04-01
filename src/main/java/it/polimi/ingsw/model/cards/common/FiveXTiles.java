@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model.cards.common;
 
 import it.polimi.ingsw.model.bookshelf.Bookshelf;
+import it.polimi.ingsw.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.model.exceptions.PlayersNumberOutOfRange;
 import it.polimi.ingsw.model.coordinate.Coordinates;
 import it.polimi.ingsw.model.tiles.ItemTile;
@@ -29,18 +30,22 @@ public class FiveXTiles extends  CommonGoalCard{
     public boolean verifyConstraint(Bookshelf bookshelf){
         ArrayList<ItemTile> parentTiles= new ArrayList<>();
         for( int r  = 0; r < bookshelf.getRows(); r++){
-            for( int c = 0; c < bookshelf.getColumns(); c++){
-                if(bookshelf.getItemTile(new Coordinates(r,c)).isEmpty()) continue;
+            for( int c = 0; c < bookshelf.getColumns(); c++) {
+                ItemTile refTile;
+                try {
 
-                ItemTile refTile = bookshelf.getItemTile(new Coordinates(r,c)).get();
+                    if (bookshelf.getItemTile(new Coordinates(r, c)).isEmpty()) continue;
 
-                bookshelf.getItemTile(new Coordinates(r, c + 2)).ifPresent(parentTiles::add);
-                bookshelf.getItemTile(new Coordinates(r+2, c)).ifPresent(parentTiles::add);
-                bookshelf.getItemTile(new Coordinates(r+1, c+1)).ifPresent(parentTiles::add);
-                bookshelf.getItemTile(new Coordinates(r+2, c+2)).ifPresent(parentTiles::add);
+                    refTile = bookshelf.getItemTile(new Coordinates(r, c)).get();
+                    bookshelf.getItemTile(new Coordinates(r, c + 2)).ifPresent(parentTiles::add);
+                    bookshelf.getItemTile(new Coordinates(r + 2, c)).ifPresent(parentTiles::add);
+                    bookshelf.getItemTile(new Coordinates(r + 1, c + 1)).ifPresent(parentTiles::add);
+                    bookshelf.getItemTile(new Coordinates(r + 2, c + 2)).ifPresent(parentTiles::add);
+                } catch (InvalidCoordinatesException e) {
+                    throw new RuntimeException(e);
+                }
 
-                if ( parentTiles.size() != 4 ) continue;
-
+                if (parentTiles.size() != 4) continue;
                 if (!this.sameTiles) return true;
 
                 Optional<ItemTile> brokenItem = parentTiles.stream().filter(tile -> !tile.equals(refTile)).findAny();
@@ -50,7 +55,7 @@ public class FiveXTiles extends  CommonGoalCard{
                 parentTiles.clear();
 
 
-                }
+            }
         }
 
         return false;
