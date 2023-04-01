@@ -10,6 +10,8 @@ import java.util.EmptyStackException;
 import java.util.Objects;
 import java.util.Stack;
 
+import static it.polimi.ingsw.model.utilities.UtilityFunctions.MAX_PLAYERS;
+
 /**
  * CommonGoalCard is an abstract class used to represent the common cards of the game.
  */
@@ -34,9 +36,20 @@ public abstract class CommonGoalCard {
         if(nPlayers < 2) throw new PlayersNumberOutOfRange("Min excepted players: 2 players received: "+nPlayers);
         tokenStack = new Stack<>();
         this.description = Objects.requireNonNull(description);
-        if(TokenPoint.values().length < nPlayers) throw new PlayersNumberOutOfRange("Max excepted players: "+TokenPoint.values().length+" players received: "+nPlayers);
-        for(int i= TokenPoint.values().length  - 1; i >TokenPoint.values().length - nPlayers; i--) {
-            tokenStack.push( new ScoringToken(TokenPoint.values()[i]));
+        if(MAX_PLAYERS< nPlayers) throw new PlayersNumberOutOfRange("Max excepted players: 4 players received: "+nPlayers);
+
+        if(nPlayers == 2) {
+            tokenStack.push(new ScoringToken(TokenPoint.FOUR));
+            tokenStack.push(new ScoringToken(TokenPoint.EIGHT));
+        }else if(nPlayers == 3){
+            tokenStack.push( new ScoringToken(TokenPoint.FOUR));
+            tokenStack.push( new ScoringToken(TokenPoint.SIX));
+            tokenStack.push( new ScoringToken(TokenPoint.EIGHT));
+        } else {
+            tokenStack.push( new ScoringToken(TokenPoint.TWO));
+            tokenStack.push( new ScoringToken(TokenPoint.FOUR));
+            tokenStack.push( new ScoringToken(TokenPoint.SIX));
+            tokenStack.push( new ScoringToken(TokenPoint.EIGHT));
         }
 
     }
@@ -65,5 +78,11 @@ public abstract class CommonGoalCard {
      */
     public String getDescription() {
         return description;
+    }
+
+    protected Stack<ScoringToken> getTokenStack(){
+        Stack<ScoringToken> tokens= new Stack<>();
+        tokens.addAll(tokenStack);
+        return  tokens;
     }
 }

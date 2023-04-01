@@ -2,6 +2,7 @@ package it.polimi.ingsw.model.cards.personal;
 
 import it.polimi.ingsw.model.bookshelf.CardBookshelf;
 import it.polimi.ingsw.model.coordinate.Coordinates;
+import it.polimi.ingsw.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.model.tiles.ItemTile;
 
 import java.util.HashMap;
@@ -42,8 +43,13 @@ public class PersonalGoalCard{
 
         Map<Coordinates, ItemTile> tempPattern = new HashMap<>();
         for( int r = 0; r < bookshelf.getRows(); r++){
-            for( int c = 0; c < bookshelf.getColumns(); c++){
-                Coordinates tempCoord = new Coordinates(r,c);
+            for( int c = 0; c < bookshelf.getColumns(); c++) {
+                Coordinates tempCoord;
+                try {
+                    tempCoord = new Coordinates(r, c);
+                } catch (InvalidCoordinatesException e) {
+                    throw new RuntimeException(e);
+                }
                 this.bookshelf.getItemTile(tempCoord).ifPresent(el -> tempPattern.put(tempCoord, el));
             }
         }

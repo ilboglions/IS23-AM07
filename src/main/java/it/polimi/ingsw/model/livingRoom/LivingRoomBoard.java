@@ -3,6 +3,7 @@ package it.polimi.ingsw.model.livingRoom;
 import com.google.gson.Gson;
 import it.polimi.ingsw.model.coordinate.Coordinates;
 import it.polimi.ingsw.model.exceptions.EmptySlotException;
+import it.polimi.ingsw.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.model.exceptions.PlayersNumberOutOfRange;
 import it.polimi.ingsw.model.exceptions.SlotFullException;
 import it.polimi.ingsw.model.livingRoom.exceptions.NotEnoughTilesException;
@@ -11,10 +12,16 @@ import it.polimi.ingsw.model.tiles.ItemTile;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Optional;
 
+import static it.polimi.ingsw.model.utilities.UtilityFunctions.MAX_PLAYERS;
+
 public class LivingRoomBoard {
+
+
+    private static final int NCELL_3PLAYER = 37;
+    private static final int NCELL_4PLAYER = 45;
+    private static final int NCELL_2PLAYER = 29;
 
     private final Slot[][] slot;
     private final int rows = 9;
@@ -57,16 +64,16 @@ public class LivingRoomBoard {
         //read a json file with the configuration of the board, from the file you will have coordinates and type
         Gson gson = new Gson();
 
-        if(numPlayers <= 0) {
-            throw new PlayersNumberOutOfRange("numPlayers is negative !!");
+        if(numPlayers <= 0 || numPlayers > MAX_PLAYERS) {
+            throw new PlayersNumberOutOfRange("numPlayers is "+numPlayers+" it must be between 0 and "+MAX_PLAYERS+"!");
         } else if(numPlayers == 3) {
-            this.numCells = 37;
+            this.numCells = NCELL_3PLAYER;
             confFilePath = "src/main/java/it/polimi/ingsw/model/livingRoom/confFiles/3PlayersPattern.json";
-        } else if(numPlayers >= 4) {
-            this.numCells = 45;
+        } else if(numPlayers == MAX_PLAYERS) {
+            this.numCells = NCELL_4PLAYER;
             confFilePath = "src/main/java/it/polimi/ingsw/model/livingRoom/confFiles/4orMorePlayersPattern.json";
         } else {
-            this.numCells = 29;
+            this.numCells = NCELL_2PLAYER;
             confFilePath = "src/main/java/it/polimi/ingsw/model/livingRoom/confFiles/2PlayersPattern.json";
         }
 
@@ -84,9 +91,7 @@ public class LivingRoomBoard {
     public boolean checkRefill() {
         // this method tells you if the livingRoom needs to be refilled with new tiles or not
         // the board must be refilled if the next player can only take single tiles => there are not 2 tiles adjacient in the board
-        boolean result;
         Slot currSlot;
-        Optional<ItemTile> temp;
         for(int i=0; i<rows; i++) {
             for(int j=0; j<cols-1; j++) {
                 currSlot = slot[i][j];
@@ -114,15 +119,19 @@ public class LivingRoomBoard {
     public ArrayList<ItemTile> emptyBoard() {
         // this method will empty the board returning a list with the tiles removed
         Slot curr;
-        ArrayList<ItemTile> removed = new ArrayList<ItemTile>();
-        for(int i=0; i<rows; i++) {
-            for(int j=0; j<cols; j++) {
-                curr = slot[i][j];
-                if(curr.getItemTile().isPresent()) {
-                    removed.add(curr.getItemTile().get());
-                    this.removeTile(new Coordinates(i,j));
+        ArrayList<ItemTile> removed = new ArrayList<>();
+        try {
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < cols; j++) {
+                    curr = slot[i][j];
+                    if (curr.getItemTile().isPresent()) {
+                        removed.add(curr.getItemTile().get());
+                        this.removeTile(new Coordinates(i, j));
+                    }
                 }
             }
+        } catch(InvalidCoordinatesException e){
+            throw new RuntimeException(e);
         }
         return removed;
     }
@@ -144,16 +153,19 @@ public class LivingRoomBoard {
         }
     }
 
-    public Optional<ItemTile> getTile(Coordinates coo) {
-        if(coo == null)
+    public Optional<ItemTile> getTile(Coordinates coo) throws InvalidCoordinatesException {
+    if(coo == null)
             throw new NullPointerException("Given coordinates are null");
         else {
             return slot[coo.getRow()][coo.getColumn()].getItemTile();
         }
     }
-    public void addTile(Coordinates coo,ItemTile itemTile) throws SlotFullException {
+    public void addTile(Coordinates coo,ItemTile itemTile) throws SlotFullException, InvalidCoordinatesException {
         int row,col;
         Optional<ItemTile> newTile = Optional.of(itemTile);
+
+        if (coo.getRow() >= this.rows || coo.getColumn() >= this.cols) throw new InvalidCoordinatesException("there is no cell in this coordinate!");
+
         if(coo == null) {
             throw new NullPointerException("Coordinates object is null");
         }
@@ -173,6 +185,7 @@ public class LivingRoomBoard {
 
     public void removeTile(Coordinates coo) {
         int row, col;
+
         if(coo == null)
             throw new NullPointerException("Coordinates object is null");
         else {
@@ -219,12 +232,12 @@ public class LivingRoomBoard {
                 diffCol = Math.abs(coo.get(0).getColumn() - coo.get(1).getColumn());
                 if( diffRow == 0 && diffCol == 0 )
                     return false;
-                else if(diffRow == 0 && diffCol != 0) {
+                else if(diffRow == 0) {
                     // check parallel to x returns if the coordinates represent a segment parallel to x
                     // if it's not the case it returns false, otherwise true
                     // sort based on the x-axis
-                    Collections.sort(coo, (curr, next) -> {
-                        if( curr.getColumn() <= next.getColumn() )
+                    coo.sort((curr, next) -> {
+                        if (curr.getColumn() <= next.getColumn())
                             return -1;
                         else
                             return 1;
@@ -232,12 +245,12 @@ public class LivingRoomBoard {
 
 
                     return checkParallelX(coo);
-                } else if(diffCol == 0 && diffRow != 0) {
+                } else if(diffCol == 0) {
                     // check parallel to y
 
                     // sort based on the y-axis
-                    Collections.sort(coo, (curr, next) -> {
-                        if( curr.getRow() <= next.getRow() )
+                    coo.sort((curr, next) -> {
+                        if (curr.getRow() <= next.getRow())
                             return -1;
                         else
                             return 1;
@@ -290,29 +303,22 @@ public class LivingRoomBoard {
         return true;
     }
 
-    private boolean checkFreeSide(Coordinates coo) {
+    private boolean checkFreeSide(Coordinates coo)  {
         int i = 2;
-        int selRow[] = new int[i], selCol[] = new int[i];
-        selRow[0] = coo.getRow() - 1;
-        selRow[1] = coo.getRow() + 1;
-        selCol[0] = coo.getColumn() - 1;
-        selCol[1] = coo.getColumn() + 1;
+        int d;
 
-        for(int x=0; x<i; x++) {
-            // if the neighbour cell is in the range of the x-axis
-            if(selRow[x] >= 0 && selRow[x] <= 8) {
-                for(int y=0; y<i; y++) {
-                    // if the neighbour cell is in the range of the y-axis
-                    if(selCol[y] >= 0 && selCol[y] <= 8) {
-                        // if the selected neighbour cell does not have a tile then the current tile has a free side
-                        if(slot[selRow[x]][selCol[y]].getItemTile().isEmpty()) {
-                            return true;
-                        }
-                    }
+        for( int x = 0; x < i; x++){
+
+                d = x % 2 == 0 ? 1 : -1;
+                try {
+                    if (this.getTile(new Coordinates(coo.getRow() + d, coo.getColumn())).isEmpty() || this.getTile(new Coordinates(coo.getRow(), coo.getColumn() + d)).isEmpty())
+                        return true;
+                }catch (InvalidCoordinatesException ignore){
+
                 }
-            }
         }
         return false;
+
     }
 
 }
