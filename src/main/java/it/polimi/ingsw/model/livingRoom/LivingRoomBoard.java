@@ -2,6 +2,7 @@ package it.polimi.ingsw.model.livingRoom;
 
 import com.google.gson.Gson;
 import it.polimi.ingsw.model.coordinate.Coordinates;
+import it.polimi.ingsw.model.exceptions.EmptySlotException;
 import it.polimi.ingsw.model.exceptions.PlayersNumberOutOfRange;
 import it.polimi.ingsw.model.exceptions.SlotFullException;
 import it.polimi.ingsw.model.livingRoom.exceptions.NotEnoughTilesException;
@@ -10,6 +11,7 @@ import it.polimi.ingsw.model.tiles.ItemTile;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Optional;
 
 public class LivingRoomBoard {
@@ -81,6 +83,7 @@ public class LivingRoomBoard {
 
     public boolean checkRefill() {
         // this method tells you if the livingRoom needs to be refilled with new tiles or not
+        // the board must be refilled if the next player can only take single tiles => there are not 2 tiles adjacient in the board
         boolean result;
         Slot currSlot;
         Optional<ItemTile> temp;
@@ -189,4 +192,127 @@ public class LivingRoomBoard {
         public SlotType slotType;
 
     }
+
+    public boolean checkValidRetrieve(ArrayList<Coordinates> coo) throws EmptySlotException {
+        int diffRow, diffCol;
+        if(coo == null || coo.contains(null))
+            throw new NullPointerException("Coordinates list is/contains null");
+        else if(coo.isEmpty()) {
+            return false;
+        } else {
+            for(Coordinates curr : coo) {
+                if(slot[curr.getRow()][curr.getColumn()].getItemTile().isEmpty()) {
+                    throw new EmptySlotException("Selected an empty slot");
+                }
+                if( !checkFreeSide(curr) ) {
+                    // the tile does not have a free side, it cannot be retrieved and the move is not valid
+                    return false;
+                }
+            }
+            // if the list contains one coordinate, then the move is valid only if it has a free side, which we previously verified
+            if(coo.size() == 1)
+                return true;
+            else {
+                // if the list is not empty, and it does not contain just one element then the list size is at least two and we need to
+                // verify if the segment is purely horizontal or vertical
+                diffRow = Math.abs(coo.get(0).getRow() - coo.get(1).getRow());
+                diffCol = Math.abs(coo.get(0).getColumn() - coo.get(1).getColumn());
+                if( diffRow == 0 && diffCol == 0 )
+                    return false;
+                else if(diffRow == 0 && diffCol != 0) {
+                    // check parallel to x returns if the coordinates represent a segment parallel to x
+                    // if it's not the case it returns false, otherwise true
+                    // sort based on the x-axis
+                    Collections.sort(coo, (curr, next) -> {
+                        if( curr.getColumn() <= next.getColumn() )
+                            return -1;
+                        else
+                            return 1;
+                    });
+
+
+                    return checkParallelX(coo);
+                } else if(diffCol == 0 && diffRow != 0) {
+                    // check parallel to y
+
+                    // sort based on the y-axis
+                    Collections.sort(coo, (curr, next) -> {
+                        if( curr.getRow() <= next.getRow() )
+                            return -1;
+                        else
+                            return 1;
+                    });
+
+                    return checkParallelY(coo);
+                } else {
+                    // this else is equal to the following: else if(diffRow != 0 && diffCol != 0)
+                    return false;
+                }
+            }
+        }
+    }
+
+    // in order to use properly this method the coordinates list needs to be ordered from top to bottom and from left to right
+    // example: 00 -> 01 -> 03 is ordered properly and the check will return false
+    // example: 00 -> 03 -> 01 is not ordered properly
+    // it is the same for vertical alignments, start from top to bottom
+    private boolean checkParallelX(ArrayList<Coordinates> coo) {
+        if(coo == null || coo.contains(null))
+            throw new NullPointerException("Coordinates list is/contains null");
+
+        for(int i=0; i<coo.size() - 1; i++) {
+            if( coo.get(i).getRow() != coo.get(i+1).getRow() )
+                return false;
+            else {
+                // cannot have same coordinate two times
+                if(coo.get(i).getColumn() == coo.get(i+1).getColumn())
+                    return false;
+                if(coo.get(i).getColumn() != (coo.get(i+1).getColumn() - 1))
+                    return false;
+            }
+        }
+        return true;
+    }
+    private boolean checkParallelY(ArrayList<Coordinates> coo) {
+        if(coo == null || coo.contains(null))
+            throw new NullPointerException("Coordinates list is/contains null");
+
+        for(int i=0; i<coo.size() - 1; i++) {
+            if( coo.get(i).getColumn() != coo.get(i+1).getColumn() )
+                return false;
+            else {
+                if(coo.get(i).getRow() == coo.get(i+1).getRow())
+                    return false;
+                if(coo.get(i).getRow() != (coo.get(i+1).getRow() - 1))
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean checkFreeSide(Coordinates coo) {
+        int i = 2;
+        int selRow[] = new int[i], selCol[] = new int[i];
+        selRow[0] = coo.getRow() - 1;
+        selRow[1] = coo.getRow() + 1;
+        selCol[0] = coo.getColumn() - 1;
+        selCol[1] = coo.getColumn() + 1;
+
+        for(int x=0; x<i; x++) {
+            // if the neighbour cell is in the range of the x-axis
+            if(selRow[x] >= 0 && selRow[x] <= 8) {
+                for(int y=0; y<i; y++) {
+                    // if the neighbour cell is in the range of the y-axis
+                    if(selCol[y] >= 0 && selCol[y] <= 8) {
+                        // if the selected neighbour cell does not have a tile then the current tile has a free side
+                        if(slot[selRow[x]][selCol[y]].getItemTile().isEmpty()) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
 }
