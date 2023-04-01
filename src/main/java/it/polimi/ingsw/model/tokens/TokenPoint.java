@@ -4,6 +4,8 @@ package it.polimi.ingsw.model.tokens;
  * the tokenPoint enums represent the possible values of the tokens placed on the common cards
  */
 public enum TokenPoint {
+
+    FIRSTPLAYER(1),
     TWO(2),
     FOUR(4),
     SIX(6),

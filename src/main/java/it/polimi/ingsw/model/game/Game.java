@@ -11,6 +11,7 @@ import it.polimi.ingsw.model.livingRoom.exceptions.NotEnoughTilesException;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.model.tiles.ItemTile;
 import it.polimi.ingsw.model.tokens.ScoringToken;
+import it.polimi.ingsw.model.tokens.TokenPoint;
 
 import java.io.FileNotFoundException;
 import java.util.*;
@@ -24,7 +25,7 @@ public class Game implements GameModelInterface {
     private final int numPlayers;
     private boolean isStarted;
     private int playerTurn;
-    private boolean isBookshelfComplete;
+    private boolean isLastTurn;
     private DeckPersonal deckPersonal;
     private DeckCommon deckCommon;
     private BagHolder bagHolder;
@@ -37,7 +38,7 @@ public class Game implements GameModelInterface {
         this.deckPersonal = new DeckPersonal("cards/confFiles/personalCards.json", "cards/confFiles/pointsReference.json");
         this.bagHolder = new BagHolder();
         this.isStarted = false;
-        this.isBookshelfComplete = false;
+        this.isLastTurn = false;
         this.playerTurn = -1; //game not started
         this.stdPointsReference = new HashMap<>();
 
@@ -63,24 +64,26 @@ public class Game implements GameModelInterface {
         this.playerTurn = 0;
     }
 
-    public int getPlayerPoints(String username) throws InvalidPlayerException {
+    public void updatePlayerPoints(String username) throws InvalidPlayerException {
         Optional<Player> player = searchPlayer(username);
 
         if(player.isEmpty())
             throw new InvalidPlayerException();
 
-        return player.get().getPoints();
+        player.get().updatePoints(stdPointsReference);
     }
 
-    public ArrayList<ScoringToken> getPlayerTokens(String player) throws InvalidPlayerException {
+
+    /*public ArrayList<ScoringToken> getPlayerTokens(String player) throws InvalidPlayerException {
         Optional<Player> current = searchPlayer(player);
         if(current.isEmpty())
             throw new InvalidPlayerException();
 
         return new ArrayList<>(current.get().getTokenAcquired());
-    }
+    }*/
 
-    public String getPlayerInTurn() {
+    public String getPlayerInTurn() throws GameEndedException {
+        if (isLastTurn && this.playerTurn == this.players.size() - 1) throw new GameEndedException();
         return players.get(playerTurn).getUsername();
     }
 
@@ -118,15 +121,17 @@ public class Game implements GameModelInterface {
         currPlayer.getBookshelf().insertItemTile(column,temp);
     }
 
-    public ArrayList<Coordinates> getLivingRoomCoordinates() {
-        return null;
+
+    public boolean getItemTiles(ArrayList<Coordinates> coords) throws EmptySlotException {
+        return  livingRoom.checkValidRetrieve(coords);
     }
 
-    public ArrayList<ItemTile> getItemTiles(ArrayList<Coordinates> coo) {
-        return null;
+    public boolean checkRefill(){
+        return livingRoom.checkRefill();
     }
 
     public void refillLivingRoom() {
+
         // here we don't do the check if the livingBoard actually needs to be refilled, before changing the turn the controller calls for the check
         ArrayList<ItemTile> removed, useToRefill, fromBag;
         removed = livingRoom.emptyBoard();
@@ -142,14 +147,19 @@ public class Game implements GameModelInterface {
     }
 
     public boolean checkBookshelfComplete() {
-        for(Player player : players) {
-            if(player.getBookshelf().checkComplete())
-                return true;
+
+        if ( isLastTurn ) return true;
+
+        if(players.get(this.playerTurn).getBookshelf().checkComplete()) {
+            this.isLastTurn = true;
+            players.get(this.playerTurn).addToken(new ScoringToken(TokenPoint.FIRSTPLAYER));
+            return true;
         }
+
         return false;
     }
 
-    public Player getWinner() {
+    public String getWinner() {
         return null;
     }
 
@@ -192,8 +202,16 @@ public class Game implements GameModelInterface {
         return isStarted;
     }
 
-    private void setPlayerTurn() {
+    public boolean setPlayerTurn(){
+
+        if(this.isLastTurn && this.playerTurn == this.players.size() - 1){
+            return false;
+        }
+
         this.playerTurn = (this.playerTurn + 1) % this.numPlayers;
+
+
+        return true;
     }
 
 }
