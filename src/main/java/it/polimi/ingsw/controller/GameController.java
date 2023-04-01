@@ -6,6 +6,9 @@ import it.polimi.ingsw.model.game.GameModelInterface;
 
 import java.util.ArrayList;
 
+/**
+ * the game controller ensures the communication through client controller and server model
+ */
 public class GameController {
     private final GameModelInterface gameModel;
 
@@ -81,7 +84,9 @@ public class GameController {
         }
     }
 
-
+    protected GameModelInterface getGameControlled(){
+        return gameModel;
+    }
 
 
 
