@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model.cards.personal;
 
 import it.polimi.ingsw.model.coordinate.Coordinates;
+import it.polimi.ingsw.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.model.tiles.ItemTile;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,11 +23,25 @@ class PersonalGoalCardTest {
         assertThrows(NullPointerException.class, ()->{
             PersonalGoalCard test = new PersonalGoalCard(new HashMap<>(), null);
         });
+
+        assertThrows(IllegalArgumentException.class, ()->{
+            Map<Integer,Integer> testPointsReference = new HashMap<>();
+            testPointsReference.put(1,1);
+
+            PersonalGoalCard test = new PersonalGoalCard(new HashMap<>(), testPointsReference);
+        });
+
+        assertThrows(IllegalArgumentException.class, ()->{
+            Map<Coordinates, ItemTile> testPattern = new HashMap<>();
+            testPattern.put(new Coordinates(1,1), ItemTile.BOOK);
+
+            PersonalGoalCard test = new PersonalGoalCard(testPattern, new HashMap<>());
+        });
     }
 
     @Test
     @DisplayName("Test that the personal card is instantiated correctly")
-    void getBookshelf() {
+    void getBookshelf() throws InvalidCoordinatesException {
         Map<Coordinates, ItemTile> testPattern = new HashMap<>();
         Map<Integer, Integer> testStdPoints = new HashMap<>();
 
@@ -37,9 +52,11 @@ class PersonalGoalCardTest {
         testPattern.put(new Coordinates(5,0), ItemTile.FRAME);
 
         testStdPoints.put(1,1);
-        testStdPoints.put(3,5);
+        testStdPoints.put(2,2);
+        testStdPoints.put(3,4);
         testStdPoints.put(4,6);
-        testStdPoints.put(6,8);
+        testStdPoints.put(5,9);
+        testStdPoints.put(6,12);
 
         PersonalGoalCard test = new PersonalGoalCard(testPattern, testStdPoints);
 

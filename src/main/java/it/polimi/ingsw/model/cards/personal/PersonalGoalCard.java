@@ -31,6 +31,9 @@ public class PersonalGoalCard{
         Objects.requireNonNull(pattern, "You passed a null instead of a pattern Map");
         Objects.requireNonNull(pointsReference, "You passed a null instead of a pointsReference Map");
 
+        if(pattern.isEmpty() || pointsReference.isEmpty())
+            throw new IllegalArgumentException("You passed an empty parameter!");
+
         bookshelf = new CardBookshelf(pattern);
         this.pointsReference = new HashMap<>(pointsReference);
     }

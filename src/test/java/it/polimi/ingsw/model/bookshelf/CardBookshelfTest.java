@@ -1,12 +1,12 @@
 package it.polimi.ingsw.model.bookshelf;
 
 import it.polimi.ingsw.model.coordinate.Coordinates;
+import it.polimi.ingsw.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.model.exceptions.NotEnoughSpaceException;
 import it.polimi.ingsw.model.tiles.ItemTile;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,7 +42,7 @@ class CardBookshelfTest {
 
     @Test
     @DisplayName("Test for correct pattern initialization")
-    void testInit() {
+    void testInit() throws InvalidCoordinatesException {
         Map<Coordinates, ItemTile> testPattern = new HashMap<>();
 
         testPattern.put(new Coordinates(0,0), ItemTile.GAME);
@@ -74,7 +74,7 @@ class CardBookshelfTest {
 
     @Test
     @DisplayName("Test overlapping elements")
-    void testOverlapped() throws NotEnoughSpaceException {
+    void testOverlapped() throws InvalidCoordinatesException {
         Map<Coordinates, ItemTile> testPattern = new HashMap<>();
 
         testPattern.put(new Coordinates(0,0), ItemTile.GAME);
