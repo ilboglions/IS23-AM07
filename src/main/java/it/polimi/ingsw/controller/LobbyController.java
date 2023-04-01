@@ -56,6 +56,8 @@ public class LobbyController {
             return Optional.empty();
         } catch (InvalidPlayerException e) {
             return Optional.empty();
+        } catch (NicknameAlreadyUsedException e) {
+            throw new RuntimeException(e);
         }
         return Optional.of(gameController);
     }

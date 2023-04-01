@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2e3d8ba5-7979-460d-b6ee-dca2aaf5b565" name="Changes" comment="first implementation of the gameController, added tokenPoint for the first player, fixed">
-      <change afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/controller/LobbyController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/controller/GameController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/controller/GameController.java" afterDir="false" />
-    </list>
+    <list default="true" id="2e3d8ba5-7979-460d-b6ee-dca2aaf5b565" name="Changes" comment="improved gameController, implemented lobby controller, written first javadoc" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -254,7 +250,7 @@
       <workItem from="1680265657007" duration="510000" />
       <workItem from="1680280034422" duration="501000" />
       <workItem from="1680344002361" duration="14571000" />
-      <workItem from="1680368597000" duration="1799000" />
+      <workItem from="1680368597000" duration="2256000" />
     </task>
     <task id="LOCAL-00001" summary="added model directory">
       <created>1678961934466</created>
@@ -452,7 +448,14 @@
       <option name="project" value="LOCAL" />
       <updated>1680366822874</updated>
     </task>
-    <option name="localTasksCounter" value="29" />
+    <task id="LOCAL-00029" summary="improved gameController, implemented lobby controller, written first javadoc">
+      <created>1680370842866</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1680370842866</updated>
+    </task>
+    <option name="localTasksCounter" value="30" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -482,7 +485,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="created first commonCards classes" />
     <MESSAGE value="created commonCards, started the implementation of the DeckCommon" />
     <MESSAGE value="Implemented all DeckCommon options, to be tested" />
     <MESSAGE value="DeckCommon: fixed generation of the only necessary cards" />
@@ -507,6 +509,7 @@
     <MESSAGE value="fixed card issues, added exception notEnoughSpace" />
     <MESSAGE value="fixed InvalidCoordinatesExceptions, improved livingroom" />
     <MESSAGE value="first implementation of the gameController, added tokenPoint for the first player, fixed" />
-    <option name="LAST_COMMIT_MESSAGE" value="first implementation of the gameController, added tokenPoint for the first player, fixed" />
+    <MESSAGE value="improved gameController, implemented lobby controller, written first javadoc" />
+    <option name="LAST_COMMIT_MESSAGE" value="improved gameController, implemented lobby controller, written first javadoc" />
   </component>
 </project>
