@@ -22,7 +22,7 @@ public class Player {
     private int points;
 
     public Player(String username) {
-        this.username = username;
+        this.username = Objects.requireNonNull(username);
         this.bookshelf = new PlayerBookshelf();
         this.tokenAcquired = new ArrayList<>();
         this.points = 0;
@@ -51,6 +51,12 @@ public class Player {
     private int calculatePointsPersonalGoalCard() {
 
         int count = bookshelf.nElementsOverlapped(personalCard.getBookshelf());
+
+        if(count == 0)
+            return count;
+        else if(count >= Collections.max(personalCard.getPointsReference().keySet())) {
+            count = Collections.max(personalCard.getPointsReference().keySet());
+        }
 
         return personalCard.getPointsReference().get(count);
     }
@@ -102,6 +108,10 @@ public class Player {
 
 
     public int updatePoints(Map<Integer, Integer> adjacentPointReference) {
+        Objects.requireNonNull(adjacentPointReference);
+        if(adjacentPointReference.isEmpty())
+            throw new IllegalArgumentException("You passed an empty Map for adjacentPointReference");
+
         int total = 0;
 
         for(ScoringToken token : tokenAcquired) {
@@ -116,11 +126,11 @@ public class Player {
     }
 
     public void addToken(ScoringToken token) {
-        this.tokenAcquired.add(token);
+        this.tokenAcquired.add(Objects.requireNonNull(token));
     }
 
     public void assignPersonalCard(PersonalGoalCard card) {
-        this.personalCard = card;
+        this.personalCard = Objects.requireNonNull(card);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model.bookshelf;
 
 import it.polimi.ingsw.model.coordinate.Coordinates;
+import it.polimi.ingsw.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.model.exceptions.NotEnoughSpaceException;
 import it.polimi.ingsw.model.tiles.ItemTile;
 import org.junit.jupiter.api.DisplayName;
@@ -72,7 +73,7 @@ class PlayerBookshelfTest {
 
     @Test
     @DisplayName("Test for a complete bookshelf")
-    void testFull() throws NotEnoughSpaceException {
+    void testFull() throws NotEnoughSpaceException, InvalidCoordinatesException {
         PlayerBookshelf test = new PlayerBookshelf();
         ArrayList<ItemTile> testArray = new ArrayList<>();
 
@@ -108,7 +109,7 @@ class PlayerBookshelfTest {
 
     @Test
     @DisplayName("Test empty Arraylist of tiles")
-    void testEmpty() throws NotEnoughSpaceException {
+    void testEmpty() throws NotEnoughSpaceException, InvalidCoordinatesException {
         PlayerBookshelf test = new PlayerBookshelf();
 
         test.insertItemTile(0, new ArrayList<>());
