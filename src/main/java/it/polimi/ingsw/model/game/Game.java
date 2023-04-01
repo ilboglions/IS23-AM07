@@ -16,7 +16,6 @@ import java.io.FileNotFoundException;
 import java.util.*;
 
 public class Game implements GameModelInterface {
-
     private final LivingRoomBoard livingRoom;
     private final ArrayList<Player> players;
     private final ArrayList<CommonGoalCard> commonGoalCards;
@@ -33,8 +32,8 @@ public class Game implements GameModelInterface {
         this.numPlayers = numPlayers;
         this.players = new ArrayList<>();
         this.livingRoom = new LivingRoomBoard(numPlayers);
-        this.deckCommon = new DeckCommon(numPlayers,"cards/confFiles/commonCards.json");
-        this.deckPersonal = new DeckPersonal("cards/confFiles/personalCards.json", "cards/confFiles/pointsReference.json");
+        this.deckCommon = new DeckCommon(numPlayers,"src/main/java/it/polimi/ingsw/model/cards/confFiles/commonCards.json");
+        this.deckPersonal = new DeckPersonal("src/main/java/it/polimi/ingsw/model/cards/confFiles/personalCards.json", "src/main/java/it/polimi/ingsw/model/cards/confFiles/pointsReference.json");
         this.bagHolder = new BagHolder();
         this.isStarted = false;
         this.isBookshelfComplete = false;
@@ -49,15 +48,12 @@ public class Game implements GameModelInterface {
         this.players.add(host);
     }
 
-    //trashit
-    public void setIsStarted(boolean newState) {
-        isStarted = newState;
-    }
-
     public void start() throws NotAllPlayersHaveJoinedException{
-        Random random = new Random();
         if (players.size() < numPlayers) throw new NotAllPlayersHaveJoinedException("player connected: "+players.size()+" players required: "+numPlayers);
+
+        Random random = new Random();
         int firstPlayerIndex = random.nextInt(this.numPlayers);
+
         Collections.rotate(players, -firstPlayerIndex);
         this.isStarted = true;
         this.playerTurn = 0;
@@ -73,7 +69,7 @@ public class Game implements GameModelInterface {
     }
 
     public ArrayList<ScoringToken> getPlayerTokens(String player) throws InvalidPlayerException {
-        Optional<Player> current = searchPlayer(player);
+        Optional<Player> current = searchPlayer(Objects.requireNonNull(player));
         if(current.isEmpty())
             throw new InvalidPlayerException();
 
@@ -84,7 +80,7 @@ public class Game implements GameModelInterface {
         return players.get(playerTurn).getUsername();
     }
 
-    public void moveTiles(ArrayList<Coordinates> source, int column) throws InvalidCoordinatesException, EmptySlotException, NotEnoughSpaceException {
+    public void moveTiles(ArrayList<Coordinates> source, int column) throws EmptySlotException, NotEnoughSpaceException {
         /*
             checks done:
              - source LivingRoomBoard slot actually have a tile
@@ -98,10 +94,10 @@ public class Game implements GameModelInterface {
         if(source == null || source.contains(null)) {
             throw new NullPointerException("Source is/contains null");
         } else if (source.isEmpty()) {
-            throw new InvalidCoordinatesException("Source list is empty");
+            throw new IllegalArgumentException("Source list is empty");
         }
         if(!(column >= 0 && column < currPlayer.getBookshelf().getColumns())) {
-            throw new InvalidCoordinatesException("Selected column is out of range");
+            throw new IllegalArgumentException("Selected column is out of range");
         }
 
         for(int i=0; i<source.size(); i++) {
@@ -118,12 +114,16 @@ public class Game implements GameModelInterface {
         currPlayer.getBookshelf().insertItemTile(column,temp);
     }
 
-    public ArrayList<Coordinates> getLivingRoomCoordinates() {
-        return null;
-    }
-
     public ArrayList<ItemTile> getItemTiles(ArrayList<Coordinates> coo) {
-        return null;
+        Objects.requireNonNull(coo);
+
+        ArrayList<ItemTile> result = new ArrayList<>();
+
+        for(Coordinates c : coo) {
+            livingRoom.getTile(c).ifPresent(result::add);
+        }
+
+        return result;
     }
 
     public void refillLivingRoom() {
@@ -143,18 +143,27 @@ public class Game implements GameModelInterface {
 
     public boolean checkBookshelfComplete() {
         for(Player player : players) {
-            if(player.getBookshelf().checkComplete())
+            if(player.getBookshelf().checkComplete()) {
+                this.isBookshelfComplete = true;
                 return true;
+            }
         }
         return false;
     }
 
-    public Player getWinner() {
-        return null;
-    }
+    public String getWinner() throws GameNotEndedException {
+        if(!this.isBookshelfComplete)
+            throw new GameNotEndedException("No one has completed the bookshelf");
 
-    public void endGame() {
+        if(playerTurn != players.size()-1)
+            //If the playerTurn is not the last index of players arraylist it means that the game is not ended, because the arraylist is ordered from the first player to the last
+            throw new GameNotEndedException("The last turn has not completed yet");
 
+        for(Player player : players) {
+            player.updatePoints(stdPointsReference);
+        }
+
+        return players.stream().max(Comparator.comparing(Player::getPoints)).get().getUsername();
     }
 
     public boolean addPlayer(Player newPlayer) {
@@ -192,8 +201,14 @@ public class Game implements GameModelInterface {
         return isStarted;
     }
 
-    private void setPlayerTurn() {
+    public boolean nextPlayerTurn() {
+        if(isBookshelfComplete && playerTurn == players.size()-1){
+            return false;
+        }
+
         this.playerTurn = (this.playerTurn + 1) % this.numPlayers;
+
+        return true;
     }
 
 }
