@@ -170,18 +170,16 @@ public class Game implements GameModelInterface {
         return players.stream().max(Comparator.comparing(Player::getPoints)).get().getUsername();
     }
 
-    public boolean addPlayer(Player newPlayer) {
+    public void addPlayer(Player newPlayer) throws NicknameAlreadyUsedException {
         if(newPlayer == null) {
             throw new NullPointerException();
         } else {
             if(!userUsed(newPlayer.getUsername())) {
                 players.add(newPlayer); // player added to game active player
-                return true;    // true means that the player has been added and no problem occurred
             } else {
-                return false;   // false: the player has not been added to the game
+                throw new NicknameAlreadyUsedException("A player with the same nickname is already present in the game");
             }
         }
-
     }
 
     private boolean userUsed(String user) {
