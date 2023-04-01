@@ -37,6 +37,8 @@ public class UtilityFunctions {
 
         group.addAll(findAdjacentElements(bookshelf, row + 1, col, itemTile,visited));
         group.addAll(findAdjacentElements(bookshelf, row, col + 1, itemTile, visited));
+        group.addAll(findAdjacentElements(bookshelf, row - 1, col, itemTile,visited));
+        group.addAll(findAdjacentElements(bookshelf, row, col - 1, itemTile, visited));
 
         return  group.stream().distinct().collect(Collectors.toList());
     }

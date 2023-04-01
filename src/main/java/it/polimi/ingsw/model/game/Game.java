@@ -17,7 +17,6 @@ import java.io.FileNotFoundException;
 import java.util.*;
 
 public class Game implements GameModelInterface {
-
     private final LivingRoomBoard livingRoom;
     private final ArrayList<Player> players;
     private final ArrayList<CommonGoalCard> commonGoalCards;
@@ -34,8 +33,8 @@ public class Game implements GameModelInterface {
         this.numPlayers = numPlayers;
         this.players = new ArrayList<>();
         this.livingRoom = new LivingRoomBoard(numPlayers);
-        this.deckCommon = new DeckCommon(numPlayers,"cards/confFiles/commonCards.json");
-        this.deckPersonal = new DeckPersonal("cards/confFiles/personalCards.json", "cards/confFiles/pointsReference.json");
+        this.deckCommon = new DeckCommon(numPlayers,"src/main/java/it/polimi/ingsw/model/cards/confFiles/commonCards.json");
+        this.deckPersonal = new DeckPersonal("src/main/java/it/polimi/ingsw/model/cards/confFiles/personalCards.json", "src/main/java/it/polimi/ingsw/model/cards/confFiles/pointsReference.json");
         this.bagHolder = new BagHolder();
         this.isStarted = false;
         this.isLastTurn = false;
@@ -50,15 +49,12 @@ public class Game implements GameModelInterface {
         this.players.add(host);
     }
 
-    //trashit
-    public void setIsStarted(boolean newState) {
-        isStarted = newState;
-    }
-
     public void start() throws NotAllPlayersHaveJoinedException{
-        Random random = new Random();
         if (players.size() < numPlayers) throw new NotAllPlayersHaveJoinedException("player connected: "+players.size()+" players required: "+numPlayers);
+
+        Random random = new Random();
         int firstPlayerIndex = random.nextInt(this.numPlayers);
+
         Collections.rotate(players, -firstPlayerIndex);
         this.isStarted = true;
         this.playerTurn = 0;
@@ -159,12 +155,19 @@ public class Game implements GameModelInterface {
         return false;
     }
 
-    public String getWinner() {
-        return null;
-    }
+    public String getWinner() throws GameNotEndedException {
+        if(!this.isBookshelfComplete)
+            throw new GameNotEndedException("No one has completed the bookshelf");
 
-    public void endGame() {
+        if(playerTurn != players.size()-1)
+            //If the playerTurn is not the last index of players arraylist it means that the game is not ended, because the arraylist is ordered from the first player to the last
+            throw new GameNotEndedException("The last turn has not completed yet");
 
+        for(Player player : players) {
+            player.updatePoints(stdPointsReference);
+        }
+
+        return players.stream().max(Comparator.comparing(Player::getPoints)).get().getUsername();
     }
 
     public boolean addPlayer(Player newPlayer) {
