@@ -1,5 +1,8 @@
 package it.polimi.ingsw.model.game;
 
+import it.polimi.ingsw.model.chat.Chat;
+import it.polimi.ingsw.model.chat.Message;
+import it.polimi.ingsw.model.chat.exceptions.SenderEqualsRecipientException;
 import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.cards.common.CommonGoalCard;
 import it.polimi.ingsw.model.coordinate.Coordinates;
@@ -16,7 +19,7 @@ import it.polimi.ingsw.model.tokens.TokenPoint;
 import java.io.FileNotFoundException;
 import java.util.*;
 
-public class Game implements GameModelInterface {
+public class Game implements GameModelInterface, GameChatInterface {
     private final LivingRoomBoard livingRoom;
     private final ArrayList<Player> players;
     private final ArrayList<CommonGoalCard> commonGoalCards;
@@ -25,12 +28,15 @@ public class Game implements GameModelInterface {
     private boolean isStarted;
     private int playerTurn;
     private boolean isLastTurn;
-    private DeckPersonal deckPersonal;
-    private DeckCommon deckCommon;
-    private BagHolder bagHolder;
+    private final DeckPersonal deckPersonal;
+    private final DeckCommon deckCommon;
+    private final BagHolder bagHolder;
+
+    private final Chat chat;
 
     public Game(int numPlayers, Player host) throws FileNotFoundException, NegativeFieldException, PlayersNumberOutOfRange, NotEnoughCardsException {
         this.numPlayers = numPlayers;
+        this.chat = new Chat();
         this.players = new ArrayList<>();
         this.livingRoom = new LivingRoomBoard(numPlayers);
         this.deckCommon = new DeckCommon(numPlayers,"src/main/java/it/polimi/ingsw/model/cards/confFiles/commonCards.json");
@@ -48,6 +54,16 @@ public class Game implements GameModelInterface {
         this.commonGoalCards = deckCommon.draw(2);
         this.players.add(host);
     }
+
+    /**
+     * check if the game can be started
+     * @return true, if the game have the right conditions to start, false otherwise
+     */
+    public boolean canStart() {
+       return this.numPlayers == players.size();
+    }
+
+
 
     public void start() throws NotAllPlayersHaveJoinedException{
         if (players.size() < numPlayers) throw new NotAllPlayersHaveJoinedException("player connected: "+players.size()+" players required: "+numPlayers);
@@ -214,4 +230,22 @@ public class Game implements GameModelInterface {
         return true;
     }
 
+    @Override
+    public ArrayList<Message> getPlayerMessages(String player) throws InvalidPlayerException {
+        if(this.searchPlayer(player).isEmpty()) throw new InvalidPlayerException();
+
+        return chat.getPlayerMessages(player);
+    }
+
+    @Override
+    public void postMessage(String sender, Optional<String> reciver, String message) throws SenderEqualsRecipientException, InvalidPlayerException {
+        if(this.searchPlayer(sender).isEmpty()) throw new InvalidPlayerException();
+
+        if(reciver.isPresent() ){
+            if( this.searchPlayer(reciver.get()).isEmpty() ) throw new InvalidPlayerException();
+        }
+
+        chat.postMessage(new Message(sender, reciver, message));
+
+    }
 }

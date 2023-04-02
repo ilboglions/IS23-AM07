@@ -1,7 +1,9 @@
 package it.polimi.ingsw.controller;
 
+import it.polimi.ingsw.model.chat.Chat;
 import it.polimi.ingsw.model.coordinate.Coordinates;
 import it.polimi.ingsw.model.exceptions.*;
+import it.polimi.ingsw.model.game.GameChatInterface;
 import it.polimi.ingsw.model.game.GameModelInterface;
 
 import java.util.ArrayList;
@@ -12,12 +14,17 @@ import java.util.ArrayList;
 public class GameController {
     private final GameModelInterface gameModel;
 
+    private final ChatController chatController;
+
     /**
      * creates the gameController
+     *
      * @param gameModel the model reffered to the game
+     *
      */
-    public GameController(GameModelInterface gameModel) {
+    public GameController(GameModelInterface gameModel, GameChatInterface chat) {
         this.gameModel = gameModel;
+        this.chatController = new ChatController(chat);
     }
 
     /**

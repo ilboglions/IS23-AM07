@@ -4,7 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2e3d8ba5-7979-460d-b6ee-dca2aaf5b565" name="Changes" comment="improved gameController, implemented lobby controller, written first javadoc" />
+    <list default="true" id="2e3d8ba5-7979-460d-b6ee-dca2aaf5b565" name="Changes" comment="fixed nicknameAlreadyUseException">
+      <change afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/controller/ChatController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/game/GameChatInterface.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/controller/GameController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/controller/GameController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/controller/LobbyController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/controller/LobbyController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/game/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/game/Game.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/game/GameModelInterface.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/game/GameModelInterface.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/lobby/Lobby.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/lobby/Lobby.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -13,9 +22,9 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Interface" />
         <option value="Enum" />
         <option value="Class" />
+        <option value="Interface" />
       </list>
     </option>
   </component>
@@ -250,7 +259,10 @@
       <workItem from="1680265657007" duration="510000" />
       <workItem from="1680280034422" duration="501000" />
       <workItem from="1680344002361" duration="14571000" />
-      <workItem from="1680368597000" duration="2256000" />
+      <workItem from="1680368597000" duration="2390000" />
+      <workItem from="1680371253609" duration="731000" />
+      <workItem from="1680436627484" duration="37000" />
+      <workItem from="1680453796823" duration="1450000" />
     </task>
     <task id="LOCAL-00001" summary="added model directory">
       <created>1678961934466</created>
@@ -455,7 +467,14 @@
       <option name="project" value="LOCAL" />
       <updated>1680370842866</updated>
     </task>
-    <option name="localTasksCounter" value="30" />
+    <task id="LOCAL-00030" summary="fixed nicknameAlreadyUseException">
+      <created>1680370929528</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1680370929528</updated>
+    </task>
+    <option name="localTasksCounter" value="31" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -485,7 +504,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="created commonCards, started the implementation of the DeckCommon" />
     <MESSAGE value="Implemented all DeckCommon options, to be tested" />
     <MESSAGE value="DeckCommon: fixed generation of the only necessary cards" />
     <MESSAGE value="updated Bookshelf, added ItemTile class, implemented constraint for FiveXtiles" />
@@ -510,6 +528,7 @@
     <MESSAGE value="fixed InvalidCoordinatesExceptions, improved livingroom" />
     <MESSAGE value="first implementation of the gameController, added tokenPoint for the first player, fixed" />
     <MESSAGE value="improved gameController, implemented lobby controller, written first javadoc" />
-    <option name="LAST_COMMIT_MESSAGE" value="improved gameController, implemented lobby controller, written first javadoc" />
+    <MESSAGE value="fixed nicknameAlreadyUseException" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed nicknameAlreadyUseException" />
   </component>
 </project>

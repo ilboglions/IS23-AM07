@@ -16,6 +16,8 @@ public interface GameModelInterface {
     boolean checkBookshelfComplete();
     String getWinner() throws GameNotEndedException;
     boolean checkRefill();
-    public void updatePlayerPoints(String username) throws InvalidPlayerException;
-    public boolean setPlayerTurn();
+    void updatePlayerPoints(String username) throws InvalidPlayerException;
+    boolean setPlayerTurn();
+
+     boolean canStart();
 }

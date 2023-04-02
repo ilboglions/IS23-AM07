@@ -1,6 +1,7 @@
 package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.model.exceptions.*;
+import it.polimi.ingsw.model.game.GameChatInterface;
 import it.polimi.ingsw.model.game.GameModelInterface;
 import it.polimi.ingsw.model.lobby.Lobby;
 
@@ -49,7 +50,7 @@ public class LobbyController {
             if (gameControllers.stream().anyMatch(el -> el.getGameControlled().equals(gameModel))){
                 gameController = gameControllers.stream().filter(el -> el.getGameControlled().equals(gameModel)).findFirst().get();
             } else {
-                gameController = new GameController(gameModel);
+                gameController = new GameController(gameModel, (GameChatInterface) gameModel);
                 gameControllers.add(gameController);
             }
         } catch (NoAvailableGameException e) {
@@ -59,6 +60,14 @@ public class LobbyController {
         } catch (NicknameAlreadyUsedException e) {
             throw new RuntimeException(e);
         }
+
+        try {
+            if( gameController.getGameControlled().canStart())
+                gameController.getGameControlled().start();
+        } catch (NotAllPlayersHaveJoinedException ignored) {
+
+        }
+
         return Optional.of(gameController);
     }
 
@@ -71,7 +80,8 @@ public class LobbyController {
     public Optional<GameController> createGame(String player, int nPlayers){
             GameController  gameController;
             try {
-                 gameController = new GameController(lobbyModel.createGame(nPlayers,player));
+                GameModelInterface g = lobbyModel.createGame(nPlayers,player);
+                 gameController = new GameController(g, (GameChatInterface) g);
                  this.gameControllers.add(gameController);
 
             } catch (BrokenInternalGameConfigurations e) {
