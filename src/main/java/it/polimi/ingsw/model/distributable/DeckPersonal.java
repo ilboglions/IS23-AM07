@@ -23,7 +23,13 @@ public class DeckPersonal implements Distributable<PersonalGoalCard> {
     /**
      * used to store the point reference
      */
+
+    /**
+     * a set containing all the indexes of the card that have been already distributed
+     */
     private final String pointsReferenceFile;
+
+    private final Set<Integer> generatedCardsIndex;
 
     /**
      * The deckPersonal constructor assign the configurations parameters in order to create the cards.
@@ -33,6 +39,7 @@ public class DeckPersonal implements Distributable<PersonalGoalCard> {
     public DeckPersonal(String configurationFile, String pointsReferenceFile) {
         this.configurationFile = Objects.requireNonNull(configurationFile, "You passed a null instead of a String for the configuration file");
         this.pointsReferenceFile = Objects.requireNonNull(pointsReferenceFile, "You passed a null instead of a String for the points reference file");
+        this.generatedCardsIndex = new HashSet<>();
     }
 
     /**
@@ -48,7 +55,7 @@ public class DeckPersonal implements Distributable<PersonalGoalCard> {
         TypeToken<Map<Integer, Integer>> pointsReferenceMapType = new TypeToken<>(){};
         Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
         Random randGenerator = new Random();
-        ArrayList<Integer> generatedCardsIndex = new ArrayList<>();
+
         int extractedCardIndex;
 
 
@@ -60,9 +67,9 @@ public class DeckPersonal implements Distributable<PersonalGoalCard> {
         for( int i = 0; i < nElements; i++){
             do {
                 extractedCardIndex = randGenerator.nextInt(jsonCards.size());
-            } while(generatedCardsIndex.contains(extractedCardIndex));
+            } while(this.generatedCardsIndex.contains(extractedCardIndex));
 
-            generatedCardsIndex.add(extractedCardIndex);
+            this.generatedCardsIndex.add(extractedCardIndex);
 
             JsonElement extractedCard = jsonCards.get(i);
             Map<Coordinates, ItemTile> pattern = gson.fromJson(extractedCard, mapType);

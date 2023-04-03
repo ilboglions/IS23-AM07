@@ -57,7 +57,9 @@ public class LobbyController {
         } catch (InvalidPlayerException e) {
             return Optional.empty();
         } catch (NicknameAlreadyUsedException e) {
-            throw new RuntimeException(e);
+            return Optional.empty();
+        } catch (PlayersNumberOutOfRange e) {
+            return Optional.empty();
         }
 
         try {

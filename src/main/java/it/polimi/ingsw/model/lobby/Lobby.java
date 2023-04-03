@@ -38,7 +38,7 @@ public class Lobby {
      * @throws InvalidPlayerException if the player is not in waiting list or the player nickname is already taken in the game
      *
      */
-    public Game addPlayerToGame(String playerName) throws NoAvailableGameException, InvalidPlayerException, NicknameAlreadyUsedException {
+    public Game addPlayerToGame(String playerName) throws NoAvailableGameException, InvalidPlayerException, NicknameAlreadyUsedException, PlayersNumberOutOfRange {
         Objects.requireNonNull(playerName);
 
         Game result = games.stream()
