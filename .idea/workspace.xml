@@ -5,21 +5,30 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2e3d8ba5-7979-460d-b6ee-dca2aaf5b565" name="Changes" comment="removed gitignore">
+      <change afterPath="$PROJECT_DIR$/src/test/java/it/polimi/ingsw/model/cards/common/CheckPatternTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/it/polimi/ingsw/model/cards/common/FiveXTilesTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/it/polimi/ingsw/model/cards/common/FullColumnsTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/it/polimi/ingsw/model/cards/common/FullRowsTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/it/polimi/ingsw/model/cards/common/MarioPyramidTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/it/polimi/ingsw/model/cards/common/NSameTilesTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/it/polimi/ingsw/model/cards/common/NadjacentElementsTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/it/polimi/ingsw/model/cards/common/NequalsSquaresTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/controller/GameController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/controller/GameController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/bookshelf/Bookshelf.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/bookshelf/Bookshelf.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/bookshelf/PlayerBookshelf.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/bookshelf/PlayerBookshelf.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/cards/common/CommonGoalCard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/cards/common/CommonGoalCard.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/cards/common/CheckPattern.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/cards/common/CheckPattern.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/cards/common/FiveXTiles.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/cards/common/FiveXTiles.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/cards/common/FullColumns.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/cards/common/FullColumns.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/cards/common/FullRows.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/cards/common/FullRows.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/cards/common/MarioPyramid.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/cards/common/MarioPyramid.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/cards/common/NequalsSquares.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/cards/common/NequalsSquares.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/cards/personal/PersonalGoalCard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/cards/personal/PersonalGoalCard.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/coordinate/Coordinates.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/coordinate/Coordinates.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/livingRoom/LivingRoomBoard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/livingRoom/LivingRoomBoard.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/player/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/player/Player.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/utilities/UtilityFunctions.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/utilities/UtilityFunctions.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/it/polimi/ingsw/model/cards/NequalsSquaresTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/it/polimi/ingsw/model/cards/NequalsSquaresTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/game/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/game/Game.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/game/GameModelInterface.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/game/GameModelInterface.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/it/polimi/ingsw/model/lobby/LobbyTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/it/polimi/ingsw/model/lobby/LobbyTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/it/polimi/ingsw/model/player/PlayerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/it/polimi/ingsw/model/player/PlayerTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -111,77 +120,82 @@
       <recent name="$PROJECT_DIR$/src/main" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.App">
-    <configuration name="App" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="it.polimi.ingsw.App" />
+  <component name="RunManager" selected="JUnit.testConfig">
+    <configuration name="FullColumnsTest.FalsesameTilesTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="AM07" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="it.polimi.ingsw.*" />
+          <option name="PATTERN" value="it.polimi.ingsw.model.cards.common.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="AppTest.theAnswer" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="AM07" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="it.polimi.ingsw.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="it.polimi.ingsw" />
-      <option name="MAIN_CLASS_NAME" value="it.polimi.ingsw.AppTest" />
-      <option name="METHOD_NAME" value="theAnswer" />
+      <option name="PACKAGE_NAME" value="it.polimi.ingsw.model.cards.common" />
+      <option name="MAIN_CLASS_NAME" value="it.polimi.ingsw.model.cards.common.FullColumnsTest" />
+      <option name="METHOD_NAME" value="FalsesameTilesTest" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="CardBookshelfTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="FullColumnsTest.NotEnoughSpaceException" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="AM07" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="it.polimi.ingsw.model.bookshelf.*" />
+          <option name="PATTERN" value="it.polimi.ingsw.model.cards.common.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="it.polimi.ingsw.model.bookshelf" />
-      <option name="MAIN_CLASS_NAME" value="it.polimi.ingsw.model.bookshelf.CardBookshelfTest" />
-      <option name="TEST_OBJECT" value="class" />
+      <option name="PACKAGE_NAME" value="it.polimi.ingsw.model.cards.common" />
+      <option name="MAIN_CLASS_NAME" value="it.polimi.ingsw.model.cards.common.FullColumnsTest" />
+      <option name="METHOD_NAME" value="NotEnoughSpaceException" />
+      <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="LobbyTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="FullColumnsTest.verifyCostrainttest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="AM07" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="it.polimi.ingsw.model.lobby.*" />
+          <option name="PATTERN" value="it.polimi.ingsw.model.cards.common.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="it.polimi.ingsw.model.lobby" />
-      <option name="MAIN_CLASS_NAME" value="it.polimi.ingsw.model.lobby.LobbyTest" />
-      <option name="TEST_OBJECT" value="class" />
+      <option name="PACKAGE_NAME" value="it.polimi.ingsw.model.cards.common" />
+      <option name="MAIN_CLASS_NAME" value="it.polimi.ingsw.model.cards.common.FullColumnsTest" />
+      <option name="METHOD_NAME" value="verifyCostrainttest" />
+      <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="LobbyTest.checkException" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="NSameTilesTest.verifyCostraintTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="AM07" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="it.polimi.ingsw.model.lobby.*" />
+          <option name="PATTERN" value="it.polimi.ingsw.model.cards.common.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="it.polimi.ingsw.model.lobby" />
-      <option name="MAIN_CLASS_NAME" value="it.polimi.ingsw.model.lobby.LobbyTest" />
-      <option name="METHOD_NAME" value="checkException" />
+      <option name="PACKAGE_NAME" value="it.polimi.ingsw.model.cards.common" />
+      <option name="MAIN_CLASS_NAME" value="it.polimi.ingsw.model.cards.common.NSameTilesTest" />
+      <option name="METHOD_NAME" value="verifyCostraintTest" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="NadjacentElementsTest.verifyCostrainttest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="AM07" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="it.polimi.ingsw.model.cards.common.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="it.polimi.ingsw.model.cards.common" />
+      <option name="MAIN_CLASS_NAME" value="it.polimi.ingsw.model.cards.common.NadjacentElementsTest" />
+      <option name="METHOD_NAME" value="verifyCostrainttest" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -198,20 +212,20 @@
       </method>
     </configuration>
     <list>
-      <item itemvalue="Application.App" />
       <item itemvalue="JUnit.testConfig" />
-      <item itemvalue="JUnit.CardBookshelfTest" />
-      <item itemvalue="JUnit.AppTest.theAnswer" />
-      <item itemvalue="JUnit.LobbyTest" />
-      <item itemvalue="JUnit.LobbyTest.checkException" />
+      <item itemvalue="JUnit.FullColumnsTest.FalsesameTilesTest" />
+      <item itemvalue="JUnit.FullColumnsTest.NotEnoughSpaceException" />
+      <item itemvalue="JUnit.FullColumnsTest.verifyCostrainttest" />
+      <item itemvalue="JUnit.NSameTilesTest.verifyCostraintTest" />
+      <item itemvalue="JUnit.NadjacentElementsTest.verifyCostrainttest" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.App" />
-        <item itemvalue="JUnit.CardBookshelfTest" />
-        <item itemvalue="JUnit.LobbyTest" />
-        <item itemvalue="JUnit.LobbyTest.checkException" />
-        <item itemvalue="JUnit.AppTest.theAnswer" />
+        <item itemvalue="JUnit.NSameTilesTest.verifyCostraintTest" />
+        <item itemvalue="JUnit.NadjacentElementsTest.verifyCostrainttest" />
+        <item itemvalue="JUnit.FullColumnsTest.NotEnoughSpaceException" />
+        <item itemvalue="JUnit.FullColumnsTest.FalsesameTilesTest" />
+        <item itemvalue="JUnit.FullColumnsTest.verifyCostrainttest" />
       </list>
     </recent_temporary>
   </component>
@@ -504,5 +518,16 @@
     <MESSAGE value="fixed card issues, added basic structure of server tcp communication" />
     <MESSAGE value="fixed card issues, added exception notEnoughSpace" />
     <option name="LAST_COMMIT_MESSAGE" value="fixed card issues, added exception notEnoughSpace" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/cards/common/FiveXTiles.java</url>
+          <line>48</line>
+          <option name="timeStamp" value="8" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

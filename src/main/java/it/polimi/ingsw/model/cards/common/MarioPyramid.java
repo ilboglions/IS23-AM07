@@ -1,6 +1,6 @@
 package it.polimi.ingsw.model.cards.common;
 
-import it.polimi.ingsw.model.bookshelf.PlayerBookshelf;
+import it.polimi.ingsw.model.bookshelf.Bookshelf;
 import it.polimi.ingsw.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.model.exceptions.PlayersNumberOutOfRange;
 import it.polimi.ingsw.model.coordinate.Coordinates;
@@ -18,8 +18,8 @@ public class MarioPyramid extends CommonGoalCard{
         super(nPlayers, description);
     }
 
-    @Override
-    public boolean verifyConstraint(PlayerBookshelf bookshelf) {
+
+    public boolean verifyConstraint(Bookshelf bookshelf) {
 
 
         boolean found = checkPyramid(false,bookshelf);
@@ -36,7 +36,7 @@ public class MarioPyramid extends CommonGoalCard{
      * @param bookshelf the bookshelf to analyze
      * @return true, if exists a pyramid in the direction chosen
      */
-    private boolean checkPyramid( boolean reverse , PlayerBookshelf bookshelf){
+    private boolean checkPyramid( boolean reverse , Bookshelf bookshelf){
         int refRow;
         int r = 0;
         int c;

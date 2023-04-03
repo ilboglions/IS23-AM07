@@ -23,9 +23,11 @@ public class FullRows extends CommonGoalCard{
      */
     private final boolean sameTiles;
     /**
-     * the maximum of possible different tiles in a single row
+     * the maximum/minimum of possible different tiles in a single row
+     * if sameTiles == true --> maximum number
+     * if sameTiles == false --> minimum number
      */
-    private final int maxTilesFrule;
+    private final int numDifferent;
 
     /**
      * the constructor of the card
@@ -33,16 +35,16 @@ public class FullRows extends CommonGoalCard{
      * @param description the description of the card
      * @param nRows the number of rows to be found
      * @param sameTiles if true, the constraint require a minimum of bookshelf.getRows - maxTilesFRule equal tiles, otherwise all the tiles should be different
-     * @param maxTilesFrule the maximum of possible different tiles in a single row
+     * @param numDifferent the maximum of possible different tiles in a single row
      * @throws PlayersNumberOutOfRange if the number of player is out of the permitted range
      * @throws NegativeFieldException if some field is negative
      */
-    public FullRows(int nPlayers,  String description ,int nRows, boolean sameTiles, int maxTilesFrule) throws PlayersNumberOutOfRange, NegativeFieldException {
+    public FullRows(int nPlayers,  String description ,int nRows, boolean sameTiles, int numDifferent) throws PlayersNumberOutOfRange, NegativeFieldException {
         super(nPlayers, description);
-        if( nRows <= 0 || maxTilesFrule <= 0 ) throw new NegativeFieldException("can't assign negative parameters!");
+        if( nRows <= 0 || numDifferent <= 0 ) throw new NegativeFieldException("can't assign negative parameters!");
         this.nRows = nRows;
         this.sameTiles = sameTiles;
-        this.maxTilesFrule = maxTilesFrule;
+        this.numDifferent = numDifferent;
 
     }
 
@@ -60,9 +62,6 @@ public class FullRows extends CommonGoalCard{
         if(nRows >= bookshelf.getRows()) throw new NotEnoughSpaceException("can't check "+nRows+" rows, only "+bookshelf.getRows()+" available!");
         foundRows = 0;
 
-        //how many equals/different tiles? equals -> how many equals?
-        int distinctElements = this.sameTiles ? (bookshelf.getRows()  - this.maxTilesFrule)  : bookshelf.getRows();
-
         try {
             for (int r = 0; r < bookshelf.getRows(); r++) {
 
@@ -74,7 +73,10 @@ public class FullRows extends CommonGoalCard{
                     c++;
                 }
 
-                foundRows = (parentTiles.size() == bookshelf.getRows() && parentTiles.stream().distinct().count() >= distinctElements) ? foundRows + 1 : foundRows;
+                if(sameTiles)
+                    foundRows = (parentTiles.size() == bookshelf.getColumns() && parentTiles.stream().distinct().count() <= numDifferent) ? foundRows + 1 : foundRows;
+                else
+                    foundRows = (parentTiles.size() == bookshelf.getColumns() && parentTiles.stream().distinct().count() >= numDifferent) ? foundRows + 1 : foundRows;
 
                 if (foundRows == this.nRows) return true;
 

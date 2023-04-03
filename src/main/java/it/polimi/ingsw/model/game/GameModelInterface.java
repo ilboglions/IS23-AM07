@@ -9,7 +9,6 @@ import java.util.ArrayList;
 public interface GameModelInterface {
 
     boolean getIsStarted();
-    void setIsStarted(boolean newState);
     void start() throws NotAllPlayersHaveJoinedException;
 
     String getPlayerInTurn() throws GameEndedException;
@@ -18,7 +17,7 @@ public interface GameModelInterface {
     boolean getItemTiles(ArrayList<Coordinates> coords) throws EmptySlotException;
     void refillLivingRoom();
     boolean checkBookshelfComplete();
-    String getWinner();
+    String getWinner() throws GameNotEndedException;
 
     boolean checkRefill();
 

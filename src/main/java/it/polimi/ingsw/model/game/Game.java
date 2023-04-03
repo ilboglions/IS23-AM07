@@ -156,7 +156,7 @@ public class Game implements GameModelInterface {
     }
 
     public String getWinner() throws GameNotEndedException {
-        if(!this.isBookshelfComplete)
+        if(!this.isLastTurn)
             throw new GameNotEndedException("No one has completed the bookshelf");
 
         if(playerTurn != players.size()-1)

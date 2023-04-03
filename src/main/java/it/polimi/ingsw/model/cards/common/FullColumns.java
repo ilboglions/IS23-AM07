@@ -20,15 +20,17 @@ public class FullColumns extends CommonGoalCard{
      */
     private final boolean sameTiles;
     /**
-     * the max number of tiles that are admitted
+     * the maximum/minimum of possible different tiles in a single column
+     * if sameTiles == true --> maximum number
+     * if sameTiles == false --> minimum number
      */
-    private final int maxTilesFrule;
-    public FullColumns(int nPlayers, String description , int nCols, boolean sameTiles, int maxTilesFrule) throws PlayersNumberOutOfRange, NegativeFieldException {
+    private final int numDifferent;
+    public FullColumns(int nPlayers, String description , int nCols, boolean sameTiles, int numDifferent) throws PlayersNumberOutOfRange, NegativeFieldException {
         super(nPlayers,description);
-        if( nCols <= 0 || maxTilesFrule <= 0 ) throw new NegativeFieldException("can't assign negative parameters!");
+        if( nCols <= 0 || numDifferent <= 0 ) throw new NegativeFieldException("can't assign negative parameters!");
         this.nCols = nCols;
         this.sameTiles = sameTiles;
-        this.maxTilesFrule = maxTilesFrule;
+        this.numDifferent = numDifferent;
     }
 
     /**
@@ -47,8 +49,6 @@ public class FullColumns extends CommonGoalCard{
 
 
         foundColumns = 0;
-        //how many equals/different tiles? equals -> how many equals?
-        int distinctElements = this.sameTiles ? (bookshelf.getRows()  - this.maxTilesFrule)  : bookshelf.getRows();
 
         try{
             for( int c  = 0; c < bookshelf.getColumns(); c++){
@@ -61,7 +61,11 @@ public class FullColumns extends CommonGoalCard{
                     r++;
                 }
 
-                foundColumns =  (  parentTiles.size() == bookshelf.getRows() && parentTiles.stream().distinct().count() >= distinctElements) ? foundColumns + 1 : foundColumns;
+                if(sameTiles)
+                    foundColumns = (parentTiles.size() == bookshelf.getRows() && parentTiles.stream().distinct().count() <= numDifferent) ? foundColumns  + 1 : foundColumns ;
+                else
+                    foundColumns= (parentTiles.size() == bookshelf.getRows() && parentTiles.stream().distinct().count() >= numDifferent) ? foundColumns + 1 : foundColumns ;
+
 
                 if ( foundColumns == this.nCols) return true;
 

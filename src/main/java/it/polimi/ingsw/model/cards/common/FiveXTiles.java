@@ -29,13 +29,14 @@ public class FiveXTiles extends  CommonGoalCard{
      */
     public boolean verifyConstraint(Bookshelf bookshelf){
         ArrayList<ItemTile> parentTiles= new ArrayList<>();
-        for( int r  = 0; r < bookshelf.getRows(); r++){
-            for( int c = 0; c < bookshelf.getColumns(); c++) {
+        int rowlimit = bookshelf.getRows()-2;
+        int collimit =bookshelf.getColumns()-2;
+        for( int r  = 0; r < rowlimit; r++){
+            for( int c = 0; c < collimit; c++) {
                 ItemTile refTile;
                 try {
 
                     if (bookshelf.getItemTile(new Coordinates(r, c)).isEmpty()) continue;
-
                     refTile = bookshelf.getItemTile(new Coordinates(r, c)).get();
                     bookshelf.getItemTile(new Coordinates(r, c + 2)).ifPresent(parentTiles::add);
                     bookshelf.getItemTile(new Coordinates(r + 2, c)).ifPresent(parentTiles::add);

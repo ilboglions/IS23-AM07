@@ -57,15 +57,11 @@ public class CheckPattern extends CommonGoalCard{
 
                     if(bookshelf.getItemTile(el.get(0)).isEmpty()) return false;
                     ItemTile refTile = bookshelf.getItemTile(el.get(0)).get();
-                    boolean stillOk = true;
                     for( Coordinates c: el) {
-                        stillOk  = bookshelf.getItemTile(c).isPresent();
-                        if(!stillOk)
+                        if(!bookshelf.getItemTile(c).isPresent() || !bookshelf.getItemTile(c).get().equals(refTile))
                             return false;
-                        stillOk = bookshelf.getItemTile(c).get().equals(refTile);
                     }
-
-                    return stillOk;
+                    return true;
                 });
 
     }

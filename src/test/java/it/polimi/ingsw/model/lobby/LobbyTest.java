@@ -26,4 +26,9 @@ public class LobbyTest {
         assertThrows(PlayersNumberOutOfRange.class, () -> lobbyTest.createGame(5,"FunnyPlayer"));
         assertThrows(InvalidPlayerException.class, () -> lobbyTest.createGame(2,"FunyPlayer"));
     }
+    @Test
+    @DisplayName("Check createPlayer method")
+    void createPlayerTest() {
+        assertThrows(NicknameAlreadyUsedException.class, () ->  lobbyTest.createPlayer("FunnyPlayer"));
+    }
 }

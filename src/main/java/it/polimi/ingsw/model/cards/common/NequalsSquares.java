@@ -28,36 +28,76 @@ public class NequalsSquares extends CommonGoalCard{
         int nFoundSquares = 0;
         boolean validSquare;
 
-        if(nSquares * (squareDim + 1) * (squareDim + 1) > bookshelf.getColumns()*bookshelf.getRows() ) throw  new NotEnoughSpaceException(nSquares+" squares of dimension "+squareDim+" can't be found! not enough tile!" );
+        if(nSquares * squareDim * squareDim  > bookshelf.getColumns()*bookshelf.getRows() ) throw  new NotEnoughSpaceException(nSquares+" squares of dimension "+squareDim+" can't be found! not enough tile!" );
 
-        for( int r  = 0; r < bookshelf.getRows() && nFoundSquares < nSquares; r++){
-            for( int c = 0; c < bookshelf.getColumns() && nFoundSquares < nSquares; c++) {
+        int rowslimit = bookshelf.getRows() - squareDim+1;
+        int collimit = bookshelf.getColumns() - squareDim+1;
+        for( int r  = 0; r <rowslimit && nFoundSquares < nSquares; r++){
+            for( int c = 0; c < collimit && nFoundSquares < nSquares; c++) {
 
                 ItemTile refTile;
+                parentTiles.clear();
                 try {
                     if (bookshelf.getItemTile(new Coordinates(r, c)).isEmpty()) continue;
-
                     refTile = bookshelf.getItemTile(new Coordinates(r, c)).get();
                     validSquare = true;
-                    for (int i = r; i < r + this.squareDim + 1 && i < bookshelf.getRows() && validSquare; i++) {
-                        for (int j = c; j < c + this.squareDim + 1 && j < bookshelf.getColumns() && validSquare; j++) {
+                    int squarerowlim = r+squareDim;
+                    int suqarecollim = c+squareDim;
+                    for (int i = r; i < squarerowlim; i++) {
+                        for (int j = c; j < suqarecollim; j++) {
                             Coordinates tempCoords = new Coordinates(i, j);
-                            if ((i > r + this.squareDim || j > c + this.squareDim) && bookshelf.getItemTile(tempCoords).isPresent()) {
-                                if (bookshelf.getItemTile(tempCoords).get().equals(refTile))
-                                    validSquare = false;
-                            } else {
                                 bookshelf.getItemTile(tempCoords).ifPresent(parentTiles::add);
-                            }
                         }
                     }
                 } catch (InvalidCoordinatesException e) {
                     throw new RuntimeException(e);
                 }
-
                 if (parentTiles.size() != this.squareDim * this.squareDim) continue;
+                boolean notCloseSameTiles = true;
+                int highBorder = r + squareDim;
+                int lowBorder = r - squareDim;
+                int leftBorder = c-squareDim;
+                int rightBorder = c+squareDim;
+                try {
+                    if (highBorder < bookshelf.getRows()) {
+                        for (int i = 0; i < squareDim && notCloseSameTiles; i++) {
+                            Coordinates tempCoords = new Coordinates(highBorder, i + c);
+                            if (bookshelf.getItemTile(tempCoords).isPresent() ? bookshelf.getItemTile(tempCoords).equals(refTile) : false){
+                                    notCloseSameTiles=false;
+                            }
+                        }
+                    }
+                    if (lowBorder >= 0) {
+                        for (int i = 0; i < squareDim && notCloseSameTiles; i++) {
+                            Coordinates tempCoords = new Coordinates(lowBorder, i + c);
+                            if (bookshelf.getItemTile(tempCoords).isPresent() ? bookshelf.getItemTile(tempCoords).equals(refTile) : false){
+                                notCloseSameTiles=false;
+                            }
+                        }
+                    }
+                    if (leftBorder >= 0) {
+                        for (int i = 0; i < squareDim && notCloseSameTiles; i++) {
+                            Coordinates tempCoords = new Coordinates(i+r, leftBorder);
+                            if (bookshelf.getItemTile(tempCoords).isPresent() ? bookshelf.getItemTile(tempCoords).equals(refTile) : false){
+                                notCloseSameTiles=false;
+                            }
+                        }
+                    }
+                    if (rightBorder < bookshelf.getColumns()) {
+                        for (int i = 0; i < squareDim && notCloseSameTiles; i++) {
+                            Coordinates tempCoords = new Coordinates(i+r, rightBorder);
+                            if (bookshelf.getItemTile(tempCoords).isPresent() ? bookshelf.getItemTile(tempCoords).get().equals(refTile) : false){
+                                notCloseSameTiles=false;
+                            }
+                        }
+                    }
+                }
+                catch (InvalidCoordinatesException e) {
+                    throw new RuntimeException(e);
+                }
 
                 Optional<ItemTile> brokenItem = parentTiles.stream().filter(tile -> !tile.equals(refTile)).findAny();
-                if (brokenItem.isEmpty())
+                if (brokenItem.isEmpty() && notCloseSameTiles)
                     nFoundSquares++;
 
             }

@@ -71,6 +71,10 @@ public abstract class Bookshelf {
                 }
             }
         }
+        for (ItemTile item : ItemTile.values()) {
+            if (bookshelfMap.get(item) == null)
+                bookshelfMap.put(item, 0);
+        }
         return bookshelfMap;
     }
 
