@@ -6,6 +6,7 @@ import it.polimi.ingsw.model.player.Player;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -37,23 +38,21 @@ public class Lobby {
      * @throws InvalidPlayerException if the player is not in waiting list or the player nickname is already taken in the game
      *
      */
-    public Game addPlayerToGame(String playerName) throws NoAvailableGameException, InvalidPlayerException {
+    public Game addPlayerToGame(String playerName) throws NoAvailableGameException, InvalidPlayerException, NicknameAlreadyUsedException, PlayersNumberOutOfRange {
+        Objects.requireNonNull(playerName);
+
         Game result = games.stream()
                             .filter(tmp -> !tmp.getIsStarted())
                             .findFirst()
                             .orElseThrow(()-> new NoAvailableGameException("All the games have already started"));
 
         Optional<Player> op =  waitingPlayers.stream().filter(p -> p.getUsername().equals(playerName)).findFirst();
-        boolean valid;
         if ( op.isPresent() ){
-            valid = result.addPlayer(op.get());
+            result.addPlayer(op.get());
         }
         else {
             throw new InvalidPlayerException();
         }
-
-        if(!valid)
-            throw new InvalidPlayerException();
 
         waitingPlayers.remove(op.get());
 
@@ -71,16 +70,16 @@ public class Lobby {
      *
      */
     public Game createGame(int nPlayers, String hostNickname) throws PlayersNumberOutOfRange, BrokenInternalGameConfigurations, InvalidPlayerException, NotEnoughCardsException {
+        Objects.requireNonNull(hostNickname);
 
         Optional<Player> host =  waitingPlayers.stream().filter(p -> p.getUsername().equals(hostNickname)).findFirst();
-        if( host.isEmpty())
+        if(host.isEmpty())
             throw new InvalidPlayerException();
         try{
             Game newGame = new Game(nPlayers, host.get());
             games.add(newGame);
             return newGame;
         }  catch (NegativeFieldException | FileNotFoundException e) {
-            System.out.println(e);
             throw new BrokenInternalGameConfigurations();
         }
 
@@ -97,7 +96,7 @@ public class Lobby {
                 throw new NicknameAlreadyUsedException("This nickname is already used");
         }
 
-        if ( waitingPlayers.contains(new Player(nickname)) )
+        if (waitingPlayers.contains(new Player(nickname)))
                 throw new NicknameAlreadyUsedException("This nickname is already used");
 
         Player newPlayer = new Player(nickname);

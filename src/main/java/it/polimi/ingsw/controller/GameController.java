@@ -1,20 +1,28 @@
 package it.polimi.ingsw.controller;
 
+import it.polimi.ingsw.model.chat.exceptions.SenderEqualsRecipientException;
 import it.polimi.ingsw.model.coordinate.Coordinates;
 import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.game.GameModelInterface;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
+/**
+ * the game controller ensures the communication through client controller and server model
+ */
 public class GameController {
     private final GameModelInterface gameModel;
 
     /**
      * creates the gameController
+     *
      * @param gameModel the model reffered to the game
+     *
      */
     public GameController(GameModelInterface gameModel) {
         this.gameModel = gameModel;
+
     }
 
     /**
@@ -78,10 +86,53 @@ public class GameController {
             return false;
         } catch (InvalidPlayerException e){
             return false;
+        } catch (TokenAlreadyGivenException e) {
+            return false;
         }
     }
 
 
+    /**
+     * used to create a broadcast message
+     * @param player the player that will be post the message
+     * @param message the message to be posted
+     * @return true, if the message can be posted, false otherwise
+     */
+    public boolean postBroadCastMessage(String player, String message){
+        try {
+            gameModel.postMessage(player, Optional.empty(),message);
+        } catch (SenderEqualsRecipientException e) {
+            return false;
+        } catch (InvalidPlayerException e) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * used to create a message to a certain player in the same game
+     * @param player the player that want to send the message
+     * @param receiver the player that will receive the message
+     * @param message the message to be sent
+     * @return false, if the message cannot be posted or sent to the receiver, true otherwise
+     */
+    public boolean postDirectMessage(String player, String receiver,String message){
+
+        try {
+            gameModel.postMessage(player,Optional.of(receiver),message);
+        } catch (SenderEqualsRecipientException e) {
+            return false;
+        } catch (InvalidPlayerException e) {
+            return false;
+        }
+
+        return true;
+    }
+
+    protected GameModelInterface getGameControlled(){
+        return gameModel;
+    }
 
 
 

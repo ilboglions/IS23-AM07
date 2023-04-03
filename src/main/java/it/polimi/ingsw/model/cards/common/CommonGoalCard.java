@@ -3,12 +3,11 @@ package it.polimi.ingsw.model.cards.common;
 import it.polimi.ingsw.model.bookshelf.PlayerBookshelf;
 import it.polimi.ingsw.model.exceptions.NotEnoughSpaceException;
 import it.polimi.ingsw.model.exceptions.PlayersNumberOutOfRange;
+import it.polimi.ingsw.model.exceptions.TokenAlreadyGivenException;
 import it.polimi.ingsw.model.tokens.ScoringToken;
 import it.polimi.ingsw.model.tokens.TokenPoint;
 
-import java.util.EmptyStackException;
-import java.util.Objects;
-import java.util.Stack;
+import java.util.*;
 
 import static it.polimi.ingsw.model.utilities.UtilityFunctions.MAX_PLAYERS;
 
@@ -20,6 +19,8 @@ public abstract class CommonGoalCard {
      * description stores the description of the card constraint
      */
     private final String description;
+
+    private final Set<String> PlayersReachedGoal;
     /**
      * this attribute represent the stack of the ScoringTokens assigned to the common card
      */
@@ -52,6 +53,7 @@ public abstract class CommonGoalCard {
             tokenStack.push( new ScoringToken(TokenPoint.EIGHT));
         }
 
+        PlayersReachedGoal = new HashSet<>();
     }
 
     /**
@@ -59,8 +61,12 @@ public abstract class CommonGoalCard {
      * @return the token point earned by the Player
      * @throws EmptyStackException if all the tokenPoints have been distributed
      */
-    public ScoringToken popToken() throws EmptyStackException {
+    public ScoringToken popTokenTo(String Player) throws EmptyStackException, TokenAlreadyGivenException {
+
+        if(PlayersReachedGoal.contains(Player)) throw new TokenAlreadyGivenException();
+        PlayersReachedGoal.add(Player);
         return tokenStack.pop();
+
     }
 
     /**

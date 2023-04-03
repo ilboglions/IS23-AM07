@@ -1,5 +1,8 @@
 package it.polimi.ingsw.model.game;
 
+import it.polimi.ingsw.model.chat.Chat;
+import it.polimi.ingsw.model.chat.Message;
+import it.polimi.ingsw.model.chat.exceptions.SenderEqualsRecipientException;
 import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.cards.common.CommonGoalCard;
 import it.polimi.ingsw.model.coordinate.Coordinates;
@@ -25,15 +28,17 @@ public class Game implements GameModelInterface {
     private boolean isStarted;
     private int playerTurn;
     private boolean isLastTurn;
-    private DeckPersonal deckPersonal;
-    private DeckCommon deckCommon;
-    private BagHolder bagHolder;
+    private final DeckPersonal deckPersonal;
+    private final BagHolder bagHolder;
+
+    private final Chat chat;
 
     public Game(int numPlayers, Player host) throws FileNotFoundException, NegativeFieldException, PlayersNumberOutOfRange, NotEnoughCardsException {
         this.numPlayers = numPlayers;
+        this.chat = new Chat();
         this.players = new ArrayList<>();
         this.livingRoom = new LivingRoomBoard(numPlayers);
-        this.deckCommon = new DeckCommon(numPlayers,"src/main/java/it/polimi/ingsw/model/cards/confFiles/commonCards.json");
+        DeckCommon deckCommon = new DeckCommon(numPlayers, "src/main/java/it/polimi/ingsw/model/cards/confFiles/commonCards.json");
         this.deckPersonal = new DeckPersonal("src/main/java/it/polimi/ingsw/model/cards/confFiles/personalCards.json", "src/main/java/it/polimi/ingsw/model/cards/confFiles/pointsReference.json");
         this.bagHolder = new BagHolder();
         this.isStarted = false;
@@ -49,6 +54,16 @@ public class Game implements GameModelInterface {
         this.players.add(host);
     }
 
+    /**
+     * check if the game can be started
+     * @return true, if the game have the right conditions to start, false otherwise
+     */
+    public boolean canStart() {
+       return this.numPlayers == players.size();
+    }
+
+
+
     public void start() throws NotAllPlayersHaveJoinedException{
         if (players.size() < numPlayers) throw new NotAllPlayersHaveJoinedException("player connected: "+players.size()+" players required: "+numPlayers);
 
@@ -60,11 +75,22 @@ public class Game implements GameModelInterface {
         this.playerTurn = 0;
     }
 
-    public void updatePlayerPoints(String username) throws InvalidPlayerException {
+    public void updatePlayerPoints(String username) throws InvalidPlayerException, NotEnoughSpaceException {
         Optional<Player> player = searchPlayer(username);
 
         if(player.isEmpty())
             throw new InvalidPlayerException();
+        Player p = player.get();
+        for ( CommonGoalCard c : this.commonGoalCards) {
+            if( c.verifyConstraint(player.get().getBookshelf()) ){
+                try{
+                    p.addToken(c.popTokenTo(p.getUsername()));
+                } catch (TokenAlreadyGivenException ignored){
+
+                }
+
+            }
+        }
 
         player.get().updatePoints(stdPointsReference);
     }
@@ -78,11 +104,24 @@ public class Game implements GameModelInterface {
         return new ArrayList<>(current.get().getTokenAcquired());
     }*/
 
+    /**
+     * gets the player that is in the turn
+     * @return a String representing the name of the player
+     * @throws GameEndedException if the game is ended
+     */
     public String getPlayerInTurn() throws GameEndedException {
         if (isLastTurn && this.playerTurn == this.players.size() - 1) throw new GameEndedException();
         return players.get(playerTurn).getUsername();
     }
 
+    /**
+     * make it possible to move tiles from the livingroomBoard to a column of the current player in  turn
+     * @param source the source coordinates
+     * @param column the column chosen by the player
+     * @throws InvalidCoordinatesException if the coordinates chosen don't follow the constraints
+     * @throws EmptySlotException if one of the coordinate is empty
+     * @throws NotEnoughSpaceException it the column has no enough space left
+     */
     public void moveTiles(ArrayList<Coordinates> source, int column) throws InvalidCoordinatesException, EmptySlotException, NotEnoughSpaceException {
         /*
             checks done:
@@ -117,15 +156,28 @@ public class Game implements GameModelInterface {
         currPlayer.getBookshelf().insertItemTile(column,temp);
     }
 
-
+    /**
+     * checks if the item tiles in a certain coordinate can be chosen by the player
+     * @param coords the coordinates in the livingroomboard containing the interested tiles
+     * @return true, if is possible to get that tiles, false otherwise
+     * @throws EmptySlotException if one of the  coordinates referes to an empty slot
+     */
     public boolean getItemTiles(ArrayList<Coordinates> coords) throws EmptySlotException {
         return  livingRoom.checkValidRetrieve(coords);
     }
 
+    /**
+     * checks if the livingroom need to be refilled
+     * @return true, if is necessary to refill the livingroom, false otherwise
+     */
     public boolean checkRefill(){
         return livingRoom.checkRefill();
     }
 
+
+    /**
+     * refills the living room
+     */
     public void refillLivingRoom() {
 
         // here we don't do the check if the livingBoard actually needs to be refilled, before changing the turn the controller calls for the check
@@ -142,6 +194,10 @@ public class Game implements GameModelInterface {
         }
     }
 
+    /**
+     * checks if the bookshelf of the player in turn is completed
+     * @return true, if the bookshelf is full, false otherwise
+     */
     public boolean checkBookshelfComplete() {
 
         if ( isLastTurn ) return true;
@@ -155,6 +211,11 @@ public class Game implements GameModelInterface {
         return false;
     }
 
+    /**
+     * if the game is ended, it returns the username of the winner player
+     * @return the player that have won the game
+     * @throws GameNotEndedException if the game is not yet ended
+     */
     public String getWinner() throws GameNotEndedException {
         if(!this.isLastTurn)
             throw new GameNotEndedException("No one has completed the bookshelf");
@@ -170,28 +231,47 @@ public class Game implements GameModelInterface {
         return players.stream().max(Comparator.comparing(Player::getPoints)).get().getUsername();
     }
 
-    public boolean addPlayer(Player newPlayer) {
+    /**
+     * make it possible to insert a new player in the game
+     * @param newPlayer the Player to be insert
+     * @throws NicknameAlreadyUsedException if the nickname of the player have been already choosen
+     * @throws PlayersNumberOutOfRange if the game have reached the maximum number of players
+     */
+    public void addPlayer(Player newPlayer) throws NicknameAlreadyUsedException, PlayersNumberOutOfRange {
+
+        if(players.size() >= this.numPlayers ) throw new PlayersNumberOutOfRange("max number of player reached! The player can not be added to the game!");
+
         if(newPlayer == null) {
             throw new NullPointerException();
         } else {
             if(!userUsed(newPlayer.getUsername())) {
                 players.add(newPlayer); // player added to game active player
-                return true;    // true means that the player has been added and no problem occurred
+                try {
+                    newPlayer.assignPersonalCard(deckPersonal.draw(1).get(0));
+                } catch (FileNotFoundException e) {
+                    throw new RuntimeException(e);
+                } catch (NotEnoughCardsException e) {
+                    throw new RuntimeException(e);
+                }
             } else {
-                return false;   // false: the player has not been added to the game
+                throw new NicknameAlreadyUsedException("A player with the same nickname is already present in the game");
             }
         }
-
     }
 
     private boolean userUsed(String user) {
-        for(int i=0; i<players.size(); i++) {
-            if(players.get(i).getUsername().equals(user)) // if there is a player with the same user
+        for (Player player : players) {
+            if (player.getUsername().equals(user)) // if there is a player with the same user
                 return true;    // true: there is already a player with the same username
         }
         return false;   //there are no players with this user
     }
 
+    /**
+     * used to search a player inside  the game
+     * @param username the username used to search the player
+     * @return the player, if exists, an empty optional, if no player with that username is present
+     */
     public Optional<Player> searchPlayer(String username) {
 
         for(Player player : players) {
@@ -201,10 +281,19 @@ public class Game implements GameModelInterface {
 
         return Optional.empty();
     }
+
+    /**
+     * get if the game is already started
+     * @return true, if the game is started
+     */
     public boolean getIsStarted() {
         return isStarted;
     }
 
+    /**
+     * switches the turn to the next player
+     * @return true, if the switch can be done, false otherwise
+     */
     public boolean setPlayerTurn(){
 
         if(this.isLastTurn && this.playerTurn == this.players.size() - 1){
@@ -213,8 +302,26 @@ public class Game implements GameModelInterface {
 
         this.playerTurn = (this.playerTurn + 1) % this.numPlayers;
 
-
         return true;
     }
 
+
+    @Override
+    public ArrayList<Message> getPlayerMessages(String player) throws InvalidPlayerException {
+        if(this.searchPlayer(player).isEmpty()) throw new InvalidPlayerException();
+
+        return chat.getPlayerMessages(player);
+    }
+
+    @Override
+    public void postMessage(String sender, Optional<String> receiver, String message) throws SenderEqualsRecipientException, InvalidPlayerException {
+        if(this.searchPlayer(sender).isEmpty()) throw new InvalidPlayerException();
+
+        if(receiver.isPresent() ){
+            if( this.searchPlayer(receiver.get()).isEmpty() ) throw new InvalidPlayerException();
+        }
+
+        chat.postMessage(new Message(sender, receiver, message));
+
+    }
 }
