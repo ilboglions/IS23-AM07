@@ -4,16 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2e3d8ba5-7979-460d-b6ee-dca2aaf5b565" name="Changes" comment="fixed controller implementations, deleted chatController">
-      <change afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/exceptions/TokenAlreadyGivenException.java" afterDir="false" />
+    <list default="true" id="2e3d8ba5-7979-460d-b6ee-dca2aaf5b565" name="Changes" comment="Implemented some test classes for common cards">
+      <change afterPath="$PROJECT_DIR$/src/test/java/it/polimi/ingsw/model/cards/common/CommonGoalCardTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/controller/LobbyController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/controller/LobbyController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/cards/common/CommonGoalCard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/cards/common/CommonGoalCard.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/distributable/DeckPersonal.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/distributable/DeckPersonal.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/game/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/game/Game.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/game/GameModelInterface.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/game/GameModelInterface.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/lobby/Lobby.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/lobby/Lobby.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/player/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/player/Player.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/cards/common/MarioPyramid.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/cards/common/MarioPyramid.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/it/polimi/ingsw/model/cards/common/CheckPatternTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/it/polimi/ingsw/model/cards/common/CheckPatternTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,6 +47,9 @@
     </option>
     <option name="currentCommit" value="1" />
     <option name="onto" value="c4f2bb05bc48d7ef176b249b1cf39fbe8bec102e" />
+  </component>
+  <component name="GitToolBoxStore">
+    <option name="projectConfigVersion" value="5" />
   </component>
   <component name="GithubPullRequestsUISettings">
     <option name="selectedUrlAndAccountId">
@@ -106,7 +104,7 @@
       <recent name="$PROJECT_DIR$/src/main" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.App">
+  <component name="RunManager">
     <configuration name="App" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="it.polimi.ingsw.App" />
       <module name="AM07" />
@@ -268,6 +266,8 @@
       <workItem from="1680466221403" duration="54000" />
       <workItem from="1680506808470" duration="306000" />
       <workItem from="1680510900573" duration="2658000" />
+      <workItem from="1680525182368" duration="765000" />
+      <workItem from="1680553447695" duration="6603000" />
     </task>
     <task id="LOCAL-00001" summary="added model directory">
       <created>1678961934466</created>
@@ -510,7 +510,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="origin/dev" />
+                        <option value="dev" />
                       </list>
                     </value>
                   </entry>
@@ -549,5 +549,16 @@
     <MESSAGE value="implemented chat controller, to be tested" />
     <MESSAGE value="fixed controller implementations, deleted chatController" />
     <option name="LAST_COMMIT_MESSAGE" value="fixed controller implementations, deleted chatController" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/IS23_AM07$CheckPatternTest.ic" NAME="CheckPatternTest Coverage Results" MODIFIED="1680520737621" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>it.polimi.ingsw.model.cards.common.*</FILTER>
+    </SUITE>
+    <SUITE FILE_PATH="coverage/IS23_AM07$App.ic" NAME="App Coverage Results" MODIFIED="1680520554939" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>it.polimi.ingsw.*</FILTER>
+    </SUITE>
+    <SUITE FILE_PATH="coverage/IS23_AM07$MarioPyramidTest.ic" NAME="MarioPyramidTest Coverage Results" MODIFIED="1680520957237" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>it.polimi.ingsw.model.cards.common.*</FILTER>
+    </SUITE>
   </component>
 </project>

@@ -44,13 +44,22 @@ public class MarioPyramid extends CommonGoalCard{
 
         if(reverse) startColumn = bookshelf.getColumns() - 1;
         else startColumn = 0;
+        int startingOffset;
 
         try{
             while(r < bookshelf.getRows() && bookshelf.getItemTile(new Coordinates(r,startColumn)).isPresent()) r++;
-
-            refRow = r;
+            if(r==0)
+                return false;
+            else if(r==bookshelf.getRows()) {
+                refRow = bookshelf.getRows() - 1;
+                startingOffset=1;
+            }
+            else {
+                refRow = r;
+                startingOffset = 0;
+            }
             if(reverse){
-                for(c = startColumn; c >= 0 && refRow >= 0; c--){
+                for(c = startColumn - startingOffset; c >= 0 && refRow > 0; c--){
                     if ( !(bookshelf.getItemTile(new Coordinates( refRow , c)).isEmpty() && bookshelf.getItemTile(new Coordinates( refRow - 1 , c)).isPresent()))
                         return false;
                     refRow--;
@@ -58,7 +67,7 @@ public class MarioPyramid extends CommonGoalCard{
                 return true;
             }
 
-            for(c = 1; c < bookshelf.getColumns() && refRow >= 0; c++){
+            for(c = startColumn + startingOffset; c < bookshelf.getColumns() && refRow > 0; c++){
                 if ( !(bookshelf.getItemTile(new Coordinates( refRow , c)).isEmpty() && bookshelf.getItemTile(new Coordinates( refRow - 1 , c)).isPresent()))
                     return false;
                 refRow--;

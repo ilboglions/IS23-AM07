@@ -72,7 +72,8 @@ class CheckPatternTest {
     void NotEnoughSpaceExceptionTester() throws InvalidCoordinatesException, PlayersNumberOutOfRange {
         pattern = new ArrayList<>();
         ArrayList<Coordinates> singlepattern = new ArrayList<Coordinates>();
-        singlepattern.add(new Coordinates(15,1));
+        singlepattern.add(new Coordinates(8,8));
+        pattern.add(singlepattern);
         CheckPattern testcard = new CheckPattern(2,"description_test", pattern, true);
         Map<Coordinates, ItemTile> testtiles = new HashMap<>();
         testtiles.put(new Coordinates(2,1), ItemTile.CAT);
