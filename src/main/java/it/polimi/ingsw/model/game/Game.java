@@ -34,6 +34,8 @@ public class Game implements GameModelInterface {
     private final Chat chat;
 
     public Game(int numPlayers, Player host) throws FileNotFoundException, NegativeFieldException, PlayersNumberOutOfRange, NotEnoughCardsException {
+        Objects.requireNonNull(host);
+
         this.numPlayers = numPlayers;
         this.chat = new Chat();
         this.players = new ArrayList<>();
@@ -52,6 +54,9 @@ public class Game implements GameModelInterface {
         this.stdPointsReference.put(6, 8); //6 or more adjacent 8 points
         this.commonGoalCards = deckCommon.draw(2);
         this.players.add(host);
+        host.assignPersonalCard(deckPersonal.draw(1).get(0));
+
+        //refillLivingRoom() is ok to put it here?
     }
 
     /**
@@ -64,8 +69,9 @@ public class Game implements GameModelInterface {
 
 
 
-    public void start() throws NotAllPlayersHaveJoinedException{
-        if (players.size() < numPlayers) throw new NotAllPlayersHaveJoinedException("player connected: "+players.size()+" players required: "+numPlayers);
+    public void start() throws NotAllPlayersHaveJoinedException, GameNotEndedException {
+        if(players.size() < numPlayers) throw new NotAllPlayersHaveJoinedException("player connected: "+players.size()+" players required: "+numPlayers);
+        if(this.isStarted) throw new GameNotEndedException("The game has already started");
 
         Random random = new Random();
         int firstPlayerIndex = random.nextInt(this.numPlayers);
@@ -109,8 +115,10 @@ public class Game implements GameModelInterface {
      * @return a String representing the name of the player
      * @throws GameEndedException if the game is ended
      */
-    public String getPlayerInTurn() throws GameEndedException {
-        if (isLastTurn && this.playerTurn == this.players.size() - 1) throw new GameEndedException();
+    public String getPlayerInTurn() throws GameEndedException, GameNotStartedException {
+        if(isLastTurn && this.playerTurn == this.players.size() - 1) throw new GameEndedException();
+        if(!this.isStarted) throw new GameNotStartedException("The game has not started yet");
+
         return players.get(playerTurn).getUsername();
     }
 
@@ -122,13 +130,15 @@ public class Game implements GameModelInterface {
      * @throws EmptySlotException if one of the coordinate is empty
      * @throws NotEnoughSpaceException it the column has no enough space left
      */
-    public void moveTiles(ArrayList<Coordinates> source, int column) throws InvalidCoordinatesException, EmptySlotException, NotEnoughSpaceException {
+    public void moveTiles(ArrayList<Coordinates> source, int column) throws InvalidCoordinatesException, EmptySlotException, NotEnoughSpaceException, GameNotStartedException {
         /*
             checks done:
              - source LivingRoomBoard slot actually have a tile
              - column is in the proper range
              - destination coordinates refer to only a common column
          */
+        if(!this.isStarted)
+            throw new GameNotStartedException("The game has not started yet");
 
         ArrayList<ItemTile> temp = new ArrayList<>(); // tile to be added to the playerBookshelf
         Optional<ItemTile> tile;
@@ -146,8 +156,10 @@ public class Game implements GameModelInterface {
             tile = livingRoom.getTile(source.get(i));
             if(tile.isEmpty())
                 throw new EmptySlotException("Trying to retrieve a tile from a empty slot");
-            else
+            else {
                 temp.add(i, tile.get()); //we are assured that the value is present by the previous if statement
+                livingRoom.removeTile(source.get(i));
+            }
         }
         /*
             now we should have validated the source coordinates
@@ -181,7 +193,7 @@ public class Game implements GameModelInterface {
     public void refillLivingRoom() {
 
         // here we don't do the check if the livingBoard actually needs to be refilled, before changing the turn the controller calls for the check
-        ArrayList<ItemTile> removed, useToRefill, fromBag;
+        ArrayList<ItemTile> removed, useToRefill;
         removed = livingRoom.emptyBoard();
         try {
             useToRefill = bagHolder.draw(livingRoom.getNumCells() - removed.size());
@@ -199,6 +211,7 @@ public class Game implements GameModelInterface {
      * @return true, if the bookshelf is full, false otherwise
      */
     public boolean checkBookshelfComplete() {
+        if(!this.isStarted) return false;
 
         if ( isLastTurn ) return true;
 
@@ -216,7 +229,10 @@ public class Game implements GameModelInterface {
      * @return the player that have won the game
      * @throws GameNotEndedException if the game is not yet ended
      */
-    public String getWinner() throws GameNotEndedException {
+    public String getWinner() throws GameNotEndedException, GameNotStartedException {
+        if(!this.isStarted)
+            throw new GameNotStartedException("The game has not started yet");
+
         if(!this.isLastTurn)
             throw new GameNotEndedException("No one has completed the bookshelf");
 
@@ -233,7 +249,7 @@ public class Game implements GameModelInterface {
 
     /**
      * make it possible to insert a new player in the game
-     * @param newPlayer the Player to be insert
+     * @param newPlayer the Player to be inserted
      * @throws NicknameAlreadyUsedException if the nickname of the player have been already choosen
      * @throws PlayersNumberOutOfRange if the game have reached the maximum number of players
      */
@@ -273,6 +289,7 @@ public class Game implements GameModelInterface {
      * @return the player, if exists, an empty optional, if no player with that username is present
      */
     public Optional<Player> searchPlayer(String username) {
+        Objects.requireNonNull(username);
 
         for(Player player : players) {
             if(player.getUsername().equals(username))

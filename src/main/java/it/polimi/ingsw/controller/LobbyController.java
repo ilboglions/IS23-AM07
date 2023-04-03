@@ -69,6 +69,8 @@ public class LobbyController {
                 gameController.getGameControlled().start();
         } catch (NotAllPlayersHaveJoinedException ignored) {
 
+        } catch (GameNotEndedException e) {
+            return Optional.empty();
         }
 
         return Optional.of(gameController);

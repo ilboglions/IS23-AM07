@@ -11,13 +11,13 @@ import java.util.Optional;
 public interface GameModelInterface {
 
     boolean getIsStarted();
-    void start() throws NotAllPlayersHaveJoinedException;
-    String getPlayerInTurn() throws GameEndedException;
-    void moveTiles(ArrayList<Coordinates> source, int column) throws InvalidCoordinatesException, EmptySlotException, NotEnoughSpaceException;
+    void start() throws NotAllPlayersHaveJoinedException, GameNotEndedException;
+    String getPlayerInTurn() throws GameEndedException, GameNotStartedException;
+    void moveTiles(ArrayList<Coordinates> source, int column) throws InvalidCoordinatesException, EmptySlotException, NotEnoughSpaceException, GameNotStartedException;
     boolean getItemTiles(ArrayList<Coordinates> coords) throws EmptySlotException;
     void refillLivingRoom();
     boolean checkBookshelfComplete();
-    String getWinner() throws GameNotEndedException;
+    String getWinner() throws GameNotEndedException, GameNotStartedException;
     boolean checkRefill();
     void updatePlayerPoints(String username) throws InvalidPlayerException, NotEnoughSpaceException, TokenAlreadyGivenException;
     boolean setPlayerTurn();

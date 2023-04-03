@@ -38,6 +38,8 @@ public class GameController {
             if(!player.equals(gameModel.getPlayerInTurn())) return false;
         } catch (GameEndedException e) {
             return false;
+        } catch (GameNotStartedException e) {
+            return false;
         }
 
         try{
@@ -61,6 +63,8 @@ public class GameController {
         try {
             if(!player.equals(gameModel.getPlayerInTurn())) return false;
         } catch (GameEndedException e) {
+            return false;
+        } catch (GameNotStartedException e) {
             return false;
         }
 
@@ -87,6 +91,8 @@ public class GameController {
         } catch (InvalidPlayerException e){
             return false;
         } catch (TokenAlreadyGivenException e) {
+            return false;
+        } catch (GameNotStartedException e) {
             return false;
         }
     }
