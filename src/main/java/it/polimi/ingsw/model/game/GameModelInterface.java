@@ -1,9 +1,12 @@
 package it.polimi.ingsw.model.game;
 
+import it.polimi.ingsw.model.chat.Message;
+import it.polimi.ingsw.model.chat.exceptions.SenderEqualsRecipientException;
 import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.coordinate.Coordinates;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 public interface GameModelInterface {
 
@@ -20,4 +23,8 @@ public interface GameModelInterface {
     boolean setPlayerTurn();
 
      boolean canStart();
+     // CHAT FUNCTIONALITIES
+    ArrayList<Message> getPlayerMessages(String player) throws InvalidPlayerException;
+
+    void postMessage(String sender, Optional<String> reciver, String message) throws SenderEqualsRecipientException, InvalidPlayerException;
 }

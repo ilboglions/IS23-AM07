@@ -4,15 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2e3d8ba5-7979-460d-b6ee-dca2aaf5b565" name="Changes" comment="fixed nicknameAlreadyUseException">
-      <change afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/controller/ChatController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/game/GameChatInterface.java" afterDir="false" />
+    <list default="true" id="2e3d8ba5-7979-460d-b6ee-dca2aaf5b565" name="Changes" comment="fixed controller implementations, deleted chatController">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/controller/ChatController.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/controller/GameController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/controller/GameController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/controller/LobbyController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/controller/LobbyController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/chat/Chat.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/chat/Chat.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/game/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/game/Game.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/game/GameChatInterface.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/game/GameModelInterface.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/game/GameModelInterface.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/lobby/Lobby.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/lobby/Lobby.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -262,7 +262,11 @@
       <workItem from="1680368597000" duration="2390000" />
       <workItem from="1680371253609" duration="731000" />
       <workItem from="1680436627484" duration="37000" />
-      <workItem from="1680453796823" duration="1450000" />
+      <workItem from="1680453796823" duration="2269000" />
+      <workItem from="1680462370919" duration="34000" />
+      <workItem from="1680466221403" duration="54000" />
+      <workItem from="1680506808470" duration="306000" />
+      <workItem from="1680510900573" duration="459000" />
     </task>
     <task id="LOCAL-00001" summary="added model directory">
       <created>1678961934466</created>
@@ -474,7 +478,14 @@
       <option name="project" value="LOCAL" />
       <updated>1680370929528</updated>
     </task>
-    <option name="localTasksCounter" value="31" />
+    <task id="LOCAL-00031" summary="implemented chat controller, to be tested">
+      <created>1680456065038</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1680456065038</updated>
+    </task>
+    <option name="localTasksCounter" value="32" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -504,8 +515,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Implemented all DeckCommon options, to be tested" />
-    <MESSAGE value="DeckCommon: fixed generation of the only necessary cards" />
     <MESSAGE value="updated Bookshelf, added ItemTile class, implemented constraint for FiveXtiles" />
     <MESSAGE value="implemented FullColumns constraints, fixed minor issues" />
     <MESSAGE value="all common Cards implemented, added Bookshelf getAllItems" />
@@ -529,6 +538,8 @@
     <MESSAGE value="first implementation of the gameController, added tokenPoint for the first player, fixed" />
     <MESSAGE value="improved gameController, implemented lobby controller, written first javadoc" />
     <MESSAGE value="fixed nicknameAlreadyUseException" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed nicknameAlreadyUseException" />
+    <MESSAGE value="implemented chat controller, to be tested" />
+    <MESSAGE value="fixed controller implementations, deleted chatController" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed controller implementations, deleted chatController" />
   </component>
 </project>

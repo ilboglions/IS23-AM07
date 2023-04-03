@@ -19,7 +19,7 @@ import it.polimi.ingsw.model.tokens.TokenPoint;
 import java.io.FileNotFoundException;
 import java.util.*;
 
-public class Game implements GameModelInterface, GameChatInterface {
+public class Game implements GameModelInterface {
     private final LivingRoomBoard livingRoom;
     private final ArrayList<Player> players;
     private final ArrayList<CommonGoalCard> commonGoalCards;
