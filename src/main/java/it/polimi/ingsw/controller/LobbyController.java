@@ -60,6 +60,8 @@ public class LobbyController {
             return Optional.empty();
         } catch (PlayersNumberOutOfRange e) {
             return Optional.empty();
+        } catch (NullPointerException e) {
+            return Optional.empty();
         }
 
         try {
@@ -92,6 +94,8 @@ public class LobbyController {
             } catch (NotEnoughCardsException e) {
                 return Optional.empty();
             } catch (PlayersNumberOutOfRange e) {
+                return Optional.empty();
+            } catch (NullPointerException e) {
                 return Optional.empty();
             }
         return Optional.of(gameController);
