@@ -20,8 +20,6 @@ public class Chat {
         ArrayList<Message> old = new ArrayList<>(sentMessages);
         if(msg == null) {
             throw new NullPointerException("Message pointer is null");
-        } else if (msg.getSender() == null || msg.getContent() == null || msg.getRecipient().isEmpty()) {
-            throw new NullPointerException("Message parameter is null");
         } else if ( msg.getRecipient().isPresent() && msg.getRecipient().get().equals(msg.getSender()) ) {
             // if the sender is also the recipient
             throw new SenderEqualsRecipientException("Sender and recipient are the same player!!");

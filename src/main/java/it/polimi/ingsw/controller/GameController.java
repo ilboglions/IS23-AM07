@@ -86,6 +86,8 @@ public class GameController {
             return false;
         } catch (InvalidPlayerException e){
             return false;
+        } catch (TokenAlreadyGivenException e) {
+            return false;
         }
     }
 
