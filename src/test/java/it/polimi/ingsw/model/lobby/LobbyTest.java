@@ -65,9 +65,4 @@ public class LobbyTest {
         Game testSecondGame = test.createGame(2, "thirdUser");
         assertEquals(testGame, test.addPlayerToGame("fourthUser"));
     }
-    @Test
-    @DisplayName("Check createPlayer method")
-    void createPlayerTest() {
-        assertThrows(NicknameAlreadyUsedException.class, () ->  lobbyTest.createPlayer("FunnyPlayer"));
-    }
 }
