@@ -1,0 +1,573 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="2e3d8ba5-7979-460d-b6ee-dca2aaf5b565" name="Changes" comment="CommonGoalCard testing complete, MarioPyramid verifyCostraint fix">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/livingRoom/LivingRoomBoard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/livingRoom/LivingRoomBoard.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/it/polimi/ingsw/model/livingRoom/LivingRoomBoardTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/it/polimi/ingsw/model/livingRoom/LivingRoomBoardTest.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Enum" />
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RESET_MODE" value="HARD" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;
+  }
+}</component>
+  <component name="GitRewordedCommitMessages">
+    <option name="commitMessagesMapping">
+      <RewordedCommitMessageMapping>
+        <option name="originalMessage" value="created Interfaces for decks, created tokens and common goal abstract" />
+        <option name="rewordedMessage" value="added Gson library to pom.xml&#10;fixed and added comments on tooManyPlayersException&#10;created Interfaces for decks, created tokens and common goal abstract" />
+      </RewordedCommitMessageMapping>
+    </option>
+    <option name="currentCommit" value="1" />
+    <option name="onto" value="c4f2bb05bc48d7ef176b249b1cf39fbe8bec102e" />
+  </component>
+  <component name="GitToolBoxStore">
+    <option name="projectConfigVersion" value="5" />
+  </component>
+  <component name="GithubPullRequestsUISettings">
+    <option name="selectedUrlAndAccountId">
+      <UrlAndAccount>
+        <option name="accountId" value="372251a4-cf4d-4352-abe1-d33e8c987562" />
+        <option name="url" value="https://github.com/ilboglions/IS23-AM07.git" />
+      </UrlAndAccount>
+    </option>
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="importingSettings">
+      <MavenImportingSettings>
+        <option name="workspaceImportEnabled" value="true" />
+      </MavenImportingSettings>
+    </option>
+  </component>
+  <component name="ProjectId" id="2MMvOqgmYo6NBXIaOPegaqVzhDs" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/filippo/IdeaProjects/IDS_MyShelfie/src/test/java/it/polimi/ingsw/model/cards&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="it.polimi.ingsw.model.exceptions" />
+      <recent name="it.polimi.ingsw.model.lobby.exceptions" />
+      <recent name="it.polimi.ingsw.model.cards" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/test/java/it/polimi/ingsw/model/cards" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/main/java/it/polimi/ingsw" />
+      <recent name="$PROJECT_DIR$/src/main" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="App" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="it.polimi.ingsw.App" />
+      <module name="AM07" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="it.polimi.ingsw.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="AppTest.theAnswer" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="AM07" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="it.polimi.ingsw.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="it.polimi.ingsw" />
+      <option name="MAIN_CLASS_NAME" value="it.polimi.ingsw.AppTest" />
+      <option name="METHOD_NAME" value="theAnswer" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="CardBookshelfTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="AM07" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="it.polimi.ingsw.model.bookshelf.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="it.polimi.ingsw.model.bookshelf" />
+      <option name="MAIN_CLASS_NAME" value="it.polimi.ingsw.model.bookshelf.CardBookshelfTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="LobbyTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="AM07" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="it.polimi.ingsw.model.lobby.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="it.polimi.ingsw.model.lobby" />
+      <option name="MAIN_CLASS_NAME" value="it.polimi.ingsw.model.lobby.LobbyTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="LobbyTest.checkException" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="AM07" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="it.polimi.ingsw.model.lobby.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="it.polimi.ingsw.model.lobby" />
+      <option name="MAIN_CLASS_NAME" value="it.polimi.ingsw.model.lobby.LobbyTest" />
+      <option name="METHOD_NAME" value="checkException" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="testConfig" type="JUnit" factoryName="JUnit">
+      <module name="AM07" />
+      <option name="PACKAGE_NAME" value="it.polimi.ingsw" />
+      <option name="MAIN_CLASS_NAME" value="it.polimi.ingsw.AppTest" />
+      <option name="METHOD_NAME" value="" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Application.App" />
+      <item itemvalue="JUnit.testConfig" />
+      <item itemvalue="JUnit.CardBookshelfTest" />
+      <item itemvalue="JUnit.AppTest.theAnswer" />
+      <item itemvalue="JUnit.LobbyTest" />
+      <item itemvalue="JUnit.LobbyTest.checkException" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.App" />
+        <item itemvalue="JUnit.CardBookshelfTest" />
+        <item itemvalue="JUnit.LobbyTest" />
+        <item itemvalue="JUnit.LobbyTest.checkException" />
+        <item itemvalue="JUnit.AppTest.theAnswer" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="2e3d8ba5-7979-460d-b6ee-dca2aaf5b565" name="Changes" comment="" />
+      <created>1677590236359</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1677590236359</updated>
+      <workItem from="1677590237607" duration="5336000" />
+      <workItem from="1678393920744" duration="4000" />
+      <workItem from="1678959971470" duration="5856000" />
+      <workItem from="1678980137753" duration="193000" />
+      <workItem from="1679041128119" duration="4617000" />
+      <workItem from="1679048870313" duration="923000" />
+      <workItem from="1679060510811" duration="7937000" />
+      <workItem from="1679069786464" duration="1800000" />
+      <workItem from="1679072774104" duration="917000" />
+      <workItem from="1679129631884" duration="5447000" />
+      <workItem from="1679137955333" duration="3985000" />
+      <workItem from="1679147257313" duration="7907000" />
+      <workItem from="1679301287037" duration="159000" />
+      <workItem from="1679301458083" duration="81000" />
+      <workItem from="1679314133665" duration="2159000" />
+      <workItem from="1679317888216" duration="4357000" />
+      <workItem from="1679323457207" duration="4982000" />
+      <workItem from="1679350054379" duration="2880000" />
+      <workItem from="1679399246876" duration="377000" />
+      <workItem from="1679402234713" duration="4083000" />
+      <workItem from="1679584616920" duration="533000" />
+      <workItem from="1679658532984" duration="1103000" />
+      <workItem from="1679666220695" duration="3889000" />
+      <workItem from="1679671020320" duration="45000" />
+      <workItem from="1679671179714" duration="1738000" />
+      <workItem from="1679748720518" duration="6635000" />
+      <workItem from="1679905092830" duration="776000" />
+      <workItem from="1679917631411" duration="10566000" />
+      <workItem from="1679938909075" duration="802000" />
+      <workItem from="1680003422076" duration="4133000" />
+      <workItem from="1680011733753" duration="2008000" />
+      <workItem from="1680095846776" duration="663000" />
+      <workItem from="1680178219237" duration="1373000" />
+      <workItem from="1680193857322" duration="1213000" />
+      <workItem from="1680202377865" duration="3189000" />
+      <workItem from="1680255917362" duration="118000" />
+      <workItem from="1680256198295" duration="557000" />
+      <workItem from="1680258052056" duration="1000" />
+      <workItem from="1680258068709" duration="1000" />
+      <workItem from="1680265657007" duration="510000" />
+      <workItem from="1680280034422" duration="501000" />
+      <workItem from="1680344002361" duration="14571000" />
+      <workItem from="1680368597000" duration="2390000" />
+      <workItem from="1680371253609" duration="731000" />
+      <workItem from="1680436627484" duration="37000" />
+      <workItem from="1680453796823" duration="2269000" />
+      <workItem from="1680462370919" duration="34000" />
+      <workItem from="1680466221403" duration="54000" />
+      <workItem from="1680506808470" duration="306000" />
+      <workItem from="1680510900573" duration="2658000" />
+      <workItem from="1680525182368" duration="765000" />
+      <workItem from="1680553447695" duration="10870000" />
+    </task>
+    <task id="LOCAL-00001" summary="added model directory">
+      <created>1678961934466</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1678961934466</updated>
+    </task>
+    <task id="LOCAL-00002" summary="fixed model directory position">
+      <created>1678962077076</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1678962077076</updated>
+    </task>
+    <task id="LOCAL-00003" summary="created Interfaces for decks, created tokens and common goal abstract">
+      <created>1678965196003</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1678965196003</updated>
+    </task>
+    <task id="LOCAL-00004" summary="fixed and added comments on tooManyPlayersException">
+      <created>1678965806082</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1678965806082</updated>
+    </task>
+    <task id="LOCAL-00005" summary="added Gson library to pom.xml">
+      <created>1679043747348</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1679043747348</updated>
+    </task>
+    <task id="LOCAL-00006" summary="created first commonCards classes">
+      <created>1679045370378</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1679045370378</updated>
+    </task>
+    <task id="LOCAL-00007" summary="created commonCards, started the implementation of the DeckCommon">
+      <created>1679067661671</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1679067661671</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Implemented all DeckCommon options, to be tested">
+      <created>1679068216703</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1679068216703</updated>
+    </task>
+    <task id="LOCAL-00009" summary="DeckCommon: fixed generation of the only necessary cards">
+      <created>1679070176474</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1679070176474</updated>
+    </task>
+    <task id="LOCAL-00010" summary="updated Bookshelf, added ItemTile class, implemented constraint for FiveXtiles">
+      <created>1679132758107</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1679132758107</updated>
+    </task>
+    <task id="LOCAL-00011" summary="implemented FullColumns constraints, fixed minor issues">
+      <created>1679141032114</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1679141032114</updated>
+    </task>
+    <task id="LOCAL-00012" summary="most of commonCards implemented, added Bookshelf getAllItems">
+      <created>1679153127149</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1679153127149</updated>
+    </task>
+    <task id="LOCAL-00013" summary="implemented constrain of CheckPattern">
+      <created>1679154147025</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1679154147025</updated>
+    </task>
+    <task id="LOCAL-00014" summary="fixed minor issues in Distributale">
+      <created>1679315634077</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1679315634077</updated>
+    </task>
+    <task id="LOCAL-00015" summary="created PersonalCards and confFiles structure">
+      <created>1679322283790</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1679322283790</updated>
+    </task>
+    <task id="LOCAL-00016" summary="written first javaDocs files">
+      <created>1679326945168</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1679326945168</updated>
+    </task>
+    <task id="LOCAL-00017" summary="uploaded javaDoc files">
+      <created>1679328278406</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1679328278407</updated>
+    </task>
+    <task id="LOCAL-00018" summary="added javadoc to implemented classes">
+      <created>1679352923340</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1679352923340</updated>
+    </task>
+    <task id="LOCAL-00019" summary="solved minor issues in equalsSquares, implemented equals coordinates">
+      <created>1679404231746</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1679404231746</updated>
+    </task>
+    <task id="LOCAL-00020" summary="fixed coordinates bugs">
+      <created>1679405985940</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1679405985940</updated>
+    </task>
+    <task id="LOCAL-00021" summary="fixed equals  Square algorithm">
+      <created>1679658966999</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1679658966999</updated>
+    </task>
+    <task id="LOCAL-00022" summary="fixed lobby methods, added new exceptions and equalsSquare test implementation">
+      <created>1679672737018</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1679672737018</updated>
+    </task>
+    <task id="LOCAL-00023" summary="improved json common card and checkPattern">
+      <created>1679905225685</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1679905225685</updated>
+    </task>
+    <task id="LOCAL-00024" summary="improved common cards, added mario pyramid card">
+      <created>1679923302200</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1679923302200</updated>
+    </task>
+    <task id="LOCAL-00025" summary="fixed configuration files, fixed some import references">
+      <created>1679939015000</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1679939015000</updated>
+    </task>
+    <task id="LOCAL-00026" summary="fixed card issues, added exception notEnoughSpace">
+      <created>1680179555912</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1680179555912</updated>
+    </task>
+    <task id="LOCAL-00027" summary="fixed InvalidCoordinatesExceptions, improved livingroom">
+      <created>1680360241315</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1680360241315</updated>
+    </task>
+    <task id="LOCAL-00028" summary="first implementation of the gameController, added tokenPoint for the first player, fixed">
+      <created>1680366822874</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1680366822874</updated>
+    </task>
+    <task id="LOCAL-00029" summary="improved gameController, implemented lobby controller, written first javadoc">
+      <created>1680370842866</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1680370842866</updated>
+    </task>
+    <task id="LOCAL-00030" summary="fixed nicknameAlreadyUseException">
+      <created>1680370929528</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1680370929528</updated>
+    </task>
+    <task id="LOCAL-00031" summary="implemented chat controller, to be tested">
+      <created>1680456065038</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1680456065038</updated>
+    </task>
+    <task id="LOCAL-00032" summary="fixed controller implementations, deleted chatController">
+      <created>1680511393690</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1680511393690</updated>
+    </task>
+    <task id="LOCAL-00033" summary="CommonGoalCard testing complete, MarioPyramid verifyCostraint fix">
+      <created>1680560650959</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1680560650959</updated>
+    </task>
+    <option name="localTasksCounter" value="34" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="dev" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="implemented FullColumns constraints, fixed minor issues" />
+    <MESSAGE value="all common Cards implemented, added Bookshelf getAllItems" />
+    <MESSAGE value="most of commonCards implemented, added Bookshelf getAllItems" />
+    <MESSAGE value="implemented constrain of CheckPattern" />
+    <MESSAGE value="fixed minor issues in Distributale" />
+    <MESSAGE value="created PersonalCards and confFiles structure" />
+    <MESSAGE value="written first javaDocs files" />
+    <MESSAGE value="uploaded javaDoc files" />
+    <MESSAGE value="added javadoc to implemented classes" />
+    <MESSAGE value="solved minor issues in equalsSquares, implemented equals coordinates" />
+    <MESSAGE value="fixed coordinates bugs" />
+    <MESSAGE value="fixed equals  Square algorithm" />
+    <MESSAGE value="fixed lobby methods, added new exceptions and equalsSquare test implementation" />
+    <MESSAGE value="improved json common card and checkPattern" />
+    <MESSAGE value="improved common cards, added mario pyramid card" />
+    <MESSAGE value="fixed configuration files, fixed some import references" />
+    <MESSAGE value="fixed card issues, added basic structure of server tcp communication" />
+    <MESSAGE value="fixed card issues, added exception notEnoughSpace" />
+    <MESSAGE value="fixed InvalidCoordinatesExceptions, improved livingroom" />
+    <MESSAGE value="first implementation of the gameController, added tokenPoint for the first player, fixed" />
+    <MESSAGE value="improved gameController, implemented lobby controller, written first javadoc" />
+    <MESSAGE value="fixed nicknameAlreadyUseException" />
+    <MESSAGE value="implemented chat controller, to be tested" />
+    <MESSAGE value="fixed controller implementations, deleted chatController" />
+    <MESSAGE value="CommonGoalCard testing complete, MarioPyramid verifyCostraint fix" />
+    <option name="LAST_COMMIT_MESSAGE" value="CommonGoalCard testing complete, MarioPyramid verifyCostraint fix" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/IS23_AM07$CheckPatternTest.ic" NAME="CheckPatternTest Coverage Results" MODIFIED="1680520737621" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>it.polimi.ingsw.model.cards.common.*</FILTER>
+    </SUITE>
+    <SUITE FILE_PATH="coverage/IS23_AM07$App.ic" NAME="App Coverage Results" MODIFIED="1680520554939" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>it.polimi.ingsw.*</FILTER>
+    </SUITE>
+    <SUITE FILE_PATH="coverage/IS23_AM07$CommonGoalCardTest.ic" NAME="CommonGoalCardTest Coverage Results" MODIFIED="1680560569303" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>it.polimi.ingsw.model.cards.common.*</FILTER>
+    </SUITE>
+    <SUITE FILE_PATH="coverage/IS23_AM07$MarioPyramidTest.ic" NAME="MarioPyramidTest Coverage Results" MODIFIED="1680520957237" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>it.polimi.ingsw.model.cards.common.*</FILTER>
+    </SUITE>
+  </component>
+</project>

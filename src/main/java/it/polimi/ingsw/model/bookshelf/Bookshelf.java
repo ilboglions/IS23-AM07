@@ -1,10 +1,12 @@
 package it.polimi.ingsw.model.bookshelf;
 
 import it.polimi.ingsw.model.coordinate.Coordinates;
+import it.polimi.ingsw.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.model.tiles.ItemTile;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -18,11 +20,11 @@ public abstract class Bookshelf {
     /**
      * the number of rows of the bookshelf
      */
-    private final int rows;
+    protected final int rows;
     /**
      * the number of columns of the bookshelf
      */
-    private final int columns;
+    protected final int columns;
 
     /**
      * the constructor initialize the bookshelf
@@ -57,13 +59,21 @@ public abstract class Bookshelf {
         Map<ItemTile, Integer> bookshelfMap = new HashMap<>();
         for( int i = 0 ; i < this.rows; i++){
             for( int j = 0; j < this.columns; j++){
-                this.getItemTile(new Coordinates(i,j))
-                        .ifPresent(
-                                el -> {
-                                    int val = bookshelfMap.get(el) != null ? bookshelfMap.get(el) : 0;
-                                    bookshelfMap.put(el, val+1 );
-                                });
+                try {
+                    this.getItemTile(new Coordinates(i,j))
+                            .ifPresent(
+                                    el -> {
+                                        int val = bookshelfMap.get(el) != null ? bookshelfMap.get(el) : 0;
+                                        bookshelfMap.put(el, val+1 );
+                                    });
+                } catch (InvalidCoordinatesException e) {
+                    throw new RuntimeException(e);
+                }
             }
+        }
+        for (ItemTile item : ItemTile.values()) {
+            if (bookshelfMap.get(item) == null)
+                bookshelfMap.put(item, 0);
         }
         return bookshelfMap;
     }
@@ -75,10 +85,36 @@ public abstract class Bookshelf {
      * @throws IndexOutOfBoundsException if the index required is outside the matrix domain
      */
     public Optional<ItemTile> getItemTile(Coordinates c) throws IndexOutOfBoundsException{
+        Objects.requireNonNull(c, "You passed a null instead of a Coordinates object");
         if(c.getColumn() >= columns || c.getRow() >= rows) {
             throw new IndexOutOfBoundsException("Given coordinates are out of range");
         }
 
         return Optional.ofNullable(tiles[c.getRow()][c.getColumn()]);
+    }
+
+    /**
+     * Method to calculate the number of ItemTiles that are in the same position and equal between this bookshelf and the one passed as parameter
+     * @param bookshelf the bookshelf to check the elements on
+     * @return an int that is the number of ItemTile in the same position and equal between the two bookshelf
+     */
+    public int nElementsOverlapped(Bookshelf bookshelf) {
+        Objects.requireNonNull(bookshelf, "You passed a null instead of a Bookshelf object");
+        int count = 0;
+        Coordinates c;
+
+        for(int i=0; i < this.rows; i++) {
+            for(int j=0; j < this.columns; j++) {
+                try {
+                    c = new Coordinates(i,j);
+                } catch (InvalidCoordinatesException e) {
+                    throw new RuntimeException(e);
+                }
+                if(bookshelf.getItemTile(c).isPresent() && this.getItemTile(c).isPresent() && bookshelf.getItemTile(c).get().equals(this.getItemTile(c).get()))
+                    count++;
+            }
+        }
+
+        return count;
     }
 }

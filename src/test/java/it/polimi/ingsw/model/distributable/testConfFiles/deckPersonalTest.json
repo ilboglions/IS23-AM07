@@ -1,0 +1,58 @@
+[
+  [
+    [
+      {"row" :  1, "column":  1},
+      "CAT"
+    ],
+    [
+      {"row" :  0, "column":  3},
+      "FRAME"
+    ],
+    [
+      {"row" :  0, "column":  4},
+      "PLANT"
+    ]
+  ],
+  [
+    [
+      {"row" :  1, "column":  1},
+      "CAT"
+    ],
+    [
+      {"row" :  0, "column":  3},
+      "FRAME"
+    ],
+    [
+      {"row" :  0, "column":  4},
+      "PLANT"
+    ]
+  ],
+  [
+    [
+      {"row" :  1, "column":  1},
+      "CAT"
+    ],
+    [
+      {"row" :  0, "column":  3},
+      "FRAME"
+    ],
+    [
+      {"row" :  0, "column":  4},
+      "PLANT"
+    ]
+  ],
+  [
+    [
+      {"row" :  1, "column":  1},
+      "CAT"
+    ],
+    [
+      {"row" :  0, "column":  3},
+      "FRAME"
+    ],
+    [
+      {"row" :  0, "column":  4},
+      "PLANT"
+    ]
+  ]
+]
