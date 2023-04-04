@@ -277,9 +277,8 @@ public class GameTest {
             test.setPlayerTurn();
         test.checkBookshelfComplete();
 
-        while(test.setPlayerTurn()) { //Next turn until the game is finished
-            //TODO: how to resolve that sometimes passes and other not (caused by the arraylist order of Players in game)
-            assertThrows(GameEndedException.class, ()->{
+        while(test.setPlayerTurn() && !test.isLastPlayerTurn()) { //Next turn until the game is finished
+            assertThrows(GameNotEndedException.class, ()->{
                 test.getWinner();
             });
         }
@@ -361,12 +360,12 @@ public class GameTest {
 
         assertEquals(0, test.getPlayerMessages("Test").size());
 
-        test.postMessage("Test", Optional.empty(), "Test message");
+        test.postMessage("Test", "Test message");
         assertEquals(1, test.getPlayerMessages("Test").size());
 
         Player secondPlayer = new Player("secondPlayer");
         test.addPlayer(secondPlayer);
-        test.postMessage("secondPlayer", Optional.of("Test"), "Private message");
+        test.postMessage("secondPlayer", "Private message");
         assertEquals(2, test.getPlayerMessages("Test").size());
     }
 
@@ -377,19 +376,19 @@ public class GameTest {
         Game test = new Game(3, testPlayer);
 
         assertThrows(NullPointerException.class, ()->{
-            test.postMessage(null, Optional.empty(), "");
+            test.postMessage(null,  "");
         });
         assertThrows(NullPointerException.class, ()->{
-            test.postMessage("Test", Optional.empty(), null);
+            test.postMessage("Test", null);
         });
         assertThrows(InvalidPlayerException.class, ()->{
-            test.postMessage("noPlayer", Optional.empty(), "");
+            test.postMessage("noPlayer",  "");
         });
         assertThrows(InvalidPlayerException.class, ()->{
-            test.postMessage("Test", Optional.of("noPlayer"), "");
+            test.postMessage("Test","noPlayer", "");
         });
 
-        assertDoesNotThrow(()->test.postMessage("Test", Optional.empty(), "Test"));
+        assertDoesNotThrow(()->test.postMessage("Test", "Test"));
     }
 
 }

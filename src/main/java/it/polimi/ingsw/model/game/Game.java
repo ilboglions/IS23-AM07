@@ -55,8 +55,6 @@ public class Game implements GameModelInterface {
         this.commonGoalCards = deckCommon.draw(2);
         this.players.add(host);
         host.assignPersonalCard(deckPersonal.draw(1).get(0));
-
-        //refillLivingRoom() is ok to put it here?
     }
 
     /**
@@ -79,6 +77,7 @@ public class Game implements GameModelInterface {
         Collections.rotate(players, -firstPlayerIndex);
         this.isStarted = true;
         this.playerTurn = 0;
+        this.refillLivingRoom();
     }
 
     public void updatePlayerPoints(String username) throws InvalidPlayerException, NotEnoughSpaceException {
@@ -236,7 +235,7 @@ public class Game implements GameModelInterface {
         if(!this.isLastTurn)
             throw new GameNotEndedException("No one has completed the bookshelf");
 
-        if(playerTurn != players.size()-1)
+        if(!this.isLastPlayerTurn())
             //If the playerTurn is not the last index of players arraylist it means that the game is not ended, because the arraylist is ordered from the first player to the last
             throw new GameNotEndedException("The last turn has not completed yet");
 
@@ -331,14 +330,27 @@ public class Game implements GameModelInterface {
     }
 
     @Override
-    public void postMessage(String sender, Optional<String> receiver, String message) throws SenderEqualsRecipientException, InvalidPlayerException {
+    public void postMessage(String sender, String receiver, String message) throws SenderEqualsRecipientException, InvalidPlayerException {
         if(this.searchPlayer(sender).isEmpty()) throw new InvalidPlayerException();
 
-        if(receiver.isPresent() ){
-            if( this.searchPlayer(receiver.get()).isEmpty() ) throw new InvalidPlayerException();
-        }
+
+        if( this.searchPlayer(receiver).isEmpty() ) throw new InvalidPlayerException();
 
         chat.postMessage(new Message(sender, receiver, message));
 
+    }
+
+    public void postMessage(String sender, String message) throws InvalidPlayerException {
+        if(this.searchPlayer(sender).isEmpty()) throw new InvalidPlayerException();
+
+        try {
+            chat.postMessage(new Message(sender, message));
+        } catch ( SenderEqualsRecipientException ignored ){
+
+        }
+    }
+
+    public boolean isLastPlayerTurn(){
+        return this.isLastTurn && this.playerTurn == this.players.size() - 1;
     }
 }

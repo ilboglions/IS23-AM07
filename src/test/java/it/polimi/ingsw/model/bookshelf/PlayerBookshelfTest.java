@@ -103,7 +103,10 @@ class PlayerBookshelfTest {
 
        Map<ItemTile, Integer> allTiles = test.getAllItemTiles();
        for(Map.Entry<ItemTile, Integer> entry : allTiles.entrySet()) {
-           assertEquals(entry.getValue(), 2 * 5);
+           if(testArray.contains(entry.getKey()))
+                assertEquals(2*5, entry.getValue());
+           else
+               assertEquals(0, entry.getValue());
        }
     }
 
@@ -120,7 +123,10 @@ class PlayerBookshelfTest {
             }
         }
 
-        assertTrue(test.getAllItemTiles().isEmpty());
+        Map<ItemTile, Integer> allTiles = test.getAllItemTiles();
+        for(Map.Entry<ItemTile, Integer> entry : allTiles.entrySet()) {
+            assertEquals(0, entry.getValue());
+        }
         assertFalse(test.checkComplete());
     }
 

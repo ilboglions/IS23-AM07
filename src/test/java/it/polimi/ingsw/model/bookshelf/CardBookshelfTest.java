@@ -2,7 +2,6 @@ package it.polimi.ingsw.model.bookshelf;
 
 import it.polimi.ingsw.model.coordinate.Coordinates;
 import it.polimi.ingsw.model.exceptions.InvalidCoordinatesException;
-import it.polimi.ingsw.model.exceptions.NotEnoughSpaceException;
 import it.polimi.ingsw.model.tiles.ItemTile;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -58,12 +57,11 @@ class CardBookshelfTest {
         }
 
         Map<ItemTile, Integer> insertedTiles = new HashMap<>();
+        for(ItemTile itemTile : ItemTile.values()){
+            insertedTiles.put(itemTile, 0);
+        }
         for(ItemTile itemTile : testPattern.values()) {
-            if(insertedTiles.containsKey(itemTile)) {
-                insertedTiles.put(itemTile, insertedTiles.get(itemTile) + 1);
-            } else {
-                insertedTiles.put(itemTile, 1);
-            }
+            insertedTiles.put(itemTile, insertedTiles.get(itemTile) + 1);
         }
 
         Map<ItemTile, Integer> allTiles = test.getAllItemTiles();

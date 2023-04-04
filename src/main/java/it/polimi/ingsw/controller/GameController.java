@@ -106,9 +106,7 @@ public class GameController {
      */
     public boolean postBroadCastMessage(String player, String message){
         try {
-            gameModel.postMessage(player, Optional.empty(),message);
-        } catch (SenderEqualsRecipientException e) {
-            return false;
+            gameModel.postMessage(player, message);
         } catch (InvalidPlayerException e) {
             return false;
         }
@@ -126,7 +124,7 @@ public class GameController {
     public boolean postDirectMessage(String player, String receiver,String message){
 
         try {
-            gameModel.postMessage(player,Optional.of(receiver),message);
+            gameModel.postMessage(player,receiver,message);
         } catch (SenderEqualsRecipientException e) {
             return false;
         } catch (InvalidPlayerException e) {

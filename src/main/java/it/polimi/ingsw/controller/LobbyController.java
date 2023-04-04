@@ -4,7 +4,8 @@ import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.game.GameModelInterface;
 import it.polimi.ingsw.model.lobby.Lobby;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -12,7 +13,7 @@ import java.util.Optional;
  */
 public class LobbyController {
     private final Lobby lobbyModel;
-    private final ArrayList<GameController> gameControllers;
+    private final Map<GameModelInterface,GameController> gameControllers;
 
     /**
      * creates the controller of the lobby
@@ -20,7 +21,7 @@ public class LobbyController {
      */
     public LobbyController(Lobby lobbyModel) {
         this.lobbyModel = lobbyModel;
-        gameControllers = new ArrayList<>();
+        gameControllers = new HashMap<>();
     }
 
     /**
@@ -46,12 +47,10 @@ public class LobbyController {
         GameController  gameController;
         try {
             GameModelInterface gameModel = lobbyModel.addPlayerToGame(player);
-            if (gameControllers.stream().anyMatch(el -> el.getGameControlled().equals(gameModel))){
-                gameController = gameControllers.stream().filter(el -> el.getGameControlled().equals(gameModel)).findFirst().get();
-            } else {
-                gameController = new GameController(gameModel);
-                gameControllers.add(gameController);
-            }
+
+                gameController = gameControllers.get(gameModel);
+
+
         } catch (NoAvailableGameException e) {
             return Optional.empty();
         } catch (InvalidPlayerException e) {
@@ -85,10 +84,9 @@ public class LobbyController {
     public Optional<GameController> createGame(String player, int nPlayers){
             GameController  gameController;
             try {
-                GameModelInterface g = lobbyModel.createGame(nPlayers,player);
-                 gameController = new GameController(g);
-                 this.gameControllers.add(gameController);
-
+                GameModelInterface gameModel = lobbyModel.createGame(nPlayers,player);
+                gameController = new GameController(gameModel);
+                this.gameControllers.put(gameModel,gameController);
             } catch (BrokenInternalGameConfigurations e) {
                 return Optional.empty();
             } catch (InvalidPlayerException e) {

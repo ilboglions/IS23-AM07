@@ -26,5 +26,6 @@ public interface GameModelInterface {
      // CHAT FUNCTIONALITIES
     ArrayList<Message> getPlayerMessages(String player) throws InvalidPlayerException;
 
-    void postMessage(String sender, Optional<String> reciver, String message) throws SenderEqualsRecipientException, InvalidPlayerException;
+    void postMessage(String sender, String receiver, String message) throws SenderEqualsRecipientException, InvalidPlayerException;
+    public void postMessage(String sender, String message) throws InvalidPlayerException;
 }

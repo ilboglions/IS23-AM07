@@ -22,7 +22,7 @@ class ChatTest {
             test.getPlayerMessages(null);
         });
         assertThrows(SenderEqualsRecipientException.class, ()->{
-            test.postMessage(new Message("test", Optional.of("test"), "test message"));
+            test.postMessage(new Message("test", "test", "test message"));
         });
     }
 
@@ -33,11 +33,11 @@ class ChatTest {
 
         assertEquals(0, test.getPlayerMessages("noUser").size());
 
-        test.postMessage(new Message("testUser", Optional.of("recipientUser"), "Test message"));
+        test.postMessage(new Message("testUser", "recipientUser", "Test message"));
         assertEquals(1, test.getPlayerMessages("testUser").size());
         assertEquals(1, test.getPlayerMessages("recipientUser").size());
 
-        test.postMessage(new Message("testUser", Optional.empty(), "Global message"));
+        test.postMessage(new Message("testUser", "Global message"));
         assertEquals(2, test.getPlayerMessages("testUser").size());
         assertEquals(2, test.getPlayerMessages("recipientUser").size());
     }
