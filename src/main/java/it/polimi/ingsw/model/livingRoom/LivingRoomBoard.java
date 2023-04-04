@@ -87,6 +87,15 @@ public class LivingRoomBoard {
             }
         }
     }
+    protected Slot[][] getAllSlots(){
+        Slot[][] newslot = new Slot[rows][cols];
+        for(int i=0; i< rows; i++){
+            for(int j=0; j < cols; j++){
+                newslot[i][j] = new Slot(this.slot[i][j].getSlotType(),this.slot[i][j].getItemTile());
+            }
+        }
+        return newslot;
+    }
 
     public boolean checkRefill() {
         // this method tells you if the livingRoom needs to be refilled with new tiles or not
@@ -200,7 +209,7 @@ public class LivingRoomBoard {
         return numCells;
     }
 
-    private class JsonLivingBoardCell {
+    protected class JsonLivingBoardCell {
         public int row,col;
         public SlotType slotType;
 

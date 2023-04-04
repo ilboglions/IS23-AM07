@@ -4,11 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2e3d8ba5-7979-460d-b6ee-dca2aaf5b565" name="Changes" comment="Implemented some test classes for common cards">
-      <change afterPath="$PROJECT_DIR$/src/test/java/it/polimi/ingsw/model/cards/common/CommonGoalCardTest.java" afterDir="false" />
+    <list default="true" id="2e3d8ba5-7979-460d-b6ee-dca2aaf5b565" name="Changes" comment="CommonGoalCard testing complete, MarioPyramid verifyCostraint fix">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/cards/common/MarioPyramid.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/cards/common/MarioPyramid.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/it/polimi/ingsw/model/cards/common/CheckPatternTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/it/polimi/ingsw/model/cards/common/CheckPatternTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/livingRoom/LivingRoomBoard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/model/livingRoom/LivingRoomBoard.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/it/polimi/ingsw/model/livingRoom/LivingRoomBoardTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/it/polimi/ingsw/model/livingRoom/LivingRoomBoardTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -267,7 +266,7 @@
       <workItem from="1680506808470" duration="306000" />
       <workItem from="1680510900573" duration="2658000" />
       <workItem from="1680525182368" duration="765000" />
-      <workItem from="1680553447695" duration="6603000" />
+      <workItem from="1680553447695" duration="10870000" />
     </task>
     <task id="LOCAL-00001" summary="added model directory">
       <created>1678961934466</created>
@@ -493,7 +492,14 @@
       <option name="project" value="LOCAL" />
       <updated>1680511393690</updated>
     </task>
-    <option name="localTasksCounter" value="33" />
+    <task id="LOCAL-00033" summary="CommonGoalCard testing complete, MarioPyramid verifyCostraint fix">
+      <created>1680560650959</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1680560650959</updated>
+    </task>
+    <option name="localTasksCounter" value="34" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -523,7 +529,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="updated Bookshelf, added ItemTile class, implemented constraint for FiveXtiles" />
     <MESSAGE value="implemented FullColumns constraints, fixed minor issues" />
     <MESSAGE value="all common Cards implemented, added Bookshelf getAllItems" />
     <MESSAGE value="most of commonCards implemented, added Bookshelf getAllItems" />
@@ -548,7 +553,8 @@
     <MESSAGE value="fixed nicknameAlreadyUseException" />
     <MESSAGE value="implemented chat controller, to be tested" />
     <MESSAGE value="fixed controller implementations, deleted chatController" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed controller implementations, deleted chatController" />
+    <MESSAGE value="CommonGoalCard testing complete, MarioPyramid verifyCostraint fix" />
+    <option name="LAST_COMMIT_MESSAGE" value="CommonGoalCard testing complete, MarioPyramid verifyCostraint fix" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/IS23_AM07$CheckPatternTest.ic" NAME="CheckPatternTest Coverage Results" MODIFIED="1680520737621" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
@@ -556,6 +562,9 @@
     </SUITE>
     <SUITE FILE_PATH="coverage/IS23_AM07$App.ic" NAME="App Coverage Results" MODIFIED="1680520554939" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
       <FILTER>it.polimi.ingsw.*</FILTER>
+    </SUITE>
+    <SUITE FILE_PATH="coverage/IS23_AM07$CommonGoalCardTest.ic" NAME="CommonGoalCardTest Coverage Results" MODIFIED="1680560569303" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>it.polimi.ingsw.model.cards.common.*</FILTER>
     </SUITE>
     <SUITE FILE_PATH="coverage/IS23_AM07$MarioPyramidTest.ic" NAME="MarioPyramidTest Coverage Results" MODIFIED="1680520957237" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
       <FILTER>it.polimi.ingsw.model.cards.common.*</FILTER>
