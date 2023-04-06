@@ -9,8 +9,5 @@
         <module name="AM07" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="IS23-AM07" target="19" />
-    </bytecodeTargetLevel>
   </component>
 </project>

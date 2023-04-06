@@ -2,14 +2,12 @@ package it.polimi.ingsw.model.chat;
 
 import it.polimi.ingsw.model.chat.exceptions.SenderEqualsRecipientException;
 import it.polimi.ingsw.model.listeners.ChatListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
 public class Chat {
 
     private final ArrayList<Message> sentMessages;
-    private final PropertyChangeListener chatListener;
+    private final ChatListener chatListener;
 
     public Chat() {
         sentMessages = new ArrayList<>();
@@ -17,7 +15,6 @@ public class Chat {
     }
 
     public void postMessage(Message msg) throws SenderEqualsRecipientException {
-        ArrayList<Message> old = new ArrayList<>(sentMessages);
         if(msg == null) {
             throw new NullPointerException("Message pointer is null");
         } else if ( msg.getRecipient().isPresent() && msg.getRecipient().get().equals(msg.getSender()) ) {
@@ -25,7 +22,7 @@ public class Chat {
             throw new SenderEqualsRecipientException("Sender and recipient are the same player!!");
         }
         sentMessages.add(msg);
-        chatListener.propertyChange( new PropertyChangeEvent(this, "newMessage", old, sentMessages));
+        chatListener.onNewMessage(msg);
         // this is to be discussed, we always said we did not want to expose the rep, so should we send a sort of copy?
         // since we want to maintain a chronological order of the messages, we can use add. add puts the new element at the end of the list
     }
