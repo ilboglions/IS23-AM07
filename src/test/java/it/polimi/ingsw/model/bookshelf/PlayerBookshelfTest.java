@@ -12,8 +12,14 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Class used to test PlayerBookshelf class
+ */
 class PlayerBookshelfTest {
 
+    /**
+     * This tests that all the exception are firing correctly, such as null values, coordinates out of range or not enough space in a column to add tiles
+     */
     @Test
     @DisplayName("Test all the exceptions")
     void testExceptions() {
@@ -71,6 +77,11 @@ class PlayerBookshelfTest {
         });
     }
 
+    /**
+     * This tests if the method checkComplete works correctly if the bookshelf is complete or not
+     * @throws NotEnoughSpaceException  if there is not enough space in the selected column
+     * @throws InvalidCoordinatesException if the coordinates are out of range
+     */
     @Test
     @DisplayName("Test for a complete bookshelf")
     void testFull() throws NotEnoughSpaceException, InvalidCoordinatesException {
@@ -110,6 +121,11 @@ class PlayerBookshelfTest {
        }
     }
 
+    /**
+     * This tests if retrieving tiles and checking if the bookshelf is completed after adding an empty arraylist of ItemTile is working correctly
+     * @throws NotEnoughSpaceException if there is not enough space in the selected column
+     * @throws InvalidCoordinatesException if the coordinates are out of range
+     */
     @Test
     @DisplayName("Test empty Arraylist of tiles")
     void testEmpty() throws NotEnoughSpaceException, InvalidCoordinatesException {
@@ -130,6 +146,10 @@ class PlayerBookshelfTest {
         assertFalse(test.checkComplete());
     }
 
+    /**
+     * This tests if the number of ItemTile in the same position in two bookshelf are counted correctly with the nElementsOverlapped() method
+     * @throws NotEnoughSpaceException if there is not enough space in the selected column
+     */
     @Test
     @DisplayName("Test overlapping elements")
     void testOverlapped() throws NotEnoughSpaceException {

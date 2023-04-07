@@ -18,6 +18,7 @@ public class Coordinates {
      * creates an immutable object representing the coordinate point
      * @param row - the x coordinate to be assigned
      * @param column - the y coordinate to be assigned
+     * @throws InvalidCoordinatesException if the row or column param is less than 0 or grater than 8
      */
     public Coordinates(int row, int column) throws InvalidCoordinatesException {
         if(row < 0 || column < 0 || row > 8 || column > 8){

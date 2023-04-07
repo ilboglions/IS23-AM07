@@ -2,7 +2,7 @@ package it.polimi.ingsw.model.game;
 
 import it.polimi.ingsw.model.chat.Chat;
 import it.polimi.ingsw.model.chat.Message;
-import it.polimi.ingsw.model.chat.exceptions.SenderEqualsRecipientException;
+import it.polimi.ingsw.model.exceptions.SenderEqualsRecipientException;
 import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.cards.common.CommonGoalCard;
 import it.polimi.ingsw.model.coordinate.Coordinates;
@@ -19,20 +19,65 @@ import it.polimi.ingsw.model.tokens.TokenPoint;
 import java.io.FileNotFoundException;
 import java.util.*;
 
+/**
+ * This class is used to handle the main logic of a Game
+ */
 public class Game implements GameModelInterface {
+    /**
+     * The board of the game
+     */
     private final LivingRoomBoard livingRoom;
+    /**
+     * The list of all the player that have joined the game
+     */
     private final ArrayList<Player> players;
+    /**
+     * The list of the extracted CommonGoalCard for the game
+     */
     private final ArrayList<CommonGoalCard> commonGoalCards;
+    /**
+     * The reference to the points for the adjacency groups inside the player's bookshelf, keys are the number of tiles for groups and the values are the relative points
+     */
     private final Map<Integer, Integer> stdPointsReference;
+    /**
+     * The total number of the player for this game
+     */
     private final int numPlayers;
+    /**
+     * Store if the game is started or is waiting for players to join
+     */
     private boolean isStarted;
+    /**
+     * Store the index of the current player in the round
+     */
     private int playerTurn;
+    /**
+     * Store if there is a player that have completed the bookshelf, so if it is the last round of the game
+     */
     private boolean isLastTurn;
+    /**
+     * The reference to the DeckPersonal to draw PersonalGoalCard for each player
+     */
     private final DeckPersonal deckPersonal;
+    /**
+     * The reference to the BagHolder to draw ItemTiles to refill the LivingRoomBoard
+     */
     private final BagHolder bagHolder;
 
+    /**
+     * The reference to the Chat of the game
+     */
     private final Chat chat;
 
+    /**
+     * Constructor of the Game objects, it initializes all the attributes, set stdPointsReference, draw the CommonGoalCard, add the host to the game and assign to him a PersonalGoalCard
+     * @param numPlayers is the total number of the players for the game, the initialization of the board changes based on this
+     * @param host is the Player that have created the game
+     * @throws FileNotFoundException if there was a problem loading the JSON config files
+     * @throws NegativeFieldException if the number of cards to draw is negative
+     * @throws PlayersNumberOutOfRange if the numPlayers is less than 2 or more than 4
+     * @throws NotEnoughCardsException if the cards to be drawn are more than the number of cards loaded with the JSON file configuration
+     */
     public Game(int numPlayers, Player host) throws FileNotFoundException, NegativeFieldException, PlayersNumberOutOfRange, NotEnoughCardsException {
         Objects.requireNonNull(host);
 
@@ -65,8 +110,11 @@ public class Game implements GameModelInterface {
        return this.numPlayers == players.size();
     }
 
-
-
+    /**
+     * This method is used to start the game, it chooses randomly a starting player
+     * @throws NotAllPlayersHaveJoinedException if the number of player that have joined is less than the number set when the game was created
+     * @throws GameNotEndedException if the game has already started
+     */
     public void start() throws NotAllPlayersHaveJoinedException, GameNotEndedException {
         if(players.size() < numPlayers) throw new NotAllPlayersHaveJoinedException("player connected: "+players.size()+" players required: "+numPlayers);
         if(this.isStarted) throw new GameNotEndedException("The game has already started");
@@ -80,6 +128,12 @@ public class Game implements GameModelInterface {
         this.refillLivingRoom();
     }
 
+    /**
+     * This method is used to update the points of the player passed as argument
+     * @param username the username of the player whose points you wish to update
+     * @throws InvalidPlayerException if there isn't a player with that username inside the game
+     * @throws NotEnoughSpaceException if there was an error with the CommonGoalCard
+     */
     public void updatePlayerPoints(String username) throws InvalidPlayerException, NotEnoughSpaceException {
         Optional<Player> player = searchPlayer(username);
 
@@ -113,6 +167,7 @@ public class Game implements GameModelInterface {
      * gets the player that is in the turn
      * @return a String representing the name of the player
      * @throws GameEndedException if the game is ended
+     * @throws GameNotStartedException if the game has not started yet
      */
     public String getPlayerInTurn() throws GameEndedException, GameNotStartedException {
         if(isLastTurn && this.playerTurn == this.players.size() - 1) throw new GameEndedException();
@@ -122,12 +177,13 @@ public class Game implements GameModelInterface {
     }
 
     /**
-     * make it possible to move tiles from the livingroomBoard to a column of the current player in  turn
+     * make it possible to move tiles from the livingRoomBoard to a column of the current player in  turn
      * @param source the source coordinates
      * @param column the column chosen by the player
      * @throws InvalidCoordinatesException if the coordinates chosen don't follow the constraints
      * @throws EmptySlotException if one of the coordinate is empty
      * @throws NotEnoughSpaceException it the column has no enough space left
+     * @throws GameNotStartedException if the game has not started yet
      */
     public void moveTiles(ArrayList<Coordinates> source, int column) throws InvalidCoordinatesException, EmptySlotException, NotEnoughSpaceException, GameNotStartedException {
         /*
@@ -227,6 +283,7 @@ public class Game implements GameModelInterface {
      * if the game is ended, it returns the username of the winner player
      * @return the player that have won the game
      * @throws GameNotEndedException if the game is not yet ended
+     * @throws GameNotStartedException if the game has not started yet
      */
     public String getWinner() throws GameNotEndedException, GameNotStartedException {
         if(!this.isStarted)
@@ -249,7 +306,7 @@ public class Game implements GameModelInterface {
     /**
      * make it possible to insert a new player in the game
      * @param newPlayer the Player to be inserted
-     * @throws NicknameAlreadyUsedException if the nickname of the player have been already choosen
+     * @throws NicknameAlreadyUsedException if the nickname of the player have been already chosen
      * @throws PlayersNumberOutOfRange if the game have reached the maximum number of players
      */
     public void addPlayer(Player newPlayer) throws NicknameAlreadyUsedException, PlayersNumberOutOfRange {
@@ -267,6 +324,8 @@ public class Game implements GameModelInterface {
                     throw new RuntimeException(e);
                 } catch (NotEnoughCardsException e) {
                     throw new RuntimeException(e);
+                } catch (NegativeFieldException e) {
+                    throw new RuntimeException(e);
                 }
             } else {
                 throw new NicknameAlreadyUsedException("A player with the same nickname is already present in the game");
@@ -274,6 +333,11 @@ public class Game implements GameModelInterface {
         }
     }
 
+    /**
+     * Checks if there is already a user in the game with the same username
+     * @param user the username to check
+     * @return if there is a player with the same username
+     */
     private boolean userUsed(String user) {
         for (Player player : players) {
             if (player.getUsername().equals(user)) // if there is a player with the same user
@@ -321,7 +385,6 @@ public class Game implements GameModelInterface {
         return true;
     }
 
-
     @Override
     public ArrayList<Message> getPlayerMessages(String player) throws InvalidPlayerException {
         if(this.searchPlayer(player).isEmpty()) throw new InvalidPlayerException();
@@ -350,6 +413,10 @@ public class Game implements GameModelInterface {
         }
     }
 
+    /**
+     * Checks if currently is the turn of the last player before the game ends
+     * @return if it's the last player's turn
+     */
     public boolean isLastPlayerTurn(){
         return this.isLastTurn && this.playerTurn == this.players.size() - 1;
     }

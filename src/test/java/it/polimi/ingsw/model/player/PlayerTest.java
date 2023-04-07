@@ -16,8 +16,14 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Class used to test Player class
+ */
 class PlayerTest {
 
+    /**
+     * This tests that the exceptions for null or invalid values work correctly
+     */
     @Test
     @DisplayName("Test all the exceptions")
     void testException(){
@@ -46,6 +52,10 @@ class PlayerTest {
         });
     }
 
+    /**
+     * This tests all the getter and equals methods
+     * @throws InvalidCoordinatesException if the coordinates are out of range
+     */
     @Test
     @DisplayName("Test getter and equals")
     void testGetter() throws InvalidCoordinatesException {
@@ -71,6 +81,10 @@ class PlayerTest {
         assertNotEquals(test, new Player("notEquals"));
     }
 
+    /**
+     * This tests if the points are calculated correctly in case a player has not reached any goal
+     * @throws InvalidCoordinatesException if the coordinates are out of range
+     */
     @Test
     @DisplayName("Test zero points calculation")
     void testZeroPoints() throws InvalidCoordinatesException {
@@ -89,6 +103,11 @@ class PlayerTest {
         assertEquals(0, test.updatePoints(testPointsReference));
     }
 
+    /**
+     * This is a test for generic values of scoring tokens and personal goal reached
+     * @throws NotEnoughSpaceException if there isn't enough space in the column to insert the tiles
+     * @throws InvalidCoordinatesException if the coordinates are out of range
+     */
     @Test
     @DisplayName("Test generic scoring token and personalCard points calculation")
     void testPoints() throws NotEnoughSpaceException, InvalidCoordinatesException {
@@ -127,6 +146,11 @@ class PlayerTest {
         assertEquals(8 + 2, test.updatePoints(testAdjacentPointsReference)); //8 points for the scoring token, 2 for the personalGoalCard and 0 for adjacency groups
     }
 
+    /**
+     * This tests again scoring tokens and personal goal card points with a number of elements overlapping that is exceeding the maximum number of points
+     * @throws NotEnoughSpaceException if there isn't enough space in the column to insert the tiles
+     * @throws InvalidCoordinatesException if the coordinates are out of range
+     */
     @Test
     @DisplayName("Test scoring token and personalCard points calculation exceeding max elements overlapped")
     void testPersonalCardPoints() throws NotEnoughSpaceException, InvalidCoordinatesException {
@@ -180,6 +204,11 @@ class PlayerTest {
         assertEquals(8 + 6, test.updatePoints(testAdjacentPointsReference)); //8 points for the scoring token, 8 for the personalGoalCard and 0 for adjacency groups
     }
 
+    /**
+     * This tests for the correct calculation of points for the adjacent ItemTile groups inside the PlayerBookshelf
+     * @throws NotEnoughSpaceException if there isn't enough space in the column to insert the tiles
+     * @throws InvalidCoordinatesException if the coordinates are out of range
+     */
     @Test
     @DisplayName("Test adjacency points calculation")
     void testPointsAdjacency() throws NotEnoughSpaceException, InvalidCoordinatesException {

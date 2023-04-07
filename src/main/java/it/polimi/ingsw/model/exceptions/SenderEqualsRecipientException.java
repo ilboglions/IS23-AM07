@@ -1,4 +1,4 @@
-package it.polimi.ingsw.model.chat.exceptions;
+package it.polimi.ingsw.model.exceptions;
 
 public class SenderEqualsRecipientException extends Exception {
     public SenderEqualsRecipientException(String msg) {

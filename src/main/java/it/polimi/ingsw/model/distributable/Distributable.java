@@ -21,6 +21,7 @@ public interface Distributable<T> {
      * @throws NegativeFieldException - some implementation need to initialize elements to draw, based on the configuration file, if some negative field is
      * insert, this exception will be thrown
      * @throws PlayersNumberOutOfRange as NegativeField exception, this is thrown if some configurations of the game are not permitted, because of the number of players exceeded
+     * @throws NotEnoughCardsException if the number of cards read from the JSON is not enough to draw the nElements cards
      */
     ArrayList<T> draw(int nElements) throws FileNotFoundException, PlayersNumberOutOfRange, NotEnoughCardsException, NegativeFieldException;
 

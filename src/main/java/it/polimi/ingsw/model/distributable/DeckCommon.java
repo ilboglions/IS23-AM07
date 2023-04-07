@@ -34,6 +34,7 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
      * The DeckCommon constructor initialize the deck with the given attributes
      * @param nPlayers the number of players of the actual game
      * @param configuration the path to the json configuration file
+     * @throws PlayersNumberOutOfRange if the nPlayers is less than 2 and grater than 4
      */
     public DeckCommon(int nPlayers, String configuration) throws PlayersNumberOutOfRange {
         if(nPlayers < 2 || nPlayers > 4)
@@ -49,6 +50,9 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
      * @param nElements the number of elements to draw
      * @return an ArrayList that contains the drawn elements
      * @throws FileNotFoundException if the configuration cannot be found, this exception is thrown
+     * @throws NegativeFieldException if the nElements is negative
+     * @throws PlayersNumberOutOfRange if the number of players is less than 2 or grater than 4
+     * @throws NotEnoughCardsException if the number of the cards read from the JSON file is less than the required cards with nElements
      */
     public ArrayList<CommonGoalCard> draw(int nElements) throws FileNotFoundException, NegativeFieldException, PlayersNumberOutOfRange, NotEnoughCardsException {
         ArrayList<CommonGoalCard> selected = new ArrayList<>();

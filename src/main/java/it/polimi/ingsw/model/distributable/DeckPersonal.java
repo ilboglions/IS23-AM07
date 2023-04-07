@@ -4,6 +4,7 @@ import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import it.polimi.ingsw.model.cards.personal.PersonalGoalCard;
 import it.polimi.ingsw.model.coordinate.Coordinates;
+import it.polimi.ingsw.model.exceptions.NegativeFieldException;
 import it.polimi.ingsw.model.exceptions.NotEnoughCardsException;
 import it.polimi.ingsw.model.tiles.ItemTile;
 
@@ -23,12 +24,10 @@ public class DeckPersonal implements Distributable<PersonalGoalCard> {
     /**
      * used to store the point reference
      */
-
+    private final String pointsReferenceFile;
     /**
      * a set containing all the indexes of the card that have been already distributed
      */
-    private final String pointsReferenceFile;
-
     private final Set<Integer> generatedCardsIndex;
 
     /**
@@ -47,9 +46,13 @@ public class DeckPersonal implements Distributable<PersonalGoalCard> {
      * @param nElements the number of elements to draw
      * @return an ArrayList that contains the drawn elements
      * @throws FileNotFoundException if the configuration cannot be found, this exception is thrown
+     * @throws NotEnoughCardsException if the number of cards read from the JSON is less than the nElements required
      */
     @Override
-    public ArrayList<PersonalGoalCard> draw(int nElements) throws FileNotFoundException, NotEnoughCardsException {
+    public ArrayList<PersonalGoalCard> draw(int nElements) throws FileNotFoundException, NotEnoughCardsException, NegativeFieldException {
+        if(nElements < 0)
+            throw new NegativeFieldException("You can't draw a negative number of cards");
+
         ArrayList<PersonalGoalCard> selected = new ArrayList<>();
         TypeToken<Map<Coordinates, ItemTile>> mapType = new TypeToken<>(){};
         TypeToken<Map<Integer, Integer>> pointsReferenceMapType = new TypeToken<>(){};

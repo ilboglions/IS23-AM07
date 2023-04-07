@@ -11,8 +11,14 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Class used to test PersonalGoalCard class
+ */
 class PersonalGoalCardTest {
 
+    /**
+     * This tests that all the exception are firing correctly, such as null values or empty arraylist passed
+     */
     @Test
     @DisplayName("Test all the exceptions")
     void exceptionTest() {
@@ -39,6 +45,10 @@ class PersonalGoalCardTest {
         });
     }
 
+    /**
+     * This tests if the initialization of PersonalGoalCard is done accordingly to the pattern and the pointsReference passed to the constructor
+     * @throws InvalidCoordinatesException if the coordinates are out of range
+     */
     @Test
     @DisplayName("Test that the personal card is instantiated correctly")
     void getBookshelf() throws InvalidCoordinatesException {

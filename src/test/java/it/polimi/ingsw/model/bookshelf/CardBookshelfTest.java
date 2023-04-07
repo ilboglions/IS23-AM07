@@ -11,8 +11,14 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Class used to test CardBookshelf class
+ */
 class CardBookshelfTest {
 
+    /**
+     * This test that all the exception are firing correctly, such as null values and coordinates out of range
+     */
     @Test
     @DisplayName("Test all the exceptions")
     void testExceptions() {
@@ -39,6 +45,10 @@ class CardBookshelfTest {
         });
     }
 
+    /**
+     * This tests if the initialization of CardBookshelf is done accordingly to the pattern passed to the constructor
+     * @throws InvalidCoordinatesException if there are coordinates out of range
+     */
     @Test
     @DisplayName("Test for correct pattern initialization")
     void testInit() throws InvalidCoordinatesException {
@@ -70,6 +80,10 @@ class CardBookshelfTest {
         }
     }
 
+    /**
+     * This tests if the number of ItemTile in the same position in two bookshelf are counted correctly with the nElementsOverlapped() method
+     * @throws InvalidCoordinatesException if there are coordinates out of range
+     */
     @Test
     @DisplayName("Test overlapping elements")
     void testOverlapped() throws InvalidCoordinatesException {

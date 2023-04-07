@@ -36,7 +36,9 @@ public class Lobby {
      * @param playerName the player to be added to the game
      * @throws NoAvailableGameException if no game is available
      * @throws InvalidPlayerException if the player is not in waiting list or the player nickname is already taken in the game
-     *
+     * @throws NicknameAlreadyUsedException if there is already a user in the lobby or in any game with the same username
+     * @throws PlayersNumberOutOfRange if the number of players is less than 2 or greater than 4
+     * @return the Game in which the player has joined
      */
     public Game addPlayerToGame(String playerName) throws NoAvailableGameException, InvalidPlayerException, NicknameAlreadyUsedException, PlayersNumberOutOfRange {
         Objects.requireNonNull(playerName);
@@ -67,7 +69,7 @@ public class Lobby {
      * @throws PlayersNumberOutOfRange if the player's number is out of the specific range
      * @throws BrokenInternalGameConfigurations if some internal configurations are broken
      * @throws InvalidPlayerException if the host player cannot be found
-     *
+     * @throws NotEnoughCardsException if the number of cards required is grater than the number of cards available to draw
      */
     public Game createGame(int nPlayers, String hostNickname) throws PlayersNumberOutOfRange, BrokenInternalGameConfigurations, InvalidPlayerException, NotEnoughCardsException {
         Objects.requireNonNull(hostNickname);

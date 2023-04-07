@@ -12,8 +12,14 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Class used to test DeckCommon class
+ */
 class DeckCommonTest {
 
+    /**
+     * This tests if the exception are firing correctly for player number out of range, negative number of cards to draw, null values or unknown file path
+     */
     @Test
     @DisplayName("Test all the exceptions")
     void testExceptions() {
@@ -44,6 +50,13 @@ class DeckCommonTest {
         });
     }
 
+    /**
+     * This tests if the draw method is working appropriately
+     * @throws PlayersNumberOutOfRange if the number of player is less than 2 or grater than 4
+     * @throws NegativeFieldException if the number of cards to draw is negative
+     * @throws FileNotFoundException if the path for the configuration file is not found
+     * @throws NotEnoughCardsException if there aren't as many cards as the ones asked for
+     */
     @Test
     @DisplayName("Test the limits cases of draw method")
     void draw() throws PlayersNumberOutOfRange, NegativeFieldException, FileNotFoundException, NotEnoughCardsException {

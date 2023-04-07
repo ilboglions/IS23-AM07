@@ -1,12 +1,11 @@
 package it.polimi.ingsw.controller;
 
-import it.polimi.ingsw.model.chat.exceptions.SenderEqualsRecipientException;
+import it.polimi.ingsw.model.exceptions.SenderEqualsRecipientException;
 import it.polimi.ingsw.model.coordinate.Coordinates;
 import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.game.GameModelInterface;
 
 import java.util.ArrayList;
-import java.util.Optional;
 
 /**
  * the game controller ensures the communication through client controller and server model

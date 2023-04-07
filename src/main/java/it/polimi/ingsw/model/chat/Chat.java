@@ -1,19 +1,35 @@
 package it.polimi.ingsw.model.chat;
 
-import it.polimi.ingsw.model.chat.exceptions.SenderEqualsRecipientException;
+import it.polimi.ingsw.model.exceptions.SenderEqualsRecipientException;
 import it.polimi.ingsw.model.listeners.ChatListener;
 import java.util.ArrayList;
 
+/**
+ * The Chat class stores all the messages sent by all the player inside a game, either in public or in private chat
+ */
 public class Chat {
-
+    /**
+     * The list of all the messages sent by the players
+     */
     private final ArrayList<Message> sentMessages;
+    /**
+     * The listener that will be updated on action
+     */
     private final ChatListener chatListener;
 
+    /**
+     * Constructor of the chat initialize the arraylist of messages and the listener
+     */
     public Chat() {
         sentMessages = new ArrayList<>();
         chatListener = new ChatListener();
     }
 
+    /**
+     * This method is used to add a message to the chat message list
+     * @param msg is the message object that will be added to the list
+     * @throws SenderEqualsRecipientException if the recipient and the sender of the message is the same user
+     */
     public void postMessage(Message msg) throws SenderEqualsRecipientException {
         if(msg == null) {
             throw new NullPointerException("Message pointer is null");
@@ -27,7 +43,11 @@ public class Chat {
         // since we want to maintain a chronological order of the messages, we can use add. add puts the new element at the end of the list
     }
 
-
+    /**
+     * This is the method to retrieve all the messages relative to a player, either sent and received
+     * @param player a String that represent the username of the player for which to search the messages
+     * @return an Arraylist of messages relative to the player
+     */
     public ArrayList<Message> getPlayerMessages(String player) {
         ArrayList<Message> playerMsgs = new ArrayList<>();
         if(player == null)

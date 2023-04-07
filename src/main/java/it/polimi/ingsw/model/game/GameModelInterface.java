@@ -1,12 +1,11 @@
 package it.polimi.ingsw.model.game;
 
 import it.polimi.ingsw.model.chat.Message;
-import it.polimi.ingsw.model.chat.exceptions.SenderEqualsRecipientException;
+import it.polimi.ingsw.model.exceptions.SenderEqualsRecipientException;
 import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.coordinate.Coordinates;
 
 import java.util.ArrayList;
-import java.util.Optional;
 
 public interface GameModelInterface {
 

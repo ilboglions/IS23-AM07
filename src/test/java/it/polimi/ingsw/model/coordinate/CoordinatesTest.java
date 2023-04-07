@@ -5,7 +5,14 @@ import static org.junit.jupiter.api.Assertions.*;
 import it.polimi.ingsw.model.exceptions.InvalidCoordinatesException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+/**
+ * Class used to test Coordinates class
+ */
 public class CoordinatesTest {
+    /**
+     * This tests that all the exception are firing correctly for invalid coordinates values
+     */
     @Test
     @DisplayName("Check exception")
     void checkException() {
@@ -19,6 +26,11 @@ public class CoordinatesTest {
             Coordinates test = new Coordinates(3,9);
         });
     }
+
+    /**
+     * This tests if the class is working correctly for generic values
+     * @throws InvalidCoordinatesException if the coordinates are out of range
+     */
     @Test
     @DisplayName("Generic Value")
     void checkGenericValue() throws InvalidCoordinatesException {
@@ -36,6 +48,10 @@ public class CoordinatesTest {
         assertEquals(5,test4.getColumn());
     }
 
+    /**
+     * This tests if the equals method is implemented correctly
+     * @throws InvalidCoordinatesException if the coordinates are out of range
+     */
     @Test
     @DisplayName("Test equals method")
     void testEquals() throws InvalidCoordinatesException {

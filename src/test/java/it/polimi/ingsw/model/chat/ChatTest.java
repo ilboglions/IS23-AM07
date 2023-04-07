@@ -1,15 +1,19 @@
 package it.polimi.ingsw.model.chat;
 
-import it.polimi.ingsw.model.chat.exceptions.SenderEqualsRecipientException;
+import it.polimi.ingsw.model.exceptions.SenderEqualsRecipientException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Class used to test Chat class
+ */
 class ChatTest {
 
+    /**
+     * This tests that all the exception are firing correctly, such as null values or equal sender and recipient
+     */
     @Test
     @DisplayName("Test all the exceptions")
     void testExceptions(){
@@ -26,6 +30,10 @@ class ChatTest {
         });
     }
 
+    /**
+     * This tests if all the methods to post and get messages are working correctly, with no messages, private messages or global messages
+     * @throws SenderEqualsRecipientException if the sender and the recipient are equal
+     */
     @Test
     @DisplayName("Test all the methods")
     void testMethods() throws SenderEqualsRecipientException {

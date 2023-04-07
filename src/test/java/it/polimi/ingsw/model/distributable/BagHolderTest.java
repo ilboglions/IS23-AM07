@@ -8,8 +8,14 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Class used to test BagHolder class
+ */
 class BagHolderTest {
 
+    /**
+     * This tests if the exception for drawing a negative number of tiles is working correctly
+     */
     @Test
     @DisplayName("Test all the exceptions")
     void testExceptions() {
@@ -19,6 +25,10 @@ class BagHolderTest {
         });
     }
 
+    /**
+     * This tests if the draw method is working correctly for limit cases such as 0 elements or more elements than the ones that contains the bag at its initialization
+     * @throws NegativeFieldException if the number of tiles to draw is negative
+     */
     @Test
     @DisplayName("Test the limits cases of draw method")
     void draw() throws NegativeFieldException {

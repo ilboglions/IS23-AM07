@@ -23,6 +23,7 @@ public class UtilityFunctions {
      * @param itemTile the tile used for reference
      * @param visited a set containing all the Coordinates already visited
      * @return a list of coordinates that are adjacent
+     * @throws InvalidCoordinatesException if the coordinates are out of range
      */
     public static List<Coordinates> findAdjacentElements(Bookshelf bookshelf, int row, int col, ItemTile itemTile, Set<Coordinates> visited) throws InvalidCoordinatesException {
 
