@@ -6,12 +6,15 @@ import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.game.GameModelInterface;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * the game controller ensures the communication through client controller and server model
  */
 public class GameController {
     private final GameModelInterface gameModel;
+    private final Set<Coordinates> selectedTiles;
 
     /**
      * creates the gameController
@@ -21,6 +24,7 @@ public class GameController {
      */
     public GameController(GameModelInterface gameModel) {
         this.gameModel = gameModel;
+        this.selectedTiles = new HashSet<>();
 
     }
 
@@ -30,7 +34,7 @@ public class GameController {
      * @param coords the list of coordinates where tiles should have been taken
      * @return true, if the action is permitted
      */
-    public boolean getItemTiles(String player, ArrayList<Coordinates> coords)  {
+    public boolean checkValidRetrieve(String player, ArrayList<Coordinates> coords)  {
 
 
         try {
@@ -42,12 +46,16 @@ public class GameController {
         }
 
         try{
-            return  gameModel.getItemTiles(coords);
+            if( gameModel.checkValidRetrieve(coords)){
+                selectedTiles.clear();
+                selectedTiles.addAll(coords);
+                return true;
+            }
+            return false;
 
         } catch (EmptySlotException e){
             return false;
         }
-
     }
 
     /**
@@ -67,6 +75,7 @@ public class GameController {
             return false;
         }
 
+        if(!this.selectedTiles.containsAll(source)) return false;
         try {
             gameModel.moveTiles(source,column);
             if (gameModel.checkRefill()){

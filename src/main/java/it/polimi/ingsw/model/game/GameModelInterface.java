@@ -13,7 +13,7 @@ public interface GameModelInterface {
     void start() throws NotAllPlayersHaveJoinedException, GameNotEndedException;
     String getPlayerInTurn() throws GameEndedException, GameNotStartedException;
     void moveTiles(ArrayList<Coordinates> source, int column) throws InvalidCoordinatesException, EmptySlotException, NotEnoughSpaceException, GameNotStartedException;
-    boolean getItemTiles(ArrayList<Coordinates> coords) throws EmptySlotException;
+    boolean checkValidRetrieve(ArrayList<Coordinates> coords) throws EmptySlotException;
     void refillLivingRoom();
     boolean checkBookshelfComplete();
     String getWinner() throws GameNotEndedException, GameNotStartedException;
@@ -26,5 +26,5 @@ public interface GameModelInterface {
     ArrayList<Message> getPlayerMessages(String player) throws InvalidPlayerException;
 
     void postMessage(String sender, String receiver, String message) throws SenderEqualsRecipientException, InvalidPlayerException;
-    public void postMessage(String sender, String message) throws InvalidPlayerException;
+    void postMessage(String sender, String message) throws InvalidPlayerException;
 }

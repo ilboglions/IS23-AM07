@@ -229,7 +229,7 @@ public class Game implements GameModelInterface {
      * @return true, if is possible to get that tiles, false otherwise
      * @throws EmptySlotException if one of the  coordinates referes to an empty slot
      */
-    public boolean getItemTiles(ArrayList<Coordinates> coords) throws EmptySlotException {
+    public boolean checkValidRetrieve(ArrayList<Coordinates> coords) throws EmptySlotException {
         return  livingRoom.checkValidRetrieve(coords);
     }
 
