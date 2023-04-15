@@ -215,7 +215,8 @@ public class LivingRoomBoard {
 
     }
 
-    public boolean checkValidRetrieve(ArrayList<Coordinates> coo) throws EmptySlotException {
+    public boolean checkValidRetrieve(ArrayList<Coordinates> coordinates) throws EmptySlotException {
+        ArrayList<Coordinates> coo = new ArrayList<Coordinates>(coordinates);
         int diffRow, diffCol;
         if(coo == null || coo.contains(null))
             throw new NullPointerException("Coordinates list is/contains null");
