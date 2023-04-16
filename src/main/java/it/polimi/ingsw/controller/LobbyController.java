@@ -3,15 +3,20 @@ package it.polimi.ingsw.controller;
 import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.game.GameModelInterface;
 import it.polimi.ingsw.model.lobby.Lobby;
+import it.polimi.ingsw.remoteControllers.RemoteGameController;
+import it.polimi.ingsw.remoteControllers.RemoteLobbyController;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import java.rmi.*;
+import java.rmi.registry.*;
+import java.rmi.server.*;
 /**
  * the lobby controller ensures the communication through client controller and server model
  */
-public class LobbyController {
+public class LobbyController extends UnicastRemoteObject implements RemoteLobbyController {
     private final Lobby lobbyModel;
     private final Map<GameModelInterface,GameController> gameControllers;
 
@@ -19,7 +24,8 @@ public class LobbyController {
      * creates the controller of the lobby
      * @param lobbyModel the model of the lobby
      */
-    public LobbyController(Lobby lobbyModel) {
+    public LobbyController(Lobby lobbyModel) throws RemoteException {
+        super();
         this.lobbyModel = lobbyModel;
         gameControllers = new HashMap<>();
     }
@@ -43,7 +49,7 @@ public class LobbyController {
      * @param player the nickname of the player to be added
      * @return an optional of GameController, if no game is in the lobby, an empty value will be filled
      */
-    public Optional<GameController> addPlayerToGame(String player) {
+    public Optional<RemoteGameController> addPlayerToGame(String player) {
         GameController  gameController;
         try {
             GameModelInterface gameModel = lobbyModel.addPlayerToGame(player);
@@ -81,7 +87,7 @@ public class LobbyController {
      * @param nPlayers the number of players for the game
      * @return the GameController, if the game creation is not possible, an empty value will be returned
      */
-    public Optional<GameController> createGame(String player, int nPlayers){
+    public Optional<RemoteGameController> createGame(String player, int nPlayers){
             GameController  gameController;
             try {
                 GameModelInterface gameModel = lobbyModel.createGame(nPlayers,player);

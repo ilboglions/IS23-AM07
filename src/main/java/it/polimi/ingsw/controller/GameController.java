@@ -4,6 +4,7 @@ import it.polimi.ingsw.model.exceptions.SenderEqualsRecipientException;
 import it.polimi.ingsw.model.coordinate.Coordinates;
 import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.game.GameModelInterface;
+import it.polimi.ingsw.remoteControllers.RemoteGameController;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -12,7 +13,7 @@ import java.util.Set;
 /**
  * the game controller ensures the communication through client controller and server model
  */
-public class GameController {
+public class GameController implements RemoteGameController {
     private final GameModelInterface gameModel;
     private final Set<Coordinates> selectedTiles;
 

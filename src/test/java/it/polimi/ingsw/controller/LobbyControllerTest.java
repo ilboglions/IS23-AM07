@@ -4,13 +4,15 @@ import it.polimi.ingsw.model.lobby.Lobby;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.rmi.RemoteException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class LobbyControllerTest {
 
     @Test
     @DisplayName("Test entering in lobby")
-    void testEnter(){
+    void testEnter() throws RemoteException {
         LobbyController test = new LobbyController(new Lobby());
 
         assertTrue(test.enterInLobby("Test")); //Player added correctly
@@ -19,7 +21,7 @@ class LobbyControllerTest {
 
     @Test
     @DisplayName("Test game creation")
-    void testCreation(){
+    void testCreation() throws RemoteException {
         LobbyController test = new LobbyController(new Lobby());
 
         //Invalid values, already tested in LobbyTest class
@@ -38,7 +40,7 @@ class LobbyControllerTest {
 
     @Test
     @DisplayName("Test adding player to game")
-    void testAddPlayer(){
+    void testAddPlayer() throws RemoteException {
         LobbyController test = new LobbyController(new Lobby());
 
         assertTrue(test.addPlayerToGame("Test").isEmpty()); //No player in lobby with this nickname

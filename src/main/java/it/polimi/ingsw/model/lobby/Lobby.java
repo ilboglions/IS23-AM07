@@ -79,6 +79,7 @@ public class Lobby {
             throw new InvalidPlayerException();
         try{
             Game newGame = new Game(nPlayers, host.get());
+            waitingPlayers.remove(host.get());
             games.add(newGame);
             return newGame;
         }  catch (NegativeFieldException | FileNotFoundException e) {
@@ -105,4 +106,6 @@ public class Lobby {
 
         waitingPlayers.add(newPlayer);
     }
+
+
 }
