@@ -238,17 +238,17 @@ public class GameTest {
         Game test = new Game(3, testPlayer);
 
         assertThrows(NullPointerException.class, ()->{
-           test.getItemTiles(null);
+           test.checkValidRetrieve(null);
         });
 
         ArrayList<Coordinates> testList = new ArrayList<>();
         testList.add(new Coordinates(3,4));
         assertThrows(EmptySlotException.class, ()->{
-           test.getItemTiles(testList);
+           test.checkValidRetrieve(testList);
         });
 
         test.refillLivingRoom();
-        assertDoesNotThrow(()->test.getItemTiles(testList));
+        assertDoesNotThrow(()->test.checkValidRetrieve(testList));
     }
 
     /**

@@ -12,6 +12,7 @@ import it.polimi.ingsw.model.tiles.ItemTile;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Optional;
 
 import static it.polimi.ingsw.model.utilities.UtilityFunctions.MAX_PLAYERS;
@@ -97,6 +98,20 @@ public class LivingRoomBoard {
         return newslot;
     }
 
+    /**
+     * Method used to custom fill the livingroomboard for testing purposes
+     * @param tilesMap contains the coordinates and tiles to fill the board with.
+     * @throws InvalidCoordinatesException
+     * @throws SlotFullException
+     */
+    protected void customRefill(Map<Coordinates,ItemTile> tilesMap) throws InvalidCoordinatesException, SlotFullException {
+       ArrayList<ItemTile> garbage = emptyBoard();
+       for (Map.Entry<Coordinates, ItemTile> elem: tilesMap.entrySet()){
+           addTile(elem.getKey(), elem.getValue());
+        }
+
+    }
+
     public boolean checkRefill() {
         // this method tells you if the livingRoom needs to be refilled with new tiles or not
         // the board must be refilled if the next player can only take single tiles => there are not 2 tiles adjacient in the board
@@ -169,7 +184,7 @@ public class LivingRoomBoard {
             return slot[coo.getRow()][coo.getColumn()].getItemTile();
         }
     }
-    public void addTile(Coordinates coo,ItemTile itemTile) throws SlotFullException, InvalidCoordinatesException {
+    protected void addTile(Coordinates coo,ItemTile itemTile) throws SlotFullException, InvalidCoordinatesException {
         int row,col;
         Optional<ItemTile> newTile = Optional.of(itemTile);
 
@@ -316,16 +331,28 @@ public class LivingRoomBoard {
     private boolean checkFreeSide(Coordinates coo)  {
         int i = 2;
         int d;
+        boolean a,b;
 
         for( int x = 0; x < i; x++){
 
-                d = x % 2 == 0 ? 1 : -1;
-                try {
-                    if (this.getTile(new Coordinates(coo.getRow() + d, coo.getColumn())).isEmpty() || this.getTile(new Coordinates(coo.getRow(), coo.getColumn() + d)).isEmpty())
-                        return true;
-                }catch (InvalidCoordinatesException ignore){
+            a=false;
+            b=false;
+            d = x % 2 == 0 ? 1 : -1;
+            try {
+                a = this.getTile(new Coordinates(coo.getRow() + d, coo.getColumn())).isEmpty();
+            }
+            catch (InvalidCoordinatesException ignore){
 
-                }
+            }
+            try {
+                b = this.getTile(new Coordinates(coo.getRow(), coo.getColumn() + d)).isEmpty();
+            }
+            catch (InvalidCoordinatesException ignore){
+
+            }
+            if ( a || b ) {
+                return true;
+            }
         }
         return false;
 
