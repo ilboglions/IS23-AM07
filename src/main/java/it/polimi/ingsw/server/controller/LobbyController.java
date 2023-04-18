@@ -34,7 +34,7 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
      * @param player the username of the player to be added
      * @return true, if a player can join the lobby, false if the nickname in the lobby has been already used
      */
-    public boolean enterInLobby(String player){
+    public boolean enterInLobby(String player) throws RemoteException{
         try {
             lobbyModel.createPlayer(player);
             return true;
@@ -45,10 +45,11 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
 
     /**
      * ensures for a player to be added to an available game
+     *
      * @param player the nickname of the player to be added
      * @return an optional of GameController, if no game is in the lobby, an empty value will be filled
      */
-    public Optional<RemoteGameController> addPlayerToGame(String player) {
+    public Optional<RemoteGameController> addPlayerToGame(String player) throws RemoteException{
         GameController  gameController;
         try {
             GameModelInterface gameModel = lobbyModel.addPlayerToGame(player);
@@ -82,11 +83,12 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
 
     /**
      * creates a game for a certain number of players
-     * @param player the username of the player
+     *
+     * @param player   the username of the player
      * @param nPlayers the number of players for the game
      * @return the GameController, if the game creation is not possible, an empty value will be returned
      */
-    public Optional<RemoteGameController> createGame(String player, int nPlayers){
+    public Optional<RemoteGameController> createGame(String player, int nPlayers) throws RemoteException{
             GameController  gameController;
             try {
                 GameModelInterface gameModel = lobbyModel.createGame(nPlayers,player);

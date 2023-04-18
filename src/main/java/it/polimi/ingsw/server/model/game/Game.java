@@ -3,7 +3,7 @@ package it.polimi.ingsw.server.model.game;
 import it.polimi.ingsw.server.model.chat.Chat;
 import it.polimi.ingsw.server.model.chat.Message;
 import it.polimi.ingsw.server.model.exceptions.SenderEqualsRecipientException;
-import it.polimi.ingsw.model.exceptions.*;
+import it.polimi.ingsw.server.model.exceptions.*;
 import it.polimi.ingsw.server.model.cards.common.CommonGoalCard;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.distributable.BagHolder;
@@ -15,7 +15,6 @@ import it.polimi.ingsw.server.model.player.Player;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 import it.polimi.ingsw.server.model.tokens.ScoringToken;
 import it.polimi.ingsw.server.model.tokens.TokenPoint;
-import it.polimi.ingsw.server.model.exceptions.*;
 
 import java.io.FileNotFoundException;
 import java.util.*;

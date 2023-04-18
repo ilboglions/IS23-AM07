@@ -6,13 +6,13 @@ import java.util.ArrayList;
 
 public interface RemoteGameController extends Remote{
 
-    boolean checkValidRetrieve(String player, ArrayList<Coordinates> coords);
+    boolean checkValidRetrieve(String player, ArrayList<Coordinates> coords) throws RemoteException;
 
-    boolean moveTiles(String player, ArrayList<Coordinates> source, int column);
+    boolean moveTiles(String player, ArrayList<Coordinates> source, int column) throws RemoteException;
 
-    boolean postBroadCastMessage(String player, String message);
+    boolean postBroadCastMessage(String player, String message) throws RemoteException;
 
-    boolean postDirectMessage(String player, String receiver,String message);
+    boolean postDirectMessage(String player, String receiver,String message) throws RemoteException;
 
 
 

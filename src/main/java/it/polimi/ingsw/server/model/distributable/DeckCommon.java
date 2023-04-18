@@ -3,12 +3,11 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
-import it.polimi.ingsw.model.cards.common.*;
+import it.polimi.ingsw.server.model.cards.common.*;
 import it.polimi.ingsw.server.model.exceptions.NegativeFieldException;
 import it.polimi.ingsw.server.model.exceptions.PlayersNumberOutOfRange;
 import it.polimi.ingsw.server.model.exceptions.NotEnoughCardsException;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
-import it.polimi.ingsw.server.model.cards.common.*;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;

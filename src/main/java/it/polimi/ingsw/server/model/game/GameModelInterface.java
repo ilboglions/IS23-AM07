@@ -2,7 +2,6 @@ package it.polimi.ingsw.server.model.game;
 
 import it.polimi.ingsw.server.model.chat.Message;
 import it.polimi.ingsw.server.model.exceptions.SenderEqualsRecipientException;
-import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.*;
 

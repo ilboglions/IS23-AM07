@@ -37,7 +37,7 @@ public class ClientSocket implements ConnectionHandler{
         }
     }
 
-    }
+
 
     @Override
     public void close() throws IOException {

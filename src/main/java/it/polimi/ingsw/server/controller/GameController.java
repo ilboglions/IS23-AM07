@@ -5,6 +5,7 @@ import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.game.GameModelInterface;
 import it.polimi.ingsw.remoteControllers.RemoteGameController;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,7 +23,7 @@ public class GameController implements RemoteGameController {
      * @param gameModel the model reffered to the game
      *
      */
-    public GameController(GameModelInterface gameModel) {
+    public GameController(GameModelInterface gameModel) throws RemoteException {
         this.gameModel = gameModel;
         this.selectedTiles = new HashSet<>();
 
@@ -34,7 +35,7 @@ public class GameController implements RemoteGameController {
      * @param coords the list of coordinates where tiles should have been taken
      * @return true, if the action is permitted
      */
-    public boolean checkValidRetrieve(String player, ArrayList<Coordinates> coords)  {
+    public boolean checkValidRetrieve(String player, ArrayList<Coordinates> coords) throws RemoteException  {
 
 
         try {
@@ -66,7 +67,7 @@ public class GameController implements RemoteGameController {
      * @param column the column where the coordinates will be inserted
      * @return true, if the action has been correctly performed, false otherwise
      */
-    public boolean moveTiles( String player, ArrayList<Coordinates> source, int column){
+    public boolean moveTiles( String player, ArrayList<Coordinates> source, int column) throws RemoteException{
         try {
             if(!player.equals(gameModel.getPlayerInTurn())) return false;
         } catch (GameEndedException e) {
@@ -112,7 +113,7 @@ public class GameController implements RemoteGameController {
      * @param message the message to be posted
      * @return true, if the message can be posted, false otherwise
      */
-    public boolean postBroadCastMessage(String player, String message){
+    public boolean postBroadCastMessage(String player, String message) throws RemoteException{
         try {
             gameModel.postMessage(player, message);
         } catch (InvalidPlayerException e) {
@@ -129,7 +130,7 @@ public class GameController implements RemoteGameController {
      * @param message the message to be sent
      * @return false, if the message cannot be posted or sent to the receiver, true otherwise
      */
-    public boolean postDirectMessage(String player, String receiver,String message){
+    public boolean postDirectMessage(String player, String receiver,String message) throws RemoteException{
 
         try {
             gameModel.postMessage(player,receiver,message);
