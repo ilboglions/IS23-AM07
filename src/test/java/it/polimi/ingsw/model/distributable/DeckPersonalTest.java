@@ -1,8 +1,9 @@
 package it.polimi.ingsw.model.distributable;
 
-import it.polimi.ingsw.model.cards.personal.PersonalGoalCard;
-import it.polimi.ingsw.model.exceptions.NegativeFieldException;
-import it.polimi.ingsw.model.exceptions.NotEnoughCardsException;
+import it.polimi.ingsw.server.model.cards.personal.PersonalGoalCard;
+import it.polimi.ingsw.server.model.distributable.DeckPersonal;
+import it.polimi.ingsw.server.model.exceptions.NegativeFieldException;
+import it.polimi.ingsw.server.model.exceptions.NotEnoughCardsException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

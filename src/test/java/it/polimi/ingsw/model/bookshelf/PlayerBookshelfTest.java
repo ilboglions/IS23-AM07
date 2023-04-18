@@ -1,9 +1,10 @@
 package it.polimi.ingsw.model.bookshelf;
 
-import it.polimi.ingsw.model.coordinate.Coordinates;
-import it.polimi.ingsw.model.exceptions.InvalidCoordinatesException;
-import it.polimi.ingsw.model.exceptions.NotEnoughSpaceException;
-import it.polimi.ingsw.model.tiles.ItemTile;
+import it.polimi.ingsw.server.model.bookshelf.PlayerBookshelf;
+import it.polimi.ingsw.server.model.coordinate.Coordinates;
+import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
+import it.polimi.ingsw.server.model.exceptions.NotEnoughSpaceException;
+import it.polimi.ingsw.server.model.tiles.ItemTile;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

@@ -1,5 +1,5 @@
 package it.polimi.ingsw.remoteControllers;
-import it.polimi.ingsw.model.coordinate.Coordinates;
+import it.polimi.ingsw.server.model.coordinate.Coordinates;
 
 import java.rmi.*;
 import java.util.ArrayList;

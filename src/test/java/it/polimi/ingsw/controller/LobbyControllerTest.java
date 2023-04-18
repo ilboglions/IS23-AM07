@@ -1,6 +1,7 @@
 package it.polimi.ingsw.controller;
 
-import it.polimi.ingsw.model.lobby.Lobby;
+import it.polimi.ingsw.server.controller.LobbyController;
+import it.polimi.ingsw.server.model.lobby.Lobby;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

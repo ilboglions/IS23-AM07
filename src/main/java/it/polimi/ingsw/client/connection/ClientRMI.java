@@ -1,6 +1,6 @@
 package it.polimi.ingsw.client.connection;
 
-import it.polimi.ingsw.model.coordinate.Coordinates;
+import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.remoteControllers.RemoteGameController;
 import it.polimi.ingsw.remoteControllers.RemoteLobbyController;
 
@@ -8,9 +8,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
-import java.util.Optional;
 
 public class ClientRMI implements ConnectionHandler{
 

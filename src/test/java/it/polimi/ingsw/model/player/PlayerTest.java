@@ -1,12 +1,13 @@
 package it.polimi.ingsw.model.player;
 
-import it.polimi.ingsw.model.cards.personal.PersonalGoalCard;
-import it.polimi.ingsw.model.coordinate.Coordinates;
-import it.polimi.ingsw.model.exceptions.InvalidCoordinatesException;
-import it.polimi.ingsw.model.exceptions.NotEnoughSpaceException;
-import it.polimi.ingsw.model.tiles.ItemTile;
-import it.polimi.ingsw.model.tokens.ScoringToken;
-import it.polimi.ingsw.model.tokens.TokenPoint;
+import it.polimi.ingsw.server.model.cards.personal.PersonalGoalCard;
+import it.polimi.ingsw.server.model.coordinate.Coordinates;
+import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
+import it.polimi.ingsw.server.model.exceptions.NotEnoughSpaceException;
+import it.polimi.ingsw.server.model.player.Player;
+import it.polimi.ingsw.server.model.tiles.ItemTile;
+import it.polimi.ingsw.server.model.tokens.ScoringToken;
+import it.polimi.ingsw.server.model.tokens.TokenPoint;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

@@ -1,6 +1,6 @@
 package it.polimi.ingsw.client.connection;
 // da spostare le coordinates in un altro package (?)
-import it.polimi.ingsw.model.coordinate.Coordinates;
+import it.polimi.ingsw.server.model.coordinate.Coordinates;
 
 import java.io.IOException;
 import java.rmi.NotBoundException;

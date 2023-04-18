@@ -2,13 +2,15 @@ package it.polimi.ingsw.model.livingRoom;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import it.polimi.ingsw.model.exceptions.PlayersNumberOutOfRange;
+import it.polimi.ingsw.server.model.exceptions.PlayersNumberOutOfRange;
+import it.polimi.ingsw.server.model.livingRoom.LivingRoomBoard;
+import it.polimi.ingsw.server.model.livingRoom.Slot;
+import it.polimi.ingsw.server.model.livingRoom.SlotType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import com.google.gson.Gson;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.util.Optional;
 
 public class LivingRoomBoardTest {
 

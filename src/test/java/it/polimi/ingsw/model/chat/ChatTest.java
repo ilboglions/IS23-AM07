@@ -1,6 +1,8 @@
 package it.polimi.ingsw.model.chat;
 
-import it.polimi.ingsw.model.exceptions.SenderEqualsRecipientException;
+import it.polimi.ingsw.server.model.chat.Chat;
+import it.polimi.ingsw.server.model.chat.Message;
+import it.polimi.ingsw.server.model.exceptions.SenderEqualsRecipientException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

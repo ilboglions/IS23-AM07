@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model.distributable;
-import it.polimi.ingsw.model.exceptions.NegativeFieldException;
-import it.polimi.ingsw.model.tiles.ItemTile;
+import it.polimi.ingsw.server.model.distributable.BagHolder;
+import it.polimi.ingsw.server.model.exceptions.NegativeFieldException;
+import it.polimi.ingsw.server.model.tiles.ItemTile;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

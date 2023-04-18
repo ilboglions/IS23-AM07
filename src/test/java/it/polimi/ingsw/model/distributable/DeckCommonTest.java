@@ -1,9 +1,10 @@
 package it.polimi.ingsw.model.distributable;
 
-import it.polimi.ingsw.model.cards.common.CommonGoalCard;
-import it.polimi.ingsw.model.exceptions.NegativeFieldException;
-import it.polimi.ingsw.model.exceptions.NotEnoughCardsException;
-import it.polimi.ingsw.model.exceptions.PlayersNumberOutOfRange;
+import it.polimi.ingsw.server.model.cards.common.CommonGoalCard;
+import it.polimi.ingsw.server.model.distributable.DeckCommon;
+import it.polimi.ingsw.server.model.exceptions.NegativeFieldException;
+import it.polimi.ingsw.server.model.exceptions.NotEnoughCardsException;
+import it.polimi.ingsw.server.model.exceptions.PlayersNumberOutOfRange;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

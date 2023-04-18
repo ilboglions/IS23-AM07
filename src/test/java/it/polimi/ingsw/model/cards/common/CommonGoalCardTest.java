@@ -1,17 +1,17 @@
 package it.polimi.ingsw.model.cards.common;
 
 
-import it.polimi.ingsw.model.exceptions.*;
-import it.polimi.ingsw.model.tokens.ScoringToken;
-import it.polimi.ingsw.model.tokens.TokenPoint;
-import org.junit.jupiter.api.BeforeEach;
+import it.polimi.ingsw.server.model.cards.common.CommonGoalCard;
+import it.polimi.ingsw.server.model.cards.common.MarioPyramid;
+import it.polimi.ingsw.server.model.exceptions.PlayersNumberOutOfRange;
+import it.polimi.ingsw.server.model.exceptions.TokenAlreadyGivenException;
+import it.polimi.ingsw.server.model.tokens.ScoringToken;
+import it.polimi.ingsw.server.model.tokens.TokenPoint;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.EmptyStackException;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.Stack;
 
 public class CommonGoalCardTest {

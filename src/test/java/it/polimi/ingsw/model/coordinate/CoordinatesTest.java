@@ -2,7 +2,8 @@ package it.polimi.ingsw.model.coordinate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import it.polimi.ingsw.model.exceptions.InvalidCoordinatesException;
+import it.polimi.ingsw.server.model.coordinate.Coordinates;
+import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

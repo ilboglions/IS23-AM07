@@ -1,10 +1,14 @@
 package it.polimi.ingsw.model.cards.common;
 
-import it.polimi.ingsw.model.bookshelf.Bookshelf;
-import it.polimi.ingsw.model.bookshelf.CardBookshelf;
-import it.polimi.ingsw.model.coordinate.Coordinates;
-import it.polimi.ingsw.model.exceptions.*;
-import it.polimi.ingsw.model.tiles.ItemTile;
+import it.polimi.ingsw.server.model.bookshelf.Bookshelf;
+import it.polimi.ingsw.server.model.bookshelf.CardBookshelf;
+import it.polimi.ingsw.server.model.cards.common.NsameTiles;
+import it.polimi.ingsw.server.model.coordinate.Coordinates;
+import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
+import it.polimi.ingsw.server.model.exceptions.NegativeFieldException;
+import it.polimi.ingsw.server.model.exceptions.NotEnoughSpaceException;
+import it.polimi.ingsw.server.model.exceptions.PlayersNumberOutOfRange;
+import it.polimi.ingsw.server.model.tiles.ItemTile;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

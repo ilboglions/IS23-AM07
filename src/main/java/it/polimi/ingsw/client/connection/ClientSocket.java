@@ -1,9 +1,8 @@
 package it.polimi.ingsw.client.connection;
 
-import it.polimi.ingsw.model.coordinate.Coordinates;
+import it.polimi.ingsw.server.model.coordinate.Coordinates;
 
 import java.io.IOException;
-import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;

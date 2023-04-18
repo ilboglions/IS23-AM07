@@ -2,11 +2,11 @@ package it.polimi.ingsw.model.game;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import it.polimi.ingsw.model.exceptions.SenderEqualsRecipientException;
-import it.polimi.ingsw.model.coordinate.Coordinates;
-import it.polimi.ingsw.model.exceptions.*;
-import it.polimi.ingsw.model.player.Player;
-import it.polimi.ingsw.model.tiles.ItemTile;
+import it.polimi.ingsw.server.model.exceptions.*;
+import it.polimi.ingsw.server.model.coordinate.Coordinates;
+import it.polimi.ingsw.server.model.game.Game;
+import it.polimi.ingsw.server.model.player.Player;
+import it.polimi.ingsw.server.model.tiles.ItemTile;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
