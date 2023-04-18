@@ -48,7 +48,7 @@ public class ServerMain {
                 portNumber = Integer.parseInt(args[1]);
             } else {
                 Gson gson = new Gson();
-                JsonObject job = gson.fromJson(new FileReader("/json/HostAndPort.json"), JsonObject.class);
+                JsonObject job = gson.fromJson(new FileReader("confFiles/HostAndPort.json"), JsonObject.class);
                 portNumber = gson.fromJson(job.get("portNumber"), Integer.class);
                 hostName = gson.fromJson(job.get("hostName"), String.class);
             }

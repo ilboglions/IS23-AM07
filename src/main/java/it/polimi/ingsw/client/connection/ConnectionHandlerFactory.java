@@ -3,8 +3,8 @@ package it.polimi.ingsw.client.connection;
 public class ConnectionHandlerFactory {
     public ConnectionHandler createConnection(ConnectionType type){
         if( type.equals(ConnectionType.RMI)) {
-            return new ConnectionRMI();
+            return new ClientRMI();
         }
-        return new ConnectionTCP();
+        return new ClientSocket();
     }
 }

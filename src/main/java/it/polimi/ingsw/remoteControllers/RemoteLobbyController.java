@@ -5,7 +5,7 @@ import java.util.Optional;
 
 public interface RemoteLobbyController extends Remote{
     boolean enterInLobby(String player);
-    Optional<RemoteGameController> addPlayerToGame(String player);
+    String addPlayerToGame(String player);
 
-    Optional<RemoteGameController> createGame(String player, int nPlayers);
+    String createGame(String player, int nPlayers);
 }

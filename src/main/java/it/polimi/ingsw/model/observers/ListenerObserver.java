@@ -2,6 +2,8 @@ package it.polimi.ingsw.model.observers;
 
 import it.polimi.ingsw.model.listeners.Listener;
 
+import java.rmi.server.UnicastRemoteObject;
+
 /**
  * a listener observer is a class that observe a listener in order to receive a status update by a certain class listened
  */
