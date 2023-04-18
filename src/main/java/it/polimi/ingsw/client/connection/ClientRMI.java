@@ -9,6 +9,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class ClientRMI implements ConnectionHandler{
 
@@ -29,31 +30,31 @@ public class ClientRMI implements ConnectionHandler{
     }
 
     @Override
-    public void JoinLobby(String username) {
+    public void JoinLobby(String username) throws RemoteException {
         this.username = username;
         this.lobbyController.enterInLobby(username);
     }
 
     @Override
     public void CreateGame(int nPlayers) throws NotBoundException, RemoteException {
-        String remoteGameName;
-        if( !(remoteGameName = this.lobbyController.createGame(username, nPlayers)).isEmpty() ){
-            this.gameController =  (RemoteGameController) registry.lookup(remoteGameName);
-        }
+        Optional<RemoteGameController> rgc;
+
+        rgc = this.lobbyController.createGame(username, nPlayers);
+        rgc.ifPresent(remoteGameController -> this.gameController = remoteGameController);
 
     }
 
     @Override
     public void JoinGame() throws RemoteException, NotBoundException {
-        String remoteGameName;
-        if( !(remoteGameName = this.lobbyController.addPlayerToGame(this.username)).isEmpty() ){
-            this.gameController =  (RemoteGameController) registry.lookup(remoteGameName);
-        }
+        Optional<RemoteGameController> rgc;
+
+        rgc = this.lobbyController.addPlayerToGame(username);
+        rgc.ifPresent(remoteGameController -> this.gameController = remoteGameController);
 
     }
 
     @Override
-    public void checkValidRetrieve(ArrayList<Coordinates> tiles) {
+    public void checkValidRetrieve(ArrayList<Coordinates> tiles) throws RemoteException {
 
         this.checkGameIsSetted();
 
@@ -63,7 +64,7 @@ public class ClientRMI implements ConnectionHandler{
     }
 
     @Override
-    public void moveTiles(ArrayList<Coordinates> tiles, int column) {
+    public void moveTiles(ArrayList<Coordinates> tiles, int column) throws RemoteException {
 
         if(gameController.moveTiles(this.username,tiles, column)) return;
 

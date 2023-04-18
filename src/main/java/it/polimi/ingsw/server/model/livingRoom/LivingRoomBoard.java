@@ -68,13 +68,13 @@ public class LivingRoomBoard {
             throw new PlayersNumberOutOfRange("numPlayers is "+numPlayers+" it must be between 0 and "+MAX_PLAYERS+"!");
         } else if(numPlayers == 3) {
             this.numCells = NCELL_3PLAYER;
-            confFilePath = "src/main/java/it/polimi/ingsw/model/livingRoom/confFiles/3PlayersPattern.json";
+            confFilePath = "src/main/java/it/polimi/ingsw/server/model/livingRoom/confFiles/3PlayersPattern.json";
         } else if(numPlayers == MAX_PLAYERS) {
             this.numCells = NCELL_4PLAYER;
-            confFilePath = "src/main/java/it/polimi/ingsw/model/livingRoom/confFiles/4orMorePlayersPattern.json";
+            confFilePath = "src/main/java/it/polimi/ingsw/server/model/livingRoom/confFiles/4orMorePlayersPattern.json";
         } else {
             this.numCells = NCELL_2PLAYER;
-            confFilePath = "src/main/java/it/polimi/ingsw/model/livingRoom/confFiles/2PlayersPattern.json";
+            confFilePath = "src/main/java/it/polimi/ingsw/server/model/livingRoom/confFiles/2PlayersPattern.json";
         }
 
         JsonLivingBoardCell[][] jsonCells = gson.fromJson(new FileReader(confFilePath), JsonLivingBoardCell[][].class);

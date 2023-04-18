@@ -5,6 +5,6 @@ public class ConnectionHandlerFactory {
         if( type.equals(ConnectionType.RMI)) {
             return new ClientRMI();
         }
-        return new ClientSocket();
+        return new ClientSocket("127.0.0.1",4567);
     }
 }

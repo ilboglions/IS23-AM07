@@ -11,15 +11,15 @@ public interface ConnectionHandler {
 
     void init() throws RemoteException, NotBoundException;
     void close() throws IOException;
-    void JoinLobby(String username);
+    void JoinLobby(String username) throws RemoteException;
 
     void CreateGame(int nPlayers) throws NotBoundException, RemoteException;
 
     void JoinGame() throws RemoteException, NotBoundException;
 
-    void checkValidRetrieve(ArrayList<Coordinates> tiles);
+    void checkValidRetrieve(ArrayList<Coordinates> tiles) throws RemoteException;
 
-    void moveTiles( ArrayList<Coordinates> tiles, int column);
+    void moveTiles( ArrayList<Coordinates> tiles, int column) throws RemoteException;
 
 
 }

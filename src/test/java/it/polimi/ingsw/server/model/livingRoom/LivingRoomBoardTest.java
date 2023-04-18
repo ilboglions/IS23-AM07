@@ -26,7 +26,7 @@ public class LivingRoomBoardTest {
         assertThrows(PlayersNumberOutOfRange.class, () ->{ new LivingRoomBoard(0);});
         assertThrows(PlayersNumberOutOfRange.class, () ->{ new LivingRoomBoard(5);});
         LivingRoomBoard testboard = new LivingRoomBoard(4);
-        String confFilePath = "src/main/java/it/polimi/ingsw/model/livingRoom/confFiles/4orMorePlayersPattern.json";
+        String confFilePath = "src/main/java/it/polimi/ingsw/server/model/livingRoom/confFiles/4orMorePlayersPattern.json";
         Gson gson = new Gson();
         LivingRoomBoard.JsonLivingBoardCell[][] jsonCells = gson.fromJson(new FileReader(confFilePath), LivingRoomBoard.JsonLivingBoardCell[][].class);
         SlotType slotType;
@@ -38,7 +38,7 @@ public class LivingRoomBoardTest {
             }
         }
         testboard = new LivingRoomBoard(3);
-        confFilePath = "src/main/java/it/polimi/ingsw/model/livingRoom/confFiles/3PlayersPattern.json";
+        confFilePath = "src/main/java/it/polimi/ingsw/server/model/livingRoom/confFiles/3PlayersPattern.json";
         gson = new Gson();
         jsonCells = gson.fromJson(new FileReader(confFilePath), LivingRoomBoard.JsonLivingBoardCell[][].class);
         slotmatrix = testboard.getAllSlots();
@@ -49,7 +49,7 @@ public class LivingRoomBoardTest {
             }
         }
         testboard = new LivingRoomBoard(2);
-        confFilePath = "src/main/java/it/polimi/ingsw/model/livingRoom/confFiles/2PlayersPattern.json";
+        confFilePath = "src/main/java/it/polimi/ingsw/server/model/livingRoom/confFiles/2PlayersPattern.json";
         gson = new Gson();
         jsonCells = gson.fromJson(new FileReader(confFilePath), LivingRoomBoard.JsonLivingBoardCell[][].class);
         slotmatrix = testboard.getAllSlots();

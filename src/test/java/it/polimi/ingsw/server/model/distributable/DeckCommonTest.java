@@ -29,21 +29,21 @@ class DeckCommonTest {
             test.draw(5);
         });
         assertThrows(PlayersNumberOutOfRange.class, ()->{
-            DeckCommon test = new DeckCommon(-1, "src/test/java/it/polimi/ingsw/model/distributable/testConfFiles/deckCommonTest.json");
+            DeckCommon test = new DeckCommon(-1, "src/test/java/it/polimi/ingsw/server/model/distributable/testConfFiles/deckCommonTest.json");
         });
         assertThrows(PlayersNumberOutOfRange.class, ()->{
-            DeckCommon test = new DeckCommon(10, "src/test/java/it/polimi/ingsw/model/distributable/testConfFiles/deckCommonTest.json");
+            DeckCommon test = new DeckCommon(10, "src/test/java/it/polimi/ingsw/server/model/distributable/testConfFiles/deckCommonTest.json");
         });
         assertThrows(NegativeFieldException.class, ()->{
-            DeckCommon test = new DeckCommon(4, "src/test/java/it/polimi/ingsw/model/distributable/testConfFiles/deckCommonTest.json");
+            DeckCommon test = new DeckCommon(4, "src/test/java/it/polimi/ingsw/server/model/distributable/testConfFiles/deckCommonTest.json");
             test.draw(-1);
         });
         assertThrows(NotEnoughCardsException.class, ()->{
-            DeckCommon test = new DeckCommon(4, "src/test/java/it/polimi/ingsw/model/distributable/testConfFiles/deckCommonTest.json");
+            DeckCommon test = new DeckCommon(4, "src/test/java/it/polimi/ingsw/server/model/distributable/testConfFiles/deckCommonTest.json");
             test.draw(100);
         });
         assertThrows(IllegalArgumentException.class, ()->{
-           DeckCommon test = new DeckCommon(4, "src/test/java/it/polimi/ingsw/model/distributable/testConfFiles/deckCommonTestIllegal.json");
+           DeckCommon test = new DeckCommon(4, "src/test/java/it/polimi/ingsw/server/model/distributable/testConfFiles/deckCommonTestIllegal.json");
            test.draw(1);
         });
         assertThrows(NullPointerException.class, ()->{
@@ -61,7 +61,7 @@ class DeckCommonTest {
     @Test
     @DisplayName("Test the limits cases of draw method")
     void draw() throws PlayersNumberOutOfRange, NegativeFieldException, FileNotFoundException, NotEnoughCardsException {
-        DeckCommon test = new DeckCommon(3, "src/test/java/it/polimi/ingsw/model/distributable/testConfFiles/deckCommonTest.json");
+        DeckCommon test = new DeckCommon(3, "src/test/java/it/polimi/ingsw/server/model/distributable/testConfFiles/deckCommonTest.json");
         ArrayList<CommonGoalCard> selected = test.draw(13);
 
         assertEquals(13, selected.size());
