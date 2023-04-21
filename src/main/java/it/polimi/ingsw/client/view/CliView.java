@@ -4,8 +4,8 @@ import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 
-import java.util.ArrayList;
 import java.util.Map;
+import java.util.Optional;
 
 public class CliView {
 
@@ -86,9 +86,6 @@ public class CliView {
     private final String WHITE_BACKGROUND_BRIGHT = "\033[0;107m";   // WHITE
 
 
-    /* bookshelf settings */
-    private final int bookshelfRows=6;
-    private final int bookshelfColumns=5;
     public void printTitle(){
         System.out.println(YELLOW);
         System.out.println( "███╗   ███╗██╗   ██╗    ███████╗██╗  ██╗███████╗██╗     ███████╗██╗███████╗");
@@ -99,7 +96,24 @@ public class CliView {
         System.out.println( "╚═╝     ╚═╝   ╚═╝       ╚══════╝╚═╝  ╚═╝╚══════╝╚══════╝╚═╝     ╚═╝╚══════╝");
         System.out.println(RESET+BLACK_BOLD_BRIGHT);
         System.out.println( WHITE_BOLD_BRIGHT+"=> Not as good as a "+RED_BOLD+"MargaraCraft"+WHITE_BOLD_BRIGHT+" episode, but better than nothing!"+RESET);
+
+        System.out.println();
     }
+
+    public void printPersonalCard(Map<Coordinates,ItemTile> tilesMap, Map<Integer,Integer> pointsReference) throws InvalidCoordinatesException {
+        System.out.println(WHITE_BOLD_BRIGHT+"Here's your"+RED_BOLD+" personal goal card"+WHITE_BOLD_BRIGHT+"!\n");
+        this.printBookShelf( tilesMap);
+        System.out.println(WHITE_BOLD_BRIGHT+"== points reference ==");
+
+        pointsReference.forEach(
+                (key, value) -> {
+            System.out.print(key+"->"+value+"pt ");
+        }
+        );
+    }
+
+
+
     public void printYourBookShelf(Map<Coordinates,ItemTile> tilesMap) throws InvalidCoordinatesException {
         System.out.println(WHITE_BOLD_BRIGHT+"Here's "+RED_BOLD+"your "+WHITE_BOLD_BRIGHT+"bookshelf");
         this.printBookShelf( tilesMap);
@@ -112,8 +126,20 @@ public class CliView {
     public void printBookShelf(Map<Coordinates,ItemTile> tilesMap) throws InvalidCoordinatesException {
         Coordinates coord;
         String colorTile;
-        for(int r = 0; r < this.bookshelfRows; r++){
-            for(int c = 0; c < this.bookshelfColumns; c++){
+        /* bookshelf settings */
+        int bookshelfRows = 6;
+        int bookshelfColumns = 5;
+
+        System.out.print("  ");
+        for(int c = bookshelfColumns- 1; c >= 0; c--){
+            System.out.print(WHITE_BOLD_BRIGHT+c+"  ");
+        }
+
+        System.out.println(RESET);
+
+        for(int r = bookshelfRows - 1; r >= 0; r--){
+            System.out.print(WHITE_BOLD_BRIGHT+r+" "+RESET);
+            for(int c = bookshelfColumns - 1; c >= 0; c--){
                 coord = new Coordinates(r,c);
                 if (tilesMap.containsKey(coord) )
                     colorTile = getColorFromTileType(tilesMap.get(coord));
@@ -123,6 +149,43 @@ public class CliView {
             }
             System.out.print("\n");
         }
+        System.out.println();
+    }
+
+
+    public void printLivingRoom(Map<Coordinates, Optional<ItemTile>> livingRoomMap) throws InvalidCoordinatesException {
+        Coordinates coord;
+        String colorTile;
+
+        /* bookshelf settings */
+        int livingRoomRows = 9;
+        int livingRoomColumns = 9;
+        System.out.println(WHITE_BOLD_BRIGHT+"== Here's the "+RED_BOLD+"Living room board"+WHITE_BOLD_BRIGHT+" =="+RESET);
+
+        System.out.print("  ");
+        for(int c = livingRoomColumns- 1; c >= 0; c--){
+            System.out.print(WHITE_BOLD_BRIGHT+c+"  ");
+        }
+        System.out.println(RESET);
+
+        for(int r = livingRoomRows - 1; r >= 0; r--){
+            System.out.print(WHITE_BOLD_BRIGHT+r+" "+RESET);
+            for(int c = livingRoomColumns- 1; c >= 0; c--){
+                coord = new Coordinates(r,c);
+                if (livingRoomMap.containsKey(coord) ){
+                    if (livingRoomMap.get(coord).isPresent()){
+                        colorTile = getColorFromTileType(livingRoomMap.get(coord).get());
+                    } else {
+                        colorTile = BLACK;
+                    }
+                    System.out.print(colorTile+"██ ");
+                } else{
+                    System.out.print("   ");
+                }
+            }
+            System.out.print("\n");
+        }
+        System.out.println();
     }
     private String getColorFromTileType(ItemTile tile){
             switch (tile){
