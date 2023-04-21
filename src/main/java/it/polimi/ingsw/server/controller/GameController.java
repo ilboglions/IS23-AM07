@@ -6,6 +6,7 @@ import it.polimi.ingsw.server.model.game.GameModelInterface;
 import it.polimi.ingsw.remoteControllers.RemoteGameController;
 
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -13,7 +14,7 @@ import java.util.Set;
 /**
  * the game controller ensures the communication through client controller and server model
  */
-public class GameController implements RemoteGameController {
+public class GameController extends UnicastRemoteObject implements RemoteGameController {
     private final GameModelInterface gameModel;
     private final Set<Coordinates> selectedTiles;
 

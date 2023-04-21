@@ -30,7 +30,6 @@ public class ServerMain {
         this.lobbyController = new LobbyController(new Lobby());
     }
     public void startServer() {
-
         ExecutorService executor = Executors.newCachedThreadPool();
         ServerSocket serverSocket;
         System.out.println("Server started!");
@@ -56,8 +55,6 @@ public class ServerMain {
             return;
         }
         System.out.println("Server ready");
-
-
 
 
         /* SOCKET TCP */

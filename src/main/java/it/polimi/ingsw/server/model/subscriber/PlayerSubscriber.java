@@ -1,9 +1,9 @@
-package it.polimi.ingsw.server.model.observers;
+package it.polimi.ingsw.server.model.subscriber;
 
 /**
  * the interface that provides the method to be implemented by an observer of the Player
  */
-public interface PlayerObserver extends ListenerObserver {
+public interface PlayerSubscriber extends ListenerSubscriber {
 
     /**
      * provides information about the points of a certain player

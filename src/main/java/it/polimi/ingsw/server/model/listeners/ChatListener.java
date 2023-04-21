@@ -1,6 +1,6 @@
 package it.polimi.ingsw.server.model.listeners;
 import it.polimi.ingsw.server.model.chat.Message;
-import it.polimi.ingsw.server.model.observers.ChatObserver;
+import it.polimi.ingsw.server.model.subscriber.ChatSubscriber;
 
 import java.util.Optional;
 import java.util.Set;
@@ -8,7 +8,7 @@ import java.util.Set;
 /**
  * the chatListener is used to notify the client about the new messages posted
  */
-public class ChatListener extends Listener<ChatObserver> {
+public class ChatListener extends Listener<ChatSubscriber> {
 
 
     /**
@@ -17,12 +17,12 @@ public class ChatListener extends Listener<ChatObserver> {
      */
     public void onNewMessage(Message msg) {
 
-        Set<ChatObserver> observers = this.getObservers();
+        Set<ChatSubscriber> observers = this.getObservers();
 
         if( msg.getRecipient().isPresent() ){
 
             String recipient = msg.getRecipient().get();
-            Optional<ChatObserver> interestedOb =   observers.stream()
+            Optional<ChatSubscriber> interestedOb =   observers.stream()
                                                     .filter(obs -> obs.getObserverUsername().equals(recipient))
                                                     .findFirst();
             interestedOb.ifPresent( ob -> ob.receiveMessage(msg.getSender(), msg.getContent()));
