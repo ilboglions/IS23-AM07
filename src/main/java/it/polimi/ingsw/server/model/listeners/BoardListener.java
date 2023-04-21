@@ -1,7 +1,7 @@
 package it.polimi.ingsw.server.model.listeners;
 
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
-import it.polimi.ingsw.server.model.observers.BoardObserver;
+import it.polimi.ingsw.server.model.subscriber.BoardSubscriber;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 
 import java.util.Map;
@@ -10,7 +10,7 @@ import java.util.Set;
 /**
  * provides updates of the board state
  */
-public class BoardListener extends Listener<BoardObserver> {
+public class BoardListener extends Listener<BoardSubscriber> {
 
     /**
      * when the tiles on the boards change, the observers are notified
@@ -18,8 +18,8 @@ public class BoardListener extends Listener<BoardObserver> {
      */
     public void onBoardChange(Map<Coordinates, Optional<ItemTile>> tilesInBoard ){
 
-        Set<BoardObserver> observers = this.getObservers();
-        for (BoardObserver ob : observers) {
+        Set<BoardSubscriber> observers = this.getObservers();
+        for (BoardSubscriber ob : observers) {
             ob.UpdateBoardStatus(tilesInBoard);
         }
     }

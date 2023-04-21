@@ -1,9 +1,9 @@
-package it.polimi.ingsw.server.model.observers;
+package it.polimi.ingsw.server.model.subscriber;
 
 /**
  * the interface that provides the method to be implemented by an observer of the chat service
  */
-public interface ChatObserver extends ListenerObserver {
+public interface ChatSubscriber extends ListenerSubscriber {
 
     /**
      * because of not all the messages are shared for all the players, it is necessary to identify the username of the

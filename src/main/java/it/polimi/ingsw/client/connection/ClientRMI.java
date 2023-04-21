@@ -56,7 +56,7 @@ public class ClientRMI implements ConnectionHandler{
     @Override
     public void checkValidRetrieve(ArrayList<Coordinates> tiles) throws RemoteException {
 
-        this.checkGameIsSetted();
+        this.checkGameIsSet();
 
         //here the view will be notified that the action has been executed correctly
         if(gameController.checkValidRetrieve(this.username,tiles)) return;
@@ -68,10 +68,9 @@ public class ClientRMI implements ConnectionHandler{
 
         if(gameController.moveTiles(this.username,tiles, column)) return;
 
-
     }
 
-    private void checkGameIsSetted(){
+    private void checkGameIsSet(){
         if( gameController == null) throw  new RuntimeException("the client has joined no game!");
     }
 }

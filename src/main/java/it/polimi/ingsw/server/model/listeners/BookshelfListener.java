@@ -1,6 +1,6 @@
 package it.polimi.ingsw.server.model.listeners;
 
-import it.polimi.ingsw.server.model.observers.BookshelfObserver;
+import it.polimi.ingsw.server.model.subscriber.BookshelfSubscriber;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 
 import java.util.ArrayList;
@@ -9,7 +9,7 @@ import java.util.Set;
 /**
  * provides to the client information about a bookshelf of a player
  */
-public class BookshelfListener extends Listener<BookshelfObserver> {
+public class BookshelfListener extends Listener<BookshelfSubscriber> {
 
     /**
      * when a bookshelf of a player receives new tiles, all the observers are notified
@@ -18,9 +18,9 @@ public class BookshelfListener extends Listener<BookshelfObserver> {
      * @param col the column where the tiles are insert
      */
     public void onBookshelfChange(String player, ArrayList<ItemTile> insertedTiles, int col){
-        Set<BookshelfObserver> observers = this.getObservers();
+        Set<BookshelfSubscriber> observers = this.getObservers();
 
-        for (BookshelfObserver o : observers) {
+        for (BookshelfSubscriber o : observers) {
             o.UpdateBookshelfStatus(player, insertedTiles, col);
         }
     }

@@ -1,6 +1,6 @@
 package it.polimi.ingsw.server.model.listeners;
 
-import it.polimi.ingsw.server.model.observers.ListenerObserver;
+import it.polimi.ingsw.server.model.subscriber.ListenerSubscriber;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -9,7 +9,7 @@ import java.util.Set;
  * the abstract and generic class that describe a listener
  * @param <T> the type of the ListenerObserver
  */
-public abstract class Listener<T extends ListenerObserver> {
+public abstract class Listener<T extends ListenerSubscriber> {
     /**
      * the observers subscribed to the listener
      */

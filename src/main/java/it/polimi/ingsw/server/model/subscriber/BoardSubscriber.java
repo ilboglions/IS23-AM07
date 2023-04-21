@@ -1,4 +1,4 @@
-package it.polimi.ingsw.server.model.observers;
+package it.polimi.ingsw.server.model.subscriber;
 
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
@@ -9,7 +9,7 @@ import java.util.Optional;
 /**
  * the interface that provides the method to be implemented by an observer of the board
  */
-public interface BoardObserver extends ListenerObserver {
+public interface BoardSubscriber extends ListenerSubscriber {
 
      /**
       * when the board state changes, the listener of the board will trigger this method
