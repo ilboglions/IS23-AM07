@@ -3,6 +3,8 @@ package it.polimi.ingsw.server.model.bookshelf;
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.server.model.exceptions.NotEnoughSpaceException;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
+import it.polimi.ingsw.server.model.listeners.BookshelfListener;
+import it.polimi.ingsw.server.model.player.Player;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 
 import java.util.ArrayList;
@@ -12,7 +14,17 @@ import java.util.Objects;
  * the player bookshelf extends the bookshelf class, it is a mutable class, used for stores players tiles
  */
 public class PlayerBookshelf extends Bookshelf{
+
+    private final Player player;
     private static final int MAXTILES = 3;
+
+    private final BookshelfListener bookshelfListener;
+
+    public PlayerBookshelf(Player player){
+        super();
+        this.player = player;
+        this.bookshelfListener = new BookshelfListener();
+    }
 
     /**
      * the method make it possible to insert items in a column
@@ -39,6 +51,8 @@ public class PlayerBookshelf extends Bookshelf{
                 this.tiles[firstFreeIndex][column] = orderedTile;
                 firstFreeIndex++;
             }
+
+            bookshelfListener.onBookshelfChange(player.getUsername(),orderedTiles,column);
         }
         else
             throw new NotEnoughSpaceException("There isn't enough space in this column!");

@@ -1,9 +1,9 @@
 package it.polimi.ingsw.server.model.bookshelf;
 
-import it.polimi.ingsw.server.model.bookshelf.PlayerBookshelf;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.server.model.exceptions.NotEnoughSpaceException;
+import it.polimi.ingsw.server.model.player.Player;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,7 @@ class PlayerBookshelfTest {
     @Test
     @DisplayName("Test all the exceptions")
     void testExceptions() {
-        PlayerBookshelf test = new PlayerBookshelf();
+        PlayerBookshelf test = new PlayerBookshelf(new Player("mario"));
 
         assertThrows(NotEnoughSpaceException.class, ()->{
            ArrayList<ItemTile> testArray = new ArrayList<>();
@@ -86,7 +86,7 @@ class PlayerBookshelfTest {
     @Test
     @DisplayName("Test for a complete bookshelf")
     void testFull() throws NotEnoughSpaceException, InvalidCoordinatesException {
-        PlayerBookshelf test = new PlayerBookshelf();
+        PlayerBookshelf test = new PlayerBookshelf(new Player("Mario"));
         ArrayList<ItemTile> testArray = new ArrayList<>();
 
         testArray.add(ItemTile.GAME);
@@ -130,7 +130,7 @@ class PlayerBookshelfTest {
     @Test
     @DisplayName("Test empty Arraylist of tiles")
     void testEmpty() throws NotEnoughSpaceException, InvalidCoordinatesException {
-        PlayerBookshelf test = new PlayerBookshelf();
+        PlayerBookshelf test = new PlayerBookshelf(new Player("mario"));
 
         test.insertItemTile(0, new ArrayList<>());
 
@@ -154,7 +154,7 @@ class PlayerBookshelfTest {
     @Test
     @DisplayName("Test overlapping elements")
     void testOverlapped() throws NotEnoughSpaceException {
-        PlayerBookshelf test = new PlayerBookshelf();
+        PlayerBookshelf test = new PlayerBookshelf(new Player("mario"));
         ArrayList<ItemTile> testArray = new ArrayList<>();
 
         testArray.add(ItemTile.GAME);
@@ -173,9 +173,9 @@ class PlayerBookshelfTest {
         test.insertItemTile(4, testArray);
 
         assertEquals(testArray.size() * 2 * 5, test.nElementsOverlapped(test));
-        assertEquals(0, test.nElementsOverlapped(new PlayerBookshelf()));
+        assertEquals(0, test.nElementsOverlapped(new PlayerBookshelf(new Player("mario"))));
 
-        PlayerBookshelf secondBookshelf = new PlayerBookshelf();
+        PlayerBookshelf secondBookshelf = new PlayerBookshelf(new Player("mario"));
         ArrayList<ItemTile> testSingle = new ArrayList<>();
         testSingle.add(ItemTile.GAME);
         secondBookshelf.insertItemTile(0, testSingle);

@@ -1,7 +1,9 @@
 package it.polimi.ingsw.server.model.listeners;
 
+import java.util.ArrayList;
 import java.util.Set;
 import it.polimi.ingsw.server.model.subscriber.PlayerSubscriber;
+import it.polimi.ingsw.server.model.tokens.ScoringToken;
 
 /**
  * listener of the Player class, it provides to observers information about the player change of state
@@ -20,6 +22,14 @@ public class PlayerListener extends Listener<PlayerSubscriber> {
 
         for (PlayerSubscriber obs : observers) {
             obs.updatePoints(player, overallPoints, addedPoints);
+        }
+    }
+
+    public void onTokenPointAcquired(ArrayList<ScoringToken> tokens){
+        Set<PlayerSubscriber> observers = this.getObservers();
+
+        for (PlayerSubscriber obs : observers) {
+            obs.updateTokens(tokens);
         }
     }
 }
