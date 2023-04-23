@@ -18,7 +18,11 @@ import java.rmi.server.*;
 public class LobbyController extends UnicastRemoteObject implements RemoteLobbyController {
     private final Lobby lobbyModel;
     private final Map<GameModelInterface,GameController> gameControllers;
+    /*
+        lobbyLock is used to synchronize the methods of LobbyController. it is equivalent to use synchronize in the method's signature
+     */
 
+    private final Object lobbyLock;
     /**
      * creates the controller of the lobby
      * @param lobbyModel the model of the lobby
@@ -27,6 +31,7 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
         super();
         this.lobbyModel = lobbyModel;
         gameControllers = new HashMap<>();
+        lobbyLock = new Object();
     }
 
     /**
@@ -35,12 +40,15 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
      * @return true, if a player can join the lobby, false if the nickname in the lobby has been already used
      */
     public boolean enterInLobby(String player) throws RemoteException{
-        try {
-            lobbyModel.createPlayer(player);
-            return true;
-        } catch (NicknameAlreadyUsedException e) {
-            return false;
+        synchronized (lobbyLock) {
+            try {
+                lobbyModel.createPlayer(player);
+                return true;
+            } catch (NicknameAlreadyUsedException e) {
+                return false;
+            }
         }
+
     }
 
     /**
@@ -49,36 +57,35 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
      * @param player the nickname of the player to be added
      * @return an optional of GameController, if no game is in the lobby, an empty value will be filled
      */
-    public Optional<RemoteGameController> addPlayerToGame(String player) throws RemoteException{
-        GameController  gameController;
-        try {
-            GameModelInterface gameModel = lobbyModel.addPlayerToGame(player);
-
+    public Optional<RemoteGameController> addPlayerToGame(String player) throws RemoteException {
+        synchronized (lobbyLock) {
+            GameController gameController;
+            try {
+                GameModelInterface gameModel = lobbyModel.addPlayerToGame(player);
                 gameController = gameControllers.get(gameModel);
+            } catch (NoAvailableGameException e) {
+                return Optional.empty();
+            } catch (InvalidPlayerException e) {
+                return Optional.empty();
+            } catch (NicknameAlreadyUsedException e) {
+                return Optional.empty();
+            } catch (PlayersNumberOutOfRange e) {
+                return Optional.empty();
+            } catch (NullPointerException e) {
+                return Optional.empty();
+            }
 
+            try {
+                if( gameController.getGameControlled().canStart())
+                    gameController.getGameControlled().start();
+            } catch (NotAllPlayersHaveJoinedException ignored) {
 
-        } catch (NoAvailableGameException e) {
-            return Optional.empty();
-        } catch (InvalidPlayerException e) {
-            return Optional.empty();
-        } catch (NicknameAlreadyUsedException e) {
-            return Optional.empty();
-        } catch (PlayersNumberOutOfRange e) {
-            return Optional.empty();
-        } catch (NullPointerException e) {
-            return Optional.empty();
+            } catch (GameNotEndedException e) {
+                return Optional.empty();
+            }
+
+            return Optional.of(gameController);
         }
-
-        try {
-            if( gameController.getGameControlled().canStart())
-                gameController.getGameControlled().start();
-        } catch (NotAllPlayersHaveJoinedException ignored) {
-
-        } catch (GameNotEndedException e) {
-            return Optional.empty();
-        }
-
-        return Optional.of(gameController);
     }
 
     /**
@@ -89,11 +96,12 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
      * @return the GameController, if the game creation is not possible, an empty value will be returned
      */
     public Optional<RemoteGameController> createGame(String player, int nPlayers) throws RemoteException{
-            GameController  gameController;
+        synchronized (lobbyLock) {
+            GameController gameController;
             try {
-                GameModelInterface gameModel = lobbyModel.createGame(nPlayers,player);
+                GameModelInterface gameModel = lobbyModel.createGame(nPlayers, player);
                 gameController = new GameController(gameModel);
-                this.gameControllers.put(gameModel,gameController);
+                this.gameControllers.put(gameModel, gameController);
             } catch (BrokenInternalGameConfigurations e) {
                 return Optional.empty();
             } catch (InvalidPlayerException e) {
@@ -105,7 +113,8 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
             } catch (NullPointerException e) {
                 return Optional.empty();
             }
-        return Optional.of(gameController);
+            return Optional.of(gameController);
+        }
     }
 
 }

@@ -17,7 +17,7 @@ import java.util.Set;
 public class GameController extends UnicastRemoteObject implements RemoteGameController {
     private final GameModelInterface gameModel;
     private final Set<Coordinates> selectedTiles;
-
+    private final Object gameLock, chatLock;
     /**
      * creates the gameController
      *
@@ -27,7 +27,8 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
     public GameController(GameModelInterface gameModel) throws RemoteException {
         this.gameModel = gameModel;
         this.selectedTiles = new HashSet<>();
-
+        this.gameLock = new Object();
+        this.chatLock = new Object();
     }
 
     /**
@@ -37,26 +38,26 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
      * @return true, if the action is permitted
      */
     public boolean checkValidRetrieve(String player, ArrayList<Coordinates> coords) throws RemoteException  {
-
-
-        try {
-            if(!player.equals(gameModel.getPlayerInTurn())) return false;
-        } catch (GameEndedException e) {
-            return false;
-        } catch (GameNotStartedException e) {
-            return false;
-        }
-
-        try{
-            if( gameModel.checkValidRetrieve(coords)){
-                selectedTiles.clear();
-                selectedTiles.addAll(coords);
-                return true;
+        synchronized (gameLock) {
+            try {
+                if(!player.equals(gameModel.getPlayerInTurn())) return false;
+            } catch (GameEndedException e) {
+                return false;
+            } catch (GameNotStartedException e) {
+                return false;
             }
-            return false;
 
-        } catch (EmptySlotException e){
-            return false;
+            try{
+                if( gameModel.checkValidRetrieve(coords)){
+                    selectedTiles.clear();
+                    selectedTiles.addAll(coords);
+                    return true;
+                }
+                return false;
+
+            } catch (EmptySlotException e){
+                return false;
+            }
         }
     }
 
@@ -69,41 +70,43 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
      * @return true, if the action has been correctly performed, false otherwise
      */
     public boolean moveTiles( String player, ArrayList<Coordinates> source, int column) throws RemoteException{
-        try {
-            if(!player.equals(gameModel.getPlayerInTurn())) return false;
-        } catch (GameEndedException e) {
-            return false;
-        } catch (GameNotStartedException e) {
-            return false;
-        }
-
-        if(!this.selectedTiles.containsAll(source)) return false;
-        try {
-            gameModel.moveTiles(source,column);
-            if (gameModel.checkRefill()){
-                gameModel.refillLivingRoom();
+        synchronized (gameLock) {
+            try {
+                if(!player.equals(gameModel.getPlayerInTurn())) return false;
+            } catch (GameEndedException e) {
+                return false;
+            } catch (GameNotStartedException e) {
+                return false;
             }
 
-            gameModel.updatePlayerPoints(player);
+            if(!this.selectedTiles.containsAll(source)) return false;
+            try {
+                gameModel.moveTiles(source,column);
+                if (gameModel.checkRefill()){
+                    gameModel.refillLivingRoom();
+                }
 
-            gameModel.checkBookshelfComplete();
+                gameModel.updatePlayerPoints(player);
 
-            gameModel.setPlayerTurn();
+                gameModel.checkBookshelfComplete();
+
+                gameModel.setPlayerTurn();
 
 
-            return true;
-        } catch (InvalidCoordinatesException e) {
-            return false;
-        } catch (EmptySlotException e) {
-            return false;
-        } catch (NotEnoughSpaceException e) {
-            return false;
-        } catch (InvalidPlayerException e){
-            return false;
-        } catch (TokenAlreadyGivenException e) {
-            return false;
-        } catch (GameNotStartedException e) {
-            return false;
+                return true;
+            } catch (InvalidCoordinatesException e) {
+                return false;
+            } catch (EmptySlotException e) {
+                return false;
+            } catch (NotEnoughSpaceException e) {
+                return false;
+            } catch (InvalidPlayerException e){
+                return false;
+            } catch (TokenAlreadyGivenException e) {
+                return false;
+            } catch (GameNotStartedException e) {
+                return false;
+            }
         }
     }
 
@@ -115,13 +118,15 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
      * @return true, if the message can be posted, false otherwise
      */
     public boolean postBroadCastMessage(String player, String message) throws RemoteException{
-        try {
-            gameModel.postMessage(player, message);
-        } catch (InvalidPlayerException e) {
-            return false;
-        }
+        synchronized (chatLock) {
+            try {
+                gameModel.postMessage(player, message);
+            } catch (InvalidPlayerException e) {
+                return false;
+            }
 
-        return true;
+            return true;
+        }
     }
 
     /**
@@ -132,16 +137,17 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
      * @return false, if the message cannot be posted or sent to the receiver, true otherwise
      */
     public boolean postDirectMessage(String player, String receiver,String message) throws RemoteException{
+        synchronized (chatLock) {
+            try {
+                gameModel.postMessage(player,receiver,message);
+            } catch (SenderEqualsRecipientException e) {
+                return false;
+            } catch (InvalidPlayerException e) {
+                return false;
+            }
 
-        try {
-            gameModel.postMessage(player,receiver,message);
-        } catch (SenderEqualsRecipientException e) {
-            return false;
-        } catch (InvalidPlayerException e) {
-            return false;
+            return true;
         }
-
-        return true;
     }
 
     protected GameModelInterface getGameControlled(){
