@@ -27,20 +27,20 @@ public class PlayerListener extends Listener<PlayerSubscriber> {
         }
     }
 
-    public void onTokenPointAcquired(ArrayList<ScoringToken> tokens){
+    public void onTokenPointAcquired(String player, ArrayList<ScoringToken> tokens){
         Set<PlayerSubscriber> subscribers = this.getSubscribers();
 
         for (PlayerSubscriber sub : subscribers) {
-            sub.updateTokens(tokens);
+            sub.updateTokens(player, tokens);
         }
     }
 
-    public void onPersonalGoalCardAssigned(String username, RemotePersonalGoalCard personalGoalCard){
+    public void onPersonalGoalCardAssigned(String player, RemotePersonalGoalCard personalGoalCard, String username){
         Set<PlayerSubscriber> subscribers = this.getSubscribers();
 
         for (PlayerSubscriber sub : subscribers) {
             if( sub.getSubscriberUsername().equals(username)){
-                sub.updatePersonalGoalCard(personalGoalCard);
+                sub.updatePersonalGoalCard(player, personalGoalCard);
             }
         }
     }

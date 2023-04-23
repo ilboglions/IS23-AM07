@@ -17,7 +17,7 @@ public interface PlayerSubscriber extends ListenerSubscriber {
      */
     void updatePoints(String player, int overallPoints, int addedPoints);
 
-    void updateTokens(ArrayList<ScoringToken> tokenPoints);
+    void updateTokens(String player, ArrayList<ScoringToken> tokenPoints);
 
-    void updatePersonalGoalCard(RemotePersonalGoalCard remotePersonal);
+    void updatePersonalGoalCard(String player, RemotePersonalGoalCard remotePersonal);
 }

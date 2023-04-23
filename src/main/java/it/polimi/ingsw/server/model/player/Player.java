@@ -39,7 +39,9 @@ public class Player {
      * The total points scored by the user with the PersonalGoalCard, CommonGoalCard and adjacency inside the PlayerBookshelf
      */
     private int points;
-
+    /**
+     * The listener used to notify the subscribers about the players changes
+     */
     private final PlayerListener playerListener;
 
     /**
@@ -54,7 +56,10 @@ public class Player {
         this.points = 0;
     }
 
-
+    /**
+     * permits to subscribe a PlayerSubscriber to the player notifications
+     * @param subscriber the interested subscriber
+     */
     public void subscribeToListener(PlayerSubscriber subscriber){
         this.playerListener.addSubscriber(subscriber);
     }
@@ -204,7 +209,7 @@ public class Player {
     public void addToken(ScoringToken token) {
         this.tokenAcquired.add(Objects.requireNonNull(token));
         /* notify the listener */
-        this.playerListener.onTokenPointAcquired(new ArrayList<>(this.tokenAcquired));
+        this.playerListener.onTokenPointAcquired( this.username, new ArrayList<>(this.tokenAcquired));
     }
 
     /**
@@ -213,7 +218,7 @@ public class Player {
      */
     public void assignPersonalCard(PersonalGoalCard card) {
         this.personalCard = Objects.requireNonNull(card);
-        this.playerListener.onPersonalGoalCardAssigned(this.username, card);
+        playerListener.onPersonalGoalCardAssigned(this.username, card, this.getUsername());
     }
 
     /**
