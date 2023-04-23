@@ -5,7 +5,7 @@ import it.polimi.ingsw.server.model.exceptions.NotEnoughSpaceException;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.listeners.BookshelfListener;
 import it.polimi.ingsw.server.model.player.Player;
-import it.polimi.ingsw.server.model.subscriber.BookshelfSubscriber;
+import it.polimi.ingsw.remoteInterfaces.BookshelfSubscriber;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 
 import java.util.ArrayList;

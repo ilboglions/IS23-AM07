@@ -1,6 +1,6 @@
 package it.polimi.ingsw.server.model.listeners;
 
-import it.polimi.ingsw.server.model.subscriber.BookshelfSubscriber;
+import it.polimi.ingsw.remoteInterfaces.BookshelfSubscriber;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 
 import java.util.ArrayList;

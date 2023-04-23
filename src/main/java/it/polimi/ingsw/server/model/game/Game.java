@@ -1,5 +1,9 @@
 package it.polimi.ingsw.server.model.game;
 
+import it.polimi.ingsw.remoteInterfaces.BoardSubscriber;
+import it.polimi.ingsw.remoteInterfaces.BookshelfSubscriber;
+import it.polimi.ingsw.remoteInterfaces.ChatSubscriber;
+import it.polimi.ingsw.remoteInterfaces.PlayerSubscriber;
 import it.polimi.ingsw.server.model.chat.Chat;
 import it.polimi.ingsw.server.model.chat.Message;
 import it.polimi.ingsw.server.model.exceptions.SenderEqualsRecipientException;
@@ -12,7 +16,6 @@ import it.polimi.ingsw.server.model.distributable.DeckPersonal;
 import it.polimi.ingsw.server.model.livingRoom.LivingRoomBoard;
 import it.polimi.ingsw.server.model.livingRoom.exceptions.NotEnoughTilesException;
 import it.polimi.ingsw.server.model.player.Player;
-import it.polimi.ingsw.server.model.subscriber.*;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 import it.polimi.ingsw.server.model.tokens.ScoringToken;
 import it.polimi.ingsw.server.model.tokens.TokenPoint;

@@ -1,4 +1,4 @@
-package it.polimi.ingsw.server.model.subscriber;
+package it.polimi.ingsw.remoteInterfaces;
 
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 import java.util.ArrayList;

@@ -1,7 +1,7 @@
-package it.polimi.ingsw.server.model.subscriber;
+package it.polimi.ingsw.remoteInterfaces;
 
 import it.polimi.ingsw.server.model.tokens.ScoringToken;
-import it.polimi.ingsw.remoteInterfaces.RemotePersonalGoalCard;
+
 import java.util.ArrayList;
 
 /**

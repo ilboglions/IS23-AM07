@@ -4,10 +4,10 @@ import it.polimi.ingsw.server.model.chat.Message;
 import it.polimi.ingsw.server.model.exceptions.SenderEqualsRecipientException;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.*;
-import it.polimi.ingsw.server.model.subscriber.BoardSubscriber;
-import it.polimi.ingsw.server.model.subscriber.BookshelfSubscriber;
-import it.polimi.ingsw.server.model.subscriber.ChatSubscriber;
-import it.polimi.ingsw.server.model.subscriber.PlayerSubscriber;
+import it.polimi.ingsw.remoteInterfaces.BoardSubscriber;
+import it.polimi.ingsw.remoteInterfaces.BookshelfSubscriber;
+import it.polimi.ingsw.remoteInterfaces.ChatSubscriber;
+import it.polimi.ingsw.remoteInterfaces.PlayerSubscriber;
 
 import java.util.ArrayList;
 

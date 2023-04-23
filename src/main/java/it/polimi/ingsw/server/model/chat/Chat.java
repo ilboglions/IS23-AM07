@@ -2,7 +2,7 @@ package it.polimi.ingsw.server.model.chat;
 
 import it.polimi.ingsw.server.model.exceptions.SenderEqualsRecipientException;
 import it.polimi.ingsw.server.model.listeners.ChatListener;
-import it.polimi.ingsw.server.model.subscriber.ChatSubscriber;
+import it.polimi.ingsw.remoteInterfaces.ChatSubscriber;
 
 import java.util.ArrayList;
 

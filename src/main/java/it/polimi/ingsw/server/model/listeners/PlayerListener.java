@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Set;
 
 import it.polimi.ingsw.remoteInterfaces.RemotePersonalGoalCard;
-import it.polimi.ingsw.server.model.subscriber.PlayerSubscriber;
+import it.polimi.ingsw.remoteInterfaces.PlayerSubscriber;
 import it.polimi.ingsw.server.model.tokens.ScoringToken;
 
 /**

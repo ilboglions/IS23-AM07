@@ -1,6 +1,6 @@
 package it.polimi.ingsw.server.model.listeners;
 
-import it.polimi.ingsw.server.model.subscriber.ListenerSubscriber;
+import it.polimi.ingsw.remoteInterfaces.ListenerSubscriber;
 
 import java.rmi.Remote;
 import java.util.HashSet;

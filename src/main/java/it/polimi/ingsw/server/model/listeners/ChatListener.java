@@ -1,6 +1,6 @@
 package it.polimi.ingsw.server.model.listeners;
 import it.polimi.ingsw.server.model.chat.Message;
-import it.polimi.ingsw.server.model.subscriber.ChatSubscriber;
+import it.polimi.ingsw.remoteInterfaces.ChatSubscriber;
 
 import java.util.Optional;
 import java.util.Set;

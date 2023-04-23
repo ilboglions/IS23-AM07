@@ -6,7 +6,7 @@ import it.polimi.ingsw.server.model.cards.personal.PersonalGoalCard;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.server.model.listeners.PlayerListener;
-import it.polimi.ingsw.server.model.subscriber.PlayerSubscriber;
+import it.polimi.ingsw.remoteInterfaces.PlayerSubscriber;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 import it.polimi.ingsw.server.model.tokens.ScoringToken;
 import it.polimi.ingsw.server.model.utilities.UtilityFunctions;

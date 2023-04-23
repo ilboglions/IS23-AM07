@@ -61,7 +61,7 @@ public class ServerMain {
         while (true) {
             try {
                 Socket socket = serverSocket.accept();
-                executor.submit(new ServerClientHandlerTCP(socket));
+                executor.submit(new ServerClientHandlerTCP(socket, lobbyController));
             } catch(IOException e) {
                 break; // Entrerei qui se serverSocket venisse chiuso
             }

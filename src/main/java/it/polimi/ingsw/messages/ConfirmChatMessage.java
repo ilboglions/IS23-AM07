@@ -8,7 +8,7 @@ public class ConfirmChatMessage extends NetMessage {
 
     private final Boolean result;
 
-    ConfirmChatMessage(String username, Boolean result) {
+    public ConfirmChatMessage(String username, Boolean result) {
         super(username, MessageType.CONFIRM_CHAT);
         this.result = result;
     }

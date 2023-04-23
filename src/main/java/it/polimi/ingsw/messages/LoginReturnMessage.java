@@ -8,7 +8,7 @@ public class LoginReturnMessage extends NetMessage {
 
     private final Boolean confirmLogin;
     private final String details;
-    LoginReturnMessage(String username, Boolean confirmLogin, String details) {
+    public LoginReturnMessage(String username, Boolean confirmLogin, String details) {
         super(username, MessageType.LOGIN_RETURN);
         this.confirmLogin = confirmLogin;
         this.details = details;

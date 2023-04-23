@@ -10,7 +10,7 @@ public class ConfirmGameMessage extends NetMessage {
     private final String errorType;
     private final String details;
 
-    ConfirmGameMessage(String username, Boolean confirmGameCreation, String errorType, String details) {
+    public ConfirmGameMessage(String username, Boolean confirmGameCreation, String errorType, String details) {
         super(username, MessageType.CONFIRM_GAME);
         this.confirmGameCreation = confirmGameCreation;
         this.errorType = errorType;

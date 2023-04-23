@@ -1,4 +1,4 @@
-package it.polimi.ingsw.server.model.subscriber;
+package it.polimi.ingsw.remoteInterfaces;
 
 /**
  * the interface that provides the method to be implemented by an observer of the chat service

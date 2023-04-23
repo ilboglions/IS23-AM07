@@ -22,4 +22,5 @@ public enum MessageType {
     POINTS_UPDATE,
     TOKEN_UPDATE,
     PERSONAL_CARD_UPDATE,
+    CLOSE_CONNECTION,
 }

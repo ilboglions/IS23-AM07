@@ -1,9 +1,5 @@
 package it.polimi.ingsw.remoteInterfaces;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
-import it.polimi.ingsw.server.model.subscriber.BoardSubscriber;
-import it.polimi.ingsw.server.model.subscriber.BookshelfSubscriber;
-import it.polimi.ingsw.server.model.subscriber.ChatSubscriber;
-import it.polimi.ingsw.server.model.subscriber.PlayerSubscriber;
 
 import java.rmi.*;
 import java.util.ArrayList;

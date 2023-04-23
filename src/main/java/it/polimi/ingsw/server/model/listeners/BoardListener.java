@@ -1,7 +1,7 @@
 package it.polimi.ingsw.server.model.listeners;
 
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
-import it.polimi.ingsw.server.model.subscriber.BoardSubscriber;
+import it.polimi.ingsw.remoteInterfaces.BoardSubscriber;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 
 import java.util.Map;
