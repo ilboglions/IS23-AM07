@@ -1,10 +1,12 @@
 package it.polimi.ingsw.server.model.cards.personal;
 
+import it.polimi.ingsw.remoteControllers.RemotePersonalGoalCard;
 import it.polimi.ingsw.server.model.bookshelf.CardBookshelf;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 
+import java.io.Serial;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -12,7 +14,10 @@ import java.util.Objects;
 /**
  * PersonalGoalCard represent the card assigned to a specific player. They represent a pattern that should be respected for earning more points
  */
-public class PersonalGoalCard{
+public class PersonalGoalCard implements RemotePersonalGoalCard {
+
+    @Serial
+    private static final long serialVersionUID = -8245464591724083168L;
     /**
      * this attribute assign an immutable bookshelf to the card, in order to represent the pattern to follow.
      */

@@ -101,6 +101,7 @@ public class Game implements GameModelInterface {
         this.commonGoalCards = deckCommon.draw(2);
         this.players.add(host);
         host.assignPersonalCard(deckPersonal.draw(1).get(0));
+
     }
 
 
