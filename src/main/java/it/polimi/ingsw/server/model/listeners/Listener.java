@@ -14,22 +14,22 @@ public abstract class Listener<T extends ListenerSubscriber> implements Remote {
     /**
      * the observers subscribed to the listener
      */
-    private final Set<T> observers = new HashSet<>();
+    private final Set<T> subscribers = new HashSet<>();
 
     /**
      * gets the set of observers
      * @return the set of the subscribed observers
      */
-    protected Set<T> getObservers() {
-        return observers;
+    protected Set<T> getSubscribers() {
+        return subscribers;
     }
 
     /**
      * make it possible to insert a new observer to the listener
-     * @param observer the observer to be added
+     * @param subscriber the observer to be added
      */
-    public void addObserver(T observer) {
-        observers.add(observer);
+    public void addSubscriber(T subscriber) {
+        subscribers.add(subscriber);
     }
 
 }

@@ -2,6 +2,7 @@ package it.polimi.ingsw.server.model.chat;
 
 import it.polimi.ingsw.server.model.exceptions.SenderEqualsRecipientException;
 import it.polimi.ingsw.server.model.listeners.ChatListener;
+import it.polimi.ingsw.server.model.subscriber.ChatSubscriber;
 
 import java.util.ArrayList;
 
@@ -24,6 +25,10 @@ public class Chat {
     public Chat() {
         sentMessages = new ArrayList<>();
         chatListener = new ChatListener();
+    }
+
+    public void subscribeToListener(ChatSubscriber subscriber){
+        chatListener.addSubscriber(subscriber);
     }
 
     /**

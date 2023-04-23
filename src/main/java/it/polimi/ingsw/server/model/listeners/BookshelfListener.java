@@ -18,7 +18,7 @@ public class BookshelfListener extends Listener<BookshelfSubscriber> {
      * @param col the column where the tiles are insert
      */
     public void onBookshelfChange(String player, ArrayList<ItemTile> insertedTiles, int col){
-        Set<BookshelfSubscriber> observers = this.getObservers();
+        Set<BookshelfSubscriber> observers = this.getSubscribers();
 
         for (BookshelfSubscriber o : observers) {
             o.UpdateBookshelfStatus(player, insertedTiles, col);

@@ -10,9 +10,10 @@ import java.rmi.Remote;
  */
 public interface ListenerSubscriber extends Remote {
     /**
-     * make it possible to subscribe the observer to a certain listener
-     * @param listener the listener to be subscribed
-     * @return true, if the subscription worked out, false otherwise
+     * it is necessary to identify the username of the
+     * observer that the client refers to
+     * @return the username of the player that is observing the chat
      */
-    boolean subscribeToListener(Listener listener);
+    String getSubscriberUsername();
+
 }

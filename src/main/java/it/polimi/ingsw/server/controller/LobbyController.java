@@ -49,25 +49,11 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
      * @param player the nickname of the player to be added
      * @return an optional of GameController, if no game is in the lobby, an empty value will be filled
      */
-    public Optional<RemoteGameController> addPlayerToGame(String player) throws RemoteException{
+    public RemoteGameController addPlayerToGame(String player) throws RemoteException, NicknameAlreadyUsedException, NoAvailableGameException, InvalidPlayerException, PlayersNumberOutOfRange {
         GameController  gameController;
-        try {
-            GameModelInterface gameModel = lobbyModel.addPlayerToGame(player);
 
-                gameController = gameControllers.get(gameModel);
-
-
-        } catch (NoAvailableGameException e) {
-            return Optional.empty();
-        } catch (InvalidPlayerException e) {
-            return Optional.empty();
-        } catch (NicknameAlreadyUsedException e) {
-            return Optional.empty();
-        } catch (PlayersNumberOutOfRange e) {
-            return Optional.empty();
-        } catch (NullPointerException e) {
-            return Optional.empty();
-        }
+        GameModelInterface gameModel = lobbyModel.addPlayerToGame(player);
+        gameController = gameControllers.get(gameModel);
 
         try {
             if( gameController.getGameControlled().canStart())
@@ -75,10 +61,9 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
         } catch (NotAllPlayersHaveJoinedException ignored) {
 
         } catch (GameNotEndedException e) {
-            return Optional.empty();
         }
 
-        return Optional.of(gameController);
+        return gameController;
     }
 
     /**
@@ -88,24 +73,13 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
      * @param nPlayers the number of players for the game
      * @return the GameController, if the game creation is not possible, an empty value will be returned
      */
-    public Optional<RemoteGameController> createGame(String player, int nPlayers) throws RemoteException{
+    public RemoteGameController createGame(String player, int nPlayers) throws RemoteException, InvalidPlayerException, BrokenInternalGameConfigurations, NotEnoughCardsException, PlayersNumberOutOfRange {
             GameController  gameController;
-            try {
-                GameModelInterface gameModel = lobbyModel.createGame(nPlayers,player);
-                gameController = new GameController(gameModel);
-                this.gameControllers.put(gameModel,gameController);
-            } catch (BrokenInternalGameConfigurations e) {
-                return Optional.empty();
-            } catch (InvalidPlayerException e) {
-                return Optional.empty();
-            } catch (NotEnoughCardsException e) {
-                return Optional.empty();
-            } catch (PlayersNumberOutOfRange e) {
-                return Optional.empty();
-            } catch (NullPointerException e) {
-                return Optional.empty();
-            }
-        return Optional.of(gameController);
+            GameModelInterface gameModel = lobbyModel.createGame(nPlayers,player);
+            gameController = new GameController(gameModel);
+            this.gameControllers.put(gameModel,gameController);
+
+        return gameController;
     }
 
 }

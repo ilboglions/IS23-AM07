@@ -18,7 +18,7 @@ public class BoardListener extends Listener<BoardSubscriber> {
      */
     public void onBoardChange(Map<Coordinates, Optional<ItemTile>> tilesInBoard ){
 
-        Set<BoardSubscriber> observers = this.getObservers();
+        Set<BoardSubscriber> observers = this.getSubscribers();
         for (BoardSubscriber ob : observers) {
             ob.UpdateBoardStatus(tilesInBoard);
         }

@@ -29,7 +29,7 @@ public class LobbyTest {
         assertThrows(NullPointerException.class, ()->{
             test.createGame(4, null);
         });
-        assertThrows(NoAvailableGameException.class, ()->{
+        assertThrows(InvalidPlayerException.class, ()->{
             test.addPlayerToGame("testUser");
         });
         assertThrows(InvalidPlayerException.class, ()->{

@@ -17,19 +17,19 @@ public class ChatListener extends Listener<ChatSubscriber> {
      */
     public void onNewMessage(Message msg) {
 
-        Set<ChatSubscriber> observers = this.getObservers();
+        Set<ChatSubscriber> observers = this.getSubscribers();
 
         if( msg.getRecipient().isPresent() ){
 
             String recipient = msg.getRecipient().get();
             Optional<ChatSubscriber> interestedOb =   observers.stream()
-                                                    .filter(obs -> obs.getObserverUsername().equals(recipient))
+                                                    .filter(obs -> obs.getSubscriberUsername().equals(recipient))
                                                     .findFirst();
             interestedOb.ifPresent( ob -> ob.receiveMessage(msg.getSender(), msg.getContent()));
 
         } else{
             observers.stream()
-                    .filter( obs -> !obs.getObserverUsername().equals(msg.getSender()))
+                    .filter( obs -> !obs.getSubscriberUsername().equals(msg.getSender()))
                     .forEach( obs -> obs.receiveMessage(msg.getSender(), msg.getContent()));
         }
     }

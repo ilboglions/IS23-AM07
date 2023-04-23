@@ -43,22 +43,25 @@ public class Lobby {
     public Game addPlayerToGame(String playerName) throws NoAvailableGameException, InvalidPlayerException, NicknameAlreadyUsedException, PlayersNumberOutOfRange {
         Objects.requireNonNull(playerName);
 
-        Game result = games.stream()
-                            .filter(tmp -> !tmp.getIsStarted())
-                            .findFirst()
-                            .orElseThrow(()-> new NoAvailableGameException("All the games have already started"));
-
         Optional<Player> op =  waitingPlayers.stream().filter(p -> p.getUsername().equals(playerName)).findFirst();
         if ( op.isPresent() ){
+            Game result = games.stream()
+                    .filter(tmp -> !tmp.getIsStarted())
+                    .findFirst()
+                    .orElseThrow(()-> new NoAvailableGameException("All the games have already started"));
+
             result.addPlayer(op.get());
+
+            waitingPlayers.remove(op.get());
+
+            return result;
+
         }
         else {
             throw new InvalidPlayerException();
         }
 
-        waitingPlayers.remove(op.get());
 
-        return result;
     }
 
     /**

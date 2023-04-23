@@ -5,12 +5,7 @@ package it.polimi.ingsw.server.model.subscriber;
  */
 public interface ChatSubscriber extends ListenerSubscriber {
 
-    /**
-     * because of not all the messages are shared for all the players, it is necessary to identify the username of the
-     * observer that the client refers to
-     * @return the username of the player that is observing the chat
-     */
-    String getObserverUsername();
+
 
     /**
      * when a message for the player is posted, the listener will trigger this method

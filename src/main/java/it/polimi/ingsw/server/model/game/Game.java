@@ -12,6 +12,7 @@ import it.polimi.ingsw.server.model.distributable.DeckPersonal;
 import it.polimi.ingsw.server.model.livingRoom.LivingRoomBoard;
 import it.polimi.ingsw.server.model.livingRoom.exceptions.NotEnoughTilesException;
 import it.polimi.ingsw.server.model.player.Player;
+import it.polimi.ingsw.server.model.subscriber.*;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 import it.polimi.ingsw.server.model.tokens.ScoringToken;
 import it.polimi.ingsw.server.model.tokens.TokenPoint;
@@ -101,6 +102,28 @@ public class Game implements GameModelInterface {
         this.players.add(host);
         host.assignPersonalCard(deckPersonal.draw(1).get(0));
     }
+
+
+    public void subscribeToListener(BoardSubscriber subscriber){
+
+        livingRoom.subscribeToListener(subscriber);
+
+    }
+
+    public void subscribeToListener(BookshelfSubscriber subscriber){
+
+        players.forEach(p -> p.getBookshelf().subscribeToListener( subscriber));
+
+    }
+
+    public void subscribeToListener(ChatSubscriber subscriber){
+        chat.subscribeToListener(subscriber);
+    }
+
+    public void subscribeToListener(PlayerSubscriber subscriber){
+        players.forEach(p -> p.subscribeToListener(subscriber));
+    }
+
 
     /**
      * check if the game can be started

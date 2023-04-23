@@ -110,6 +110,8 @@ public class CliView {
             System.out.print(key+"->"+value+"pt ");
         }
         );
+
+        this.printSpace(2);
     }
 
 
@@ -120,6 +122,34 @@ public class CliView {
     public void printBookShelf(Map<Coordinates,ItemTile> tilesMap, String playerUsername) throws InvalidCoordinatesException {
         System.out.println(WHITE_BOLD_BRIGHT+"Here's the bookshelf of "+RED_BOLD+playerUsername);
         this.printBookShelf( tilesMap);
+
+    }
+
+
+    public  void printChatMessage(String sender, String msg){
+
+        String msgToBePrinted = " * "+sender+": "+msg;
+        System.out.print(WHITE_BOLD_BRIGHT+" ");
+
+        for(int i = 0; i < msgToBePrinted.length() + 2;i++)
+            System.out.print("-");
+
+        System.out.println();
+        System.out.print("|");
+
+        for(int i = 0; i < msgToBePrinted.length()/2-1;i++)
+            System.out.print(" ");
+
+        System.out.print("CHAT");
+
+        for(int i = 0; i < msgToBePrinted.length()/2-1;i++)
+         System.out.print(" ");
+
+        System.out.print("|\n ");
+        for(int i = 0; i < msgToBePrinted.length() + 2;i++)
+            System.out.print("-");
+        this.printSpace(1);
+        System.out.println(" * "+RED_BOLD+sender+WHITE_BOLD_BRIGHT+": "+msg);
     }
 
     public void printBookShelf(Map<Coordinates,ItemTile> tilesMap) throws InvalidCoordinatesException {
@@ -146,11 +176,19 @@ public class CliView {
                     colorTile = BLACK;
                 System.out.print(colorTile+"██ ");
             }
-            System.out.print("\n");
+            this.printSpace(1);
         }
-        System.out.println();
+        this.printSpace(2);
+
     }
 
+    private void printSpace(int n){
+        String newline = "";
+        for(int i = 0; i < n; i++){
+            newline = newline+"\n";
+        }
+        System.out.print(newline);
+    }
 
     public void printLivingRoom(Map<Coordinates, Optional<ItemTile>> livingRoomMap) throws InvalidCoordinatesException {
         Coordinates coord;

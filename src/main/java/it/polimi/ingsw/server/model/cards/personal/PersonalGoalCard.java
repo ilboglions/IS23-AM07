@@ -59,6 +59,22 @@ public class PersonalGoalCard{
         return new CardBookshelf(tempPattern);
     }
 
+    public Map<Coordinates, ItemTile> getCardPattern(){
+        Map<Coordinates, ItemTile> itemTileMap = new HashMap<>();
+        for( int r = 0; r < bookshelf.getRows(); r++){
+            for( int c = 0; c < bookshelf.getColumns(); c++) {
+                Coordinates tempCoord;
+                try {
+                    tempCoord = new Coordinates(r, c);
+                } catch (InvalidCoordinatesException e) {
+                    throw new RuntimeException(e);
+                }
+                this.bookshelf.getItemTile(tempCoord).ifPresent(el -> itemTileMap.put(tempCoord, el));
+            }
+        }
+        return itemTileMap;
+    }
+
     /**
      * a simple getter method that returns the point reference of the card
      * @return the points reference used to evaluate the points acquired

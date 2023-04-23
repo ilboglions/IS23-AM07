@@ -6,6 +6,7 @@ import it.polimi.ingsw.server.model.cards.personal.PersonalGoalCard;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.server.model.listeners.PlayerListener;
+import it.polimi.ingsw.server.model.subscriber.PlayerSubscriber;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 import it.polimi.ingsw.server.model.tokens.ScoringToken;
 import it.polimi.ingsw.server.model.utilities.UtilityFunctions;
@@ -53,6 +54,10 @@ public class Player {
         this.points = 0;
     }
 
+
+    public void subscribeToListener(PlayerSubscriber subscriber){
+        this.playerListener.addSubscriber(subscriber);
+    }
     /**
      * Method used to retrieve the username
      * @return the username of the player

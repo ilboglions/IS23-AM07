@@ -3,6 +3,7 @@ package it.polimi.ingsw.client.connection;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.remoteControllers.RemoteGameController;
 import it.polimi.ingsw.remoteControllers.RemoteLobbyController;
+import it.polimi.ingsw.server.model.exceptions.*;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -37,19 +38,35 @@ public class ClientRMI implements ConnectionHandler{
 
     @Override
     public void CreateGame(int nPlayers) throws NotBoundException, RemoteException {
-        Optional<RemoteGameController> rgc;
 
-        rgc = this.lobbyController.createGame(username, nPlayers);
-        rgc.ifPresent(remoteGameController -> this.gameController = remoteGameController);
+        try {
+            this.gameController = this.lobbyController.createGame(username, nPlayers);
+        } catch (InvalidPlayerException e) {
+            throw new RuntimeException(e);
+        } catch (BrokenInternalGameConfigurations e) {
+            throw new RuntimeException(e);
+        } catch (NotEnoughCardsException e) {
+            throw new RuntimeException(e);
+        } catch (PlayersNumberOutOfRange e) {
+            throw new RuntimeException(e);
+        }
 
     }
 
     @Override
     public void JoinGame() throws RemoteException, NotBoundException {
-        Optional<RemoteGameController> rgc;
 
-        rgc = this.lobbyController.addPlayerToGame(username);
-        rgc.ifPresent(remoteGameController -> this.gameController = remoteGameController);
+        try {
+            this.gameController = this.lobbyController.addPlayerToGame(username);
+        } catch (NicknameAlreadyUsedException e) {
+            throw new RuntimeException(e);
+        } catch (NoAvailableGameException e) {
+            throw new RuntimeException(e);
+        } catch (InvalidPlayerException e) {
+            throw new RuntimeException(e);
+        } catch (PlayersNumberOutOfRange e) {
+            throw new RuntimeException(e);
+        }
 
     }
 

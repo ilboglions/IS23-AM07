@@ -8,6 +8,8 @@ import it.polimi.ingsw.server.model.exceptions.PlayersNumberOutOfRange;
 import it.polimi.ingsw.server.model.exceptions.SlotFullException;
 import it.polimi.ingsw.server.model.listeners.BoardListener;
 import it.polimi.ingsw.server.model.livingRoom.exceptions.NotEnoughTilesException;
+import it.polimi.ingsw.server.model.subscriber.BoardSubscriber;
+import it.polimi.ingsw.server.model.subscriber.ListenerSubscriber;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 
 import java.io.FileNotFoundException;
@@ -32,6 +34,10 @@ public class LivingRoomBoard {
     private final int numCells;
 
     private final BoardListener boardListener;
+
+    public void subscribeToListener(BoardSubscriber subscriber){
+        boardListener.addSubscriber(subscriber);
+    }
 
     /*public LivingRoomBoard() throws FileNotFoundException {
         //create the pattern of the living room board

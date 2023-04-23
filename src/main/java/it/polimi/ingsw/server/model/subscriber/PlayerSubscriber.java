@@ -1,7 +1,7 @@
 package it.polimi.ingsw.server.model.subscriber;
 
 import it.polimi.ingsw.server.model.tokens.ScoringToken;
-
+import it.polimi.ingsw.remoteControllers.RemotePersonalGoalCard;
 import java.util.ArrayList;
 
 /**
@@ -18,4 +18,6 @@ public interface PlayerSubscriber extends ListenerSubscriber {
     void updatePoints(String player, int overallPoints, int addedPoints);
 
     void updateTokens(ArrayList<ScoringToken> tokenPoints);
+
+    void updatePersonalGoalCard(RemotePersonalGoalCard remotePersonal);
 }

@@ -97,4 +97,11 @@ public class CLITest {
         cli.printLivingRoom(testBoardPattern);
 
     }
+
+    @Test
+    @DisplayName("chat test")
+    void chatTest(){
+        CliView cli = new CliView();
+        cli.printChatMessage("Pietro","BElla raga si va a praga!");
+    }
 }

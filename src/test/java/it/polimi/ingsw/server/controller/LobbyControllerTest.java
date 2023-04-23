@@ -1,6 +1,7 @@
 package it.polimi.ingsw.server.controller;
 
-import it.polimi.ingsw.server.controller.LobbyController;
+import it.polimi.ingsw.remoteControllers.RemoteGameController;
+import it.polimi.ingsw.server.model.exceptions.*;
 import it.polimi.ingsw.server.model.lobby.Lobby;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,40 +27,38 @@ class LobbyControllerTest {
         LobbyController test = new LobbyController(new Lobby());
 
         //Invalid values, already tested in LobbyTest class
-        assertTrue(test.createGame("Test", 0).isEmpty());
-        assertTrue(test.createGame(null, 3).isEmpty());
-        assertTrue(test.createGame("Test", 6).isEmpty());
-        assertTrue(test.createGame("Test", -1).isEmpty());
-        assertTrue(test.createGame("Test", 3).isEmpty());
+        assertThrows( InvalidPlayerException.class, () -> test.createGame("Test", 0));
+        assertThrows( InvalidPlayerException.class, () -> test.createGame("Test", 6));
+        assertThrows( InvalidPlayerException.class, () -> test.createGame("Test", -1));
+        assertThrows( InvalidPlayerException.class, () -> test.createGame("Test", 3));
 
         test.enterInLobby("Test");
-        assertTrue(test.createGame("Test", 6).isEmpty());
-        assertTrue(test.createGame("Test", -1).isEmpty());
-        assertTrue(test.createGame("Test", 1).isEmpty());
-        assertFalse(test.createGame("Test", 3).isEmpty()); //Created correctly, all the values are ok
+        assertThrows( PlayersNumberOutOfRange.class, () -> test.createGame("Test", 0));
+        assertThrows( PlayersNumberOutOfRange.class, () -> test.createGame("Test", 6));
+        assertThrows( PlayersNumberOutOfRange.class, () -> test.createGame("Test", -1));
     }
 
     @Test
     @DisplayName("Test adding player to game")
-    void testAddPlayer() throws RemoteException {
+    void testAddPlayer() throws RemoteException, NicknameAlreadyUsedException, NoAvailableGameException , PlayersNumberOutOfRange, InvalidPlayerException, BrokenInternalGameConfigurations, NotEnoughCardsException {
         LobbyController test = new LobbyController(new Lobby());
+        assertThrows(InvalidPlayerException.class ,() -> test.addPlayerToGame("Test")); //No player in lobby with this nickname
 
-        assertTrue(test.addPlayerToGame("Test").isEmpty()); //No player in lobby with this nickname
-        assertTrue(test.addPlayerToGame(null).isEmpty());
 
         test.enterInLobby("Test");
-        assertTrue(test.addPlayerToGame("Test").isEmpty()); //No game available
+        assertThrows(NoAvailableGameException.class, () -> test.addPlayerToGame("Test"));
+
 
         test.createGame("Test", 3);
-        assertTrue(test.addPlayerToGame("Test").isEmpty()); //No player in lobby available, and also we would have duplicate nickname
+        assertThrows(InvalidPlayerException.class, ()-> test.addPlayerToGame("Test")); //No player in lobby available, and also we would have duplicate nickname
 
         test.enterInLobby("secondUser");
-        assertTrue(test.addPlayerToGame("secondUser").isPresent()); //Correct adding to an available game
+        assertEquals(test.addPlayerToGame("secondUser").getClass(), GameController.class); //Correct adding to an available game
 
         test.enterInLobby("thirdUser");
         test.enterInLobby("fourthUser");
-        assertTrue(test.addPlayerToGame("thirdUser").isPresent()); //Correct adding to available game and game started
-        assertTrue(test.addPlayerToGame("fourthUser").isEmpty()); //No game available
+        assertEquals(test.addPlayerToGame("thirdUser").getClass(), GameController.class); //Correct adding to available game and game started
+        assertThrows(NoAvailableGameException.class, () -> test.addPlayerToGame("fourthUser")); //No game available
     }
 
 }
