@@ -8,7 +8,6 @@ import it.polimi.ingsw.remoteControllers.RemoteLobbyController;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import java.rmi.*;
 import java.rmi.server.*;
@@ -18,7 +17,11 @@ import java.rmi.server.*;
 public class LobbyController extends UnicastRemoteObject implements RemoteLobbyController {
     private final Lobby lobbyModel;
     private final Map<GameModelInterface,GameController> gameControllers;
+    /*
+        lobbyLock is used to synchronize the methods of LobbyController. it is equivalent to use synchronize in the method's signature
+     */
 
+    private final Object lobbyLock;
     /**
      * creates the controller of the lobby
      * @param lobbyModel the model of the lobby
@@ -27,6 +30,7 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
         super();
         this.lobbyModel = lobbyModel;
         gameControllers = new HashMap<>();
+        lobbyLock = new Object();
     }
 
     /**
@@ -35,12 +39,15 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
      * @return true, if a player can join the lobby, false if the nickname in the lobby has been already used
      */
     public boolean enterInLobby(String player) throws RemoteException{
-        try {
-            lobbyModel.createPlayer(player);
-            return true;
-        } catch (NicknameAlreadyUsedException e) {
-            return false;
+        synchronized (lobbyLock) {
+            try {
+                lobbyModel.createPlayer(player);
+                return true;
+            } catch (NicknameAlreadyUsedException e) {
+                return false;
+            }
         }
+
     }
 
     /**
@@ -50,20 +57,22 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
      * @return an optional of GameController, if no game is in the lobby, an empty value will be filled
      */
     public RemoteGameController addPlayerToGame(String player) throws RemoteException, NicknameAlreadyUsedException, NoAvailableGameException, InvalidPlayerException, PlayersNumberOutOfRange {
-        GameController  gameController;
+        synchronized (lobbyLock) {
+            GameController gameController;
 
-        GameModelInterface gameModel = lobbyModel.addPlayerToGame(player);
-        gameController = gameControllers.get(gameModel);
+            GameModelInterface gameModel = lobbyModel.addPlayerToGame(player);
+            gameController = gameControllers.get(gameModel);
 
-        try {
-            if( gameController.getGameControlled().canStart())
-                gameController.getGameControlled().start();
-        } catch (NotAllPlayersHaveJoinedException ignored) {
+            try {
+                if (gameController.getGameControlled().canStart())
+                    gameController.getGameControlled().start();
+            } catch (NotAllPlayersHaveJoinedException ignored) {
 
-        } catch (GameNotEndedException e) {
+            } catch (GameNotEndedException e) {
+            }
+
+            return gameController;
         }
-
-        return gameController;
     }
 
     /**
@@ -74,12 +83,14 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
      * @return the GameController, if the game creation is not possible, an empty value will be returned
      */
     public RemoteGameController createGame(String player, int nPlayers) throws RemoteException, InvalidPlayerException, BrokenInternalGameConfigurations, NotEnoughCardsException, PlayersNumberOutOfRange {
-            GameController  gameController;
-            GameModelInterface gameModel = lobbyModel.createGame(nPlayers,player);
+        synchronized (lobbyLock) {
+            GameController gameController;
+            GameModelInterface gameModel = lobbyModel.createGame(nPlayers, player);
             gameController = new GameController(gameModel);
-            this.gameControllers.put(gameModel,gameController);
+            this.gameControllers.put(gameModel, gameController);
 
-        return gameController;
+            return gameController;
+        }
     }
 
 }
