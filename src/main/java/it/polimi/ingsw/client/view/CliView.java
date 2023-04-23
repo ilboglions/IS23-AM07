@@ -113,7 +113,6 @@ public class CliView {
     }
 
 
-
     public void printYourBookShelf(Map<Coordinates,ItemTile> tilesMap) throws InvalidCoordinatesException {
         System.out.println(WHITE_BOLD_BRIGHT+"Here's "+RED_BOLD+"your "+WHITE_BOLD_BRIGHT+"bookshelf");
         this.printBookShelf( tilesMap);
@@ -131,7 +130,7 @@ public class CliView {
         int bookshelfColumns = 5;
 
         System.out.print("  ");
-        for(int c = bookshelfColumns- 1; c >= 0; c--){
+        for(int c = 0; c < bookshelfColumns; c++){
             System.out.print(WHITE_BOLD_BRIGHT+c+"  ");
         }
 
@@ -139,7 +138,7 @@ public class CliView {
 
         for(int r = bookshelfRows - 1; r >= 0; r--){
             System.out.print(WHITE_BOLD_BRIGHT+r+" "+RESET);
-            for(int c = bookshelfColumns - 1; c >= 0; c--){
+            for(int c = 0; c < bookshelfColumns; c++){
                 coord = new Coordinates(r,c);
                 if (tilesMap.containsKey(coord) )
                     colorTile = getColorFromTileType(tilesMap.get(coord));
@@ -163,14 +162,14 @@ public class CliView {
         System.out.println(WHITE_BOLD_BRIGHT+"== Here's the "+RED_BOLD+"Living room board"+WHITE_BOLD_BRIGHT+" =="+RESET);
 
         System.out.print("  ");
-        for(int c = livingRoomColumns- 1; c >= 0; c--){
+        for(int c = 0; c < livingRoomColumns; c++){
             System.out.print(WHITE_BOLD_BRIGHT+c+"  ");
         }
         System.out.println(RESET);
 
         for(int r = livingRoomRows - 1; r >= 0; r--){
             System.out.print(WHITE_BOLD_BRIGHT+r+" "+RESET);
-            for(int c = livingRoomColumns- 1; c >= 0; c--){
+            for(int c = 0; c < livingRoomColumns; c++){
                 coord = new Coordinates(r,c);
                 if (livingRoomMap.containsKey(coord) ){
                     if (livingRoomMap.get(coord).isPresent()){

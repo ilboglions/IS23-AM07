@@ -5,6 +5,7 @@ import it.polimi.ingsw.server.model.bookshelf.PlayerBookshelf;
 import it.polimi.ingsw.server.model.cards.personal.PersonalGoalCard;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
+import it.polimi.ingsw.server.model.listeners.PlayerListener;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 import it.polimi.ingsw.server.model.tokens.ScoringToken;
 import it.polimi.ingsw.server.model.utilities.UtilityFunctions;
@@ -38,13 +39,16 @@ public class Player {
      */
     private int points;
 
+    private final PlayerListener playerListener;
+
     /**
      * Constructor of the player
      * @param username is the username used by the player
      */
     public Player(String username) {
+        this.playerListener = new PlayerListener();
         this.username = Objects.requireNonNull(username);
-        this.bookshelf = new PlayerBookshelf();
+        this.bookshelf = new PlayerBookshelf(this);
         this.tokenAcquired = new ArrayList<>();
         this.points = 0;
     }
@@ -169,6 +173,7 @@ public class Player {
      * @return the total points scored by the player
      */
     public int updatePoints(Map<Integer, Integer> adjacentPointReference) {
+        int delta;
         Objects.requireNonNull(adjacentPointReference);
         if(adjacentPointReference.isEmpty())
             throw new IllegalArgumentException("You passed an empty Map for adjacentPointReference");
@@ -181,8 +186,9 @@ public class Player {
 
         total += calculatePointsPersonalGoalCard();
         total += calculatePointsAdjacent(bookshelf, adjacentPointReference);
+        delta = total - this.points;
         this.points = total;
-
+        playerListener.onPointsUpdate(this.getUsername(),this.points,delta);
         return this.points;
     }
 
@@ -192,6 +198,8 @@ public class Player {
      */
     public void addToken(ScoringToken token) {
         this.tokenAcquired.add(Objects.requireNonNull(token));
+        /* notify the listener */
+        this.playerListener.onTokenPointAcquired(new ArrayList<>(this.tokenAcquired));
     }
 
     /**

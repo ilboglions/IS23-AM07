@@ -6,12 +6,15 @@ import it.polimi.ingsw.server.model.exceptions.EmptySlotException;
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.server.model.exceptions.PlayersNumberOutOfRange;
 import it.polimi.ingsw.server.model.exceptions.SlotFullException;
+import it.polimi.ingsw.server.model.listeners.BoardListener;
 import it.polimi.ingsw.server.model.livingRoom.exceptions.NotEnoughTilesException;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import static it.polimi.ingsw.server.model.utilities.UtilityFunctions.MAX_PLAYERS;
@@ -27,6 +30,8 @@ public class LivingRoomBoard {
     private final int rows = 9;
     private final int cols = 9;
     private final int numCells;
+
+    private final BoardListener boardListener;
 
     /*public LivingRoomBoard() throws FileNotFoundException {
         //create the pattern of the living room board
@@ -58,6 +63,8 @@ public class LivingRoomBoard {
         //create the pattern of the living room board
         //let's create the pattern per rows
         slot = new Slot[rows][cols];
+        this.boardListener = new BoardListener();
+
         int row,col;
         SlotType slotType;
         String confFilePath;
@@ -86,7 +93,34 @@ public class LivingRoomBoard {
                 slot[row][col] = new Slot(slotType, Optional.empty());
             }
         }
+
+
+
+        boardListener.onBoardChange(this.getItemTilesMapFromBoard());
+
     }
+
+    /**
+     * Private method used to gets an itemTiles map for listeners
+     * @return the map containing the coordinates and an optional of the item tile
+     */
+    private Map<Coordinates,Optional<ItemTile>> getItemTilesMapFromBoard()  {
+
+        Map<Coordinates,Optional<ItemTile>> itemTilesmap = new HashMap<>();
+        for(int i=0; i< this.rows; i++){
+            for(int j=0; j < this.cols; j++){
+              if(slot[i][j].getSlotType().equals(SlotType.BASIC)){
+                  try {
+                      itemTilesmap.put(new Coordinates(i,j), slot[i][j].getItemTile());
+                  } catch (InvalidCoordinatesException e) {
+                      throw new RuntimeException(e);
+                  }
+              }
+            }
+        }
+        return itemTilesmap;
+    }
+
     protected Slot[][] getAllSlots(){
         Slot[][] newslot = new Slot[rows][cols];
         for(int i=0; i< rows; i++){
@@ -142,6 +176,9 @@ public class LivingRoomBoard {
         } catch(InvalidCoordinatesException e){
             throw new RuntimeException(e);
         }
+
+
+
         return removed;
     }
 

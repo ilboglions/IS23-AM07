@@ -1,5 +1,9 @@
 package it.polimi.ingsw.server.model.subscriber;
 
+import it.polimi.ingsw.server.model.tokens.ScoringToken;
+
+import java.util.ArrayList;
+
 /**
  * the interface that provides the method to be implemented by an observer of the Player
  */
@@ -12,4 +16,6 @@ public interface PlayerSubscriber extends ListenerSubscriber {
      * @param addedPoints the points added on this state change
      */
     void updatePoints(String player, int overallPoints, int addedPoints);
+
+    void updateTokens(ArrayList<ScoringToken> tokenPoints);
 }
