@@ -1,6 +1,7 @@
 [
   {
     "cardType": "Illegal",
-    "description": "Test for illegal argument"
+    "description": "Test for illegal argument",
+    "name": "test"
   }
 ]

@@ -3,7 +3,7 @@ package it.polimi.ingsw.server.model.listeners;
 import java.util.ArrayList;
 import java.util.Set;
 
-import it.polimi.ingsw.remoteControllers.RemotePersonalGoalCard;
+import it.polimi.ingsw.remoteInterfaces.RemotePersonalGoalCard;
 import it.polimi.ingsw.server.model.subscriber.PlayerSubscriber;
 import it.polimi.ingsw.server.model.tokens.ScoringToken;
 
@@ -35,7 +35,7 @@ public class PlayerListener extends Listener<PlayerSubscriber> {
         }
     }
 
-    public void onPersonalGoalCardAssigned(RemotePersonalGoalCard personalGoalCard, String username){
+    public void onPersonalGoalCardAssigned(String username, RemotePersonalGoalCard personalGoalCard){
         Set<PlayerSubscriber> subscribers = this.getSubscribers();
 
         for (PlayerSubscriber sub : subscribers) {

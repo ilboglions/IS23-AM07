@@ -25,8 +25,8 @@ public class FullColumns extends CommonGoalCard{
      * if sameTiles == false --> minimum number
      */
     private final int numDifferent;
-    public FullColumns(int nPlayers, String description , int nCols, boolean sameTiles, int numDifferent) throws PlayersNumberOutOfRange, NegativeFieldException {
-        super(nPlayers,description);
+    public FullColumns(int nPlayers, String description, CommonCardType name, int nCols, boolean sameTiles, int numDifferent) throws PlayersNumberOutOfRange, NegativeFieldException {
+        super(nPlayers,description, name);
         if( nCols <= 0 || numDifferent <= 0 ) throw new NegativeFieldException("can't assign negative parameters!");
         this.nCols = nCols;
         this.sameTiles = sameTiles;

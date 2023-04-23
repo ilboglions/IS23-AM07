@@ -1,4 +1,4 @@
-package it.polimi.ingsw.remoteControllers;
+package it.polimi.ingsw.remoteInterfaces;
 
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.tiles.ItemTile;

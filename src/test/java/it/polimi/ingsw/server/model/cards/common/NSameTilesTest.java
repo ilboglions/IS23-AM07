@@ -2,7 +2,6 @@ package it.polimi.ingsw.server.model.cards.common;
 
 import it.polimi.ingsw.server.model.bookshelf.Bookshelf;
 import it.polimi.ingsw.server.model.bookshelf.CardBookshelf;
-import it.polimi.ingsw.server.model.cards.common.NsameTiles;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.server.model.exceptions.NegativeFieldException;
@@ -29,12 +28,12 @@ public class NSameTilesTest {
     @DisplayName("Card creation test")
     void  createCard() throws PlayersNumberOutOfRange, NegativeFieldException {
         assertThrows(PlayersNumberOutOfRange.class, () -> {
-            new NsameTiles(0,"description_test",3);});
+            new NsameTiles(0,"description_test", CommonCardType.CORNERS ,3);});
         assertThrows(PlayersNumberOutOfRange.class, () -> {
-            new NsameTiles(5,"description_test", 3);});
+            new NsameTiles(5,"description_test", CommonCardType.CORNERS,3);});
         assertThrows(NegativeFieldException.class, () -> {
-            new NsameTiles(3,"description_test",-2);});
-        card = new NsameTiles(2,"description_test",5);
+            new NsameTiles(3,"description_test",CommonCardType.CORNERS,-2);});
+        card = new NsameTiles(2,"description_test", CommonCardType.CORNERS,5);
     }
 
     @Test
@@ -76,7 +75,7 @@ public class NSameTilesTest {
     @Test
     @DisplayName("NotEnoughSpaceExceptionTester")
     void NotEnoughSpaceExceptionTest () throws NegativeFieldException, PlayersNumberOutOfRange, InvalidCoordinatesException {
-        card = new NsameTiles(2,"description_test",31);
+        card = new NsameTiles(2,"description_test",CommonCardType.CORNERS,31);
         Map<Coordinates, ItemTile> testtiles = new HashMap<>(); //shape valid groups
         testtiles.put(new Coordinates(0,0), ItemTile.CAT);
         Bookshelf testingbookshelf = new CardBookshelf(testtiles);

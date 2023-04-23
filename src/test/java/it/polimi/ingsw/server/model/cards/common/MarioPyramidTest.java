@@ -2,10 +2,8 @@ package it.polimi.ingsw.server.model.cards.common;
 
 import it.polimi.ingsw.server.model.bookshelf.Bookshelf;
 import it.polimi.ingsw.server.model.bookshelf.CardBookshelf;
-import it.polimi.ingsw.server.model.cards.common.MarioPyramid;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
-import it.polimi.ingsw.server.model.exceptions.NotEnoughSpaceException;
 import it.polimi.ingsw.server.model.exceptions.PlayersNumberOutOfRange;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,17 +23,16 @@ public class MarioPyramidTest {
      */
     @BeforeEach
     @DisplayName("Card creation test")
-    void  createCard() throws PlayersNumberOutOfRange, InvalidCoordinatesException {
+    void  createCard() throws PlayersNumberOutOfRange {
         assertThrows(PlayersNumberOutOfRange.class, () -> {
-            new MarioPyramid(0,"");});
+            new MarioPyramid(0,"", CommonCardType.CORNERS);});
         assertThrows(PlayersNumberOutOfRange.class, () -> {
-            new MarioPyramid(5,"");});
-        card = new MarioPyramid(2,"description_test");
+            new MarioPyramid(5,"", CommonCardType.CORNERS);});
+        card = new MarioPyramid(2,"description_test", CommonCardType.CORNERS);
     }
 
     /**
      * This test verifies the correct functioning of the method verifyCostraint
-     * @throws NotEnoughSpaceException
      * @throws InvalidCoordinatesException
      */
     @Test

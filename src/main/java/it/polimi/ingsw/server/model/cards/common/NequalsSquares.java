@@ -14,8 +14,8 @@ public class NequalsSquares extends CommonGoalCard{
 
     private final int nSquares;
     private final int squareDim;
-    public NequalsSquares(int nPlayers, String description , int nSquares, int squareDim) throws PlayersNumberOutOfRange, NegativeFieldException {
-        super(nPlayers, description);
+    public NequalsSquares(int nPlayers, String description, CommonCardType name, int nSquares, int squareDim) throws PlayersNumberOutOfRange, NegativeFieldException {
+        super(nPlayers, description, name);
         if(nSquares <= 0 || squareDim <= 0) throw new NegativeFieldException("can't assign negative parameters!");
         this.nSquares = nSquares;
         this.squareDim = squareDim;
@@ -26,7 +26,6 @@ public class NequalsSquares extends CommonGoalCard{
 
         ArrayList<ItemTile> parentTiles= new ArrayList<>();
         int nFoundSquares = 0;
-        boolean validSquare;
 
         if(nSquares * squareDim * squareDim  > bookshelf.getColumns()*bookshelf.getRows() ) throw  new NotEnoughSpaceException(nSquares+" squares of dimension "+squareDim+" can't be found! not enough tile!" );
 
@@ -40,7 +39,6 @@ public class NequalsSquares extends CommonGoalCard{
                 try {
                     if (bookshelf.getItemTile(new Coordinates(r, c)).isEmpty()) continue;
                     refTile = bookshelf.getItemTile(new Coordinates(r, c)).get();
-                    validSquare = true;
                     int squarerowlim = r+squareDim;
                     int suqarecollim = c+squareDim;
                     for (int i = r; i < squarerowlim; i++) {
@@ -62,7 +60,7 @@ public class NequalsSquares extends CommonGoalCard{
                     if (highBorder < bookshelf.getRows()) {
                         for (int i = 0; i < squareDim && notCloseSameTiles; i++) {
                             Coordinates tempCoords = new Coordinates(highBorder, i + c);
-                            if (bookshelf.getItemTile(tempCoords).isPresent() ? bookshelf.getItemTile(tempCoords).equals(refTile) : false){
+                            if (bookshelf.getItemTile(tempCoords).isPresent() && bookshelf.getItemTile(tempCoords).get().equals(refTile)){
                                     notCloseSameTiles=false;
                             }
                         }
@@ -70,7 +68,7 @@ public class NequalsSquares extends CommonGoalCard{
                     if (lowBorder >= 0) {
                         for (int i = 0; i < squareDim && notCloseSameTiles; i++) {
                             Coordinates tempCoords = new Coordinates(lowBorder, i + c);
-                            if (bookshelf.getItemTile(tempCoords).isPresent() ? bookshelf.getItemTile(tempCoords).equals(refTile) : false){
+                            if (bookshelf.getItemTile(tempCoords).isPresent() && bookshelf.getItemTile(tempCoords).get().equals(refTile)){
                                 notCloseSameTiles=false;
                             }
                         }
@@ -78,7 +76,7 @@ public class NequalsSquares extends CommonGoalCard{
                     if (leftBorder >= 0) {
                         for (int i = 0; i < squareDim && notCloseSameTiles; i++) {
                             Coordinates tempCoords = new Coordinates(i+r, leftBorder);
-                            if (bookshelf.getItemTile(tempCoords).isPresent() ? bookshelf.getItemTile(tempCoords).equals(refTile) : false){
+                            if (bookshelf.getItemTile(tempCoords).isPresent() && bookshelf.getItemTile(tempCoords).get().equals(refTile)){
                                 notCloseSameTiles=false;
                             }
                         }
@@ -86,7 +84,7 @@ public class NequalsSquares extends CommonGoalCard{
                     if (rightBorder < bookshelf.getColumns()) {
                         for (int i = 0; i < squareDim && notCloseSameTiles; i++) {
                             Coordinates tempCoords = new Coordinates(i+r, rightBorder);
-                            if (bookshelf.getItemTile(tempCoords).isPresent() ? bookshelf.getItemTile(tempCoords).get().equals(refTile) : false){
+                            if (bookshelf.getItemTile(tempCoords).isPresent() && bookshelf.getItemTile(tempCoords).get().equals(refTile)){
                                 notCloseSameTiles=false;
                             }
                         }

@@ -2,7 +2,6 @@ package it.polimi.ingsw.server.model.cards.common;
 
 import it.polimi.ingsw.server.model.bookshelf.Bookshelf;
 import it.polimi.ingsw.server.model.bookshelf.CardBookshelf;
-import it.polimi.ingsw.server.model.cards.common.NequalsSquares;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.server.model.exceptions.NegativeFieldException;
@@ -30,15 +29,15 @@ public class NequalsSquaresTest {
     @DisplayName("Card creation test")
     void  createCard() throws PlayersNumberOutOfRange, NegativeFieldException {
         assertThrows(PlayersNumberOutOfRange.class, () -> {
-            new NequalsSquares(0,"description_test",2,3);});
+            new NequalsSquares(0,"description_test",CommonCardType.CORNERS,2,3);});
         assertThrows(PlayersNumberOutOfRange.class, () -> {
-            new NequalsSquares(5,"description_test",2,3);});
+            new NequalsSquares(5,"description_test",CommonCardType.CORNERS,2,3);});
         assertThrows(NegativeFieldException.class, () -> {
-            new NequalsSquares(3,"description_test",-2, 3);});
+            new NequalsSquares(3,"description_test",CommonCardType.CORNERS,-2, 3);});
         assertThrows(NegativeFieldException.class, () -> {
-            new NequalsSquares(3,"description_test",2, 0);});
+            new NequalsSquares(3,"description_test",CommonCardType.CORNERS,2, 0);});
 
-        card = new NequalsSquares(2,"description_test",2,3);
+        card = new NequalsSquares(2,"description_test",CommonCardType.CORNERS,2,3);
     }
 
     /**
@@ -130,7 +129,7 @@ public class NequalsSquaresTest {
     @Test
     @DisplayName("NotEnoughSpaceExceptionTester")
     void NotEnoughSpaceExceptionTest () throws NegativeFieldException, PlayersNumberOutOfRange, InvalidCoordinatesException {
-        card = new NequalsSquares(2,"description_test",5,7);
+        card = new NequalsSquares(2,"description_test",CommonCardType.CORNERS,5,7);
         Map<Coordinates, ItemTile> testtiles = new HashMap<>(); //shape valid groups
         testtiles.put(new Coordinates(0,0), ItemTile.CAT);
         Bookshelf testingbookshelf = new CardBookshelf(testtiles);

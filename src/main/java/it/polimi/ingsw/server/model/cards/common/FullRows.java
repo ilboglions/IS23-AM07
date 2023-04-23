@@ -39,8 +39,8 @@ public class FullRows extends CommonGoalCard{
      * @throws PlayersNumberOutOfRange if the number of player is out of the permitted range
      * @throws NegativeFieldException if some field is negative
      */
-    public FullRows(int nPlayers,  String description ,int nRows, boolean sameTiles, int numDifferent) throws PlayersNumberOutOfRange, NegativeFieldException {
-        super(nPlayers, description);
+    public FullRows(int nPlayers,  String description, CommonCardType name,int nRows, boolean sameTiles, int numDifferent) throws PlayersNumberOutOfRange, NegativeFieldException {
+        super(nPlayers, description, name);
         if( nRows <= 0 || numDifferent <= 0 ) throw new NegativeFieldException("can't assign negative parameters!");
         this.nRows = nRows;
         this.sameTiles = sameTiles;

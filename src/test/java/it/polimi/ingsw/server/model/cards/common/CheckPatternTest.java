@@ -2,7 +2,6 @@ package it.polimi.ingsw.server.model.cards.common;
 
 import it.polimi.ingsw.server.model.bookshelf.Bookshelf;
 import it.polimi.ingsw.server.model.bookshelf.CardBookshelf;
-import it.polimi.ingsw.server.model.cards.common.CheckPattern;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.server.model.exceptions.NotEnoughSpaceException;
@@ -30,16 +29,16 @@ class CheckPatternTest {
     @DisplayName("Card creation test")
     void  createCard() throws PlayersNumberOutOfRange, InvalidCoordinatesException {
         pattern = new ArrayList<>();
-        ArrayList<Coordinates> singlepattern = new ArrayList<Coordinates>();
+        ArrayList<Coordinates> singlepattern = new ArrayList<>();
         singlepattern.add(new Coordinates(2,1));
         singlepattern.add(new Coordinates(5,0));
         singlepattern.add(new Coordinates(1,3));
         pattern.add(singlepattern);
         assertThrows(PlayersNumberOutOfRange.class, () -> {
-            new CheckPattern(0,"", pattern, true);});
+            new CheckPattern(0,"", CommonCardType.CORNERS, pattern, true);});
         assertThrows(PlayersNumberOutOfRange.class, () -> {
-            new CheckPattern(5,"", pattern, true);});
-        card = new CheckPattern(2,"description_test", pattern, true);
+            new CheckPattern(5,"", CommonCardType.CORNERS, pattern, true);});
+        card = new CheckPattern(2,"description_test", CommonCardType.CORNERS, pattern, true);
     }
 
     /**
@@ -73,10 +72,10 @@ class CheckPatternTest {
     @DisplayName("Exception Tester")
     void NotEnoughSpaceExceptionTester() throws InvalidCoordinatesException, PlayersNumberOutOfRange {
         pattern = new ArrayList<>();
-        ArrayList<Coordinates> singlepattern = new ArrayList<Coordinates>();
+        ArrayList<Coordinates> singlepattern = new ArrayList<>();
         singlepattern.add(new Coordinates(8,8));
         pattern.add(singlepattern);
-        CheckPattern testcard = new CheckPattern(2,"description_test", pattern, true);
+        CheckPattern testcard = new CheckPattern(2,"description_test",CommonCardType.CORNERS, pattern, true);
         Map<Coordinates, ItemTile> testtiles = new HashMap<>();
         testtiles.put(new Coordinates(2,1), ItemTile.CAT);
         testtiles.put(new Coordinates(5,0), ItemTile.TROPHY);
@@ -96,12 +95,12 @@ class CheckPatternTest {
     @DisplayName("sameTiles False test")
     void FalsesameTilesTest() throws InvalidCoordinatesException, PlayersNumberOutOfRange, NotEnoughSpaceException {
         pattern = new ArrayList<>();
-        ArrayList<Coordinates> singlepattern = new ArrayList<Coordinates>();
+        ArrayList<Coordinates> singlepattern = new ArrayList<>();
         singlepattern.add(new Coordinates(2,1));
         singlepattern.add(new Coordinates(5,0));
         singlepattern.add(new Coordinates(1,3));
         pattern.add(singlepattern);
-        CheckPattern card = new CheckPattern(2,"description_test", pattern, false);
+        CheckPattern card = new CheckPattern(2,"description_test",CommonCardType.CORNERS, pattern, false);
         Map<Coordinates, ItemTile> testtiles = new HashMap<>();
         testtiles.put(new Coordinates(2,1), ItemTile.CAT);
         testtiles.put(new Coordinates(5,0), ItemTile.TROPHY);

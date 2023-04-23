@@ -20,6 +20,8 @@ public abstract class CommonGoalCard {
      */
     private final String description;
 
+    private final CommonCardType name;
+
     private final Set<String> PlayersReachedGoal;
     /**
      * this attribute represent the stack of the ScoringTokens assigned to the common card
@@ -32,11 +34,12 @@ public abstract class CommonGoalCard {
      * @param description it is used for explain the card's constraint
      * @throws PlayersNumberOutOfRange when nPlayers exceed the numbers of the tile, tooManyPlayersException will be thrown
      */
-    public CommonGoalCard(int nPlayers , String description) throws PlayersNumberOutOfRange, NullPointerException{
+    public CommonGoalCard(int nPlayers , String description, CommonCardType name) throws PlayersNumberOutOfRange, NullPointerException{
 
         if(nPlayers < 2) throw new PlayersNumberOutOfRange("Min excepted players: 2 players received: "+nPlayers);
         tokenStack = new Stack<>();
         this.description = Objects.requireNonNull(description);
+        this.name = Objects.requireNonNull(name);
         if(MAX_PLAYERS< nPlayers) throw new PlayersNumberOutOfRange("Max excepted players: 4 players received: "+nPlayers);
 
         if(nPlayers == 2) {
@@ -90,5 +93,9 @@ public abstract class CommonGoalCard {
         Stack<ScoringToken> tokens= new Stack<>();
         tokens.addAll(tokenStack);
         return  tokens;
+    }
+
+    public CommonCardType getName() {
+        return name;
     }
 }

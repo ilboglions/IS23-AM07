@@ -14,8 +14,8 @@ public class MarioPyramid extends CommonGoalCard{
      * @param description it is used for explain the card's constraint
      * @throws PlayersNumberOutOfRange when nPlayers exceed the numbers of the tile, tooManyPlayersException will be thrown
      */
-    public MarioPyramid(int nPlayers, String description) throws PlayersNumberOutOfRange {
-        super(nPlayers, description);
+    public MarioPyramid(int nPlayers, String description, CommonCardType name) throws PlayersNumberOutOfRange {
+        super(nPlayers, description, name);
     }
 
 

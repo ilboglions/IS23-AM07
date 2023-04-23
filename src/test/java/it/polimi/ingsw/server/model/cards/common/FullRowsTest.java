@@ -2,8 +2,6 @@ package it.polimi.ingsw.server.model.cards.common;
 
 import it.polimi.ingsw.server.model.bookshelf.Bookshelf;
 import it.polimi.ingsw.server.model.bookshelf.CardBookshelf;
-import it.polimi.ingsw.server.model.cards.common.FullColumns;
-import it.polimi.ingsw.server.model.cards.common.FullRows;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.server.model.exceptions.NegativeFieldException;
@@ -27,15 +25,15 @@ public class FullRowsTest {
     @DisplayName("Card creation test")
     void  createCard() throws PlayersNumberOutOfRange, NegativeFieldException {
         assertThrows(PlayersNumberOutOfRange.class, () -> {
-            new FullColumns(0,"description_test",2,true , 3);});
+            new FullColumns(0,"description_test",CommonCardType.CORNERS,2,true , 3);});
         assertThrows(PlayersNumberOutOfRange.class, () -> {
-            new FullColumns(5,"description_test",2,true , 3);});
+            new FullColumns(5,"description_test",CommonCardType.CORNERS,2,true , 3);});
         assertThrows(NegativeFieldException.class, () -> {
-            new FullColumns(3,"description_test",-2,true , 3);});
+            new FullColumns(3,"description_test",CommonCardType.CORNERS,-2,true , 3);});
         assertThrows(NegativeFieldException.class, () -> {
-            new FullColumns(3,"description_test",2,true , 0);});
+            new FullColumns(3,"description_test",CommonCardType.CORNERS,2,true , 0);});
 
-        card = new FullRows(2,"description_test",2,true , 3);
+        card = new FullRows(2,"description_test",CommonCardType.CORNERS,2,true , 3);
     }
 
     /**
@@ -128,7 +126,7 @@ public class FullRowsTest {
     @Test
     @DisplayName("sameTiles False test")
     void FalsesameTilesTest() throws NegativeFieldException, PlayersNumberOutOfRange, InvalidCoordinatesException, NotEnoughSpaceException {
-        card = new FullRows(2,"description_test",2,false , 5);
+        card = new FullRows(2,"description_test",CommonCardType.CORNERS,2,false , 5);
         Map<Coordinates, ItemTile> testtiles = new HashMap<>(); //both rows valid
         testtiles.put(new Coordinates(0,0), ItemTile.CAT);
         testtiles.put(new Coordinates(0,1), ItemTile.BOOK);
@@ -160,7 +158,7 @@ public class FullRowsTest {
     @Test
     @DisplayName("NotEnoughSpaceException")
     public void NotEnoughSpaceException () throws InvalidCoordinatesException, NegativeFieldException, PlayersNumberOutOfRange {
-        card = new FullRows(2,"description_test",8,false , 1);
+        card = new FullRows(2,"description_test",CommonCardType.CORNERS,8,false , 1);
         Map<Coordinates, ItemTile> testtiles = new HashMap<>();
         testtiles.put(new Coordinates(0,0), ItemTile.CAT);
         testtiles.put(new Coordinates(0,1), ItemTile.BOOK);

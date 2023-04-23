@@ -2,10 +2,8 @@ package it.polimi.ingsw.server.model.cards.common;
 
 import it.polimi.ingsw.server.model.bookshelf.Bookshelf;
 import it.polimi.ingsw.server.model.bookshelf.CardBookshelf;
-import it.polimi.ingsw.server.model.cards.common.FiveXTiles;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
-import it.polimi.ingsw.server.model.exceptions.NotEnoughSpaceException;
 import it.polimi.ingsw.server.model.exceptions.PlayersNumberOutOfRange;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,19 +23,18 @@ public class FiveXTilesTest {
     @DisplayName("Card creation test")
     void  createCard() throws PlayersNumberOutOfRange {
         assertThrows(PlayersNumberOutOfRange.class, () -> {
-            new FiveXTiles(0,"", true);});
+            new FiveXTiles(0,"",CommonCardType.CORNERS, true);});
         assertThrows(PlayersNumberOutOfRange.class, () -> {
-            new FiveXTiles(5,"", true);});
-        card = new FiveXTiles(2,"description_test", true);
+            new FiveXTiles(5,"",CommonCardType.CORNERS, true);});
+        card = new FiveXTiles(2,"description_test",CommonCardType.CORNERS, true);
     }
     /**
      * This test verifies the correct functioning of the method verifyCostraint when sameTiles flag is true
-     * @throws NotEnoughSpaceException
      * @throws InvalidCoordinatesException
      */
     @Test
     @DisplayName("Verify Constraint Tester")
-    void verifyCostrainttest() throws NotEnoughSpaceException, InvalidCoordinatesException {
+    void verifyCostrainttest() throws InvalidCoordinatesException {
         Map<Coordinates, ItemTile> testtiles = new HashMap<>();
         testtiles.put(new Coordinates(2,1), ItemTile.CAT);
         testtiles.put(new Coordinates(2,3), ItemTile.CAT);
@@ -57,13 +54,12 @@ public class FiveXTilesTest {
     }
     /**
      * This test verifies the correct functioning of the method verifyCostraint when sameTiles flag is false
-     * @throws NotEnoughSpaceException
      * @throws InvalidCoordinatesException
      */
     @Test
     @DisplayName("sameTiles False test")
-    void FalsesameTilesTest() throws NotEnoughSpaceException, InvalidCoordinatesException, PlayersNumberOutOfRange {
-        card = new FiveXTiles(2,"description_test", false);
+    void FalsesameTilesTest() throws InvalidCoordinatesException, PlayersNumberOutOfRange {
+        card = new FiveXTiles(2,"description_test",CommonCardType.CORNERS, false);
         Map<Coordinates, ItemTile> testtiles = new HashMap<>();
         testtiles.put(new Coordinates(1,1), ItemTile.CAT);
         testtiles.put(new Coordinates(1,3), ItemTile.CAT);

@@ -103,6 +103,7 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
         Gson gson = new Gson();
         String objectType = cardConfiguration.get("cardType").getAsString();
         String description= cardConfiguration.get("description").getAsString();
+        CommonCardType name = gson.fromJson(cardConfiguration.get("name"), CommonCardType.class);
         ArrayList<ArrayList<Coordinates>> pattern = new ArrayList<>();
         TypeToken<ArrayList<Coordinates>> coordArrType = new TypeToken<>(){};
 
@@ -116,19 +117,19 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
                         );
                 sameTiles = gson.fromJson(cardConfiguration.get("Attributes").getAsJsonObject().get("sameTiles"), Boolean.class);
 
-                return new CheckPattern(nPlayers, description, pattern, sameTiles);
+                return new CheckPattern(nPlayers, description, name, pattern, sameTiles);
             }
             case "FiveXTiles" -> {
 
                 sameTiles = gson.fromJson(cardConfiguration.get("Attributes").getAsJsonObject().get("sameTiles"), Boolean.class);
 
-                return new FiveXTiles(nPlayers, description, sameTiles);
+                return new FiveXTiles(nPlayers, description, name, sameTiles);
 
             }
 
             case "MarioPyramid" -> {
 
-                return new MarioPyramid(nPlayers, description);
+                return new MarioPyramid(nPlayers, description, name);
 
             }
 
@@ -138,7 +139,7 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
                 nCols = gson.fromJson(cardConfiguration.get("Attributes").getAsJsonObject().get("nCols"), Integer.class);
                 maxTilesFrule = gson.fromJson(cardConfiguration.get("Attributes").getAsJsonObject().get("maxTilesFrule"), Integer.class);
 
-                return new FullColumns(nPlayers, description,nCols, sameTiles, maxTilesFrule);
+                return new FullColumns(nPlayers, description, name,nCols, sameTiles, maxTilesFrule);
             }
             case "FullRows" -> {
 
@@ -146,7 +147,7 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
                 nRows = gson.fromJson(cardConfiguration.get("Attributes").getAsJsonObject().get("nRows"), Integer.class);
                 maxTilesFrule = gson.fromJson(cardConfiguration.get("Attributes").getAsJsonObject().get("maxTilesFrule"), Integer.class);
 
-                return new FullRows(nPlayers,description, nRows, sameTiles, maxTilesFrule);
+                return new FullRows(nPlayers,description, name, nRows, sameTiles, maxTilesFrule);
             }
 
             case "NadjacentElements" -> {
@@ -154,7 +155,7 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
                 nElems = gson.fromJson(cardConfiguration.get("Attributes").getAsJsonObject().get("nElems"), Integer.class);
                 nGroups = gson.fromJson(cardConfiguration.get("Attributes").getAsJsonObject().get("nGroups"), Integer.class);
 
-                return new NadjacentElements(nPlayers,description,nGroups, nElems);
+                return new NadjacentElements(nPlayers,description, name,nGroups, nElems);
             }
 
             case "NequalsSquares" -> {
@@ -162,11 +163,11 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
                 int nSquares = gson.fromJson(cardConfiguration.get("Attributes").getAsJsonObject().get("nSquares"), Integer.class);
                 int squareDim = gson.fromJson(cardConfiguration.get("Attributes").getAsJsonObject().get("squareDim"), Integer.class);
 
-                return new NequalsSquares(nPlayers,description, nSquares, squareDim);
+                return new NequalsSquares(nPlayers,description, name, nSquares, squareDim);
             }
             case "NsameTiles" -> {
                 int nTiles = gson.fromJson(cardConfiguration.get("Attributes").getAsJsonObject().get("nTiles"), Integer.class);
-                return new NsameTiles(nPlayers, description,nTiles);
+                return new NsameTiles(nPlayers, description, name,nTiles);
             }
             default -> throw new IllegalArgumentException();
         }

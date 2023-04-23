@@ -30,9 +30,9 @@ public class CheckPattern extends CommonGoalCard{
      * @param sameTiles true, if the tiles should be the same for all the pattern
      * @throws PlayersNumberOutOfRange if the players number do not respect the specific
      */
-    public CheckPattern(int nPlayers, String description, ArrayList<ArrayList<Coordinates>> pattern, boolean sameTiles) throws PlayersNumberOutOfRange {
+    public CheckPattern(int nPlayers, String description, CommonCardType name, ArrayList<ArrayList<Coordinates>> pattern, boolean sameTiles) throws PlayersNumberOutOfRange {
 
-        super(nPlayers, description);
+        super(nPlayers, description, name);
 
         this.pattern = new ArrayList<>();
         this.pattern.addAll(pattern);
@@ -58,7 +58,7 @@ public class CheckPattern extends CommonGoalCard{
                     if(bookshelf.getItemTile(el.get(0)).isEmpty()) return false;
                     ItemTile refTile = bookshelf.getItemTile(el.get(0)).get();
                     for( Coordinates c: el) {
-                        if(!bookshelf.getItemTile(c).isPresent() || !bookshelf.getItemTile(c).get().equals(refTile))
+                        if(bookshelf.getItemTile(c).isEmpty() || !bookshelf.getItemTile(c).get().equals(refTile))
                             return false;
                     }
                     return true;

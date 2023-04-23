@@ -1,8 +1,8 @@
 package it.polimi.ingsw.client.connection;
 
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
-import it.polimi.ingsw.remoteControllers.RemoteGameController;
-import it.polimi.ingsw.remoteControllers.RemoteLobbyController;
+import it.polimi.ingsw.remoteInterfaces.RemoteGameController;
+import it.polimi.ingsw.remoteInterfaces.RemoteLobbyController;
 import it.polimi.ingsw.server.model.exceptions.*;
 
 import java.rmi.NotBoundException;
@@ -10,7 +10,6 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
-import java.util.Optional;
 
 public class ClientRMI implements ConnectionHandler{
 
@@ -37,7 +36,7 @@ public class ClientRMI implements ConnectionHandler{
     }
 
     @Override
-    public void CreateGame(int nPlayers) throws NotBoundException, RemoteException {
+    public void CreateGame(int nPlayers) throws RemoteException {
 
         try {
             this.gameController = this.lobbyController.createGame(username, nPlayers);
@@ -54,7 +53,7 @@ public class ClientRMI implements ConnectionHandler{
     }
 
     @Override
-    public void JoinGame() throws RemoteException, NotBoundException {
+    public void JoinGame() throws RemoteException {
 
         try {
             this.gameController = this.lobbyController.addPlayerToGame(username);

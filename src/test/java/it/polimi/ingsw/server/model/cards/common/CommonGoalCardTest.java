@@ -1,8 +1,6 @@
 package it.polimi.ingsw.server.model.cards.common;
 
 
-import it.polimi.ingsw.server.model.cards.common.CommonGoalCard;
-import it.polimi.ingsw.server.model.cards.common.MarioPyramid;
 import it.polimi.ingsw.server.model.exceptions.PlayersNumberOutOfRange;
 import it.polimi.ingsw.server.model.exceptions.TokenAlreadyGivenException;
 import it.polimi.ingsw.server.model.tokens.ScoringToken;
@@ -23,11 +21,13 @@ public class CommonGoalCardTest {
     @DisplayName("CardCreationExceptionTest")
     void CommonGoalCardException() {
         assertThrows(PlayersNumberOutOfRange.class, () -> {
-            new MarioPyramid(0,"");});
+            new MarioPyramid(0,"", CommonCardType.CORNERS);});
         assertThrows(PlayersNumberOutOfRange.class, () -> {
-            new MarioPyramid(5,"");});
+            new MarioPyramid(5,"", CommonCardType.CORNERS);});
         assertThrows(NullPointerException.class, ()->{
-            new MarioPyramid(3,null);});
+            new MarioPyramid(3,null, CommonCardType.CORNERS);});
+        assertThrows(NullPointerException.class, ()->{
+            new MarioPyramid(3,"", null);});
     }
 
     /**
@@ -37,7 +37,7 @@ public class CommonGoalCardTest {
     @Test
     @DisplayName("getDescriptionTest")
     void getDescriptionTest() throws PlayersNumberOutOfRange {
-        CommonGoalCard card = new MarioPyramid(3,"description");
+        CommonGoalCard card = new MarioPyramid(3,"description", CommonCardType.CORNERS);
         assertEquals("description", card.getDescription());
     }
 
@@ -48,18 +48,18 @@ public class CommonGoalCardTest {
     @Test
     @DisplayName("tokenStackfillingTester")
     void tokenStackTester () throws PlayersNumberOutOfRange {
-        CommonGoalCard card = new MarioPyramid(2,"description");
+        CommonGoalCard card = new MarioPyramid(2,"description", CommonCardType.CORNERS);
         Stack<ScoringToken> tokens = card.getTokenStack();
         assertEquals(TokenPoint.EIGHT, tokens.pop().getScoreValue());
         assertEquals(TokenPoint.FOUR, tokens.pop().getScoreValue());
         assertTrue(tokens.empty());
-        card = new MarioPyramid(3,"description");
+        card = new MarioPyramid(3,"description", CommonCardType.CORNERS);
         tokens = card.getTokenStack();
         assertEquals(TokenPoint.EIGHT, tokens.pop().getScoreValue());
         assertEquals(TokenPoint.SIX, tokens.pop().getScoreValue());
         assertEquals(TokenPoint.FOUR, tokens.pop().getScoreValue());
         assertTrue(tokens.empty());
-        card = new MarioPyramid(4,"description");
+        card = new MarioPyramid(4,"description", CommonCardType.CORNERS);
         tokens = card.getTokenStack();
         assertEquals(TokenPoint.EIGHT, tokens.pop().getScoreValue());
         assertEquals(TokenPoint.SIX, tokens.pop().getScoreValue());
@@ -71,7 +71,7 @@ public class CommonGoalCardTest {
     @Test
     @DisplayName("popTokenTest")
     void popTokenToTest () throws PlayersNumberOutOfRange, TokenAlreadyGivenException {
-        CommonGoalCard card = new MarioPyramid(4,"description");
+        CommonGoalCard card = new MarioPyramid(4,"description", CommonCardType.CORNERS);
         assertEquals(TokenPoint.EIGHT, card.popTokenTo("Player1").getScoreValue());
         assertThrows(TokenAlreadyGivenException.class, () ->{
             card.popTokenTo("Player1");

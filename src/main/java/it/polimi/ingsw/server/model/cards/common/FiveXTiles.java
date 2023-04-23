@@ -17,8 +17,8 @@ public class FiveXTiles extends  CommonGoalCard{
      * if true, the constraint will verify that all the tiles following it are of the same type
      */
     private final boolean sameTiles;
-    public FiveXTiles(int nPlayers, String description ,boolean sameTiles) throws PlayersNumberOutOfRange {
-        super(nPlayers, description);
+    public FiveXTiles(int nPlayers, String description, CommonCardType name,boolean sameTiles) throws PlayersNumberOutOfRange {
+        super(nPlayers, description, name);
         this.sameTiles = sameTiles;
     }
 

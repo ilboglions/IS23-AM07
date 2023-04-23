@@ -213,6 +213,7 @@ public class Player {
      */
     public void assignPersonalCard(PersonalGoalCard card) {
         this.personalCard = Objects.requireNonNull(card);
+        this.playerListener.onPersonalGoalCardAssigned(this.username, card);
     }
 
     /**

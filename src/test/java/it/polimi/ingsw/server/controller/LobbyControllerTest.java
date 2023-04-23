@@ -1,6 +1,5 @@
 package it.polimi.ingsw.server.controller;
 
-import it.polimi.ingsw.remoteControllers.RemoteGameController;
 import it.polimi.ingsw.server.model.exceptions.*;
 import it.polimi.ingsw.server.model.lobby.Lobby;
 import org.junit.jupiter.api.DisplayName;

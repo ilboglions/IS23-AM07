@@ -1,9 +1,8 @@
-package it.polimi.ingsw.remoteControllers;
+package it.polimi.ingsw.remoteInterfaces;
 
 import it.polimi.ingsw.server.model.exceptions.*;
 
 import java.rmi.*;
-import java.util.Optional;
 
 public interface RemoteLobbyController extends Remote{
     boolean enterInLobby(String player) throws RemoteException;

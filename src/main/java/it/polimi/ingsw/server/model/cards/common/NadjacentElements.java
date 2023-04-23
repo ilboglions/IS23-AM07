@@ -21,8 +21,8 @@ public class NadjacentElements extends CommonGoalCard{
     private final int nGroups;
     private final int nElems;
 
-    public NadjacentElements(int nPlayers, String description ,int nGroups, int nElems) throws PlayersNumberOutOfRange, NegativeFieldException {
-        super(nPlayers, description);
+    public NadjacentElements(int nPlayers, String description, CommonCardType name,int nGroups, int nElems) throws PlayersNumberOutOfRange, NegativeFieldException {
+        super(nPlayers, description, name);
         if( nGroups <= 0 || nElems <= 0 ) throw new NegativeFieldException("can't assign negative paramaters!");
         this.nGroups = nGroups;
         this.nElems = nElems;

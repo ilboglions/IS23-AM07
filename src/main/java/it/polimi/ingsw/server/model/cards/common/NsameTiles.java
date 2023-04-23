@@ -8,8 +8,8 @@ import it.polimi.ingsw.server.model.tiles.ItemTile;
 
 public class NsameTiles extends  CommonGoalCard{
     private final int nTiles;
-    public NsameTiles(int nPlayers, String description , int nTiles) throws PlayersNumberOutOfRange, NegativeFieldException {
-        super(nPlayers, description);
+    public NsameTiles(int nPlayers, String description, CommonCardType name, int nTiles) throws PlayersNumberOutOfRange, NegativeFieldException {
+        super(nPlayers, description, name);
         if( nTiles <= 0) throw new NegativeFieldException("can't assign negative parameters!");
         this.nTiles = nTiles;
     }
