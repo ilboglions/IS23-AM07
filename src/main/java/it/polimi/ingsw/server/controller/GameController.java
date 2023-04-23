@@ -4,6 +4,10 @@ import it.polimi.ingsw.server.model.exceptions.*;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.game.GameModelInterface;
 import it.polimi.ingsw.remoteControllers.RemoteGameController;
+import it.polimi.ingsw.server.model.subscriber.BoardSubscriber;
+import it.polimi.ingsw.server.model.subscriber.BookshelfSubscriber;
+import it.polimi.ingsw.server.model.subscriber.ChatSubscriber;
+import it.polimi.ingsw.server.model.subscriber.PlayerSubscriber;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -148,6 +152,26 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
 
             return true;
         }
+    }
+
+    @Override
+    public void subscribeToListener(BoardSubscriber subscriber) throws RemoteException {
+        gameModel.subscribeToListener(subscriber);
+    }
+
+    @Override
+    public void subscribeToListener(BookshelfSubscriber subscriber) throws RemoteException {
+        gameModel.subscribeToListener(subscriber);
+    }
+
+    @Override
+    public void subscribeToListener(ChatSubscriber subscriber) throws RemoteException {
+        gameModel.subscribeToListener(subscriber);
+    }
+
+    @Override
+    public void subscribeToListener(PlayerSubscriber subscriber) {
+        gameModel.subscribeToListener(subscriber);
     }
 
     protected GameModelInterface getGameControlled(){

@@ -4,12 +4,24 @@ import it.polimi.ingsw.server.model.chat.Message;
 import it.polimi.ingsw.server.model.exceptions.SenderEqualsRecipientException;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.*;
+import it.polimi.ingsw.server.model.subscriber.BoardSubscriber;
+import it.polimi.ingsw.server.model.subscriber.BookshelfSubscriber;
+import it.polimi.ingsw.server.model.subscriber.ChatSubscriber;
+import it.polimi.ingsw.server.model.subscriber.PlayerSubscriber;
 
 import java.util.ArrayList;
 
 public interface GameModelInterface {
 
     boolean getIsStarted();
+
+    void subscribeToListener(BoardSubscriber subscriber);
+
+    void subscribeToListener(BookshelfSubscriber subscriber);
+
+    void subscribeToListener(ChatSubscriber subscriber);
+
+    void subscribeToListener(PlayerSubscriber subscriber);
     void start() throws NotAllPlayersHaveJoinedException, GameNotEndedException;
     String getPlayerInTurn() throws GameEndedException, GameNotStartedException;
     void moveTiles(ArrayList<Coordinates> source, int column) throws InvalidCoordinatesException, EmptySlotException, NotEnoughSpaceException, GameNotStartedException;
