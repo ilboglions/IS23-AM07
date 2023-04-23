@@ -2,13 +2,16 @@ package it.polimi.ingsw.server.model.coordinate;
 
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
  * the Coordinates class is a useful and immutable class used in many method
  */
-public class Coordinates {
-
+public class Coordinates implements Serializable {
+    @Serial
+    private static final long serialVersionUID = -3104092465697470225L;
     /**
      * the attributes are the position of the coordinate in x and y axes
      */

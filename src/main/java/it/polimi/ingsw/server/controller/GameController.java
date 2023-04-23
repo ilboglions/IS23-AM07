@@ -3,12 +3,13 @@ package it.polimi.ingsw.server.controller;
 import it.polimi.ingsw.server.model.exceptions.*;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.game.GameModelInterface;
-import it.polimi.ingsw.remoteControllers.RemoteGameController;
+import it.polimi.ingsw.remoteInterfaces.RemoteGameController;
 import it.polimi.ingsw.server.model.subscriber.BoardSubscriber;
 import it.polimi.ingsw.server.model.subscriber.BookshelfSubscriber;
 import it.polimi.ingsw.server.model.subscriber.ChatSubscriber;
 import it.polimi.ingsw.server.model.subscriber.PlayerSubscriber;
 
+import java.io.Serial;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
@@ -19,6 +20,9 @@ import java.util.Set;
  * the game controller ensures the communication through client controller and server model
  */
 public class GameController extends UnicastRemoteObject implements RemoteGameController {
+    @Serial
+    private static final long serialVersionUID = -385148265230540371L;
+
     private final GameModelInterface gameModel;
     private final Set<Coordinates> selectedTiles;
     private final Object gameLock, chatLock;

@@ -1,9 +1,14 @@
 package it.polimi.ingsw.server.model.tokens;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 /**
- * scoring token is a class that represent the token placed on common cards  
+ * scoring token is a class that represent the token placed on common cards
  */
-public class ScoringToken {
+public class ScoringToken implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 7969400589451602800L;
     /**
      * represent the tokenPoint type of the instanced token
      */

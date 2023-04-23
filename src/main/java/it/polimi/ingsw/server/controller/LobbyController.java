@@ -3,9 +3,10 @@ package it.polimi.ingsw.server.controller;
 import it.polimi.ingsw.server.model.exceptions.*;
 import it.polimi.ingsw.server.model.game.GameModelInterface;
 import it.polimi.ingsw.server.model.lobby.Lobby;
-import it.polimi.ingsw.remoteControllers.RemoteGameController;
-import it.polimi.ingsw.remoteControllers.RemoteLobbyController;
+import it.polimi.ingsw.remoteInterfaces.RemoteGameController;
+import it.polimi.ingsw.remoteInterfaces.RemoteLobbyController;
 
+import java.io.Serial;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,6 +16,9 @@ import java.rmi.server.*;
  * the lobby controller ensures the communication through client controller and server model
  */
 public class LobbyController extends UnicastRemoteObject implements RemoteLobbyController {
+    @Serial
+    private static final long serialVersionUID = 172897351161158928L;
+
     private final Lobby lobbyModel;
     private final Map<GameModelInterface,GameController> gameControllers;
     /*
