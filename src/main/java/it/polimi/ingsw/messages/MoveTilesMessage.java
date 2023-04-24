@@ -12,8 +12,8 @@ public class MoveTilesMessage extends NetMessage {
     private final ArrayList<Coordinates> tiles;
     private final int column;
 
-    MoveTilesMessage(String username, ArrayList<Coordinates> tiles, int column) {
-        super(username, MessageType.MOVE_TILES);
+    public MoveTilesMessage(ArrayList<Coordinates> tiles, int column) {
+        super(MessageType.MOVE_TILES);
         this.tiles = tiles;
         this.column = column;
     }

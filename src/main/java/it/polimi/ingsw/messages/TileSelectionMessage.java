@@ -11,8 +11,8 @@ public class TileSelectionMessage extends NetMessage {
 
     private final ArrayList<Coordinates> tiles;
 
-    TileSelectionMessage(String username, ArrayList<Coordinates> tiles) {
-        super(username, MessageType.TILES_SELECTION);
+    public TileSelectionMessage(ArrayList<Coordinates> tiles) {
+        super(MessageType.TILES_SELECTION);
         this.tiles = tiles;
     }
 

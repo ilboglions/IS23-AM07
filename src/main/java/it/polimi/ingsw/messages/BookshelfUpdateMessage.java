@@ -13,8 +13,8 @@ public class BookshelfUpdateMessage extends NetMessage {
     private final ArrayList<ItemTile> insertedTiles;
     private final int column;
 
-    BookshelfUpdateMessage(String username, ArrayList<ItemTile> insertedTiles, int column) {
-        super(username, MessageType.BOOKSHELF_UPDATE);
+    BookshelfUpdateMessage(ArrayList<ItemTile> insertedTiles, int column) {
+        super(MessageType.BOOKSHELF_UPDATE);
         this.insertedTiles = insertedTiles;
         this.column = column;
     }

@@ -10,9 +10,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+
 public class ServerClientHandlerTCP  implements Runnable{
     private final Socket socket;
     private final LobbyController lobbyController;
+    private String username;
     private RemoteGameController gameController;
     public ServerClientHandlerTCP(Socket socket, LobbyController lobbyController) {
         this.socket = socket;
@@ -31,13 +33,14 @@ public class ServerClientHandlerTCP  implements Runnable{
                 switch(inputMessage.getMessageType()){
                     case JOIN_LOBBY:
                         JoinLobbyMessage joinLobbyMessage = (JoinLobbyMessage)inputMessage;
+                        this.username = joinLobbyMessage.getUsername();
                         result = lobbyController.enterInLobby(joinLobbyMessage.getUsername());
-                        outputMessage = new LoginReturnMessage(joinLobbyMessage.getUsername(), result, "");
+                        outputMessage = new LoginReturnMessage(result, "");
                         break;
                     case CREATE_GAME:
                         CreateGameMessage createGameMessage = (CreateGameMessage)inputMessage;
                         try {
-                            gameController = lobbyController.createGame(createGameMessage.getUsername(), createGameMessage.getPlayerNumber());
+                            gameController = lobbyController.createGame(username, createGameMessage.getPlayerNumber());
                             result = true;
                             errorType = "";
                         }
@@ -57,12 +60,11 @@ public class ServerClientHandlerTCP  implements Runnable{
                             result = false;
                             errorType = "PlayersNumberOutOfRange";
                         }
-                        outputMessage = new ConfirmGameMessage(createGameMessage.getUsername(),result, errorType, "");
+                        outputMessage = new ConfirmGameMessage(result, errorType, "");
                         break;
                     case JOIN_GAME:
-                        JoinGameMessage joinGameMessage = (JoinGameMessage) inputMessage;
                         try {
-                            gameController = lobbyController.addPlayerToGame(joinGameMessage.getUsername());
+                            gameController = lobbyController.addPlayerToGame(username);
                             result = true;
                             errorType = "";
                         } catch (NicknameAlreadyUsedException e) {
@@ -78,27 +80,27 @@ public class ServerClientHandlerTCP  implements Runnable{
                             result = false;
                             errorType = "PlayersNumberOutOfRange";
                         }
-                        outputMessage = new ConfirmGameMessage(joinGameMessage.getUsername(), result, errorType, "");
+                        outputMessage = new ConfirmGameMessage(result, errorType, "");
                         break;
                     case TILES_SELECTION:
                         TileSelectionMessage tileSelectionMessage = (TileSelectionMessage)inputMessage;
-                        result = gameController.checkValidRetrieve(tileSelectionMessage.getUsername(), tileSelectionMessage.getTiles());
-                        outputMessage = new ConfirmSelectionMessage(tileSelectionMessage.getUsername(), result);
+                        result = gameController.checkValidRetrieve(username, tileSelectionMessage.getTiles());
+                        outputMessage = new ConfirmSelectionMessage(result);
                         break;
                     case MOVE_TILES:
                         MoveTilesMessage moveTilesMessage = (MoveTilesMessage) inputMessage;
-                        result = gameController.moveTiles(moveTilesMessage.getUsername(), moveTilesMessage.getTiles(), moveTilesMessage.getColumn());
-                        outputMessage = new ConfirmMoveMessage(moveTilesMessage.getUsername(), result);
+                        result = gameController.moveTiles(username, moveTilesMessage.getTiles(), moveTilesMessage.getColumn());
+                        outputMessage = new ConfirmMoveMessage(result);
                         break;
                     case POST_MESSAGE:
                         PostMessage postMessage = (PostMessage) inputMessage;
                         if(postMessage.getRecipient().isPresent()){
-                            result = gameController.postDirectMessage(postMessage.getUsername(), postMessage.getRecipient().get(),postMessage.getContent());
+                            result = gameController.postDirectMessage(username, postMessage.getRecipient().get(),postMessage.getContent());
                         }
                         else{
-                            result = gameController.postBroadCastMessage(postMessage.getUsername(), postMessage.getContent());
+                            result = gameController.postBroadCastMessage(username, postMessage.getContent());
                         }
-                        outputMessage = new ConfirmChatMessage(postMessage.getUsername(), result);
+                        outputMessage = new ConfirmChatMessage(result);
                         break;
                     default:
                         break loop;
@@ -115,4 +117,6 @@ public class ServerClientHandlerTCP  implements Runnable{
         }
     }
 }
+
+
 

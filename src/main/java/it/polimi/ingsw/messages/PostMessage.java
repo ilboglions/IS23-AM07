@@ -11,20 +11,17 @@ public class PostMessage extends NetMessage {
     private final String content;
 
     PostMessage(String username, String recipient, String content) {
-        super(username, MessageType.POST_MESSAGE);
+        super(MessageType.POST_MESSAGE);
         this.content = content;
         this.recipient = Optional.of(recipient);
     }
-    PostMessage(String username, String content) {
-        super(username, MessageType.POST_MESSAGE);
+    PostMessage(String content) {
+        super(MessageType.POST_MESSAGE);
         this.content = content;
         this.recipient = Optional.empty();
     }
 
 
-    public String getSender() {
-        return this.getUsername();
-    }
 
     public Optional<String> getRecipient() {
         return recipient;

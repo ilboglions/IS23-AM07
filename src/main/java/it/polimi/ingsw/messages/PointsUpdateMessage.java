@@ -8,12 +8,20 @@ public class PointsUpdateMessage extends NetMessage{
 
     private final int totalPoints;
 
+    public String getUsername() {
+        return username;
+    }
+
+    private final String username;
+
     PointsUpdateMessage(String username, int totalPoints) {
-        super(username, MessageType.POINTS_UPDATE);
+        super(MessageType.POINTS_UPDATE);
+        this.username = username;
         this.totalPoints = totalPoints;
     }
 
     public int getTotalPoints() {
         return totalPoints;
     }
+
 }

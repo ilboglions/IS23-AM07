@@ -1,5 +1,6 @@
 package it.polimi.ingsw.client.connection;
 
+import it.polimi.ingsw.messages.*;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 
 import java.io.IOException;
@@ -16,6 +17,8 @@ public class ClientSocket implements ConnectionHandler{
     private Socket connection;
     ObjectOutputStream outputStream;
     ObjectInputStream inputStream;
+    private NetMessage requestMessage;
+    private NetMessage responseMessage;
     public ClientSocket(String ip, int port) {
         this.ip = ip;
         this.port = port;
@@ -48,26 +51,74 @@ public class ClientSocket implements ConnectionHandler{
 
     @Override
     public void JoinLobby(String username) {
-        //here the socket should send the message JoinLobbyMessage asking the server to join the lobby
+        requestMessage = new JoinLobbyMessage(username);
+        try {
+            outputStream.writeObject(requestMessage);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            responseMessage = (NetMessage) inputStream.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public void CreateGame(int nPlayers) {
-        //here the socket will send a CreateGameMessage message
+        requestMessage = new CreateGameMessage(nPlayers);
+        try {
+            outputStream.writeObject(requestMessage);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            responseMessage = (NetMessage) inputStream.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
-
     @Override
     public void JoinGame() {
-
+        requestMessage = new JoinGameMessage();
+        try {
+            outputStream.writeObject(requestMessage);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            responseMessage = (NetMessage) inputStream.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
-
     @Override
     public void checkValidRetrieve(ArrayList<Coordinates> tiles) {
-
+        requestMessage = new TileSelectionMessage(tiles);
+        try {
+            outputStream.writeObject(requestMessage);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            responseMessage = (NetMessage) inputStream.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public void moveTiles(ArrayList<Coordinates> tiles, int column) {
-
+        requestMessage = new MoveTilesMessage(tiles,column);
+        try {
+            outputStream.writeObject(requestMessage);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            responseMessage = (NetMessage) inputStream.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

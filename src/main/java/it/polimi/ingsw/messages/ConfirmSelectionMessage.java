@@ -9,8 +9,8 @@ public class ConfirmSelectionMessage extends NetMessage {
     private final Boolean confirmSelection;
 
 
-    public ConfirmSelectionMessage(String username, Boolean confirmSelection) {
-        super(username, MessageType.CONFIRM_SELECTION);
+    public ConfirmSelectionMessage(Boolean confirmSelection) {
+        super(MessageType.CONFIRM_SELECTION);
         this.confirmSelection = confirmSelection;
 
     }

@@ -15,6 +15,7 @@ public class UtilityFunctions {
      * defines the max players number
      */
     public static final int MAX_PLAYERS = 4;
+    public static final long MAXINACTIVITYTIME = 5000;
     /**
      * findAdjacentElements is a recursive function used to find all same elements that are adjacent.
      * @param bookshelf the bookshelf to search in

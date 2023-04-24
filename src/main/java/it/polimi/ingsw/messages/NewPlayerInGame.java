@@ -8,8 +8,8 @@ public class NewPlayerInGame extends NetMessage {
 
     private final String newPlayerUsername;
 
-    NewPlayerInGame(String username, String newPlayerUsername) {
-        super(username, MessageType.NEW_PLAYER);
+    NewPlayerInGame(String newPlayerUsername) {
+        super(MessageType.NEW_PLAYER);
         this.newPlayerUsername = newPlayerUsername;
     }
 

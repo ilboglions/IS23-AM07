@@ -10,8 +10,8 @@ public class ConfirmMoveMessage extends NetMessage {
     private final Boolean confirmSelection;
 
 
-    public ConfirmMoveMessage(String username, Boolean confirmSelection) {
-        super(username, MessageType.CONFIRM_MOVE);
+    public ConfirmMoveMessage(Boolean confirmSelection) {
+        super(MessageType.CONFIRM_MOVE);
         this.confirmSelection = confirmSelection;
 
     }

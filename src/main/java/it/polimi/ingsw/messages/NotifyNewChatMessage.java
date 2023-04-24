@@ -8,16 +8,11 @@ public class NotifyNewChatMessage extends NetMessage {
 
     private final String recipient;
     private final String content;
-    NotifyNewChatMessage(String username, String recipient, String content) {
-        super(username, MessageType.NOTIFY_NEW_CHAT);
+    NotifyNewChatMessage(String recipient, String content) {
+        super(MessageType.NOTIFY_NEW_CHAT);
         this.recipient = recipient;
         this.content = content;
     }
-
-    public String getSender(){
-        return this.getUsername();
-    }
-
     public String getRecipient() {
         return recipient;
     }

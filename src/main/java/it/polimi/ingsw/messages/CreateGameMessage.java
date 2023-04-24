@@ -8,8 +8,8 @@ public class CreateGameMessage extends NetMessage {
 
     private final int playerNumber;
 
-    CreateGameMessage(String username, int playerNumber) {
-        super(username, MessageType.CREATE_GAME);
+    public CreateGameMessage(int playerNumber) {
+        super(MessageType.CREATE_GAME);
         this.playerNumber = playerNumber;
     }
 

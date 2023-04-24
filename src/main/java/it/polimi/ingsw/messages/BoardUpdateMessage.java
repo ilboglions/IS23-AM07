@@ -13,8 +13,8 @@ public class BoardUpdateMessage extends NetMessage{
 
     private final Map<Coordinates, Optional<ItemTile>> tilesInBoard;
 
-    BoardUpdateMessage(String username, Map<Coordinates, Optional<ItemTile>> tilesInBoard) {
-        super(username, MessageType.BOARD_UPDATE);
+    BoardUpdateMessage(Map<Coordinates, Optional<ItemTile>> tilesInBoard) {
+        super(MessageType.BOARD_UPDATE);
         this.tilesInBoard = tilesInBoard;
     }
 

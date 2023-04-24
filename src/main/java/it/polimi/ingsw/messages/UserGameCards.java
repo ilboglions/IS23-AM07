@@ -14,8 +14,8 @@ public class UserGameCards extends NetMessage {
     private final RemotePersonalGoalCard personalGoalCard;
     private final String details;
 
-    UserGameCards(String username, ArrayList<RemoteCommonGoalCard> commonGoalCards, RemotePersonalGoalCard personalGoalCard, String details) {
-        super(username, MessageType.USER_GAME_CARDS);
+    UserGameCards(ArrayList<RemoteCommonGoalCard> commonGoalCards, RemotePersonalGoalCard personalGoalCard, String details) {
+        super(MessageType.USER_GAME_CARDS);
         this.commonGoalCards = commonGoalCards;
         this.personalGoalCard = personalGoalCard;
         this.details = details;

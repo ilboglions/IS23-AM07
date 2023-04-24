@@ -11,8 +11,8 @@ public class TokenUpdateMessage extends NetMessage{
 
     private final ArrayList<ScoringToken> tokens;
 
-    TokenUpdateMessage(String username, ArrayList<ScoringToken> tokens) {
-        super(username, MessageType.TOKEN_UPDATE);
+    TokenUpdateMessage(ArrayList<ScoringToken> tokens) {
+        super(MessageType.TOKEN_UPDATE);
         this.tokens = tokens;
     }
 
