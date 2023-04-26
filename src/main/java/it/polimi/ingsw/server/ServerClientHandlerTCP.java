@@ -106,6 +106,7 @@ public class ServerClientHandlerTCP  implements Runnable{
                         break loop;
                 }
                 outputStream.writeObject(outputMessage);
+                outputStream.flush();
             }
             outputStream.close();
             inputStream.close();

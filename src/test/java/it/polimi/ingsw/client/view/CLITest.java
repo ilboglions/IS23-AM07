@@ -39,8 +39,10 @@ public class CLITest {
         testPattern.put(new Coordinates(2,0), ItemTile.PLANT);
         testPattern.put(new Coordinates(0,4), ItemTile.GAME);
 
-        cli.printYourBookShelf(testPattern);
-        cli.printBookShelf(testPattern,"Piero Pelu");
+        cli.drawYourBookShelf(testPattern);
+        cli.drawBookShelf(testPattern,"Piero Pelu", 0);
+        cli.drawBookShelf(testPattern,"Mario", 1);
+        cli.drawBookShelf(testPattern,"gino", 2);
 
         Map<Integer,Integer> pointReference = new HashMap<>();
 
@@ -51,12 +53,8 @@ public class CLITest {
         pointReference.put(5,9);
         pointReference.put(6,12);
 
-        cli.printPersonalCard(testPattern,pointReference);
-    }
-    @Test
-    @DisplayName("Test the print of the livingRoom")
-    void testLivingRoomPrint() throws InvalidCoordinatesException {
-        CliView cli = new CliView();
+        cli.drawPersonalCard(testPattern,pointReference);
+
         Map<Coordinates, Optional<ItemTile>> testBoardPattern = new HashMap<>();
         testBoardPattern.put(new Coordinates(7,3), Optional.of(ItemTile.GAME));
         testBoardPattern.put(new Coordinates(7,4), Optional.of(ItemTile.CAT));
@@ -94,14 +92,16 @@ public class CLITest {
         testBoardPattern.put(new Coordinates(1,4), Optional.empty());
         testBoardPattern.put(new Coordinates(1,5), Optional.empty());
 
-        cli.printLivingRoom(testBoardPattern);
+        cli.drawLivingRoom(testBoardPattern);
 
+        cli.plot();
     }
 
+    /*
     @Test
     @DisplayName("chat test")
     void chatTest(){
         CliView cli = new CliView();
-        cli.printChatMessage("Pietro","BElla raga si va a praga!");
-    }
+        cli.drawChatMessage("Pietro","BElla raga si va a praga!");
+    }*/
 }

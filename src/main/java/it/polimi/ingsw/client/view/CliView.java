@@ -10,126 +10,127 @@ import java.util.Optional;
 public class CliView {
 
     /**
-     * colors used for cli prints
+     * dimension of the game view
      */
-    // Reset
-    private final String RESET = "\033[0m";  // Text Reset
 
-    // Regular Colors
-    private final String BLACK = "\033[0;30m";   // BLACK
-    private final String RED = "\033[0;31m";     // RED
-    private final String GREEN = "\033[0;32m";   // GREEN
-    private final String YELLOW = "\033[0;33m";  // YELLOW
-    private final String BLUE = "\033[0;34m";    // BLUE
-    private final String PURPLE = "\033[0;35m";  // PURPLE
-    private final String CYAN = "\033[0;36m";    // CYAN
-    private final String WHITE = "\033[0;37m";   // WHITE
+    private static final int MAX_VERT_TILES = 40; //rows.
+    private static final int MAX_HORIZ_TILES = 30; //cols.
 
-    // Bold
-    private final String BLACK_BOLD = "\033[1;30m";  // BLACK
-    private final String RED_BOLD = "\033[1;31m";    // RED
-    private final String GREEN_BOLD = "\033[1;32m";  // GREEN
-    private final String YELLOW_BOLD = "\033[1;33m"; // YELLOW
-    private final String BLUE_BOLD = "\033[1;34m";   // BLUE
-    private final String PURPLE_BOLD = "\033[1;35m"; // PURPLE
-    private final String CYAN_BOLD = "\033[1;36m";   // CYAN
-    private final String WHITE_BOLD = "\033[1;37m";  // WHITE
+    String[][] tiles = new String[MAX_VERT_TILES][MAX_HORIZ_TILES];
 
-    // Underline
-    private final String BLACK_UNDERLINED = "\033[4;30m";  // BLACK
-    private final String RED_UNDERLINED = "\033[4;31m";    // RED
-    private final String GREEN_UNDERLINED = "\033[4;32m";  // GREEN
-    private final String YELLOW_UNDERLINED = "\033[4;33m"; // YELLOW
-    private final String BLUE_UNDERLINED = "\033[4;34m";   // BLUE
-    private final String PURPLE_UNDERLINED = "\033[4;35m"; // PURPLE
-    private final String CYAN_UNDERLINED = "\033[4;36m";   // CYAN
-    private final String WHITE_UNDERLINED = "\033[4;37m";  // WHITE
-
-    // Background
-    private final String BLACK_BACKGROUND = "\033[40m";  // BLACK
-    private final String RED_BACKGROUND = "\033[41m";    // RED
-    private final String GREEN_BACKGROUND = "\033[42m";  // GREEN
-    private final String YELLOW_BACKGROUND = "\033[43m"; // YELLOW
-    private final String BLUE_BACKGROUND = "\033[44m";   // BLUE
-    private final String PURPLE_BACKGROUND = "\033[45m"; // PURPLE
-    private final String CYAN_BACKGROUND = "\033[46m";   // CYAN
-    private final String WHITE_BACKGROUND = "\033[47m";  // WHITE
-
-    // High Intensity
-    private final String BLACK_BRIGHT = "\033[0;90m";  // BLACK
-    private final String RED_BRIGHT = "\033[0;91m";    // RED
-    private final String GREEN_BRIGHT = "\033[0;92m";  // GREEN
-    private final String YELLOW_BRIGHT = "\033[0;93m"; // YELLOW
-    private final String BLUE_BRIGHT = "\033[0;94m";   // BLUE
-    private final String PURPLE_BRIGHT = "\033[0;95m"; // PURPLE
-    private final String CYAN_BRIGHT = "\033[0;96m";   // CYAN
-    private final String WHITE_BRIGHT = "\033[0;97m";  // WHITE
-
-    // Bold High Intensity
-    private final String BLACK_BOLD_BRIGHT = "\033[1;90m"; // BLACK
-    private final String RED_BOLD_BRIGHT = "\033[1;91m";   // RED
-    private final String GREEN_BOLD_BRIGHT = "\033[1;92m"; // GREEN
-    private final String YELLOW_BOLD_BRIGHT = "\033[1;93m";// YELLOW
-    private final String BLUE_BOLD_BRIGHT = "\033[1;94m";  // BLUE
-    private final String PURPLE_BOLD_BRIGHT = "\033[1;95m";// PURPLE
-    private final String CYAN_BOLD_BRIGHT = "\033[1;96m";  // CYAN
-    private final String WHITE_BOLD_BRIGHT = "\033[1;97m"; // WHITE
-
-    // High Intensity backgrounds
-    private final String BLACK_BACKGROUND_BRIGHT = "\033[0;100m";// BLACK
-    private final String RED_BACKGROUND_BRIGHT = "\033[0;101m";// RED
-    private final String GREEN_BACKGROUND_BRIGHT = "\033[0;102m";// GREEN
-    private final String YELLOW_BACKGROUND_BRIGHT = "\033[0;103m";// YELLOW
-    private final String BLUE_BACKGROUND_BRIGHT = "\033[0;104m";// BLUE
-    private final String PURPLE_BACKGROUND_BRIGHT = "\033[0;105m"; // PURPLE
-    private final String CYAN_BACKGROUND_BRIGHT = "\033[0;106m";  // CYAN
-    private final String WHITE_BACKGROUND_BRIGHT = "\033[0;107m";   // WHITE
-
+    public CliView(){
+        fillEmpty();
+    }
 
     public void printTitle(){
-        System.out.println(YELLOW);
+        System.out.println(Color.YELLOW.escape());
         System.out.println( "███╗   ███╗██╗   ██╗    ███████╗██╗  ██╗███████╗██╗     ███████╗██╗███████╗");
         System.out.println( "████╗ ████║╚██╗ ██╔╝    ██╔════╝██║  ██║██╔════╝██║     ██╔════╝██║██╔════╝");
         System.out.println( "██╔████╔██║ ╚████╔╝     ███████╗███████║█████╗  ██║     █████╗  ██║█████╗  ");
         System.out.println( "██║╚██╔╝██║  ╚██╔╝      ╚════██║██╔══██║██╔══╝  ██║     ██╔══╝  ██║██╔══╝  ");
         System.out.println( "██║ ╚═╝ ██║   ██║       ███████║██║  ██║███████╗███████╗██║     ██║███████╗");
         System.out.println( "╚═╝     ╚═╝   ╚═╝       ╚══════╝╚═╝  ╚═╝╚══════╝╚══════╝╚═╝     ╚═╝╚══════╝");
-        System.out.println(RESET+BLACK_BOLD_BRIGHT);
-        System.out.println( WHITE_BOLD_BRIGHT+"=> Not as good as a "+RED_BOLD+"MargaraCraft"+WHITE_BOLD_BRIGHT+" episode, but better than nothing!"+RESET);
+        System.out.println(Color.RESET.escape()+Color.BLACK_BOLD_BRIGHT.escape());
+        System.out.println( Color.WHITE_BOLD_BRIGHT.escape()+"=> Not as good as a "+Color.RED_BOLD.escape()+"MargaraCraft"+Color.WHITE_BOLD_BRIGHT.escape()+" episode, but better than nothing!"+Color.RESET.escape());
 
         System.out.println();
     }
 
-    public void printPersonalCard(Map<Coordinates,ItemTile> tilesMap, Map<Integer,Integer> pointsReference) throws InvalidCoordinatesException {
-        System.out.println(WHITE_BOLD_BRIGHT+"Here's your"+RED_BOLD+" personal goal card"+WHITE_BOLD_BRIGHT+"!\n");
-        this.printBookShelf( tilesMap);
-        System.out.println(WHITE_BOLD_BRIGHT+"== points reference ==");
+
+    private void fillEmpty() {
+
+        tiles[0][0] = "╔";
+        for (int c = 1; c < MAX_HORIZ_TILES - 1; c++) {
+            tiles[0][c] = "═══";
+        }
+
+        tiles[0][MAX_HORIZ_TILES - 1] = "╗";
+
+        for (int r = 1; r < MAX_VERT_TILES - 1; r++) {
+            tiles[r][0] = "║";
+            for (int c = 1; c < MAX_HORIZ_TILES - 1; c++) {
+                tiles[r][c] = "   ";
+            }
+            tiles[r][MAX_HORIZ_TILES-1] = "║";
+        }
+
+        tiles[MAX_VERT_TILES - 1][0] = "╚";
+        for (int c = 1; c < MAX_HORIZ_TILES - 1; c++) {
+            tiles[MAX_VERT_TILES - 1][c] = "═══";
+        }
+
+        tiles[MAX_VERT_TILES - 1][MAX_HORIZ_TILES - 1] = "╝";
+
+    }
+
+    public void drawPersonalCard(Map<Coordinates,ItemTile> tilesMap, Map<Integer,Integer> pointsReference) throws InvalidCoordinatesException {
+        int startR = 31;
+        int startC = 2;
+
+        // System.out.println(Color.WHITE_BOLD_BRIGHT.escape()+"Here's your"+Color.RED_BOLD.escape()+" personal goal card"+Color.WHITE_BOLD_BRIGHT.escape()+"!\n");
+        this.drawBookShelf( tilesMap, startR, startC);
+        /* System.out.println(Color.WHITE_BOLD_BRIGHT.escape()+"== points reference ==");
 
         pointsReference.forEach(
-                (key, value) -> {
-            System.out.print(key+"->"+value+"pt ");
+                (key, value) -> System.out.print(key+"->"+value+"pt ")
+        ); */
+
+    }
+
+
+    public void drawYourBookShelf(Map<Coordinates,ItemTile> tilesMap) throws InvalidCoordinatesException {
+
+        int startR = 22;
+        int startC = 12;
+
+       // System.out.println(Color.WHITE_BOLD_BRIGHT.escape()+"Here's "+Color.RED_BOLD.escape()+"your "+Color.WHITE_BOLD_BRIGHT.escape()+"bookshelf");
+        this.drawBookShelf( tilesMap, startR, startC);
+    }
+    public void drawBookShelf(Map<Coordinates,ItemTile> tilesMap, String playerUsername, int order) throws InvalidCoordinatesException {
+
+        int[] startingPoints;
+        int nCelle;
+        StringBuilder tempString;
+        startingPoints = getStartsFromTurnOrder(order);
+        nCelle = playerUsername.length()/3;
+
+        for(int i = 0; i < nCelle - 1 && i*3 < playerUsername.length(); i++){
+            tempString = new StringBuilder();
+            for(int j = i*3; j < i + 3 && i*3 + j < playerUsername.length(); j++){
+                if( j < playerUsername.length()){
+                    tempString.append(playerUsername.charAt(j));
+                } else {
+                    tempString.append(" ");
+                }
+            }
+            tiles[startingPoints[0] - 1][startingPoints[1] + i] = tempString.toString();
+
         }
-        );
 
-        this.printSpace(2);
-    }
-
-
-    public void printYourBookShelf(Map<Coordinates,ItemTile> tilesMap) throws InvalidCoordinatesException {
-        System.out.println(WHITE_BOLD_BRIGHT+"Here's "+RED_BOLD+"your "+WHITE_BOLD_BRIGHT+"bookshelf");
-        this.printBookShelf( tilesMap);
-    }
-    public void printBookShelf(Map<Coordinates,ItemTile> tilesMap, String playerUsername) throws InvalidCoordinatesException {
-        System.out.println(WHITE_BOLD_BRIGHT+"Here's the bookshelf of "+RED_BOLD+playerUsername);
-        this.printBookShelf( tilesMap);
+        tiles[startingPoints[0] - 1][startingPoints[1]] =Color.RED_BOLD.escape()+playerUsername;
+        this.drawBookShelf( tilesMap,startingPoints[0], startingPoints[1] );
 
     }
 
+    private int[] getStartsFromTurnOrder(int order){
+        int[] startingPoints = new int[2];
+        if(order == 0){
+            startingPoints[0] = 2;
+            startingPoints[1] = 12;
+        } else if( order == 1){
+            startingPoints[0] = 11;
+            startingPoints[1] = 22;
+        } else {
+            startingPoints[0] = 11;
+            startingPoints[1] = 2;
+        }
 
-    public  void printChatMessage(String sender, String msg){
+        return startingPoints;
+    }
+    public  void drawChatMessage(String sender, String msg){
 
         String msgToBePrinted = " * "+sender+": "+msg;
-        System.out.print(WHITE_BOLD_BRIGHT+" ");
+        System.out.print(Color.WHITE_BOLD_BRIGHT.escape()+" ");
 
         for(int i = 0; i < msgToBePrinted.length() + 2;i++)
             System.out.print("-");
@@ -148,104 +149,112 @@ public class CliView {
         System.out.print("|\n ");
         for(int i = 0; i < msgToBePrinted.length() + 2;i++)
             System.out.print("-");
-        this.printSpace(1);
-        System.out.println(" * "+RED_BOLD+sender+WHITE_BOLD_BRIGHT+": "+msg);
+        System.out.println(" * "+Color.RED_BOLD.escape()+sender+Color.WHITE_BOLD_BRIGHT.escape()+": "+msg);
     }
 
-    public void printBookShelf(Map<Coordinates,ItemTile> tilesMap) throws InvalidCoordinatesException {
+    public void drawBookShelf(Map<Coordinates,ItemTile> tilesMap, int startR, int startC) throws InvalidCoordinatesException {
         Coordinates coord;
         String colorTile;
+
+        int r,c;
         /* bookshelf settings */
         int bookshelfRows = 6;
         int bookshelfColumns = 5;
 
-        System.out.print("  ");
-        for(int c = 0; c < bookshelfColumns; c++){
-            System.out.print(WHITE_BOLD_BRIGHT+c+"  ");
+        for( c = startC; c < bookshelfColumns + startC; c++){
+            tiles[startR][c] = Color.WHITE_BOLD_BRIGHT.escape()+c+"  ";
         }
 
-        System.out.println(RESET);
 
-        for(int r = bookshelfRows - 1; r >= 0; r--){
-            System.out.print(WHITE_BOLD_BRIGHT+r+" "+RESET);
-            for(int c = 0; c < bookshelfColumns; c++){
-                coord = new Coordinates(r,c);
+        for(r = bookshelfRows + startR - 1; r >= startR; r--){
+            tiles[r][startC] = Color.WHITE_BOLD_BRIGHT.escape()+r+" "+Color.RESET.escape();
+            for( c = startC; c < bookshelfColumns + startC; c++){
+                coord = new Coordinates(r - startR,c - startC);
                 if (tilesMap.containsKey(coord) )
                     colorTile = getColorFromTileType(tilesMap.get(coord));
                 else
-                    colorTile = BLACK;
-                System.out.print(colorTile+"██ ");
+                    colorTile = Color.BLACK.escape();
+                tiles[r][c] = colorTile+"██ ";
             }
-            this.printSpace(1);
         }
-        this.printSpace(2);
+
 
     }
 
-    private void printSpace(int n){
-        String newline = "";
-        for(int i = 0; i < n; i++){
-            newline = newline+"\n";
-        }
-        System.out.print(newline);
-    }
 
-    public void printLivingRoom(Map<Coordinates, Optional<ItemTile>> livingRoomMap) throws InvalidCoordinatesException {
+
+    public void drawLivingRoom(Map<Coordinates, Optional<ItemTile>> livingRoomMap) throws InvalidCoordinatesException {
         Coordinates coord;
         String colorTile;
 
+        int startR = 10;
+        int startC = 10;
+
+        int r;
+        int c;
         /* bookshelf settings */
         int livingRoomRows = 9;
         int livingRoomColumns = 9;
-        System.out.println(WHITE_BOLD_BRIGHT+"== Here's the "+RED_BOLD+"Living room board"+WHITE_BOLD_BRIGHT+" =="+RESET);
 
-        System.out.print("  ");
-        for(int c = 0; c < livingRoomColumns; c++){
-            System.out.print(WHITE_BOLD_BRIGHT+c+"  ");
+        //System.out.println(Color.WHITE_BOLD_BRIGHT.escape()+"== Here's the "+Color.RED_BOLD.escape()+"Living room board"+Color.WHITE_BOLD_BRIGHT.escape()+" =="+Color.RESET.escape());
+
+        for( c = startC; c < livingRoomColumns + startC; c++){
+            tiles[startR - 1][c] =  Color.WHITE_BOLD_BRIGHT.escape()+(c-startC)+"  ";
         }
-        System.out.println(RESET);
 
-        for(int r = livingRoomRows - 1; r >= 0; r--){
-            System.out.print(WHITE_BOLD_BRIGHT+r+" "+RESET);
-            for(int c = 0; c < livingRoomColumns; c++){
-                coord = new Coordinates(r,c);
+        //System.out.println(Color.RESET.escape());
+
+        for(r = livingRoomRows + startR - 1; r >= startR; r--){
+            tiles[r][startC - 1] = Color.WHITE_BOLD_BRIGHT.escape()+(r-startR)+" "+Color.RESET.escape();
+            for( c = startC; c < livingRoomColumns + startC; c++){
+                coord = new Coordinates(r - startR,c - startC);
                 if (livingRoomMap.containsKey(coord) ){
                     if (livingRoomMap.get(coord).isPresent()){
                         colorTile = getColorFromTileType(livingRoomMap.get(coord).get());
                     } else {
-                        colorTile = BLACK;
+                        colorTile = Color.BLACK.escape();
                     }
-                    System.out.print(colorTile+"██ ");
+                    tiles[r][c] =  colorTile+"██ ";
                 } else{
-                    System.out.print("   ");
+                    tiles[r][c] ="   ";
                 }
             }
-            System.out.print("\n");
         }
-        System.out.println();
+
     }
     private String getColorFromTileType(ItemTile tile){
             switch (tile){
                 case CAT -> {
-                    return GREEN;
+                    return Color.GREEN.escape();
                 }
                 case BOOK -> {
-                    return WHITE;
+                    return Color.WHITE.escape();
                 }
                 case GAME -> {
-                    return YELLOW;
+                    return Color.YELLOW.escape();
                 }
                 case FRAME -> {
-                    return CYAN;
+                    return Color.CYAN.escape();
                 }
                 case TROPHY -> {
-                    return BLUE;
+                    return Color.BLUE.escape();
                 }
                 case PLANT -> {
-                    return PURPLE;
+                    return Color.PURPLE.escape();
                 }
         }
 
-        return BLACK;
+        return Color.BLACK.escape();
+    }
+
+
+    final void plot() {
+        System.out.print( Color.GREEN.escape());
+        for (int r = 0; r < MAX_VERT_TILES; r++) {
+            System.out.println();
+            for (int c = 0; c < MAX_HORIZ_TILES; c++) {
+                System.out.print(tiles[r][c]);
+            }
+        }
     }
 }
