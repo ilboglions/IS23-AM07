@@ -12,6 +12,8 @@ import java.util.Map;
 
 import java.rmi.*;
 import java.rmi.server.*;
+import java.util.Optional;
+
 /**
  * the lobby controller ensures the communication through client controller and server model
  */
@@ -43,7 +45,12 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
      * @return true, if a player can join the lobby, false if the nickname in the lobby has been already used
      */
     public boolean enterInLobby(String player) throws RemoteException{
+
+
+
         synchronized (lobbyLock) {
+
+
             try {
                 lobbyModel.createPlayer(player);
                 return true;
@@ -54,6 +61,8 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
 
     }
 
+
+
     /**
      * ensures for a player to be added to an available game
      *
@@ -62,6 +71,16 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
      */
     public RemoteGameController addPlayerToGame(String player) throws RemoteException, NicknameAlreadyUsedException, NoAvailableGameException, InvalidPlayerException, PlayersNumberOutOfRange {
         synchronized (lobbyLock) {
+
+            for( Map.Entry<GameModelInterface, GameController> entry : gameControllers.entrySet()){
+                if(entry.getKey().isCrashedPlayer(player) ){
+                    entry.getValue().handleRejoinedPlayer(player);
+                    return entry.getValue();
+                }
+
+            }
+
+
             GameController gameController;
 
             GameModelInterface gameModel = lobbyModel.addPlayerToGame(player);

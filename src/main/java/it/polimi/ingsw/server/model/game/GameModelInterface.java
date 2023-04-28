@@ -39,4 +39,6 @@ public interface GameModelInterface {
 
     void postMessage(String sender, String receiver, String message) throws SenderEqualsRecipientException, InvalidPlayerException;
     void postMessage(String sender, String message) throws InvalidPlayerException;
+
+    boolean isCrashedPlayer(String player) throws PlayerNotFoundException;
 }

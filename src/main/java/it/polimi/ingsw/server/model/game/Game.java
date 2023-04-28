@@ -447,4 +447,12 @@ public class Game implements GameModelInterface {
     public boolean isLastPlayerTurn(){
         return this.isLastTurn && this.playerTurn == this.players.size() - 1;
     }
+
+
+    public boolean isCrashedPlayer(String player) throws PlayerNotFoundException {
+        Optional<Player> realPlayer = this.searchPlayer(player);
+        if( realPlayer.isEmpty() ) throw new PlayerNotFoundException();
+        if( crashedPlayers.contains(realPlayer.get())) return true;
+        return false;
+    }
 }

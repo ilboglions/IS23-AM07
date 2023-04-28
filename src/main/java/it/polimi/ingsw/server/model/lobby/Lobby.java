@@ -1,6 +1,7 @@
 package it.polimi.ingsw.server.model.lobby;
 
 import it.polimi.ingsw.server.model.game.Game;
+import it.polimi.ingsw.server.model.game.GameModelInterface;
 import it.polimi.ingsw.server.model.player.Player;
 import it.polimi.ingsw.server.model.exceptions.*;
 
@@ -109,6 +110,9 @@ public class Lobby {
 
         waitingPlayers.add(newPlayer);
     }
+
+
+
 
 
 }
