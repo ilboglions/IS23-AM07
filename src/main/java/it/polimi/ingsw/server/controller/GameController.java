@@ -87,7 +87,7 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
                 return false;
             }
 
-            if(!this.selectedTiles.containsAll(source)) return false;
+            if(!this.selectedTiles.containsAll(source) || this.selectedTiles.size() != source.size()) return false;
             try {
                 gameModel.moveTiles(source,column);
                 if (gameModel.checkRefill()){
@@ -173,7 +173,12 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
         return gameModel;
     }
 
+    public void handleRejoinedPlayer(String username) throws PlayerNotFoundException, RemoteException {
+        gameModel.handleRejoinedPlayer(username);
+    }
 
-
+    public void handleCrashedPlayer(String username) throws PlayerNotFoundException, RemoteException{
+        gameModel.handleCrashedPlayer(username);
+    }
 
 }

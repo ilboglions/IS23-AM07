@@ -10,15 +10,16 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.rmi.RemoteException;
+import java.util.Optional;
 
 
-public class ServerClientHandlerTCP  implements Runnable{
+public class ParserTCP implements Runnable{
     private final Socket socket;
     private boolean closeConnectionFlag;
     private final LobbyController lobbyController;
     private String username;
     private RemoteGameController gameController;
-    public ServerClientHandlerTCP(Socket socket, LobbyController lobbyController) {
+    public ParserTCP(Socket socket, LobbyController lobbyController) {
         this.socket = socket;
         this.lobbyController = lobbyController;
         closeConnectionFlag = false;
@@ -27,14 +28,21 @@ public class ServerClientHandlerTCP  implements Runnable{
         try {
             ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
             ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
+            ReschedulableTimer timer = new ReschedulableTimer();
             NetMessage inputMessage;
             NetMessage outputMessage;
+            Optional<NetMessage> tempMessage;
+            timer.schedule(new ClientCrashedHandler(this), 15000);
             while (true) {
                 inputMessage = (NetMessage)inputStream.readObject();
-                outputMessage = messageParser(inputMessage);
-                if(closeConnectionFlag)
-                    break;
-                outputStream.writeObject(outputMessage);
+                tempMessage = messageParser(inputMessage);
+                if( tempMessage.isPresent() ){
+                    outputMessage = tempMessage.get();
+                    if(closeConnectionFlag)
+                        break;
+                    outputStream.writeObject(outputMessage);
+                }
+                timer.reschedule(15000); //15s
                 outputStream.flush();
             }
             outputStream.close();
@@ -47,7 +55,7 @@ public class ServerClientHandlerTCP  implements Runnable{
         }
     }
 
-    private NetMessage messageParser(NetMessage inputMessage) throws RemoteException {
+    private Optional<NetMessage> messageParser(NetMessage inputMessage) throws RemoteException {
         NetMessage outputMessage;
         boolean result;
         String errorType;
@@ -118,13 +126,24 @@ public class ServerClientHandlerTCP  implements Runnable{
                 }
                 outputMessage = new ConfirmChatMessage(result);
             }
+            case STILL_ACTIVE -> {
+                return Optional.empty();
+            }
             default -> {
                 closeConnectionFlag = true;
                 outputMessage = new CloseConnectionMessage();
             }
         }
 
-        return outputMessage;
+        return Optional.of(outputMessage);
+    }
+
+    public void handleCrash() {
+        try {
+            gameController.handleCrashedPlayer(this.username);
+        } catch (RemoteException | PlayerNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
 

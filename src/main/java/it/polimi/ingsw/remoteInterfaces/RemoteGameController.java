@@ -1,5 +1,6 @@
 package it.polimi.ingsw.remoteInterfaces;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
+import it.polimi.ingsw.server.model.exceptions.PlayerNotFoundException;
 
 import java.rmi.*;
 import java.util.ArrayList;
@@ -20,7 +21,9 @@ public interface RemoteGameController extends Remote{
 
     void subscribeToListener(ChatSubscriber subscriber) throws RemoteException;
 
-    void subscribeToListener(PlayerSubscriber subscriber);
+    void subscribeToListener(PlayerSubscriber subscriber) throws RemoteException;
 
+    void handleCrashedPlayer(String username) throws RemoteException, PlayerNotFoundException;
 
+    void handleRejoinedPlayer(String username) throws RemoteException, PlayerNotFoundException;
 }

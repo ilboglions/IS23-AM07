@@ -14,13 +14,9 @@ import java.util.ArrayList;
 public interface GameModelInterface {
 
     boolean getIsStarted();
-
     void subscribeToListener(BoardSubscriber subscriber);
-
     void subscribeToListener(BookshelfSubscriber subscriber);
-
     void subscribeToListener(ChatSubscriber subscriber);
-
     void subscribeToListener(PlayerSubscriber subscriber);
     void start() throws NotAllPlayersHaveJoinedException, GameNotEndedException;
     String getPlayerInTurn() throws GameEndedException, GameNotStartedException;
@@ -32,13 +28,12 @@ public interface GameModelInterface {
     boolean checkRefill();
     void updatePlayerPoints(String username) throws InvalidPlayerException, NotEnoughSpaceException, TokenAlreadyGivenException;
     boolean setPlayerTurn();
-
-     boolean canStart();
+    boolean canStart();
      // CHAT FUNCTIONALITIES
     ArrayList<Message> getPlayerMessages(String player) throws InvalidPlayerException;
-
     void postMessage(String sender, String receiver, String message) throws SenderEqualsRecipientException, InvalidPlayerException;
     void postMessage(String sender, String message) throws InvalidPlayerException;
-
-    boolean isCrashedPlayer(String player) throws PlayerNotFoundException;
+    void handleRejoinedPlayer(String username) throws PlayerNotFoundException;
+    void handleCrashedPlayer(String username) throws PlayerNotFoundException;
+    boolean isCrashedPlayer(String player);
 }

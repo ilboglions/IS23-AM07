@@ -9,23 +9,28 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class ClientSocket implements ConnectionHandler{
 
-    private String ip;
-    private int port;
+    private final String ip;
+    private final int port;
     private Socket connection;
     ObjectOutputStream outputStream;
     ObjectInputStream inputStream;
     private NetMessage requestMessage;
     private NetMessage responseMessage;
+
+
     public ClientSocket(String ip, int port) {
         this.ip = ip;
         this.port = port;
     }
     @Override
     public void init() {
-
+        /* game port */
         try {
             connection = new Socket(ip, port);
             outputStream = new ObjectOutputStream(connection.getOutputStream());
@@ -38,6 +43,9 @@ public class ClientSocket implements ConnectionHandler{
         }catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        this.sendHeartBeat();
+
     }
 
 
@@ -120,5 +128,21 @@ public class ClientSocket implements ConnectionHandler{
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public void sendHeartBeat()  {
+        ScheduledExecutorService es = Executors.newSingleThreadScheduledExecutor();
+        es.scheduleAtFixedRate(
+                () -> {
+                    requestMessage = new StillActiveMessage();
+
+                    try {
+                        outputStream.writeObject(requestMessage);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                },
+                0, 5, TimeUnit.SECONDS);
     }
 }

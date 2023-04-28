@@ -12,7 +12,6 @@ import java.util.Map;
 
 import java.rmi.*;
 import java.rmi.server.*;
-import java.util.Optional;
 
 /**
  * the lobby controller ensures the communication through client controller and server model
@@ -45,12 +44,7 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
      * @return true, if a player can join the lobby, false if the nickname in the lobby has been already used
      */
     public boolean enterInLobby(String player) throws RemoteException{
-
-
-
         synchronized (lobbyLock) {
-
-
             try {
                 lobbyModel.createPlayer(player);
                 return true;
@@ -60,8 +54,6 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
         }
 
     }
-
-
 
     /**
      * ensures for a player to be added to an available game
@@ -73,13 +65,14 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
         synchronized (lobbyLock) {
 
             for( Map.Entry<GameModelInterface, GameController> entry : gameControllers.entrySet()){
-                if(entry.getKey().isCrashedPlayer(player) ){
-                    entry.getValue().handleRejoinedPlayer(player);
-                    return entry.getValue();
-                }
-
+                    if(entry.getKey().isCrashedPlayer(player) ){
+                        try {
+                            entry.getValue().handleRejoinedPlayer(player);
+                        } catch (PlayerNotFoundException ignored) {
+                        }
+                        return entry.getValue();
+                    }
             }
-
 
             GameController gameController;
 
@@ -89,9 +82,8 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
             try {
                 if (gameController.getGameControlled().canStart())
                     gameController.getGameControlled().start();
-            } catch (NotAllPlayersHaveJoinedException ignored) {
+            } catch (NotAllPlayersHaveJoinedException | GameNotEndedException ignored) {
 
-            } catch (GameNotEndedException e) {
             }
 
             return gameController;

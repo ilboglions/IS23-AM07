@@ -35,6 +35,7 @@ public class Game implements GameModelInterface {
      * The list of all the player that have joined the game
      */
     private final ArrayList<Player> players;
+    private final ArrayList<Player> crashedPlayers;
     /**
      * The list of the extracted CommonGoalCard for the game
      */
@@ -88,6 +89,7 @@ public class Game implements GameModelInterface {
         this.numPlayers = numPlayers;
         this.chat = new Chat();
         this.players = new ArrayList<>();
+        this.crashedPlayers = new ArrayList<>();
         this.livingRoom = new LivingRoomBoard(numPlayers);
         DeckCommon deckCommon = new DeckCommon(numPlayers, "src/main/java/it/polimi/ingsw/server/model/cards/confFiles/commonCards.json");
         this.deckPersonal = new DeckPersonal("src/main/java/it/polimi/ingsw/server/model/cards/confFiles/personalCards.json", "src/main/java/it/polimi/ingsw/server/model/cards/confFiles/pointsReference.json");
@@ -407,7 +409,10 @@ public class Game implements GameModelInterface {
             return false;
         }
 
-        this.playerTurn = (this.playerTurn + 1) % this.numPlayers;
+        do{
+            this.playerTurn = (this.playerTurn + 1) % this.numPlayers;
+        }
+        while(crashedPlayers.contains(players.get(playerTurn)));
 
         return true;
     }
@@ -449,10 +454,27 @@ public class Game implements GameModelInterface {
     }
 
 
-    public boolean isCrashedPlayer(String player) throws PlayerNotFoundException {
+    public boolean isCrashedPlayer(String player) {
         Optional<Player> realPlayer = this.searchPlayer(player);
-        if( realPlayer.isEmpty() ) throw new PlayerNotFoundException();
-        if( crashedPlayers.contains(realPlayer.get())) return true;
-        return false;
+        if( realPlayer.isEmpty() ) return false;
+        return crashedPlayers.contains(realPlayer.get());
+    }
+
+    public void handleCrashedPlayer(String username) throws PlayerNotFoundException {
+        Optional<Player> tmpPlayer = this.searchPlayer(username);
+
+        if(tmpPlayer.isPresent())
+            crashedPlayers.add(tmpPlayer.get());
+        else
+            throw new PlayerNotFoundException("The player with this username has not been found in the game");
+    }
+
+    public void handleRejoinedPlayer(String username) throws PlayerNotFoundException {
+        Optional<Player> tmpPlayer = this.searchPlayer(username);
+
+        if(tmpPlayer.isPresent() && crashedPlayers.contains(tmpPlayer.get()))
+            crashedPlayers.remove(tmpPlayer.get());
+        else
+            throw new PlayerNotFoundException("The player with this username has not been found in the game");
     }
 }

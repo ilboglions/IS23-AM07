@@ -20,8 +20,8 @@ import java.util.concurrent.Executors;
 
 
 public class ServerMain {
-    private int port;
-    private String hostName;
+    private final int port;
+    private final String hostName;
 
     private final LobbyController lobbyController;
     public ServerMain(int port, String hostName) throws RemoteException {
@@ -48,20 +48,21 @@ public class ServerMain {
             throw new RuntimeException(e);
         }
 
+        /* server socket initialization */
         try {
             serverSocket = new ServerSocket(port);
         } catch (IOException e) {
             System.err.println(e.getMessage()); // Porta non disponibile
             return;
         }
-        System.out.println("Server ready");
 
+        System.out.println("Server ready");
 
         /* SOCKET TCP */
         while (true) {
             try {
                 Socket socket = serverSocket.accept();
-                executor.submit(new ServerClientHandlerTCP(socket, lobbyController));
+                executor.submit(new ParserTCP(socket, lobbyController));
             } catch(IOException e) {
                 break; // Entrerei qui se serverSocket venisse chiuso
             }

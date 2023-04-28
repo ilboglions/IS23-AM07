@@ -16,5 +16,6 @@ public interface ConnectionHandler {
     void JoinGame() throws RemoteException, NotBoundException;
     void checkValidRetrieve(ArrayList<Coordinates> tiles) throws RemoteException;
     void moveTiles( ArrayList<Coordinates> tiles, int column) throws RemoteException;
+    void sendHeartBeat() throws RemoteException;
 
 }
