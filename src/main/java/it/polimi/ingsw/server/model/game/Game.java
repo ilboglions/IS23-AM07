@@ -13,6 +13,7 @@ import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.distributable.BagHolder;
 import it.polimi.ingsw.server.model.distributable.DeckCommon;
 import it.polimi.ingsw.server.model.distributable.DeckPersonal;
+import it.polimi.ingsw.server.model.listeners.GameListener;
 import it.polimi.ingsw.server.model.livingRoom.LivingRoomBoard;
 import it.polimi.ingsw.server.model.livingRoom.exceptions.NotEnoughTilesException;
 import it.polimi.ingsw.server.model.player.Player;
@@ -75,6 +76,11 @@ public class Game implements GameModelInterface {
     private final Chat chat;
 
     /**
+     * the listener to the game status
+     */
+    private final GameListener gameListener;
+
+    /**
      * Constructor of the Game objects, it initializes all the attributes, set stdPointsReference, draw the CommonGoalCard, add the host to the game and assign to him a PersonalGoalCard
      * @param numPlayers is the total number of the players for the game, the initialization of the board changes based on this
      * @param host is the Player that have created the game
@@ -85,7 +91,7 @@ public class Game implements GameModelInterface {
      */
     public Game(int numPlayers, Player host) throws FileNotFoundException, NegativeFieldException, PlayersNumberOutOfRange, NotEnoughCardsException {
         Objects.requireNonNull(host);
-
+        this.gameListener = new GameListener();
         this.numPlayers = numPlayers;
         this.chat = new Chat();
         this.players = new ArrayList<>();
@@ -310,7 +316,6 @@ public class Game implements GameModelInterface {
 
     /**
      * if the game is ended, it returns the username of the winner player
-     * @return the player that have won the game
      * @throws GameNotEndedException if the game is not yet ended
      * @throws GameNotStartedException if the game has not started yet
      */
@@ -328,8 +333,11 @@ public class Game implements GameModelInterface {
         for(Player player : players) {
             player.updatePoints(stdPointsReference);
         }
+        Player winner = players.stream().max(Comparator.comparing(Player::getPoints)).get();
+        /* calls the listener */
+        gameListener.onPlayerWins(winner.getUsername(), winner.getPoints());
 
-        return players.stream().max(Comparator.comparing(Player::getPoints)).get().getUsername();
+        return winner.getUsername();
     }
 
     /**
@@ -347,6 +355,7 @@ public class Game implements GameModelInterface {
         } else {
             if(!userUsed(newPlayer.getUsername())) {
                 players.add(newPlayer); // player added to game active player
+                gameListener.onPlayerJoinGame(newPlayer.getUsername());
                 try {
                     newPlayer.assignPersonalCard(deckPersonal.draw(1).get(0));
                 } catch (FileNotFoundException e) {

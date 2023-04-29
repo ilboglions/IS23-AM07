@@ -169,6 +169,7 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
         gameModel.subscribeToListener(subscriber);
     }
 
+
     protected GameModelInterface getGameControlled(){
         return gameModel;
     }

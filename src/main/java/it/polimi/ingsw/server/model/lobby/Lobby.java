@@ -73,9 +73,8 @@ public class Lobby {
      * @throws PlayersNumberOutOfRange if the player's number is out of the specific range
      * @throws BrokenInternalGameConfigurations if some internal configurations are broken
      * @throws InvalidPlayerException if the host player cannot be found
-     * @throws NotEnoughCardsException if the number of cards required is grater than the number of cards available to draw
      */
-    public Game createGame(int nPlayers, String hostNickname) throws PlayersNumberOutOfRange, BrokenInternalGameConfigurations, InvalidPlayerException, NotEnoughCardsException {
+    public Game createGame(int nPlayers, String hostNickname) throws PlayersNumberOutOfRange, BrokenInternalGameConfigurations, InvalidPlayerException {
         Objects.requireNonNull(hostNickname);
 
         Optional<Player> host =  waitingPlayers.stream().filter(p -> p.getUsername().equals(hostNickname)).findFirst();
@@ -86,7 +85,7 @@ public class Lobby {
             waitingPlayers.remove(host.get());
             games.add(newGame);
             return newGame;
-        }  catch (NegativeFieldException | FileNotFoundException e) {
+        }  catch (NegativeFieldException | FileNotFoundException | NotEnoughCardsException e) {
             throw new BrokenInternalGameConfigurations();
         }
 

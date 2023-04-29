@@ -97,7 +97,7 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
      * @param nPlayers the number of players for the game
      * @return the GameController, if the game creation is not possible, an empty value will be returned
      */
-    public RemoteGameController createGame(String player, int nPlayers) throws RemoteException, InvalidPlayerException, BrokenInternalGameConfigurations, NotEnoughCardsException, PlayersNumberOutOfRange {
+    public RemoteGameController createGame(String player, int nPlayers) throws RemoteException, InvalidPlayerException, BrokenInternalGameConfigurations, PlayersNumberOutOfRange {
         synchronized (lobbyLock) {
             GameController gameController;
             GameModelInterface gameModel = lobbyModel.createGame(nPlayers, player);
