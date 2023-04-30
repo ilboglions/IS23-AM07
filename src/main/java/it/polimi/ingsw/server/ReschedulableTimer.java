@@ -2,6 +2,8 @@ package it.polimi.ingsw.server;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static it.polimi.ingsw.server.ServerMain.logger;
+
 public class ReschedulableTimer extends Timer
 {
     private Runnable  task;
@@ -23,6 +25,7 @@ public class ReschedulableTimer extends Timer
 
     public void reschedule(long delay)
     {
+        logger.info("RESCHEDULE CALL DONE");
         timerTask.cancel();
         timerTask = new TimerTask()
         {

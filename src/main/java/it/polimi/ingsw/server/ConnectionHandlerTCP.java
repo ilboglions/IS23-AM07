@@ -54,6 +54,7 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
             timer.schedule(this::handleCrash, 15000);
             while (true) {
                 inputMessage = (NetMessage)inputStream.readObject();
+                logger.info("MESSAGE RECEIVED");
                 timer.reschedule(15000); //15s
                 outputMessage = messageParser(inputMessage);
                     if(closeConnectionFlag)
@@ -92,6 +93,7 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
                 try {
                     gameController = lobbyController.createGame(username, createGameMessage.getPlayerNumber());
                     result = true;
+                    logger.info("Game CREATED Successfully");
                     errorType = "";
                     gameController.subscribeToListener((PlayerSubscriber)this);
                     gameController.subscribeToListener((ChatSubscriber) this);
@@ -171,16 +173,20 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
         logger.info("Connection lost");
         if (gameController == null) {
             try {
+                logger.info("Branch gameController null");
                 socket.close();
                 return;
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
-        try {
-            gameController.handleCrashedPlayer(this.username);
-        } catch (RemoteException | PlayerNotFoundException e) {
-            throw new RuntimeException(e);
+        else {
+            try {
+                logger.info("Branch gameController not null");
+                gameController.handleCrashedPlayer(this.username);
+            } catch (RemoteException | PlayerNotFoundException e) {
+                throw new RuntimeException(e);
+            }
         }
 
     }

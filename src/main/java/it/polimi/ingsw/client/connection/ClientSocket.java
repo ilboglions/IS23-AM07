@@ -202,6 +202,7 @@ public class ClientSocket implements ConnectionHandler{
 
     }
     private NetMessage getMessageFromBuffer(MessageType type){
+            NetMessage result;
             synchronized (lastReceivedMessages) {
                 while (lastReceivedMessages.stream().noneMatch(message -> message.getMessageType().equals(type))) {
                     try {
@@ -210,8 +211,10 @@ public class ClientSocket implements ConnectionHandler{
                         throw new RuntimeException(e);
                     }
                 }
-                return lastReceivedMessages.stream().filter(message -> message.getMessageType().equals(type)).findFirst().get();
+                result =  lastReceivedMessages.stream().filter(message -> message.getMessageType().equals(type)).findFirst().get();
+                lastReceivedMessages.remove(result);
             }
+            return result;
     }
 }
 
