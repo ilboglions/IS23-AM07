@@ -108,4 +108,10 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
         }
     }
 
+    public void handleCrashedPlayer(String username) throws PlayerNotFoundException {
+        synchronized (lobbyLock) {
+            this.lobbyModel.handleCrashedPlayer(username);
+        }
+    }
+
 }

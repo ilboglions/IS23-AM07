@@ -1,7 +1,6 @@
 package it.polimi.ingsw.server.model.lobby;
 
 import it.polimi.ingsw.server.model.game.Game;
-import it.polimi.ingsw.server.model.game.GameModelInterface;
 import it.polimi.ingsw.server.model.player.Player;
 import it.polimi.ingsw.server.model.exceptions.*;
 
@@ -111,7 +110,12 @@ public class Lobby {
     }
 
 
+    public void handleCrashedPlayer(String username) throws PlayerNotFoundException {
+        Objects.requireNonNull(username);
 
-
-
+        if(this.waitingPlayers.contains(new Player(username)))
+            this.waitingPlayers.remove(new Player(username));
+        else
+            throw new PlayerNotFoundException("There isn't a player with this username in the lobby");
+    }
 }

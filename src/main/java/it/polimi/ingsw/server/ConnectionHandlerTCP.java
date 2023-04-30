@@ -3,7 +3,6 @@ package it.polimi.ingsw.server;
 import it.polimi.ingsw.messages.*;
 import it.polimi.ingsw.remoteInterfaces.*;
 import it.polimi.ingsw.server.controller.LobbyController;
-import it.polimi.ingsw.server.model.bookshelf.Bookshelf;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.*;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
@@ -173,22 +172,24 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
         logger.info("Connection lost");
         if (gameController == null) {
             try {
-                logger.info("Branch gameController null");
-                socket.close();
-                return;
-            } catch (IOException e) {
+                lobbyController.handleCrashedPlayer(this.username);
+            } catch (PlayerNotFoundException e) {
                 throw new RuntimeException(e);
             }
         }
         else {
             try {
-                logger.info("Branch gameController not null");
                 gameController.handleCrashedPlayer(this.username);
             } catch (RemoteException | PlayerNotFoundException e) {
                 throw new RuntimeException(e);
             }
         }
 
+        try {
+            socket.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
