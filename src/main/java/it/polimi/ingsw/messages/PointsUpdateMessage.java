@@ -7,6 +7,7 @@ public class PointsUpdateMessage extends NetMessage{
     private static final long serialVersionUID = -4830207241149947680L;
 
     private final int totalPoints;
+    private final int addedPoints;
 
     public String getUsername() {
         return username;
@@ -14,14 +15,18 @@ public class PointsUpdateMessage extends NetMessage{
 
     private final String username;
 
-    PointsUpdateMessage(String username, int totalPoints) {
+    public PointsUpdateMessage(String username, int totalPoints, int addedPoints) {
         super(MessageType.POINTS_UPDATE);
         this.username = username;
         this.totalPoints = totalPoints;
+        this.addedPoints = addedPoints;
     }
 
     public int getTotalPoints() {
         return totalPoints;
     }
 
+    public int getAddedPoints() {
+        return addedPoints;
+    }
 }

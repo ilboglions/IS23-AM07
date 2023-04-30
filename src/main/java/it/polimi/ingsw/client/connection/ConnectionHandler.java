@@ -8,8 +8,6 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 public interface ConnectionHandler {
-
-    void init() throws RemoteException, NotBoundException;
     void close() throws IOException;
     void JoinLobby(String username) throws RemoteException;
     void CreateGame(int nPlayers) throws NotBoundException, RemoteException;

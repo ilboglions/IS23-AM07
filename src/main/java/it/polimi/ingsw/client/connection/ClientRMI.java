@@ -17,8 +17,8 @@ public class ClientRMI implements ConnectionHandler{
     private RemoteLobbyController lobbyController;
     private String username;
     private RemoteGameController gameController;
-    @Override
-    public void init() throws RemoteException, NotBoundException {
+
+    public ClientRMI() throws RemoteException, NotBoundException {
         this.registry= LocateRegistry.getRegistry();
         String remoteObjectName = "lobby_controller";
         this.lobbyController =  (RemoteLobbyController) registry.lookup(remoteObjectName);
@@ -83,6 +83,11 @@ public class ClientRMI implements ConnectionHandler{
     public void moveTiles(ArrayList<Coordinates> tiles, int column) throws RemoteException {
 
         if(gameController.moveTiles(this.username,tiles, column)) return;
+
+    }
+
+    @Override
+    public void sendHeartBeat() throws RemoteException {
 
     }
 

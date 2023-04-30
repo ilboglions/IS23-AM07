@@ -17,9 +17,11 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Logger;
 
 
 public class ServerMain {
+    final static Logger logger = Logger.getLogger(ServerMain.class.getName());
     private final int port;
     private final String hostName;
 
@@ -32,13 +34,13 @@ public class ServerMain {
     public void startServer() {
         ExecutorService executor = Executors.newCachedThreadPool();
         ServerSocket serverSocket;
-        System.out.println("Server started!");
+        logger.info("Server started!");
 
 
         /* RMI INITIALIZATION */
         Registry registry;
         try {
-            registry = LocateRegistry.createRegistry(5678);
+            registry = LocateRegistry.createRegistry(1099);
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
@@ -56,13 +58,14 @@ public class ServerMain {
             return;
         }
 
-        System.out.println("Server ready");
+        logger.info("Server ready on port " + port);
 
         /* SOCKET TCP */
         while (true) {
             try {
                 Socket socket = serverSocket.accept();
-                executor.submit(new ParserTCP(socket, lobbyController));
+                logger.info("Client connected");
+                executor.submit(new ConnectionHandlerTCP(socket, lobbyController));
             } catch(IOException e) {
                 break; // Entrerei qui se serverSocket venisse chiuso
             }

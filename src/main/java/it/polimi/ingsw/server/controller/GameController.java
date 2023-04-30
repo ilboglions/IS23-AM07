@@ -81,9 +81,7 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
         synchronized (gameLock) {
             try {
                 if(!player.equals(gameModel.getPlayerInTurn())) return false;
-            } catch (GameEndedException e) {
-                return false;
-            } catch (GameNotStartedException e) {
+            } catch (GameEndedException | GameNotStartedException e) {
                 return false;
             }
 

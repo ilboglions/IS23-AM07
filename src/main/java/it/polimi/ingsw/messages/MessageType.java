@@ -23,4 +23,5 @@ public enum MessageType {
     TOKEN_UPDATE,
     PERSONAL_CARD_UPDATE,
     CLOSE_CONNECTION,
+
 }

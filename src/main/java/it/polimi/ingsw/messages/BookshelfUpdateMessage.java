@@ -13,7 +13,7 @@ public class BookshelfUpdateMessage extends NetMessage {
     private final ArrayList<ItemTile> insertedTiles;
     private final int column;
 
-    BookshelfUpdateMessage(ArrayList<ItemTile> insertedTiles, int column) {
+    public BookshelfUpdateMessage(ArrayList<ItemTile> insertedTiles, int column) {
         super(MessageType.BOOKSHELF_UPDATE);
         this.insertedTiles = insertedTiles;
         this.column = column;

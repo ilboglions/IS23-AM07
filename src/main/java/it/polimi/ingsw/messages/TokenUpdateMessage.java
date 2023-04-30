@@ -10,10 +10,16 @@ public class TokenUpdateMessage extends NetMessage{
     private static final long serialVersionUID = -8390443874496454175L;
 
     private final ArrayList<ScoringToken> tokens;
+    private final String player;
 
-    TokenUpdateMessage(ArrayList<ScoringToken> tokens) {
+    public TokenUpdateMessage(ArrayList<ScoringToken> tokens, String player) {
         super(MessageType.TOKEN_UPDATE);
         this.tokens = tokens;
+        this.player = player;
+    }
+
+    public String getPlayer() {
+        return player;
     }
 
     public ArrayList<ScoringToken> getTokens() {

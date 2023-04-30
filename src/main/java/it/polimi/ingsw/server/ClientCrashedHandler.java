@@ -1,9 +1,11 @@
 package it.polimi.ingsw.server;
 
+import java.io.IOException;
+
 public class ClientCrashedHandler  implements Runnable {
 
-    private final ParserTCP tcpHandler;
-    public ClientCrashedHandler(ParserTCP tcpHandler) {
+    private final ConnectionHandlerTCP tcpHandler;
+    public ClientCrashedHandler(ConnectionHandlerTCP tcpHandler) {
         this.tcpHandler = tcpHandler;
     }
 

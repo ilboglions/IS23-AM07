@@ -1,29 +1,28 @@
 package it.polimi.ingsw.messages;
 
 import java.io.Serial;
-import java.util.Optional;
 
 public class PostMessage extends NetMessage {
     @Serial
     private static final long serialVersionUID = -3522448489625423937L;
 
-    private final Optional<String> recipient;
+    private final String recipient;
     private final String content;
 
-    PostMessage(String username, String recipient, String content) {
+    public PostMessage(String recipient, String content) {
         super(MessageType.POST_MESSAGE);
         this.content = content;
-        this.recipient = Optional.of(recipient);
+        this.recipient = recipient;
     }
-    PostMessage(String content) {
+    public PostMessage(String content) {
         super(MessageType.POST_MESSAGE);
         this.content = content;
-        this.recipient = Optional.empty();
+        this.recipient = "";
     }
 
 
 
-    public Optional<String> getRecipient() {
+    public String getRecipient() {
         return recipient;
     }
 
