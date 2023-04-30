@@ -14,13 +14,16 @@ import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 public class ParserTCPTest {
-    private final ObjectInputStream inputStream;
-    private final ObjectOutputStream outputStream;
     private static final String ip = "127.0.0.1";
     private static final int port = 4567;
-    private Socket connection;
 
-    public ParserTCPTest(){
+    @Test
+    @DisplayName("Parser TCP Communications Test")
+    void ParserTCPTester () throws IOException, ClassNotFoundException {
+        ObjectOutputStream outputStream;
+        ObjectInputStream inputStream;
+        Socket connection;
+
         try {
             connection = new Socket(ip, port);
             inputStream = new ObjectInputStream(connection.getInputStream());
@@ -32,26 +35,24 @@ public class ParserTCPTest {
         }catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
 
-
-    @Test
-    @DisplayName("Parser TCP Communications Test")
-    void ParserTCPTester () throws IOException, ClassNotFoundException {
         NetMessage request = new JoinLobbyMessage("PlayerName");
         outputStream.writeObject(request);
         LoginReturnMessage response = (LoginReturnMessage) inputStream.readObject();
         assertTrue(response.getConfirmLogin());
         assertEquals("", response.getDetails());
+
         outputStream.writeObject(request);
         response = (LoginReturnMessage) inputStream.readObject();
         assertFalse(response.getConfirmLogin());
+
         request = new CreateGameMessage(9);
         outputStream.writeObject(request);
         ConfirmGameMessage responseg = (ConfirmGameMessage) inputStream.readObject();
         assertFalse(responseg.getConfirmGameCreation());
         assertEquals("PlayersNumberOutOfRange", responseg.getErrorType());
         assertEquals("", responseg.getDetails());
+
         request = new CreateGameMessage(4);
         outputStream.writeObject(request);
         responseg = (ConfirmGameMessage) inputStream.readObject();
@@ -73,6 +74,5 @@ public class ParserTCPTest {
         client.sendMessage("MessageSendingTest");
         client.sendMessage("RecipientMessageTest", "OtherPlayer");
         client.close();
-
     }
 }

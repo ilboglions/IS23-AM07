@@ -27,9 +27,9 @@ public class ClientSocket implements ConnectionHandler{
     private NetMessage requestMessage;
     private NetMessage responseMessage;
     private final Queue<NetMessage> lastReceivedMessages;
-    private ExecutorService threadManager;
-    private ReschedulableTimer timer;
-    private ScheduledExecutorService heartBeatManager;
+    private final ExecutorService threadManager;
+    private final ReschedulableTimer timer;
+    private final ScheduledExecutorService heartBeatManager;
 
     public ClientSocket(String ip, int port) {
         this.ip = ip;
@@ -104,6 +104,7 @@ public class ClientSocket implements ConnectionHandler{
         }
         responseMessage = getMessageFromBuffer(MessageType.CONFIRM_GAME);
     }
+
     @Override
     public void JoinGame() {
         requestMessage = new JoinGameMessage();
@@ -116,6 +117,7 @@ public class ClientSocket implements ConnectionHandler{
         }
         responseMessage = getMessageFromBuffer(MessageType.CONFIRM_GAME);
     }
+
     @Override
     public void checkValidRetrieve(ArrayList<Coordinates> tiles) {
         requestMessage = new TileSelectionMessage(tiles);
@@ -153,6 +155,7 @@ public class ClientSocket implements ConnectionHandler{
         responseMessage = getMessageFromBuffer(MessageType.CONFIRM_CHAT);
 
     }
+
     public void sendMessage(String content, String recipient){
         PostMessage message = new PostMessage(content, recipient);
         try {
@@ -167,54 +170,52 @@ public class ClientSocket implements ConnectionHandler{
     @Override
     public void sendHeartBeat()  {
         heartBeatManager.scheduleAtFixedRate(
-                () -> {
-                    requestMessage = new StillActiveMessage();
-                    synchronized (outputStream) {
-                        try {
-                            outputStream.writeObject(requestMessage);
-                            responseMessage = getMessageFromBuffer(MessageType.STILL_ACTIVE);
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                },
-                0, 5, TimeUnit.SECONDS);
-    }
-
-    private void messagesHopper()  {
-                    threadManager.submit( () -> {
-                        while(true) {
-                            synchronized (lastReceivedMessages) {
-                                try {
-                                    NetMessage incomingMessage = (NetMessage) inputStream.readObject();
-                                    lastReceivedMessages.add(incomingMessage);
-                                    timer.reschedule(15000);
-                                    lastReceivedMessages.notifyAll();
-                                    lastReceivedMessages.wait(1);
-                                } catch (IOException | ClassNotFoundException e) {
-                                    throw new RuntimeException(e);
-                                }
-                            }
-
-                        }
-                    });
-
-
-    }
-    private NetMessage getMessageFromBuffer(MessageType type){
-            NetMessage result;
-            synchronized (lastReceivedMessages) {
-                while (lastReceivedMessages.stream().noneMatch(message -> message.getMessageType().equals(type))) {
+            () -> {
+                requestMessage = new StillActiveMessage();
+                synchronized (outputStream) {
                     try {
-                        lastReceivedMessages.wait();
-                    } catch (InterruptedException e) {
+                        outputStream.writeObject(requestMessage);
+                        responseMessage = getMessageFromBuffer(MessageType.STILL_ACTIVE);
+                    } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
                 }
-                result =  lastReceivedMessages.stream().filter(message -> message.getMessageType().equals(type)).findFirst().get();
-                lastReceivedMessages.remove(result);
+            },
+            0, 5, TimeUnit.SECONDS);
+    }
+
+    private void messagesHopper()  {
+        threadManager.submit( () -> {
+            while(true) {
+                synchronized (lastReceivedMessages) {
+                    try {
+                        NetMessage incomingMessage = (NetMessage) inputStream.readObject();
+                        lastReceivedMessages.add(incomingMessage);
+                        timer.reschedule(15000);
+                        lastReceivedMessages.notifyAll();
+                        lastReceivedMessages.wait(1);
+                    } catch (IOException | ClassNotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+
             }
-            return result;
+        });
+    }
+    private NetMessage getMessageFromBuffer(MessageType type){
+        NetMessage result;
+        synchronized (lastReceivedMessages) {
+            while (lastReceivedMessages.stream().noneMatch(message -> message.getMessageType().equals(type))) {
+                try {
+                    lastReceivedMessages.wait();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            result =  lastReceivedMessages.stream().filter(message -> message.getMessageType().equals(type)).findFirst().get();
+            lastReceivedMessages.remove(result);
+        }
+        return result;
     }
 }
 
