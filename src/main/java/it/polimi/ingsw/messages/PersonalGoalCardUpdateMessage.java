@@ -2,7 +2,11 @@ package it.polimi.ingsw.messages;
 
 import it.polimi.ingsw.remoteInterfaces.RemotePersonalGoalCard;
 
+import java.io.Serial;
+
 public class PersonalGoalCardUpdateMessage extends NetMessage{
+    @Serial
+    private static final long serialVersionUID = 1045258623521239540L;
     private final String player;
     private final RemotePersonalGoalCard card;
     public PersonalGoalCardUpdateMessage(String player, RemotePersonalGoalCard card) {

@@ -110,6 +110,7 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
                 }
                 logger.info(String.valueOf(result));
                 outputMessage = new ConfirmGameMessage(result, errorType, "");
+                //Here we have to add that are sent also the messages relative to the CommonGoalCard
             }
             case JOIN_GAME -> {
                 try {
@@ -134,6 +135,7 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
                     errorType = "PlayersNumberOutOfRange";
                 }
                 outputMessage = new ConfirmGameMessage(result, errorType, "");
+                //Here we have to add also the messages with the CommonGoalCard, PersonalGoalCard and eventually if is crashed all the updates
             }
             case TILES_SELECTION -> {
                 TileSelectionMessage tileSelectionMessage = (TileSelectionMessage) inputMessage;
@@ -193,14 +195,20 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
     }
 
     @Override
-    public void UpdateBoardStatus(Map<Coordinates, Optional<ItemTile>> tilesInBoard) {
+    public void updateBoardStatus(Map<Coordinates, Optional<ItemTile>> tilesInBoard) {
         BoardUpdateMessage update = new BoardUpdateMessage(tilesInBoard);
         this.sendUpdate(update);
     }
 
     @Override
-    public void UpdateBookshelfStatus(String player, ArrayList<ItemTile> tilesInserted, int colChosen) {
+    public void updateBookshelfStatus(String player, ArrayList<ItemTile> tilesInserted, int colChosen) {
         BookshelfUpdateMessage update = new BookshelfUpdateMessage(tilesInserted, colChosen);
+        this.sendUpdate(update);
+    }
+
+    @Override
+    public void updateBookshelfComplete(Map<Coordinates, ItemTile> currentTilesMap) {
+        BookshelfFullUpdateMessage update = new BookshelfFullUpdateMessage(currentTilesMap);
         this.sendUpdate(update);
     }
 

@@ -13,10 +13,7 @@ import it.polimi.ingsw.server.model.tiles.ItemTile;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static it.polimi.ingsw.server.model.utilities.UtilityFunctions.MAX_PLAYERS;
 
@@ -258,7 +255,7 @@ public class LivingRoomBoard {
     }
 
     public boolean checkValidRetrieve(ArrayList<Coordinates> coordinates) throws EmptySlotException {
-        ArrayList<Coordinates> coo = new ArrayList<Coordinates>(coordinates);
+        ArrayList<Coordinates> coo = new ArrayList<>(coordinates);
         int diffRow, diffCol;
         if(coo == null || coo.contains(null))
             throw new NullPointerException("Coordinates list is/contains null");
@@ -371,6 +368,12 @@ public class LivingRoomBoard {
         }
         return false;
 
+    }
+
+    public void triggerListener(String userToBeUpdated){
+        Objects.requireNonNull(userToBeUpdated);
+
+        this.boardListener.triggerListener(userToBeUpdated, this.getItemTilesMapFromBoard());
     }
 
 }

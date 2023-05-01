@@ -98,4 +98,14 @@ public class PlayerBookshelf extends Bookshelf{
 
         return true;
     }
+
+    /**
+     * Method used to trigger the listener manually
+     * @param userToBeUpdated the username of the user that needs the update
+     */
+    public void triggerListener(String userToBeUpdated){
+        Objects.requireNonNull(userToBeUpdated);
+
+        this.bookshelfListener.triggerListener(userToBeUpdated, this.getItemTileMap());
+    }
 }

@@ -117,4 +117,26 @@ public abstract class Bookshelf {
 
         return count;
     }
+
+    /**
+     * This method is used to retrieve a complete mapping of the ItemTiles inside the bookshelf
+     * @return the map of the coordinates that has a ItemTile in it
+     */
+    public Map<Coordinates, ItemTile> getItemTileMap(){
+        Map<Coordinates, ItemTile> bookshelfMap = new HashMap<>();
+
+        for( int i = 0 ; i < this.rows; i++){
+            for( int j = 0; j < this.columns; j++){
+                try {
+                    Optional<ItemTile> tmp = this.getItemTile(new Coordinates(i,j));
+                    if(tmp.isPresent())
+                        bookshelfMap.put(new Coordinates(i,j), tmp.get());
+                } catch (InvalidCoordinatesException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        return bookshelfMap;
+    }
 }

@@ -20,8 +20,22 @@ public class BoardListener extends Listener<BoardSubscriber> {
 
         Set<BoardSubscriber> observers = this.getSubscribers();
         for (BoardSubscriber ob : observers) {
-            ob.UpdateBoardStatus(tilesInBoard);
+            ob.updateBoardStatus(tilesInBoard);
         }
     }
 
+    /**
+     * Method used to trigger listener when a player joins or re-joins a game after a crash, to receive the complete status of the board
+     * @param userToBeUpdated the username of the user that needs to receive the updates
+     * @param currentTilesMap is the map of each coordinate of the board with the corresponding ItemTile or Optional if empty
+     */
+    public void triggerListener(String userToBeUpdated, Map<Coordinates, Optional<ItemTile>> currentTilesMap){
+        Set<BoardSubscriber> subscribers = this.getSubscribers();
+
+        for (BoardSubscriber sub : subscribers) {
+            if(sub.getSubscriberUsername().equals(userToBeUpdated)){
+                sub.updateBoardStatus(currentTilesMap);
+            }
+        }
+    }
 }

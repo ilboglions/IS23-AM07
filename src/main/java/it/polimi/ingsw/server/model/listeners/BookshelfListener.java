@@ -1,9 +1,11 @@
 package it.polimi.ingsw.server.model.listeners;
 
 import it.polimi.ingsw.remoteInterfaces.BookshelfSubscriber;
+import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -21,7 +23,22 @@ public class BookshelfListener extends Listener<BookshelfSubscriber> {
         Set<BookshelfSubscriber> observers = this.getSubscribers();
 
         for (BookshelfSubscriber o : observers) {
-            o.UpdateBookshelfStatus(player, insertedTiles, col);
+            o.updateBookshelfStatus(player, insertedTiles, col);
+        }
+    }
+
+    /**
+     * Method used to trigger the listener when a player joins or re-joins a game after a crash, to receive the complete status of the bookshelf
+     * @param userToBeUpdated the username of the user that needs to receive the updates
+     * @param currentTilesMap is the map the coordinates of the board with the corresponding ItemTile in it
+     */
+    public void triggerListener(String userToBeUpdated, Map<Coordinates, ItemTile> currentTilesMap){
+        Set<BookshelfSubscriber> subscribers = this.getSubscribers();
+
+        for (BookshelfSubscriber sub : subscribers) {
+            if(sub.getSubscriberUsername().equals(userToBeUpdated)){
+                sub.updateBookshelfComplete(currentTilesMap);
+            }
         }
     }
 }

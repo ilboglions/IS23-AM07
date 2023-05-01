@@ -218,7 +218,7 @@ public class Player {
      */
     public void assignPersonalCard(PersonalGoalCard card) {
         this.personalCard = Objects.requireNonNull(card);
-        playerListener.onPersonalGoalCardAssigned(this.username, card, this.getUsername());
+        playerListener.onPersonalGoalCardAssigned(this.username, card);
     }
 
     /**
@@ -237,5 +237,15 @@ public class Player {
     @Override
     public int hashCode() {
         return Objects.hash(username);
+    }
+
+    /**
+     * Method used to trigger the listener when a player joins or re-joins a game after a crash, to receive the complete status of the player
+     * @param userToBeUpdated the username of the user that needs to receive the updates
+     */
+    public void triggerListener(String userToBeUpdated){
+        Objects.requireNonNull(userToBeUpdated);
+
+        this.playerListener.triggerListener(this.username, userToBeUpdated, this.points, new ArrayList<>(this.tokenAcquired));
     }
 }

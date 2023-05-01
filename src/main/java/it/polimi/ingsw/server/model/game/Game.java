@@ -1,9 +1,6 @@
 package it.polimi.ingsw.server.model.game;
 
-import it.polimi.ingsw.remoteInterfaces.BoardSubscriber;
-import it.polimi.ingsw.remoteInterfaces.BookshelfSubscriber;
-import it.polimi.ingsw.remoteInterfaces.ChatSubscriber;
-import it.polimi.ingsw.remoteInterfaces.PlayerSubscriber;
+import it.polimi.ingsw.remoteInterfaces.*;
 import it.polimi.ingsw.server.model.chat.Chat;
 import it.polimi.ingsw.server.model.chat.Message;
 import it.polimi.ingsw.server.model.exceptions.SenderEqualsRecipientException;
@@ -36,6 +33,9 @@ public class Game implements GameModelInterface {
      * The list of all the player that have joined the game
      */
     private final ArrayList<Player> players;
+    /**
+     * The list of all the player that are currently crashed, so they are not in game effectively
+     */
     private final ArrayList<Player> crashedPlayers;
     /**
      * The list of the extracted CommonGoalCard for the game
@@ -113,6 +113,10 @@ public class Game implements GameModelInterface {
         this.players.add(host);
         host.assignPersonalCard(deckPersonal.draw(1).get(0));
 
+        ArrayList<RemoteCommonGoalCard> remoteCards = new ArrayList<>();
+        for(CommonGoalCard card : this.commonGoalCards)
+            remoteCards.add((RemoteCommonGoalCard) card);
+        this.gameListener.onPlayerJoinGame(host.getUsername(), remoteCards);
     }
 
 
@@ -355,7 +359,14 @@ public class Game implements GameModelInterface {
         } else {
             if(!userUsed(newPlayer.getUsername())) {
                 players.add(newPlayer); // player added to game active player
-                gameListener.onPlayerJoinGame(newPlayer.getUsername());
+
+                ArrayList<RemoteCommonGoalCard> remoteCards = new ArrayList<>();
+                for(CommonGoalCard card : this.commonGoalCards)
+                    remoteCards.add((RemoteCommonGoalCard) card);
+
+                gameListener.onPlayerJoinGame(newPlayer.getUsername(), remoteCards);
+                this.triggerAllListeners(newPlayer.getUsername());
+
                 try {
                     newPlayer.assignPersonalCard(deckPersonal.draw(1).get(0));
                 } catch (FileNotFoundException e) {
@@ -426,24 +437,39 @@ public class Game implements GameModelInterface {
         return true;
     }
 
-    @Override
+    /**
+     * This is the method to retrieve all the messages relative to a player, either sent and received
+     * @param player a String that represent the username of the player for which to search the messages
+     * @return an Arraylist of messages relative to the player
+     * @throws InvalidPlayerException if there isn't a player with that username inside the game
+     */
     public ArrayList<Message> getPlayerMessages(String player) throws InvalidPlayerException {
         if(this.searchPlayer(player).isEmpty()) throw new InvalidPlayerException();
 
         return chat.getPlayerMessages(player);
     }
 
-    @Override
+    /**
+     * This method is used to send a private message to another user
+     * @param sender is the username of the sender
+     * @param receiver is the username of the receiver
+     * @param message is the message object that will be added to the list
+     * @throws SenderEqualsRecipientException if the recipient and the sender of the message is the same user
+     * @throws InvalidPlayerException if there isn't a player with that username inside the game
+     */
     public void postMessage(String sender, String receiver, String message) throws SenderEqualsRecipientException, InvalidPlayerException {
         if(this.searchPlayer(sender).isEmpty()) throw new InvalidPlayerException();
-
-
         if( this.searchPlayer(receiver).isEmpty() ) throw new InvalidPlayerException();
 
         chat.postMessage(new Message(sender, receiver, message));
-
     }
 
+    /**
+     * This method is used to send a global chat message
+     * @param sender is the username of the sender
+     * @param message is the message object that will be added to the list
+     * @throws InvalidPlayerException if there isn't a player with that username inside the game
+     */
     public void postMessage(String sender, String message) throws InvalidPlayerException {
         if(this.searchPlayer(sender).isEmpty()) throw new InvalidPlayerException();
 
@@ -462,13 +488,22 @@ public class Game implements GameModelInterface {
         return this.isLastTurn && this.playerTurn == this.players.size() - 1;
     }
 
-
+    /**
+     * This method is used to retrieve if a player is currently crashed or is active
+     * @param player the username of the player
+     * @return if the player is crashed
+     */
     public boolean isCrashedPlayer(String player) {
         Optional<Player> realPlayer = this.searchPlayer(player);
         if( realPlayer.isEmpty() ) return false;
         return crashedPlayers.contains(realPlayer.get());
     }
 
+    /**
+     * Handle the changes in the game when a user crashes
+     * @param username the username of the player that has crashed
+     * @throws PlayerNotFoundException if there isn't a player with that username inside the game
+     */
     public void handleCrashedPlayer(String username) throws PlayerNotFoundException {
         Optional<Player> tmpPlayer = this.searchPlayer(username);
 
@@ -478,12 +513,32 @@ public class Game implements GameModelInterface {
             throw new PlayerNotFoundException("The player with this username has not been found in the game");
     }
 
+    /**
+     * Handle the changes in the game when a user rejoins the game after a crash
+     * @param username the username of the player that has crashed
+     * @throws PlayerNotFoundException if there isn't a player with that username inside the game
+     */
     public void handleRejoinedPlayer(String username) throws PlayerNotFoundException {
         Optional<Player> tmpPlayer = this.searchPlayer(username);
 
-        if(tmpPlayer.isPresent() && crashedPlayers.contains(tmpPlayer.get()))
+        if(tmpPlayer.isPresent() && crashedPlayers.contains(tmpPlayer.get())){
             crashedPlayers.remove(tmpPlayer.get());
+            this.triggerAllListeners(username);
+        }
         else
             throw new PlayerNotFoundException("The player with this username has not been found in the game");
+    }
+
+    /**
+     * Method used to trigger all the listeners when a player joins or re-joins a game after a crash, to receive the complete status of the game such as players bookshelf's, points or livingRoomBoard
+     * @param userToBeUpdated the username of the user that needs to receive the updates
+     */
+    private void triggerAllListeners(String userToBeUpdated) {
+        for(Player player : players){
+            player.triggerListener(userToBeUpdated);
+            player.getBookshelf().triggerListener(userToBeUpdated);
+        }
+
+        this.livingRoom.triggerListener(userToBeUpdated);
     }
 }

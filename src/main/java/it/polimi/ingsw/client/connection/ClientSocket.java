@@ -116,6 +116,7 @@ public class ClientSocket implements ConnectionHandler{
             throw new RuntimeException(e);
         }
         responseMessage = getMessageFromBuffer(MessageType.CONFIRM_GAME);
+        //Here the player will receive also the CommonGoalCards, PersonalGoalCard and all the updates of the other players
     }
 
     @Override
