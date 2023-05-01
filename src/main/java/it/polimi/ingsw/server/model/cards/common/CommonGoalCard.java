@@ -1,5 +1,6 @@
 package it.polimi.ingsw.server.model.cards.common;
 
+import it.polimi.ingsw.remoteInterfaces.RemoteCommonGoalCard;
 import it.polimi.ingsw.server.model.bookshelf.PlayerBookshelf;
 import it.polimi.ingsw.server.model.exceptions.NotEnoughSpaceException;
 import it.polimi.ingsw.server.model.exceptions.PlayersNumberOutOfRange;
@@ -14,7 +15,7 @@ import static it.polimi.ingsw.server.model.utilities.UtilityFunctions.MAX_PLAYER
 /**
  * CommonGoalCard is an abstract class used to represent the common cards of the game.
  */
-public abstract class CommonGoalCard {
+public abstract class CommonGoalCard implements RemoteCommonGoalCard {
     /**
      * description stores the description of the card constraint
      */
