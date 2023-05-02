@@ -31,6 +31,8 @@ public class ClientSocket implements ConnectionHandler{
     private final ReschedulableTimer timer;
     private final ScheduledExecutorService heartBeatManager;
 
+    private final long timerDelay = 15000;
+
     public ClientSocket(String ip, int port) {
         this.ip = ip;
         this.port = port;
@@ -50,7 +52,7 @@ public class ClientSocket implements ConnectionHandler{
         }catch (IOException e) {
             throw new RuntimeException(e);
         }
-        timer.schedule(this::handleCrash, 15000);
+        timer.schedule(this::handleCrash, this.timerDelay);
         this.messagesHopper();
         this.sendHeartBeat();
 
@@ -192,7 +194,7 @@ public class ClientSocket implements ConnectionHandler{
                     try {
                         NetMessage incomingMessage = (NetMessage) inputStream.readObject();
                         lastReceivedMessages.add(incomingMessage);
-                        timer.reschedule(15000);
+                        timer.reschedule(this.timerDelay);
                         lastReceivedMessages.notifyAll();
                         lastReceivedMessages.wait(1);
                     } catch (IOException | ClassNotFoundException e) {
