@@ -78,7 +78,8 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
     private NetMessage messageParser(NetMessage inputMessage) throws RemoteException {
         NetMessage outputMessage;
         boolean result;
-        String errorType;
+        String errorType = "";
+        String desc = "";
         logger.info(inputMessage.getMessageType().toString());
         switch (inputMessage.getMessageType()) {
             case JOIN_LOBBY -> {
@@ -144,18 +145,72 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
             }
             case MOVE_TILES -> {
                 MoveTilesMessage moveTilesMessage = (MoveTilesMessage) inputMessage;
-                result = gameController.moveTiles(username, moveTilesMessage.getTiles(), moveTilesMessage.getColumn());
-                outputMessage = new ConfirmMoveMessage(result);
+                try {
+                    gameController.moveTiles(username, moveTilesMessage.getTiles(), moveTilesMessage.getColumn());
+                    result = true;
+                    errorType="";
+                } catch (GameNotStartedException e) {
+                    result = false;
+                    errorType = "GameNotStartedException";
+                    desc = e.getMessage();
+                } catch (GameEndedException e) {
+                    result = false;
+                    errorType = "GameEndedException";
+                    desc = e.getMessage();
+                } catch (EmptySlotException e) {
+                    result = false;
+                    errorType = "EmptySlotException";
+                    desc = e.getMessage();
+                } catch (NotEnoughSpaceException e) {
+                    result = false;
+                    errorType = "NotEnoughSpaceException";
+                    desc = e.getMessage();
+                } catch (InvalidCoordinatesException e) {
+                    result = false;
+                    errorType = "InvalidCoordinatesException";
+                    desc = e.getMessage();
+                } catch (InvalidPlayerException e) {
+                    result = false;
+                    errorType = "InvalidPlayerException";
+                    desc = e.getMessage();
+                } catch (TokenAlreadyGivenException e) {
+                    result = false;
+                    errorType = "TokenAlreadyGivenException";
+                    desc = e.getMessage();
+                } catch (PlayerNotInTurnException e) {
+                    result = false;
+                    errorType = "PlayerNotInTurnException";
+                    desc = e.getMessage();
+                }
+                outputMessage = new ConfirmMoveMessage(result,errorType,desc);
             }
             case POST_MESSAGE -> {
                 PostMessage postMessage = (PostMessage) inputMessage;
                 if (!postMessage.getRecipient().equals("")) {
-                    result = gameController.postDirectMessage(username, postMessage.getRecipient(), postMessage.getContent());
+                    try {
+                        result = true;
+                        gameController.postDirectMessage(username, postMessage.getRecipient(), postMessage.getContent());
+                    } catch (InvalidPlayerException e) {
+                        result = false;
+                        errorType = "InvalidPlayerException";
+                        desc = e.getMessage();
+                    } catch (SenderEqualsRecipientException e) {
+                        result = false;
+                        errorType = "SenderEqualsRecipientException";
+                        desc = e.getMessage();
+                    }
                 } else {
-                    result = gameController.postBroadCastMessage(username, postMessage.getContent());
+                    try {
+                        gameController.postBroadCastMessage(username, postMessage.getContent());
+                        result = true;
+                    } catch (InvalidPlayerException e) {
+                        result = false;
+                        errorType = "InvalidPlayerException";
+                        desc = e.getMessage();
+                    }
                 }
                 logger.info(postMessage.getContent() + " " + postMessage.getRecipient());
-                outputMessage = new ConfirmChatMessage(result);
+                outputMessage = new ConfirmChatMessage(result, errorType, desc);
             }
             case STILL_ACTIVE -> {
                 logger.info("Heartbeat received");
@@ -175,7 +230,7 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
         if (gameController == null) {
             try {
                 lobbyController.handleCrashedPlayer(this.username);
-            } catch (PlayerNotFoundException e) {
+            } catch (PlayerNotFoundException | RemoteException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -259,6 +314,10 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
         this.sendUpdate(update);
     }
 
+    /**
+     *
+     * @param update
+     */
     private void sendUpdate(NetMessage update) {
         synchronized (outputStream) {
             try {

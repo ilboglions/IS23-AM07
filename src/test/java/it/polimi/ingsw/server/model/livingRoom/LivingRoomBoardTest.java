@@ -3,9 +3,6 @@ package it.polimi.ingsw.server.model.livingRoom;
 import static org.junit.jupiter.api.Assertions.*;
 
 import it.polimi.ingsw.server.model.exceptions.PlayersNumberOutOfRange;
-import it.polimi.ingsw.server.model.livingRoom.LivingRoomBoard;
-import it.polimi.ingsw.server.model.livingRoom.Slot;
-import it.polimi.ingsw.server.model.livingRoom.SlotType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import com.google.gson.Gson;
@@ -26,7 +23,7 @@ public class LivingRoomBoardTest {
         assertThrows(PlayersNumberOutOfRange.class, () ->{ new LivingRoomBoard(0);});
         assertThrows(PlayersNumberOutOfRange.class, () ->{ new LivingRoomBoard(5);});
         LivingRoomBoard testboard = new LivingRoomBoard(4);
-        String confFilePath = "src/main/java/it/polimi/ingsw/server/model/livingRoom/confFiles/4orMorePlayersPattern.json";
+        String confFilePath = "src/main/resources/4orMorePlayersPattern.json";
         Gson gson = new Gson();
         LivingRoomBoard.JsonLivingBoardCell[][] jsonCells = gson.fromJson(new FileReader(confFilePath), LivingRoomBoard.JsonLivingBoardCell[][].class);
         SlotType slotType;
@@ -38,7 +35,7 @@ public class LivingRoomBoardTest {
             }
         }
         testboard = new LivingRoomBoard(3);
-        confFilePath = "src/main/java/it/polimi/ingsw/server/model/livingRoom/confFiles/3PlayersPattern.json";
+        confFilePath = "src/main/resources/3PlayersPattern.json";
         gson = new Gson();
         jsonCells = gson.fromJson(new FileReader(confFilePath), LivingRoomBoard.JsonLivingBoardCell[][].class);
         slotmatrix = testboard.getAllSlots();
@@ -49,7 +46,7 @@ public class LivingRoomBoardTest {
             }
         }
         testboard = new LivingRoomBoard(2);
-        confFilePath = "src/main/java/it/polimi/ingsw/server/model/livingRoom/confFiles/2PlayersPattern.json";
+        confFilePath = "src/main/resources/2PlayersPattern.json";
         gson = new Gson();
         jsonCells = gson.fromJson(new FileReader(confFilePath), LivingRoomBoard.JsonLivingBoardCell[][].class);
         slotmatrix = testboard.getAllSlots();

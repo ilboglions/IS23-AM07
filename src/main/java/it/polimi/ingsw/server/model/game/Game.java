@@ -97,8 +97,8 @@ public class Game implements GameModelInterface {
         this.players = new ArrayList<>();
         this.crashedPlayers = new ArrayList<>();
         this.livingRoom = new LivingRoomBoard(numPlayers);
-        DeckCommon deckCommon = new DeckCommon(numPlayers, "src/main/java/it/polimi/ingsw/server/model/cards/confFiles/commonCards.json");
-        this.deckPersonal = new DeckPersonal("src/main/java/it/polimi/ingsw/server/model/cards/confFiles/personalCards.json", "src/main/java/it/polimi/ingsw/server/model/cards/confFiles/pointsReference.json");
+        DeckCommon deckCommon = new DeckCommon(numPlayers, "src/main/resources/commonCards.json");
+        this.deckPersonal = new DeckPersonal("src/main/resources/personalCards.json", "src/main/resources/pointsReference.json");
         this.bagHolder = new BagHolder();
         this.isStarted = false;
         this.isLastTurn = false;

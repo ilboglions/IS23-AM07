@@ -8,12 +8,25 @@ public class ConfirmChatMessage extends NetMessage {
 
     private final Boolean result;
 
-    public ConfirmChatMessage(Boolean result) {
+    private final String errorType;
+    private final String details;
+
+    public ConfirmChatMessage(Boolean result, String errorType, String details) {
         super(MessageType.CONFIRM_CHAT);
         this.result = result;
+        this.errorType = errorType;
+        this.details = details;
     }
 
     public Boolean getResult() {
         return result;
+    }
+
+    public String getErrorType() {
+        return errorType;
+    }
+
+    public String getDetails() {
+        return details;
     }
 }

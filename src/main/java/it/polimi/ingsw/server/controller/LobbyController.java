@@ -1,12 +1,12 @@
 package it.polimi.ingsw.server.controller;
 
+import it.polimi.ingsw.server.ReschedulableTimer;
 import it.polimi.ingsw.server.model.exceptions.*;
 import it.polimi.ingsw.server.model.game.GameModelInterface;
 import it.polimi.ingsw.server.model.lobby.Lobby;
 import it.polimi.ingsw.remoteInterfaces.RemoteGameController;
 import it.polimi.ingsw.remoteInterfaces.RemoteLobbyController;
 
-import java.io.Serial;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,22 +17,37 @@ import java.rmi.server.*;
  * the lobby controller ensures the communication through client controller and server model
  */
 public class LobbyController extends UnicastRemoteObject implements RemoteLobbyController {
-    @Serial
-    private static final long serialVersionUID = 172897351161158928L;
 
+
+    /**
+     * the reference to the lobby model
+     */
     private final Lobby lobbyModel;
+    /**
+     * the map containing the gameControllers
+     */
     private final Map<GameModelInterface,GameController> gameControllers;
     /*
         lobbyLock is used to synchronize the methods of LobbyController. it is equivalent to use synchronize in the method's signature
      */
 
+    /**
+     * the lock for synchronize the threads
+     */
     private final Object lobbyLock;
+    /**
+     * the map representing the timers for the players
+     */
+    private final Map<String, ReschedulableTimer> timers;
+    private final long timerDelay = 15000;
+
     /**
      * creates the controller of the lobby
      * @param lobbyModel the model of the lobby
      */
     public LobbyController(Lobby lobbyModel) throws RemoteException {
         super();
+        this.timers = new HashMap<>();
         this.lobbyModel = lobbyModel;
         gameControllers = new HashMap<>();
         lobbyLock = new Object();
@@ -86,6 +101,7 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
 
             }
 
+            this.stopTimer(player);
             return gameController;
         }
     }
@@ -104,13 +120,59 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
             gameController = new GameController(gameModel);
             this.gameControllers.put(gameModel, gameController);
 
+            this.stopTimer(player);
             return gameController;
         }
     }
 
-    public void handleCrashedPlayer(String username) throws PlayerNotFoundException {
+    /**
+     * used to handle the crash of the player, it removes the player from the waiting list
+     * @param username the username of the player
+     * @throws PlayerNotFoundException if the player doesn't exist in the lobby
+     * @throws RemoteException
+     */
+    public void handleCrashedPlayer(String username) throws PlayerNotFoundException, RemoteException {
         synchronized (lobbyLock) {
             this.lobbyModel.handleCrashedPlayer(username);
+        }
+    }
+
+    /**
+     * private method used for initialize the timer of the player
+     * @param username the username of the player
+     */
+    private void initializeTimer(String username){
+        this.timers.put(username, new ReschedulableTimer());
+        this.timers.get(username).schedule(() -> {
+            try {
+                this.handleCrashedPlayer(username);
+            } catch (PlayerNotFoundException | RemoteException e) {
+                throw new RuntimeException(e);
+            }
+        },this.timerDelay);
+    }
+
+    /**
+     * stops the timer of the lobby for the player with the given username
+     * @param username the username of the player
+     */
+    private void stopTimer(String username){
+        this.timers.get(username).cancel();
+    }
+
+    /**
+     * method used in rmi for triggering the heartbeat of the client,
+     * if a client doesn't trigger this method for a too long period, the client will be considered crashed
+     * @param username the username of the player
+     * @throws RemoteException
+     */
+    public void triggerHeartBeat(String username) throws RemoteException{
+        synchronized (this.timers){
+            if(this.timers.get(username) == null ){
+                this.initializeTimer(username);
+                return;
+            }
+            this.timers.get(username).reschedule(this.timerDelay);
         }
     }
 

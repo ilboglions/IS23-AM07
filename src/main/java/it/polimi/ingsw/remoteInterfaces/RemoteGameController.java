@@ -1,6 +1,6 @@
 package it.polimi.ingsw.remoteInterfaces;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
-import it.polimi.ingsw.server.model.exceptions.PlayerNotFoundException;
+import it.polimi.ingsw.server.model.exceptions.*;
 
 import java.rmi.*;
 import java.util.ArrayList;
@@ -9,11 +9,11 @@ public interface RemoteGameController extends Remote{
 
     boolean checkValidRetrieve(String player, ArrayList<Coordinates> coords) throws RemoteException;
 
-    boolean moveTiles(String player, ArrayList<Coordinates> source, int column) throws RemoteException;
+    void moveTiles(String player, ArrayList<Coordinates> source, int column) throws RemoteException, GameNotStartedException, GameEndedException, EmptySlotException, NotEnoughSpaceException, InvalidCoordinatesException, InvalidPlayerException, TokenAlreadyGivenException, PlayerNotInTurnException;
 
-    boolean postBroadCastMessage(String player, String message) throws RemoteException;
+    void postBroadCastMessage(String player, String message) throws RemoteException, InvalidPlayerException;
 
-    boolean postDirectMessage(String player, String receiver,String message) throws RemoteException;
+    void postDirectMessage(String player, String receiver, String message) throws RemoteException, InvalidPlayerException, SenderEqualsRecipientException;
 
     void subscribeToListener(BoardSubscriber subscriber) throws RemoteException;
 
@@ -28,4 +28,6 @@ public interface RemoteGameController extends Remote{
     void handleCrashedPlayer(String username) throws RemoteException, PlayerNotFoundException;
 
     void handleRejoinedPlayer(String username) throws RemoteException, PlayerNotFoundException;
+
+    void triggerHeartBeat(String username) throws RemoteException;
 }

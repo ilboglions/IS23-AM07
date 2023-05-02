@@ -9,6 +9,10 @@ public class ReschedulableTimer extends Timer
     private Runnable  task;
     private TimerTask timerTask;
 
+    public boolean isScheduled(){
+        if(task != null) return true;
+        return false;
+    }
     public void schedule(Runnable runnable, long delay)
     {
         task = runnable;
