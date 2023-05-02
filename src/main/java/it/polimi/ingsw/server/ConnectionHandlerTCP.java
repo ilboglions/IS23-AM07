@@ -20,7 +20,7 @@ import java.util.Optional;
 import static it.polimi.ingsw.server.ServerMain.logger;
 
 
-public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, BookshelfSubscriber, ChatSubscriber, PlayerSubscriber {
+public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, BookshelfSubscriber, ChatSubscriber, PlayerSubscriber, GameSubscriber {
 
     private final Socket socket;
     private boolean closeConnectionFlag;
@@ -98,6 +98,7 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
                     gameController.subscribeToListener((ChatSubscriber) this);
                     gameController.subscribeToListener((BoardSubscriber) this);
                     gameController.subscribeToListener((BookshelfSubscriber) this);
+                    gameController.subscribeToListener((GameSubscriber) this);
                 } catch (InvalidPlayerException e) {
                     result = false;
                     errorType = "InvalidPlayer";
@@ -110,7 +111,6 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
                 }
                 logger.info(String.valueOf(result));
                 outputMessage = new ConfirmGameMessage(result, errorType, "");
-                //Here we have to add that are sent also the messages relative to the CommonGoalCard
             }
             case JOIN_GAME -> {
                 try {
@@ -121,6 +121,7 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
                     gameController.subscribeToListener((ChatSubscriber) this);
                     gameController.subscribeToListener((BoardSubscriber) this);
                     gameController.subscribeToListener((BookshelfSubscriber) this);
+                    gameController.subscribeToListener((GameSubscriber) this);
                 } catch (NicknameAlreadyUsedException e) {
                     result = false;
                     errorType = "NicknameAlreadyUsed";
@@ -135,7 +136,6 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
                     errorType = "PlayersNumberOutOfRange";
                 }
                 outputMessage = new ConfirmGameMessage(result, errorType, "");
-                //Here we have to add also the messages with the CommonGoalCard, PersonalGoalCard and eventually if is crashed all the updates
             }
             case TILES_SELECTION -> {
                 TileSelectionMessage tileSelectionMessage = (TileSelectionMessage) inputMessage;
@@ -240,6 +240,25 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
         PersonalGoalCardUpdateMessage update = new PersonalGoalCardUpdateMessage(player, remotePersonal);
         this.sendUpdate(update);
     }
+
+    @Override
+    public void notifyPlayerJoined(String username) {
+        NewPlayerInGame update = new NewPlayerInGame(username);
+        this.sendUpdate(update);
+    }
+
+    @Override
+    public void notifyWinningPlayer(String username) {
+        NotifyWinningPlayerMessage update = new NotifyWinningPlayerMessage(username);
+        this.sendUpdate(update);
+    }
+
+    @Override
+    public void notifyCommonGoalCards(ArrayList<RemoteCommonGoalCard> commonGoalCards) {
+        CommonGoalCardsUpdateMessage update = new CommonGoalCardsUpdateMessage(commonGoalCards);
+        this.sendUpdate(update);
+    }
+
     private void sendUpdate(NetMessage update) {
         synchronized (outputStream) {
             try {
@@ -249,7 +268,6 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
             }
         }
     }
-
 }
 
 

@@ -113,31 +113,37 @@ public class Game implements GameModelInterface {
         this.players.add(host);
         host.assignPersonalCard(deckPersonal.draw(1).get(0));
 
-        ArrayList<RemoteCommonGoalCard> remoteCards = new ArrayList<>();
-        for(CommonGoalCard card : this.commonGoalCards)
-            remoteCards.add((RemoteCommonGoalCard) card);
+        ArrayList<RemoteCommonGoalCard> remoteCards = new ArrayList<>(this.commonGoalCards);
         this.gameListener.onPlayerJoinGame(host.getUsername(), remoteCards);
     }
 
-
+    @Override
     public void subscribeToListener(BoardSubscriber subscriber){
 
         livingRoom.subscribeToListener(subscriber);
 
     }
 
+    @Override
     public void subscribeToListener(BookshelfSubscriber subscriber){
 
         players.forEach(p -> p.getBookshelf().subscribeToListener( subscriber));
 
     }
 
+    @Override
     public void subscribeToListener(ChatSubscriber subscriber){
         chat.subscribeToListener(subscriber);
     }
 
+    @Override
     public void subscribeToListener(PlayerSubscriber subscriber){
         players.forEach(p -> p.subscribeToListener(subscriber));
+    }
+
+    @Override
+    public void subscribeToListener(GameSubscriber subscriber) {
+        this.gameListener.addSubscriber(subscriber);
     }
 
 
@@ -360,10 +366,7 @@ public class Game implements GameModelInterface {
             if(!userUsed(newPlayer.getUsername())) {
                 players.add(newPlayer); // player added to game active player
 
-                ArrayList<RemoteCommonGoalCard> remoteCards = new ArrayList<>();
-                for(CommonGoalCard card : this.commonGoalCards)
-                    remoteCards.add((RemoteCommonGoalCard) card);
-
+                ArrayList<RemoteCommonGoalCard> remoteCards = new ArrayList<>(this.commonGoalCards);
                 gameListener.onPlayerJoinGame(newPlayer.getUsername(), remoteCards);
                 this.triggerAllListeners(newPlayer.getUsername());
 

@@ -12,8 +12,6 @@ public abstract class NetMessage implements Serializable {
         this.messageType = messageType;
     }
 
-
-
     public MessageType getMessageType() {
         return messageType;
     }
