@@ -7,12 +7,14 @@ public class ConfirmSelectionMessage extends NetMessage {
     private static final long serialVersionUID = -2537603478256907125L;
 
     private final Boolean confirmSelection;
+    private final String errorType;
+    private final String details;
 
-
-    public ConfirmSelectionMessage(Boolean confirmSelection) {
+    public ConfirmSelectionMessage(Boolean confirmSelection, String errorType, String details) {
         super(MessageType.CONFIRM_SELECTION);
         this.confirmSelection = confirmSelection;
-
+        this.errorType = errorType;
+        this.details = details;
     }
     public Boolean getConfirmSelection() {
         return confirmSelection;

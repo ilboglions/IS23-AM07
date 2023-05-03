@@ -96,7 +96,17 @@ public class ClientRMI implements ConnectionHandler{
         }
 
         //here the view will be notified that the action has been executed correctly
-        if(gameController.checkValidRetrieve(this.username,tiles)) return;
+        try {
+            if(gameController.checkValidRetrieve(this.username,tiles)) return;
+        } catch (PlayerNotInTurnException e) {
+            //...
+        } catch (GameNotStartedException e) {
+            //...
+        } catch (GameEndedException e) {
+            //...
+        } catch (EmptySlotException e) {
+            //...
+        }
 
     }
 

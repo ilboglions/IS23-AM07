@@ -54,34 +54,23 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
      * @param coords the list of coordinates where tiles should have been taken
      * @return true, if the action is permitted
      */
-    public boolean checkValidRetrieve(String player, ArrayList<Coordinates> coords) throws RemoteException  {
+    public boolean checkValidRetrieve(String player, ArrayList<Coordinates> coords) throws RemoteException, PlayerNotInTurnException, GameNotStartedException, GameEndedException, EmptySlotException {
         synchronized (gameLock) {
-            try {
-                if(!player.equals(gameModel.getPlayerInTurn())) return false;
-            } catch (GameEndedException e) {
-                return false;
-            } catch (GameNotStartedException e) {
-                return false;
-            }
+            if(!player.equals(gameModel.getPlayerInTurn())) throw new PlayerNotInTurnException();
 
-            try{
-                if( gameModel.checkValidRetrieve(coords)){
-                    selectedTiles.clear();
-                    selectedTiles.addAll(coords);
-                    return true;
-                }
-                return false;
-
-            } catch (EmptySlotException e){
-                return false;
+            if( gameModel.checkValidRetrieve(coords)){
+                selectedTiles.clear();
+                selectedTiles.addAll(coords);
+                return true;
             }
+            return false;
         }
     }
 
     /**
      * the second method to be called by the player, it performs the insertion of the tile in the bookshelf of the player, removing them from the board.
-     * it also checks if the livingroom should be refilled and, in that case invoke the refill action. It also passes the turn to the next player
-     *
+     * it also checks if the livingroom should be refilled and, in that case invoke the refill action. If the player with this move completed his bookshelf
+     * we check if he is the first one to do so, if that happens the player gets the FIRSTPLAYER token. At the end of the method the turn passes to the next player
      * @param player the player that is performing the action
      * @param source the coordinates to be taken
      * @param column the column where the coordinates will be inserted
@@ -255,5 +244,9 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
             }
             this.timers.get(username).reschedule(this.timerDelay);
         }
+    }
+
+    public Set<Coordinates> getSelectedTiles() {
+        return (new HashSet<Coordinates>(selectedTiles));
     }
 }

@@ -151,8 +151,27 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
             }
             case TILES_SELECTION -> {
                 TileSelectionMessage tileSelectionMessage = (TileSelectionMessage) inputMessage;
-                result = gameController.checkValidRetrieve(username, tileSelectionMessage.getTiles());
-                outputMessage = new ConfirmSelectionMessage(result);
+                try {
+                    result = gameController.checkValidRetrieve(username, tileSelectionMessage.getTiles());
+                    errorType = "";
+                } catch (PlayerNotInTurnException e) {
+                    result = false;
+                    errorType = "PlayerNotInTurnException";
+                    desc = e.getMessage();
+                } catch (GameNotStartedException e) {
+                    result = false;
+                    errorType = "GameNotStartedException";
+                    desc = e.getMessage();
+                } catch (GameEndedException e) {
+                    result = false;
+                    errorType = "GameEndedException";
+                    desc = e.getMessage();
+                } catch (EmptySlotException e) {
+                    result = false;
+                    errorType = "EmptySlotException";
+                    desc = e.getMessage();
+                }
+                outputMessage = new ConfirmSelectionMessage(result, errorType, desc);
             }
             case MOVE_TILES -> {
                 MoveTilesMessage moveTilesMessage = (MoveTilesMessage) inputMessage;
