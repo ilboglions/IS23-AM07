@@ -12,6 +12,7 @@ import java.util.Map;
 
 import java.rmi.*;
 import java.rmi.server.*;
+import java.util.Optional;
 
 /**
  * the lobby controller ensures the communication through client controller and server model
@@ -55,39 +56,42 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
 
     /**
      * make it possible for the player to join the lobby e select a game
+     *
      * @param player the username of the player to be added
-     * @return true, if a player can join the lobby, false if the nickname in the lobby has been already used
+     * @return a RemoteGameController, if the player was crashed, an empty optional if the player is correctly logged in the  lobby
+     * @throws NicknameAlreadyUsedException if the player is already inside a game
+     * @throws RemoteException in case of a network error occurs
      */
-    public boolean enterInLobby(String player) throws RemoteException{
+    public Optional<RemoteGameController> enterInLobby(String player) throws RemoteException, NicknameAlreadyUsedException {
         synchronized (lobbyLock) {
             try {
                 lobbyModel.createPlayer(player);
-                return true;
+                return Optional.empty();
             } catch (NicknameAlreadyUsedException e) {
-                return false;
+
+                /* search if the player is crashed in a game */
+                for( Map.Entry<GameModelInterface, GameController> entry : gameControllers.entrySet()){
+                    if(entry.getKey().isCrashedPlayer(player) ){
+                        try {
+                            entry.getValue().handleRejoinedPlayer(player);
+                        } catch (PlayerNotFoundException ignored) {
+                        }
+                        return Optional.of(entry.getValue());
+                    }
+                }
+                throw e;
             }
         }
 
     }
 
     /**
-     * ensures for a player to be added to an available game
-     *
+     * add a logged player to a game
      * @param player the nickname of the player to be added
      * @return an optional of GameController, if no game is in the lobby, an empty value will be filled
      */
     public RemoteGameController addPlayerToGame(String player) throws RemoteException, NicknameAlreadyUsedException, NoAvailableGameException, InvalidPlayerException, PlayersNumberOutOfRange {
         synchronized (lobbyLock) {
-
-            for( Map.Entry<GameModelInterface, GameController> entry : gameControllers.entrySet()){
-                    if(entry.getKey().isCrashedPlayer(player) ){
-                        try {
-                            entry.getValue().handleRejoinedPlayer(player);
-                        } catch (PlayerNotFoundException ignored) {
-                        }
-                        return entry.getValue();
-                    }
-            }
 
             GameController gameController;
 
@@ -106,6 +110,7 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
         }
     }
 
+
     /**
      * creates a game for a certain number of players
      *
@@ -119,8 +124,8 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
             GameModelInterface gameModel = lobbyModel.createGame(nPlayers, player);
             gameController = new GameController(gameModel);
             this.gameControllers.put(gameModel, gameController);
-
-            this.stopTimer(player);
+            if(timers.containsKey(player))
+                this.stopTimer(player);
             return gameController;
         }
     }
@@ -161,7 +166,7 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
     }
 
     /**
-     * method used in rmi for triggering the heartbeat of the client,
+     * method used in RMI for triggering the heartbeat of the client,
      * if a client doesn't trigger this method for a too long period, the client will be considered crashed
      * @param username the username of the player
      * @throws RemoteException

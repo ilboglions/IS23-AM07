@@ -77,29 +77,43 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
 
     private NetMessage messageParser(NetMessage inputMessage) throws RemoteException {
         NetMessage outputMessage;
+        Optional<RemoteGameController> tempGameController;
         boolean result;
         String errorType = "";
         String desc = "";
+        boolean IsPlayerrejoined;
         logger.info(inputMessage.getMessageType().toString());
         switch (inputMessage.getMessageType()) {
             case JOIN_LOBBY -> {
+
                 JoinLobbyMessage joinLobbyMessage = (JoinLobbyMessage) inputMessage;
                 this.username = joinLobbyMessage.getUsername();
-                result = lobbyController.enterInLobby(joinLobbyMessage.getUsername());
-                outputMessage = new LoginReturnMessage(result, "");
+                try {
+                     tempGameController = lobbyController.enterInLobby(joinLobbyMessage.getUsername());
+                     if(tempGameController.isPresent()){
+                         gameController = tempGameController.get();
+                          IsPlayerrejoined = true;
+                     } else {
+                         IsPlayerrejoined = false;
+                     }
+                    result = true;
+                } catch (NicknameAlreadyUsedException e) {
+                    errorType = "NicknameAlreadyUsedException";
+                    result = false;
+                    IsPlayerrejoined = false;
+                }
+
+                outputMessage = new LoginReturnMessage(result,errorType, "", IsPlayerrejoined);
             }
             case CREATE_GAME -> {
                 CreateGameMessage createGameMessage = (CreateGameMessage) inputMessage;
                 try {
                     gameController = lobbyController.createGame(username, createGameMessage.getPlayerNumber());
+
                     result = true;
                     logger.info("Game CREATED Successfully");
                     errorType = "";
-                    gameController.subscribeToListener((PlayerSubscriber)this);
-                    gameController.subscribeToListener((ChatSubscriber) this);
-                    gameController.subscribeToListener((BoardSubscriber) this);
-                    gameController.subscribeToListener((BookshelfSubscriber) this);
-                    gameController.subscribeToListener((GameSubscriber) this);
+                    this.subscribeToAllListeners();
                 } catch (InvalidPlayerException e) {
                     result = false;
                     errorType = "InvalidPlayer";
@@ -118,11 +132,8 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
                     gameController = lobbyController.addPlayerToGame(username);
                     result = true;
                     errorType = "";
-                    gameController.subscribeToListener((PlayerSubscriber)this);
-                    gameController.subscribeToListener((ChatSubscriber) this);
-                    gameController.subscribeToListener((BoardSubscriber) this);
-                    gameController.subscribeToListener((BookshelfSubscriber) this);
-                    gameController.subscribeToListener((GameSubscriber) this);
+                    this.subscribeToAllListeners();
+
                 } catch (NicknameAlreadyUsedException e) {
                     result = false;
                     errorType = "NicknameAlreadyUsed";
@@ -225,6 +236,20 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
         return outputMessage;
     }
 
+    private void subscribeToAllListeners(){
+
+        if(this.gameController == null) throw new RuntimeException("no game controlled");
+        try {
+            gameController.subscribeToListener((PlayerSubscriber) this);
+            gameController.subscribeToListener((ChatSubscriber) this);
+            gameController.subscribeToListener((BoardSubscriber) this);
+            gameController.subscribeToListener((BookshelfSubscriber) this);
+            gameController.subscribeToListener((GameSubscriber) this);
+        } catch (RemoteException e){
+            throw new RuntimeException(e);
+        }
+    }
+
     public void handleCrash() {
         logger.info("Connection lost");
         if (gameController == null) {
@@ -300,11 +325,17 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
     public void notifyPlayerJoined(String username) {
         NewPlayerInGame update = new NewPlayerInGame(username);
         this.sendUpdate(update);
+        try {
+            gameController.subscribeToListener((PlayerSubscriber) this);
+            gameController.subscribeToListener((BookshelfSubscriber) this);
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public void notifyWinningPlayer(String username) {
-        NotifyWinningPlayerMessage update = new NotifyWinningPlayerMessage(username);
+    public void notifyWinningPlayer(String username, int points, Map<String,Integer> scoreboard) {
+        NotifyWinnerPlayerMessage update = new NotifyWinnerPlayerMessage(username, points, scoreboard );
         this.sendUpdate(update);
     }
 

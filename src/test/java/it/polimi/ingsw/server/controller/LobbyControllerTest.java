@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.rmi.RemoteException;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -13,16 +14,16 @@ class LobbyControllerTest {
 
     @Test
     @DisplayName("Test entering in lobby")
-    void testEnter() throws RemoteException {
+    void testEnter() throws RemoteException, NicknameAlreadyUsedException {
         LobbyController test = new LobbyController(new Lobby());
 
-        assertTrue(test.enterInLobby("Test")); //Player added correctly
-        assertFalse(test.enterInLobby("Test")); //Player with the same nickname already joined
+        assertEquals(Optional.empty(), test.enterInLobby("Test")); //Player added correctly
+        assertThrows(NicknameAlreadyUsedException.class, () -> test.enterInLobby("Test")); //Player with the same nickname already joined
     }
 
     @Test
     @DisplayName("Test game creation")
-    void testCreation() throws RemoteException {
+    void testCreation() throws RemoteException, NicknameAlreadyUsedException {
         LobbyController test = new LobbyController(new Lobby());
 
         //Invalid values, already tested in LobbyTest class

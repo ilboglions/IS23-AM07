@@ -1,6 +1,7 @@
 package it.polimi.ingsw.remoteInterfaces;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public interface GameSubscriber extends ListenerSubscriber {
     /**
@@ -12,8 +13,10 @@ public interface GameSubscriber extends ListenerSubscriber {
     /**
      * This is used to notify when a player has won the game
      * @param username the username of the winning player
+     * @param points the points of the player that have won the game
+     * @param scoreboard the total scoreboard, already ordered, the key is the username and the value the points of the user
      */
-    void notifyWinningPlayer(String username);
+    void notifyWinningPlayer(String username, int points, Map<String,Integer> scoreboard);
 
     /**
      * This is used to notify to a new player the common goals of the game

@@ -45,7 +45,11 @@ public class ClientRMI implements ConnectionHandler{
     @Override
     public void JoinLobby(String username) throws RemoteException {
         this.username = username;
-        this.lobbyController.enterInLobby(username);
+        try {
+            this.lobbyController.enterInLobby(username);
+        } catch (NicknameAlreadyUsedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

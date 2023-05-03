@@ -3,6 +3,7 @@ import it.polimi.ingsw.remoteInterfaces.GameSubscriber;
 import it.polimi.ingsw.remoteInterfaces.RemoteCommonGoalCard;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Set;
 
 public class GameListener extends Listener<GameSubscriber> {
@@ -17,8 +18,8 @@ public class GameListener extends Listener<GameSubscriber> {
         });
     }
 
-    public void onPlayerWins(String username, int points){
+    public void onPlayerWins(String username, int points, Map<String,Integer> scoreboard){
         Set<GameSubscriber> subscribers = this.getSubscribers();
-        subscribers.forEach(sub -> sub.notifyWinningPlayer(username));
+        subscribers.forEach(sub -> sub.notifyWinningPlayer(username, points, scoreboard));
     }
 }

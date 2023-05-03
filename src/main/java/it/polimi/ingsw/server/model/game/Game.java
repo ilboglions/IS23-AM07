@@ -20,6 +20,7 @@ import it.polimi.ingsw.server.model.tokens.TokenPoint;
 
 import java.io.FileNotFoundException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * This class is used to handle the main logic of a Game
@@ -344,8 +345,14 @@ public class Game implements GameModelInterface {
             player.updatePoints(stdPointsReference);
         }
         Player winner = players.stream().max(Comparator.comparing(Player::getPoints)).get();
+        List<Player> tempPlayers = new ArrayList<>();
+        tempPlayers =  players.stream().sorted(Comparator.comparing(Player::getPoints)).collect(Collectors.toList());
         /* calls the listener */
-        gameListener.onPlayerWins(winner.getUsername(), winner.getPoints());
+        Map<String,Integer> scoreboard = new LinkedHashMap<>();
+        for( Player player : tempPlayers){
+            scoreboard.put(player.getUsername(),player.getPoints());
+        }
+        gameListener.onPlayerWins(winner.getUsername(), winner.getPoints(), scoreboard);
 
         return winner.getUsername();
     }

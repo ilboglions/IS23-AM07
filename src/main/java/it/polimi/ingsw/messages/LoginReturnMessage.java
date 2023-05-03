@@ -7,11 +7,15 @@ public class LoginReturnMessage extends NetMessage {
     private static final long serialVersionUID = -8019058775724053002L;
 
     private final Boolean confirmLogin;
+    private final Boolean confirmRejoined;
     private final String details;
-    public LoginReturnMessage(Boolean confirmLogin, String details) {
+    private final String errorType;
+    public LoginReturnMessage(Boolean confirmLogin, String errorType, String details, Boolean rejoined) {
         super(MessageType.LOGIN_RETURN);
         this.confirmLogin = confirmLogin;
         this.details = details;
+        this.errorType = errorType;
+        this.confirmRejoined = rejoined;
     }
 
     public Boolean getConfirmLogin() {
@@ -20,5 +24,12 @@ public class LoginReturnMessage extends NetMessage {
 
     public String getDetails() {
         return details;
+    }
+    public String getErrorType() {
+        return errorType;
+    }
+
+    public Boolean getConfirmRejoined() {
+        return confirmRejoined;
     }
 }

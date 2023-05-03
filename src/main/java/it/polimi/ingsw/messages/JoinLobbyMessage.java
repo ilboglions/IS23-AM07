@@ -11,9 +11,13 @@ public class JoinLobbyMessage extends NetMessage {
     public JoinLobbyMessage(String username) {
         super(MessageType.JOIN_LOBBY);
         this.username = username;
+
     }
 
     public String getUsername() {
         return username;
     }
+
+
+
 }
