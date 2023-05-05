@@ -15,7 +15,6 @@ import java.net.Socket;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Optional;
 
 import static it.polimi.ingsw.server.ServerMain.logger;
 
@@ -278,7 +277,7 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
     }
 
     @Override
-    public void updateBoardStatus(Map<Coordinates, Optional<ItemTile>> tilesInBoard) {
+    public void updateBoardStatus(Map<Coordinates, ItemTile> tilesInBoard) {
         BoardUpdateMessage update = new BoardUpdateMessage(tilesInBoard);
         this.sendUpdate(update);
     }

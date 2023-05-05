@@ -176,7 +176,9 @@ public class ClientSocket implements ConnectionHandler{
     public void sendMessage(String content){
         PostMessage message = new PostMessage(content);
         try {
-            outputStream.writeObject(message);
+            synchronized (outputStream){
+                outputStream.writeObject(message);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -187,7 +189,9 @@ public class ClientSocket implements ConnectionHandler{
     public void sendMessage(String content, String recipient){
         PostMessage message = new PostMessage(content, recipient);
         try {
-            outputStream.writeObject(message);
+            synchronized (outputStream){
+                outputStream.writeObject(message);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
