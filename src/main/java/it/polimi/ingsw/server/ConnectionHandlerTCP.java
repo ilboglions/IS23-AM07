@@ -138,6 +138,9 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
                 } catch (InvalidPlayerException e) {
                     result = false;
                     errorType = "InvalidPlayerException";
+                } catch (PlayersNumberOutOfRange e) {
+                    result = false;
+                    errorType = "PlayersNumberOutOfRange";
                 }
                 outputMessage = new ConfirmGameMessage(result, errorType, "");
             }
@@ -151,6 +154,23 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
                     desc = "you cannot select those slots";
                 }
                 outputMessage = new ConfirmSelectionMessage(result,errorType,desc);
+                try {
+                    result = gameController.checkValidRetrieve(username, tileSelectionMessage.getTiles());
+                    errorType = "";
+                } catch (PlayerNotInTurnException e) {
+                    result = false;
+                    errorType = "PlayerNotInTurnException";
+                    desc = e.getMessage();
+                } catch (GameNotStartedException e) {
+                    result = false;
+                    errorType = "GameNotStartedException";
+                    desc = e.getMessage();
+                } catch (GameEndedException e) {
+                    result = false;
+                    errorType = "GameEndedException";
+                    desc = e.getMessage();
+                }
+                outputMessage = new ConfirmSelectionMessage(result, errorType, desc);
             }
             case MOVE_TILES -> {
                 MoveTilesMessage moveTilesMessage = (MoveTilesMessage) inputMessage;

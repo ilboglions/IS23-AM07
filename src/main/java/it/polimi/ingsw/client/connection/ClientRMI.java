@@ -100,6 +100,15 @@ public class ClientRMI implements ConnectionHandler{
         } catch (EmptySlotException e) {
             view.postNotification("the slot selected is empty!",e.getMessage());
         }
+        try {
+            if(gameController.checkValidRetrieve(this.username,tiles)) return;
+        } catch (PlayerNotInTurnException e) {
+            //...
+        } catch (GameNotStartedException e) {
+            //...
+        } catch (GameEndedException e) {
+            //...
+        }
 
     }
 
