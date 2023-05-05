@@ -12,15 +12,13 @@ import it.polimi.ingsw.server.model.distributable.DeckCommon;
 import it.polimi.ingsw.server.model.distributable.DeckPersonal;
 import it.polimi.ingsw.server.model.listeners.GameListener;
 import it.polimi.ingsw.server.model.livingRoom.LivingRoomBoard;
-import it.polimi.ingsw.server.model.livingRoom.exceptions.NotEnoughTilesException;
+import it.polimi.ingsw.server.model.exceptions.NotEnoughTilesException;
 import it.polimi.ingsw.server.model.player.Player;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 import it.polimi.ingsw.server.model.tokens.ScoringToken;
 import it.polimi.ingsw.server.model.tokens.TokenPoint;
 
-import java.io.FileNotFoundException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * This class is used to handle the main logic of a Game
@@ -85,12 +83,11 @@ public class Game implements GameModelInterface {
      * Constructor of the Game objects, it initializes all the attributes, set stdPointsReference, draw the CommonGoalCard, add the host to the game and assign to him a PersonalGoalCard
      * @param numPlayers is the total number of the players for the game, the initialization of the board changes based on this
      * @param host is the Player that have created the game
-     * @throws FileNotFoundException if there was a problem loading the JSON config files
      * @throws NegativeFieldException if the number of cards to draw is negative
      * @throws PlayersNumberOutOfRange if the numPlayers is less than 2 or more than 4
      * @throws NotEnoughCardsException if the cards to be drawn are more than the number of cards loaded with the JSON file configuration
      */
-    public Game(int numPlayers, Player host) throws FileNotFoundException, NegativeFieldException, PlayersNumberOutOfRange, NotEnoughCardsException {
+    public Game(int numPlayers, Player host) throws NegativeFieldException, PlayersNumberOutOfRange, NotEnoughCardsException, IllegalFilePathException {
         Objects.requireNonNull(host);
         this.gameListener = new GameListener();
         this.numPlayers = numPlayers;
@@ -98,8 +95,8 @@ public class Game implements GameModelInterface {
         this.players = new ArrayList<>();
         this.crashedPlayers = new ArrayList<>();
         this.livingRoom = new LivingRoomBoard(numPlayers);
-        DeckCommon deckCommon = new DeckCommon(numPlayers, Objects.requireNonNull(ClassLoader.getSystemResource("commonCards.json")).getPath());
-        this.deckPersonal = new DeckPersonal(Objects.requireNonNull(ClassLoader.getSystemResource("personalCards.json")).getPath(), Objects.requireNonNull(ClassLoader.getSystemResource("pointsReference.json")).getPath());
+        DeckCommon deckCommon = new DeckCommon(numPlayers, "commonCards.json");
+        this.deckPersonal = new DeckPersonal("personalCards.json", "pointsReference.json");
         this.bagHolder = new BagHolder();
         this.isStarted = false;
         this.isLastTurn = false;
@@ -345,8 +342,7 @@ public class Game implements GameModelInterface {
             player.updatePoints(stdPointsReference);
         }
         Player winner = players.stream().max(Comparator.comparing(Player::getPoints)).get();
-        List<Player> tempPlayers = new ArrayList<>();
-        tempPlayers =  players.stream().sorted(Comparator.comparing(Player::getPoints)).collect(Collectors.toList());
+        List<Player> tempPlayers = players.stream().sorted(Comparator.comparing(Player::getPoints)).toList();
         /* calls the listener */
         Map<String,Integer> scoreboard = new LinkedHashMap<>();
         for( Player player : tempPlayers){
@@ -379,8 +375,6 @@ public class Game implements GameModelInterface {
 
                 try {
                     newPlayer.assignPersonalCard(deckPersonal.draw(1).get(0));
-                } catch (FileNotFoundException e) {
-                    throw new RuntimeException(e);
                 } catch (NotEnoughCardsException e) {
                     throw new RuntimeException(e);
                 } catch (NegativeFieldException e) {

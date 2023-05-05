@@ -6,15 +6,15 @@ import com.google.gson.JsonObject;
 import it.polimi.ingsw.server.controller.LobbyController;
 import it.polimi.ingsw.server.model.lobby.Lobby;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
@@ -81,15 +81,13 @@ public class ServerMain {
                 portNumber = Integer.parseInt(args[1]);
             } else {
                 Gson gson = new Gson();
-                JsonObject job = gson.fromJson(new FileReader(ClassLoader.getSystemResource("HostAndPort.json").getPath()), JsonObject.class);
+                JsonObject job = gson.fromJson(new InputStreamReader(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("HostAndPort.json"))), JsonObject.class);
                 portNumber = gson.fromJson(job.get("portNumber"), Integer.class);
                 hostName = gson.fromJson(job.get("hostName"), String.class);
             }
 
             ServerMain echoServer = new ServerMain(portNumber, hostName);
             echoServer.startServer();
-        }catch (FileNotFoundException e){
-            System.err.println(e.getMessage());
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }

@@ -1,6 +1,6 @@
 [
   {
-    "cardType": "checkPattern",
+    "cardType": "CheckPattern",
     "description": "Five tiles of the same type forming a diagonal.",
     "name": "MARIO_PYRAMID",
     "Attributes": {
@@ -39,7 +39,7 @@
     }
   },
   {
-    "cardType": "checkPattern",
+    "cardType": "CheckPattern",
     "description": "Four tiles of the same type in the four corners of the bookshelf.",
     "name": "MARIO_PYRAMID",
     "Attributes": {
@@ -92,7 +92,8 @@
     "name": "MARIO_PYRAMID",
     "Attributes": {
       "sameTiles": false,
-      "nRows": 2
+      "nRows": 2,
+      "maxTilesFrule": 5
     }
   },
   {
@@ -101,7 +102,8 @@
     "name": "MARIO_PYRAMID",
     "Attributes": {
       "sameTiles": false,
-      "nCols": 2
+      "nCols": 2,
+      "maxTilesFrule": 5
     }
   },
   {
@@ -138,7 +140,7 @@
     "description": "Five tiles of the same type forming an X.",
     "name": "MARIO_PYRAMID",
     "Attributes": {
-        "sameTiles": true
+      "sameTiles": true
     }
   },
   {
@@ -148,9 +150,10 @@
   },
   {
     "cardType": "NsameTiles",
-    "nTiles" : 8,
     "description": "Eight tiles of the same type. There’s no restriction about the position of these tiles.",
-    "name": "MARIO_PYRAMID"
+    "name": "MARIO_PYRAMID",
+    "Attributes": {
+      "nTiles" : 8
+    }
   }
-
 ]

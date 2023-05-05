@@ -7,12 +7,12 @@ import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.server.model.exceptions.PlayersNumberOutOfRange;
 import it.polimi.ingsw.server.model.exceptions.SlotFullException;
 import it.polimi.ingsw.server.model.listeners.BoardListener;
-import it.polimi.ingsw.server.model.livingRoom.exceptions.NotEnoughTilesException;
+import it.polimi.ingsw.server.model.exceptions.NotEnoughTilesException;
 import it.polimi.ingsw.remoteInterfaces.BoardSubscriber;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.*;
 import java.util.ArrayList;
 import java.util.Map;
@@ -56,33 +56,32 @@ public class LivingRoomBoard {
     /**
      * Constructor for the LivingRoomBoard class. It creates the layout of the board depending on how many players will play the game
      * @param numPlayers Number of players that play the game
-     * @throws FileNotFoundException if the configuration file for the board is not found
      * @throws PlayersNumberOutOfRange if the given number of players is out of range
      */
-    public LivingRoomBoard(int numPlayers) throws FileNotFoundException, PlayersNumberOutOfRange {
+    public LivingRoomBoard(int numPlayers) throws PlayersNumberOutOfRange {
 
         slot = new Slot[rows][cols];
         this.boardListener = new BoardListener();
 
         int row,col;
         SlotType slotType;
-        String confFilePath;
+        InputStream confFilePath;
         Gson gson = new Gson();
 
         if(numPlayers <= 0 || numPlayers > MAX_PLAYERS) {
             throw new PlayersNumberOutOfRange("numPlayers is "+numPlayers+" it must be between 0 and "+MAX_PLAYERS+"!");
         } else if(numPlayers == 3) {
             this.numCells = NCELL_3PLAYER;
-            confFilePath = Objects.requireNonNull(ClassLoader.getSystemResource("3PlayersPattern.json")).getPath();
+            confFilePath = Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("3PlayersPattern.json"));
         } else if(numPlayers == MAX_PLAYERS) {
             this.numCells = NCELL_4PLAYER;
-            confFilePath = Objects.requireNonNull(ClassLoader.getSystemResource("4orMorePlayersPattern.json")).getPath();
+            confFilePath = Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("4orMorePlayersPattern.json"));
         } else {
             this.numCells = NCELL_2PLAYER;
-            confFilePath = Objects.requireNonNull(ClassLoader.getSystemResource("2PlayersPattern.json")).getPath();
+            confFilePath = Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("2PlayersPattern.json"));
         }
 
-        JsonLivingBoardCell[][] jsonCells = gson.fromJson(new FileReader(confFilePath), JsonLivingBoardCell[][].class);
+        JsonLivingBoardCell[][] jsonCells = gson.fromJson(new InputStreamReader(confFilePath), JsonLivingBoardCell[][].class);
         for(int i=0; i<rows; i++) {
             for(int j=0; j<cols; j++) {
                 row = jsonCells[i][j].row;
@@ -139,7 +138,7 @@ public class LivingRoomBoard {
      * @throws SlotFullException
      */
     protected void customRefill(Map<Coordinates,ItemTile> tilesMap) throws InvalidCoordinatesException, SlotFullException {
-       ArrayList<ItemTile> garbage = emptyBoard();
+       emptyBoard();
        for (Map.Entry<Coordinates, ItemTile> elem: tilesMap.entrySet()){
            addTile(elem.getKey(), elem.getValue());
         }
@@ -242,11 +241,12 @@ public class LivingRoomBoard {
         int row,col;
         Optional<ItemTile> newTile = Optional.of(itemTile);
 
-        if (coo.getRow() >= this.rows || coo.getColumn() >= this.cols) throw new InvalidCoordinatesException("there is no cell in this coordinate!");
-
         if(coo == null) {
             throw new NullPointerException("Coordinates object is null");
         }
+
+        if (coo.getRow() >= this.rows || coo.getColumn() >= this.cols) throw new InvalidCoordinatesException("there is no cell in this coordinate!");
+
         row = coo.getRow();
         col = coo.getColumn();
         if(slot[row][col].getItemTile().isPresent()) {
@@ -296,11 +296,13 @@ public class LivingRoomBoard {
      * @throws EmptySlotException is thrown if a coordinates results to an empty slot
      */
     public boolean checkValidRetrieve(ArrayList<Coordinates> coordinates) throws EmptySlotException {
+        if(coordinates == null || coordinates.contains(null))
+            throw new NullPointerException("Coordinates list is/contains null");
+
         ArrayList<Coordinates> coo = new ArrayList<>(coordinates);
         int diffRow, diffCol;
-        if(coo == null || coo.contains(null))
-            throw new NullPointerException("Coordinates list is/contains null");
-        else if(coo.isEmpty()) {
+
+        if(coo.isEmpty()) {
             return false;
         } else {
             for(Coordinates curr : coo) {
