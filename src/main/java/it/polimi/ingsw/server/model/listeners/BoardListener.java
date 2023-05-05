@@ -5,7 +5,6 @@ import it.polimi.ingsw.remoteInterfaces.BoardSubscriber;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 /**
  * provides updates of the board state
@@ -16,7 +15,7 @@ public class BoardListener extends Listener<BoardSubscriber> {
      * when the tiles on the boards change, the observers are notified
      * @param tilesInBoard the tiles in the board, with a map containing Coordinates and the item tile in that coordinate
      */
-    public void onBoardChange(Map<Coordinates, Optional<ItemTile>> tilesInBoard ){
+    public void onBoardChange(Map<Coordinates, ItemTile> tilesInBoard ){
 
         Set<BoardSubscriber> observers = this.getSubscribers();
         for (BoardSubscriber ob : observers) {
@@ -29,7 +28,7 @@ public class BoardListener extends Listener<BoardSubscriber> {
      * @param userToBeUpdated the username of the user that needs to receive the updates
      * @param currentTilesMap is the map of each coordinate of the board with the corresponding ItemTile or Optional if empty
      */
-    public void triggerListener(String userToBeUpdated, Map<Coordinates, Optional<ItemTile>> currentTilesMap){
+    public void triggerListener(String userToBeUpdated, Map<Coordinates, ItemTile> currentTilesMap){
         Set<BoardSubscriber> subscribers = this.getSubscribers();
 
         for (BoardSubscriber sub : subscribers) {

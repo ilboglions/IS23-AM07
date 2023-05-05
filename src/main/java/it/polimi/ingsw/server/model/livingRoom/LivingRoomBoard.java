@@ -102,14 +102,17 @@ public class LivingRoomBoard {
      * Get a copy of the slot matrix
      * @return a copy of the slot matrix
      */
-    private Map<Coordinates,Optional<ItemTile>> getItemTilesMapFromBoard()  {
+    private Map<Coordinates,ItemTile> getItemTilesMapFromBoard()  {
 
-        Map<Coordinates,Optional<ItemTile>> itemTilesmap = new HashMap<>();
+        Map<Coordinates,ItemTile> itemTilesmap = new HashMap<>();
+        Optional<ItemTile> tmpTile;
         for(int i=0; i< this.rows; i++){
             for(int j=0; j < this.cols; j++){
               if(slot[i][j].getSlotType().equals(SlotType.BASIC)){
                   try {
-                      itemTilesmap.put(new Coordinates(i,j), slot[i][j].getItemTile());
+                      tmpTile = slot[i][j].getItemTile();
+                      if(tmpTile.isPresent())
+                        itemTilesmap.put(new Coordinates(i,j), tmpTile.get());
                   } catch (InvalidCoordinatesException e) {
                       throw new RuntimeException(e);
                   }
