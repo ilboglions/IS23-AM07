@@ -14,19 +14,36 @@ import it.polimi.ingsw.server.model.tiles.ItemTile;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.*;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Optional;
 
 import static it.polimi.ingsw.server.model.utilities.UtilityFunctions.MAX_PLAYERS;
 
+/**
+ * LivingRoomBoard represent the living room board and implements all the methods necessary
+ */
 public class LivingRoomBoard {
 
 
     private static final int NCELL_3PLAYER = 37;
     private static final int NCELL_4PLAYER = 45;
     private static final int NCELL_2PLAYER = 29;
-
+    /**
+     * matrix of slots to represent the board
+     */
     private final Slot[][] slot;
+    /**
+     * board's number of rows
+     */
     private final int rows = 9;
+    /**
+     * board's number of columns
+     */
     private final int cols = 9;
+    /**
+     * board's number of valid cells; depends on the number of players that play the game
+     */
     private final int numCells;
 
     private final BoardListener boardListener;
@@ -35,42 +52,21 @@ public class LivingRoomBoard {
         boardListener.addSubscriber(subscriber);
     }
 
-    /*public LivingRoomBoard() throws FileNotFoundException {
-        //create the pattern of the living room board
-        //let's create the pattern per rows
-        slot = new Slot[rows][cols];
-        int row,col;
-        SlotType slotType;
-        //read a json file with the configuration of the board, from the file you will have coordinates and type
-        Gson gson = new Gson();
 
-        JsonLivingBoardCell[][] jsonCells = gson.fromJson(new FileReader("src/main/java/it/polimi/ingsw/model/livingRoom/confFiles/livingRoomBoardPattern.json"), JsonLivingBoardCell[][].class);
-        for(int i=0; i<rows; i++) {
-            for(int j=0; j<cols; j++) {
-                row = jsonCells[i][j].row;
-                col = jsonCells[i][j].col;
-                slotType = jsonCells[i][j].slotType;
-                slot[row][col] = new Slot(slotType, Optional.empty());
-            }
-        }
-    }
-    */
-    /*
-        This overload creates a different pattern of livingRoom based on the number of player.
-        In the patterns there is no distinction of ATLEAST4, ATLEAST3 or BASIC cell; there will be only BASIC and NOTCELL
-        slots.
-    */
-
+    /**
+     * Constructor for the LivingRoomBoard class. It creates the layout of the board depending on how many players will play the game
+     * @param numPlayers Number of players that play the game
+     * @throws FileNotFoundException if the configuration file for the board is not found
+     * @throws PlayersNumberOutOfRange if the given number of players is out of range
+     */
     public LivingRoomBoard(int numPlayers) throws FileNotFoundException, PlayersNumberOutOfRange {
-        //create the pattern of the living room board
-        //let's create the pattern per rows
+
         slot = new Slot[rows][cols];
         this.boardListener = new BoardListener();
 
         int row,col;
         SlotType slotType;
         String confFilePath;
-        //read a json file with the configuration of the board, from the file you will have coordinates and type
         Gson gson = new Gson();
 
         if(numPlayers <= 0 || numPlayers > MAX_PLAYERS) {
@@ -103,8 +99,8 @@ public class LivingRoomBoard {
     }
 
     /**
-     * Private method used to gets an itemTiles map for listeners
-     * @return the map containing the coordinates and an optional of the item tile
+     * Get a copy of the slot matrix
+     * @return a copy of the slot matrix
      */
     private Map<Coordinates,Optional<ItemTile>> getItemTilesMapFromBoard()  {
 
@@ -133,15 +129,31 @@ public class LivingRoomBoard {
         return newslot;
     }
 
+    /**
+     * Custom fill the livingroomboard for testing purposes
+     * @param tilesMap contains the coordinates and tiles to fill the board with.
+     * @throws InvalidCoordinatesException
+     * @throws SlotFullException
+     */
+    protected void customRefill(Map<Coordinates,ItemTile> tilesMap) throws InvalidCoordinatesException, SlotFullException {
+       ArrayList<ItemTile> garbage = emptyBoard();
+       for (Map.Entry<Coordinates, ItemTile> elem: tilesMap.entrySet()){
+           addTile(elem.getKey(), elem.getValue());
+        }
+
+    }
+
+    /**
+     * Refill the living room board with new tiles
+     * @return true if the board has to be refilled, false otherwise
+     */
     public boolean checkRefill() {
-        // this method tells you if the livingRoom needs to be refilled with new tiles or not
-        // the board must be refilled if the next player can only take single tiles => there are not 2 tiles adjacient in the board
         Slot currSlot;
         for(int i=0; i<rows; i++) {
             for(int j=0; j<cols-1; j++) {
                 currSlot = slot[i][j];
-                if(currSlot.getSlotType() == SlotType.BASIC) { // if the slot is a valid one
-                    if (currSlot.getItemTile().isPresent()) { // and there is a tile on it
+                if(currSlot.getSlotType() == SlotType.BASIC) {
+                    if (currSlot.getItemTile().isPresent()) {
                         if (slot[i][j+1].getSlotType() == SlotType.BASIC && slot[i + 1][j].getItemTile().isPresent()) {
                             return false;
                         }
@@ -149,8 +161,8 @@ public class LivingRoomBoard {
                 }
 
                 currSlot = slot[j][i];
-                if(currSlot.getSlotType() == SlotType.BASIC) { // if the slot is a valid one
-                    if (currSlot.getItemTile().isPresent()) { // and there is a tile on it
+                if(currSlot.getSlotType() == SlotType.BASIC) {
+                    if (currSlot.getItemTile().isPresent()) {
                         if (slot[j+1][i].getSlotType() == SlotType.BASIC && slot[j+1][i].getItemTile().isPresent()) {
                             return false;
                         }
@@ -162,7 +174,6 @@ public class LivingRoomBoard {
     }
 
     public ArrayList<ItemTile> emptyBoard() {
-        // this method will empty the board returning a list with the tiles removed
         Slot curr;
         ArrayList<ItemTile> removed = new ArrayList<>();
         try {
@@ -178,12 +189,14 @@ public class LivingRoomBoard {
         } catch(InvalidCoordinatesException e){
             throw new RuntimeException(e);
         }
-
-
-
         return removed;
     }
 
+    /**
+     * Refill the living room board
+     * @param tiles contains the tiles that are going to be inserted in the board
+     * @throws NotEnoughTilesException is thrown if the given tiles are not enough
+     */
     public void refillBoard(ArrayList<ItemTile> tiles) throws NotEnoughTilesException {
         Slot curr;
         if(tiles.size() < this.numCells)
@@ -193,7 +206,7 @@ public class LivingRoomBoard {
                 for(int j=0; j<this.cols; j++) {
                     curr = slot[i][j];
                     if(curr.getSlotType() == SlotType.BASIC) {
-                        curr.setItemTile(Optional.of(tiles.get(0))); // create an optional with the tile to be inserted and put the optional inside the slot
+                        curr.setItemTile(Optional.of(tiles.get(0)));
                         tiles.remove(0);
                     }
                 }
@@ -201,6 +214,12 @@ public class LivingRoomBoard {
         }
     }
 
+    /**
+     * Return the content of a slot from the living room board
+     * @param coo is the coordinates object for the tile to be retrieved
+     * @return Optional with the content of the slot requested
+     * @throws InvalidCoordinatesException is thrown if the coordinates are out of range
+     */
     public Optional<ItemTile> getTile(Coordinates coo) throws InvalidCoordinatesException {
     if(coo == null)
             throw new NullPointerException("Given coordinates are null");
@@ -208,7 +227,15 @@ public class LivingRoomBoard {
             return slot[coo.getRow()][coo.getColumn()].getItemTile();
         }
     }
-    public void addTile(Coordinates coo,ItemTile itemTile) throws SlotFullException, InvalidCoordinatesException {
+
+    /**
+     * Used to add a single tile to the board
+     * @param coo the coordinates of the slot where to put the new tile
+     * @param itemTile the type of tile to be inserted
+     * @throws SlotFullException is thrown if the requested slot has already a tile on it
+     * @throws InvalidCoordinatesException is thrown if the coordinates are out of range
+     */
+    protected void addTile(Coordinates coo,ItemTile itemTile) throws SlotFullException, InvalidCoordinatesException {
         int row,col;
         Optional<ItemTile> newTile = Optional.of(itemTile);
 
@@ -220,17 +247,16 @@ public class LivingRoomBoard {
         row = coo.getRow();
         col = coo.getColumn();
         if(slot[row][col].getItemTile().isPresent()) {
-            /*
-                it is not possible to put a new tile in a slot which is full at the moment.
-                if you want to replace the tile, remove it first and then add the new tile
-             */
             throw new SlotFullException("The slot "+row+" "+col+" has already a tile");
         } else {
-            // add a new tile, the spot is empty
             slot[row][col].setItemTile(newTile);
         }
     }
 
+    /**
+     * Used to remove a single tile from the board
+     * @param coo coordinates of the requested slot
+     */
     public void removeTile(Coordinates coo) {
         int row, col;
 
@@ -239,21 +265,33 @@ public class LivingRoomBoard {
         else {
             row = coo.getRow();
             col = coo.getColumn();
-            // if the slot is a NOTCELL it does not matter, further checks are useless
             slot[row][col].setItemTile(Optional.empty());
         }
     }
 
+    /**
+     * Get the number of valid cells in this instance of the board
+     * @return number of valid/usable cells in the board (numCells changes depending on the number of players)
+     */
     public int getNumCells() {
         return numCells;
     }
 
+    /**
+     * Nested class used to cast the objects from the configuration file
+     */
     protected class JsonLivingBoardCell {
         public int row,col;
         public SlotType slotType;
 
     }
 
+    /**
+     * Check if the given retrieve from the board is valid
+     * @param coordinates the coordinates of the tiles that the caller wants to retrieve from the board
+     * @return true if the requested move is valid, false otherwise
+     * @throws EmptySlotException is thrown if a coordinates results to an empty slot
+     */
     public boolean checkValidRetrieve(ArrayList<Coordinates> coordinates) throws EmptySlotException {
         ArrayList<Coordinates> coo = new ArrayList<>(coordinates);
         int diffRow, diffCol;
@@ -314,10 +352,11 @@ public class LivingRoomBoard {
         }
     }
 
-    // in order to use properly this method the coordinates list needs to be ordered from top to bottom and from left to right
-    // example: 00 -> 01 -> 03 is ordered properly and the check will return false
-    // example: 00 -> 03 -> 01 is not ordered properly
-    // it is the same for vertical alignments, start from top to bottom
+    /**
+     * Check if the series of coordinates creates a segment parallel to X
+     * @param coo series of coordinates (MUST BE SORTED BY X FROM LEFT TO RIGHT)
+     * @return true if the series of coordinates creates a segment parallel to X, false otherwise
+     */
     private boolean checkParallelX(ArrayList<Coordinates> coo) {
         if(coo == null || coo.contains(null))
             throw new NullPointerException("Coordinates list is/contains null");
@@ -335,6 +374,11 @@ public class LivingRoomBoard {
         }
         return true;
     }
+    /**
+     * Check if the series of coordinates creates a segment parallel to Y
+     * @param coo series of coordinates (MUST BE SORTED BY Y FROM TOP TO BOTTOM)
+     * @return true if the series of coordinates creates a segment parallel to Y, false otherwise
+     */
     private boolean checkParallelY(ArrayList<Coordinates> coo) {
         if(coo == null || coo.contains(null))
             throw new NullPointerException("Coordinates list is/contains null");
@@ -352,19 +396,40 @@ public class LivingRoomBoard {
         return true;
     }
 
-    private boolean checkFreeSide(Coordinates coo)  {
+    /**
+     * Check if a tile has a free side
+     * @param coo coordinates of the requested slot
+     * @return true if the tile has a free side, false otherwise
+     * @throws EmptySlotException is thrown if the given coordinates result in an empty slot
+     */
+    private boolean checkFreeSide(Coordinates coo) throws EmptySlotException{
         int i = 2;
         int d;
+        boolean a,b;
+
+        if(slot[coo.getRow()][coo.getColumn()].getItemTile().isEmpty())
+            throw new EmptySlotException("Checking for the free side of an empty slot");
 
         for( int x = 0; x < i; x++){
 
-                d = x % 2 == 0 ? 1 : -1;
-                try {
-                    if (this.getTile(new Coordinates(coo.getRow() + d, coo.getColumn())).isEmpty() || this.getTile(new Coordinates(coo.getRow(), coo.getColumn() + d)).isEmpty())
-                        return true;
-                }catch (InvalidCoordinatesException ignore){
+            a=false;
+            b=false;
+            d = x % 2 == 0 ? 1 : -1;
+            try {
+                a = this.getTile(new Coordinates(coo.getRow() + d, coo.getColumn())).isEmpty();
+            }
+            catch (InvalidCoordinatesException ignore){
 
-                }
+            }
+            try {
+                b = this.getTile(new Coordinates(coo.getRow(), coo.getColumn() + d)).isEmpty();
+            }
+            catch (InvalidCoordinatesException ignore){
+
+            }
+            if ( a || b ) {
+                return true;
+            }
         }
         return false;
 
