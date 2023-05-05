@@ -12,7 +12,6 @@ import java.util.Map;
 
 import java.rmi.*;
 import java.rmi.server.*;
-import java.util.Optional;
 
 /**
  * the lobby controller ensures the communication through client controller and server model
@@ -58,15 +57,15 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
      * make it possible for the player to join the lobby e select a game
      *
      * @param player the username of the player to be added
-     * @return a RemoteGameController, if the player was crashed, an empty optional if the player is correctly logged in the  lobby
+     * @return a RemoteGameController, if the player was crashed, null if the player is correctly logged in the  lobby
      * @throws NicknameAlreadyUsedException if the player is already inside a game
-     * @throws RemoteException in case of a network error occurs
+     * @throws RemoteException              in case of a network error occurs
      */
-    public Optional<RemoteGameController> enterInLobby(String player) throws RemoteException, NicknameAlreadyUsedException {
+    public RemoteGameController enterInLobby(String player) throws RemoteException, NicknameAlreadyUsedException {
         synchronized (lobbyLock) {
             try {
                 lobbyModel.createPlayer(player);
-                return Optional.empty();
+                return null;
             } catch (NicknameAlreadyUsedException e) {
 
                 /* search if the player is crashed in a game */
@@ -76,7 +75,7 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
                             entry.getValue().handleRejoinedPlayer(player);
                         } catch (PlayerNotFoundException ignored) {
                         }
-                        return Optional.of(entry.getValue());
+                        return entry.getValue();
                     }
                 }
                 throw e;
@@ -90,12 +89,17 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
      * @param player the nickname of the player to be added
      * @return an optional of GameController, if no game is in the lobby, an empty value will be filled
      */
-    public RemoteGameController addPlayerToGame(String player) throws RemoteException, NicknameAlreadyUsedException, NoAvailableGameException, InvalidPlayerException, PlayersNumberOutOfRange {
+    public RemoteGameController addPlayerToGame(String player) throws RemoteException, NicknameAlreadyUsedException, NoAvailableGameException, InvalidPlayerException {
         synchronized (lobbyLock) {
 
             GameController gameController;
 
-            GameModelInterface gameModel = lobbyModel.addPlayerToGame(player);
+            GameModelInterface gameModel = null;
+            try {
+                gameModel = lobbyModel.addPlayerToGame(player);
+            } catch (PlayersNumberOutOfRange e) {
+                throw new NoAvailableGameException("all the games are full!");
+            }
             gameController = gameControllers.get(gameModel);
 
             try {
@@ -118,14 +122,19 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
      * @param nPlayers the number of players for the game
      * @return the GameController, if the game creation is not possible, an empty value will be returned
      */
-    public RemoteGameController createGame(String player, int nPlayers) throws RemoteException, InvalidPlayerException, BrokenInternalGameConfigurations, PlayersNumberOutOfRange {
+    public RemoteGameController createGame(String player, int nPlayers) throws RemoteException, InvalidPlayerException, PlayersNumberOutOfRange {
         synchronized (lobbyLock) {
             GameController gameController;
-            GameModelInterface gameModel = lobbyModel.createGame(nPlayers, player);
+            GameModelInterface gameModel = null;
+            try {
+                gameModel = lobbyModel.createGame(nPlayers, player);
+            } catch (BrokenInternalGameConfigurations e) {
+                throw new RuntimeException(e);
+            }
             gameController = new GameController(gameModel);
             this.gameControllers.put(gameModel, gameController);
-            if(timers.containsKey(player))
-                this.stopTimer(player);
+
+            this.stopTimer(player);
             return gameController;
         }
     }
@@ -162,7 +171,8 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
      * @param username the username of the player
      */
     private void stopTimer(String username){
-        this.timers.get(username).cancel();
+        if(timers.containsKey(username))
+            this.timers.get(username).cancel();
     }
 
     /**

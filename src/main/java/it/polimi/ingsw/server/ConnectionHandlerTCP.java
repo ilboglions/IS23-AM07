@@ -77,7 +77,6 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
 
     private NetMessage messageParser(NetMessage inputMessage) throws RemoteException {
         NetMessage outputMessage;
-        Optional<RemoteGameController> tempGameController;
         boolean result;
         String errorType = "";
         String desc = "";
@@ -89,9 +88,8 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
                 JoinLobbyMessage joinLobbyMessage = (JoinLobbyMessage) inputMessage;
                 this.username = joinLobbyMessage.getUsername();
                 try {
-                     tempGameController = lobbyController.enterInLobby(joinLobbyMessage.getUsername());
-                     if(tempGameController.isPresent()){
-                         gameController = tempGameController.get();
+                    gameController = lobbyController.enterInLobby(joinLobbyMessage.getUsername());
+                     if(gameController != null){
                           IsPlayerrejoined = true;
                      } else {
                          IsPlayerrejoined = false;
@@ -117,9 +115,6 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
                 } catch (InvalidPlayerException e) {
                     result = false;
                     errorType = "InvalidPlayer";
-                } catch (BrokenInternalGameConfigurations e) {
-                    result = false;
-                    errorType = "BrokenInternalGameConfiguration";
                 } catch (PlayersNumberOutOfRange e) {
                     result = false;
                     errorType = "PlayersNumberOutOfRange";
@@ -143,16 +138,19 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
                 } catch (InvalidPlayerException e) {
                     result = false;
                     errorType = "InvalidPlayerException";
-                } catch (PlayersNumberOutOfRange e) {
-                    result = false;
-                    errorType = "PlayersNumberOutOfRange";
                 }
                 outputMessage = new ConfirmGameMessage(result, errorType, "");
             }
             case TILES_SELECTION -> {
                 TileSelectionMessage tileSelectionMessage = (TileSelectionMessage) inputMessage;
-                result = gameController.checkValidRetrieve(username, tileSelectionMessage.getTiles());
-                outputMessage = new ConfirmSelectionMessage(result);
+                try {
+                    result = gameController.checkValidRetrieve(username, tileSelectionMessage.getTiles());
+                } catch (EmptySlotException e) {
+                    result = false;
+                    errorType = "EmptySlotException";
+                    desc = "you cannot select those slots";
+                }
+                outputMessage = new ConfirmSelectionMessage(result,errorType,desc);
             }
             case MOVE_TILES -> {
                 MoveTilesMessage moveTilesMessage = (MoveTilesMessage) inputMessage;
@@ -179,14 +177,6 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
                 } catch (InvalidCoordinatesException e) {
                     result = false;
                     errorType = "InvalidCoordinatesException";
-                    desc = e.getMessage();
-                } catch (InvalidPlayerException e) {
-                    result = false;
-                    errorType = "InvalidPlayerException";
-                    desc = e.getMessage();
-                } catch (TokenAlreadyGivenException e) {
-                    result = false;
-                    errorType = "TokenAlreadyGivenException";
                     desc = e.getMessage();
                 } catch (PlayerNotInTurnException e) {
                     result = false;

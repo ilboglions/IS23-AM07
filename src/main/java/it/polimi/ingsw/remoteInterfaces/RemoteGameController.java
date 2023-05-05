@@ -7,9 +7,9 @@ import java.util.ArrayList;
 
 public interface RemoteGameController extends Remote{
 
-    boolean checkValidRetrieve(String player, ArrayList<Coordinates> coords) throws RemoteException;
+    boolean checkValidRetrieve(String player, ArrayList<Coordinates> coords) throws RemoteException, EmptySlotException;
 
-    void moveTiles(String player, ArrayList<Coordinates> source, int column) throws RemoteException, GameNotStartedException, GameEndedException, EmptySlotException, NotEnoughSpaceException, InvalidCoordinatesException, InvalidPlayerException, TokenAlreadyGivenException, PlayerNotInTurnException;
+    void moveTiles(String player, ArrayList<Coordinates> source, int column) throws RemoteException, GameNotStartedException, GameEndedException, NotEnoughSpaceException, PlayerNotInTurnException, EmptySlotException, InvalidCoordinatesException;
 
     void postBroadCastMessage(String player, String message) throws RemoteException, InvalidPlayerException;
 

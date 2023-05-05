@@ -1,5 +1,8 @@
 package it.polimi.ingsw.client.connection;
 // da spostare le coordinates in un altro package (?)
+import it.polimi.ingsw.messages.MessageType;
+import it.polimi.ingsw.messages.NetMessage;
+import it.polimi.ingsw.messages.PostMessage;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 
 import java.io.IOException;
@@ -55,5 +58,7 @@ public interface ConnectionHandler {
      * @throws RemoteException if a connection problem occurs
      */
     void sendHeartBeat() throws RemoteException;
+    void sendMessage(String content);
+     void sendMessage(String content, String recipient);
 
 }

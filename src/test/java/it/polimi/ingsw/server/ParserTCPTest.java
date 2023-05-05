@@ -1,6 +1,7 @@
 package it.polimi.ingsw.server;
 
 import it.polimi.ingsw.client.connection.ClientSocket;
+import it.polimi.ingsw.client.view.CliView;
 import it.polimi.ingsw.messages.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -63,7 +64,7 @@ public class ParserTCPTest {
 
     @Test
     void ClientSimulatorTest(){
-        ClientSocket client = new ClientSocket(ip, port);
+        ClientSocket client = new ClientSocket(ip, port, new CliView());
         client.JoinLobby("Username");
         client.CreateGame(4);
         try {

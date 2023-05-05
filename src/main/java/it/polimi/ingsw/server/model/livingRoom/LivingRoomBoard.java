@@ -77,13 +77,13 @@ public class LivingRoomBoard {
             throw new PlayersNumberOutOfRange("numPlayers is "+numPlayers+" it must be between 0 and "+MAX_PLAYERS+"!");
         } else if(numPlayers == 3) {
             this.numCells = NCELL_3PLAYER;
-            confFilePath = "src/main/resources/3PlayersPattern.json";
+            confFilePath = Objects.requireNonNull(ClassLoader.getSystemResource("3PlayersPattern.json")).getPath();
         } else if(numPlayers == MAX_PLAYERS) {
             this.numCells = NCELL_4PLAYER;
-            confFilePath = "src/main/resources/4orMorePlayersPattern.json";
+            confFilePath = Objects.requireNonNull(ClassLoader.getSystemResource("4orMorePlayersPattern.json")).getPath();
         } else {
             this.numCells = NCELL_2PLAYER;
-            confFilePath = "src/main/resources/2PlayersPattern.json";
+            confFilePath = Objects.requireNonNull(ClassLoader.getSystemResource("2PlayersPattern.json")).getPath();
         }
 
         JsonLivingBoardCell[][] jsonCells = gson.fromJson(new FileReader(confFilePath), JsonLivingBoardCell[][].class);

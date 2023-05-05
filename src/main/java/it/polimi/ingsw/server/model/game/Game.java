@@ -98,8 +98,8 @@ public class Game implements GameModelInterface {
         this.players = new ArrayList<>();
         this.crashedPlayers = new ArrayList<>();
         this.livingRoom = new LivingRoomBoard(numPlayers);
-        DeckCommon deckCommon = new DeckCommon(numPlayers, "src/main/resources/commonCards.json");
-        this.deckPersonal = new DeckPersonal("src/main/resources/personalCards.json", "src/main/resources/pointsReference.json");
+        DeckCommon deckCommon = new DeckCommon(numPlayers, Objects.requireNonNull(ClassLoader.getSystemResource("commonCards.json")).getPath());
+        this.deckPersonal = new DeckPersonal(Objects.requireNonNull(ClassLoader.getSystemResource("personalCards.json")).getPath(), Objects.requireNonNull(ClassLoader.getSystemResource("pointsReference.json")).getPath());
         this.bagHolder = new BagHolder();
         this.isStarted = false;
         this.isLastTurn = false;

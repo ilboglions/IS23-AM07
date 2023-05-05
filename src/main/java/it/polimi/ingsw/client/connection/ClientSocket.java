@@ -1,5 +1,6 @@
 package it.polimi.ingsw.client.connection;
 
+import it.polimi.ingsw.client.view.ViewInterface;
 import it.polimi.ingsw.messages.*;
 import it.polimi.ingsw.server.ReschedulableTimer;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
@@ -24,34 +25,55 @@ public class ClientSocket implements ConnectionHandler{
     private final Socket connection;
     private final ObjectOutputStream outputStream;
     private final ObjectInputStream inputStream;
-    private NetMessage requestMessage;
-    private NetMessage responseMessage;
     private final Queue<NetMessage> lastReceivedMessages;
     private final ExecutorService threadManager;
     private final ReschedulableTimer timer;
     private final ScheduledExecutorService heartBeatManager;
 
+    private String username;
+    private final ViewInterface view;
+
     private final long timerDelay = 15000;
 
-    public ClientSocket(String ip, int port) {
+    public ClientSocket(String ip, int port, ViewInterface view) {
         this.ip = ip;
         this.port = port;
         this.lastReceivedMessages = new ArrayDeque<>();
         this.timer = new ReschedulableTimer();
         this.threadManager = Executors.newCachedThreadPool();
         this.heartBeatManager = Executors.newSingleThreadScheduledExecutor();
-        /* game port */
+        this.view = view;
+
+        boolean connected = false;
+        Socket tempConnection = null;
+
+        while(!connected){
+            /* game port */
+            try {
+                tempConnection = new Socket(ip, port);
+                connected = true;
+                // here we should create some task that listens the server!
+            } catch ( UnknownHostException e) {
+                view.postNotification("Connection error", "Server this address is not reachable, trying again soon...");
+                try {
+                    this.wait(1000);
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+
+        this.connection = tempConnection;
         try {
-            connection = new Socket(ip, port);
-            outputStream = new ObjectOutputStream(connection.getOutputStream());
-            inputStream = new ObjectInputStream(connection.getInputStream());
-            // here we should create some task that listens the server!
-        } catch ( UnknownHostException e) {
-            System.out.println("Server this address is not reachable");
-            throw new RuntimeException(e);
-        }catch (IOException e) {
+            this.outputStream = new ObjectOutputStream(connection.getOutputStream());
+            this.inputStream = new ObjectInputStream(connection.getInputStream());
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
         timer.schedule(this::handleCrash, this.timerDelay);
         this.messagesHopper();
         this.sendHeartBeat();
@@ -59,7 +81,8 @@ public class ClientSocket implements ConnectionHandler{
     }
 
     private void handleCrash() {
-        System.out.println("Connection Down!\n");
+        view.postNotification("Connection error", "connection with server no longer available!");
+
         this.close();
     }
 
@@ -82,7 +105,8 @@ public class ClientSocket implements ConnectionHandler{
 
     @Override
     public void JoinLobby(String username) {
-        requestMessage = new JoinLobbyMessage(username);
+        this.username = username;
+        JoinLobbyMessage requestMessage = new JoinLobbyMessage(username);
         try {
             synchronized (outputStream) {
                 outputStream.writeObject(requestMessage);
@@ -90,13 +114,13 @@ public class ClientSocket implements ConnectionHandler{
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        responseMessage = getMessageFromBuffer(MessageType.LOGIN_RETURN);
+        NetMessage responseMessage = getMessageFromBuffer(MessageType.LOGIN_RETURN);
         System.out.println(responseMessage.getMessageType());
     }
 
     @Override
     public void CreateGame(int nPlayers) {
-        requestMessage = new CreateGameMessage(nPlayers);
+        CreateGameMessage requestMessage = new CreateGameMessage(nPlayers);
         try {
             synchronized (outputStream) {
                 outputStream.writeObject(requestMessage);
@@ -104,12 +128,12 @@ public class ClientSocket implements ConnectionHandler{
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        responseMessage = getMessageFromBuffer(MessageType.CONFIRM_GAME);
+        NetMessage responseMessage = getMessageFromBuffer(MessageType.CONFIRM_GAME);
     }
 
     @Override
     public void JoinGame() {
-        requestMessage = new JoinGameMessage();
+        JoinGameMessage requestMessage = new JoinGameMessage();
         try {
             synchronized (outputStream) {
                 outputStream.writeObject(requestMessage);
@@ -117,13 +141,14 @@ public class ClientSocket implements ConnectionHandler{
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        responseMessage = getMessageFromBuffer(MessageType.CONFIRM_GAME);
+        NetMessage responseMessage = getMessageFromBuffer(MessageType.CONFIRM_GAME);
+        this.parse(responseMessage);
         //Here the player will receive also the CommonGoalCards, PersonalGoalCard and all the updates of the other players
     }
 
     @Override
     public void checkValidRetrieve(ArrayList<Coordinates> tiles) {
-        requestMessage = new TileSelectionMessage(tiles);
+        TileSelectionMessage requestMessage = new TileSelectionMessage(tiles);
         try {
             synchronized (outputStream) {
                 outputStream.writeObject(requestMessage);
@@ -132,12 +157,12 @@ public class ClientSocket implements ConnectionHandler{
         catch (IOException e) {
             throw new RuntimeException(e);
         }
-        responseMessage = getMessageFromBuffer(MessageType.CONFIRM_SELECTION);
+        NetMessage responseMessage = getMessageFromBuffer(MessageType.CONFIRM_SELECTION);
     }
 
     @Override
     public void moveTiles(ArrayList<Coordinates> tiles, int column) {
-        requestMessage = new MoveTilesMessage(tiles,column);
+        MoveTilesMessage requestMessage = new MoveTilesMessage(tiles, column);
         try {
             synchronized (outputStream) {
                 outputStream.writeObject(requestMessage);
@@ -145,7 +170,7 @@ public class ClientSocket implements ConnectionHandler{
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        responseMessage = getMessageFromBuffer(MessageType.CONFIRM_MOVE);
+        NetMessage responseMessage = getMessageFromBuffer(MessageType.CONFIRM_MOVE);
     }
 
     public void sendMessage(String content){
@@ -155,7 +180,7 @@ public class ClientSocket implements ConnectionHandler{
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        responseMessage = getMessageFromBuffer(MessageType.CONFIRM_CHAT);
+        NetMessage responseMessage = getMessageFromBuffer(MessageType.CONFIRM_CHAT);
 
     }
 
@@ -166,7 +191,7 @@ public class ClientSocket implements ConnectionHandler{
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        responseMessage = getMessageFromBuffer(MessageType.CONFIRM_CHAT);
+        NetMessage responseMessage = getMessageFromBuffer(MessageType.CONFIRM_CHAT);
 
     }
 
@@ -174,11 +199,11 @@ public class ClientSocket implements ConnectionHandler{
     public void sendHeartBeat()  {
         heartBeatManager.scheduleAtFixedRate(
             () -> {
-                requestMessage = new StillActiveMessage();
+                StillActiveMessage requestMessage = new StillActiveMessage();
                 synchronized (outputStream) {
                     try {
                         outputStream.writeObject(requestMessage);
-                        responseMessage = getMessageFromBuffer(MessageType.STILL_ACTIVE);
+                        NetMessage responseMessage = getMessageFromBuffer(MessageType.STILL_ACTIVE);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -220,5 +245,74 @@ public class ClientSocket implements ConnectionHandler{
         }
         return result;
     }
+
+    private void parse(NetMessage responseMessage){
+        switch (responseMessage.getMessageType()){
+            case LOGIN_RETURN -> {
+                LoginReturnMessage message = (LoginReturnMessage) responseMessage;
+                    if(message.getConfirmLogin()){
+                      view.postNotification("Logged in as "+this.username+"!","choose either to create or join a game!");
+                    } else if (message.getConfirmRejoined()) {
+                        view.postNotification("Welcome back "+this.username+"!", "reconnecting to your game...");
+                    } else {
+                        /* an error occurred */
+                        view.postNotification(message.getErrorType(),message.getDetails());
+                    }
+
+            } /* end LOGIN_RETURN */
+            case CONFIRM_GAME -> {
+                ConfirmGameMessage message = (ConfirmGameMessage) responseMessage;
+                if(message.getConfirmGameCreation()){
+                    view.postNotification("Joining game...","sugo");
+                } else{
+                    view.postNotification(message.getErrorType(),message.getDetails());
+                }
+            } /* end CONFIRM_GAME */
+            case CONFIRM_SELECTION -> {
+                ConfirmSelectionMessage message = (ConfirmSelectionMessage) responseMessage;
+                if(message.getConfirmSelection()){
+                    view.postNotification("Your Selection has been accepted!","choose the column to fit the selection!");
+                } else{
+                    view.postNotification(message.getErrorType(),message.getDetails());
+                }
+            }
+            case CONFIRM_MOVE -> {
+                ConfirmMoveMessage message = (ConfirmMoveMessage) responseMessage;
+                if(message.getConfirmSelection()){
+                    view.postNotification("Move done!","grande bro");
+
+                    /* qui immagino
+                    * bookshelf.updateBookshelf( arrayList delle tiles, colonna scelta)
+                    * view.drawBookShelf(bookshelf.getStructure); (questo potrebbe stare benissimo anche in questa sottospecie di minimodel)
+                    * quindi un mini-model lato client che mantiene uno stato (ecco dove stanno i listener!)
+                    **/
+                }
+            }
+
+            case NOTIFY_NEW_CHAT -> {}
+
+            case NOTIFY_WINNING_PLAYER -> {}
+
+            case POINTS_UPDATE -> {}
+
+            case STILL_ACTIVE -> {}
+
+            case TOKEN_UPDATE -> {}
+
+            case CONFIRM_CHAT -> {}
+
+            case BOARD_UPDATE -> {}
+
+            case BOOKSHELF_UPDATE -> {}
+
+            case BOOKSHELF_FULL_UPDATE -> {}
+
+            case PERSONAL_CARD_UPDATE -> {}
+
+            case USER_GAME_CARDS -> {}
+        }
+    }
 }
+
+
 

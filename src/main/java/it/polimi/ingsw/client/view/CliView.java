@@ -7,7 +7,7 @@ import it.polimi.ingsw.server.model.tiles.ItemTile;
 import java.util.Map;
 import java.util.Optional;
 
-public class CliView {
+public class CliView implements ViewInterface {
 
     /**
      * dimension of the game view
@@ -35,7 +35,6 @@ public class CliView {
 
         System.out.println();
     }
-
 
     private void fillEmpty() {
 
@@ -77,7 +76,6 @@ public class CliView {
 
     }
 
-
     public void drawYourBookShelf(Map<Coordinates,ItemTile> tilesMap) throws InvalidCoordinatesException {
 
         int startR = 22;
@@ -111,7 +109,6 @@ public class CliView {
         this.drawBookShelf( tilesMap,startingPoints[0], startingPoints[1] );
 
     }
-
     private int[] getStartsFromTurnOrder(int order){
         int[] startingPoints = new int[2];
         if(order == 0){
@@ -181,8 +178,6 @@ public class CliView {
 
     }
 
-
-
     public void drawLivingRoom(Map<Coordinates, Optional<ItemTile>> livingRoomMap) throws InvalidCoordinatesException {
         Coordinates coord;
         String colorTile;
@@ -222,6 +217,13 @@ public class CliView {
         }
 
     }
+
+    @Override
+    public void postNotification(String title, String description) {
+        System.out.println(title);
+        System.out.println(description);
+    }
+
     private String getColorFromTileType(ItemTile tile){
             switch (tile){
                 case CAT -> {
@@ -246,9 +248,7 @@ public class CliView {
 
         return Color.BLACK.escape();
     }
-
-
-    final void plot() {
+    public final void plot() {
         System.out.print( Color.GREEN.escape());
         for (int r = 0; r < MAX_VERT_TILES; r++) {
             System.out.println();

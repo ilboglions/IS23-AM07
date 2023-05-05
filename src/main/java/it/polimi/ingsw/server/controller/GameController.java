@@ -54,7 +54,7 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
      * @param coords the list of coordinates where tiles should have been taken
      * @return true, if the action is permitted
      */
-    public boolean checkValidRetrieve(String player, ArrayList<Coordinates> coords) throws RemoteException  {
+    public boolean checkValidRetrieve(String player, ArrayList<Coordinates> coords) throws RemoteException, EmptySlotException {
         synchronized (gameLock) {
             try {
                 if(!player.equals(gameModel.getPlayerInTurn())) return false;
@@ -64,17 +64,14 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
                 return false;
             }
 
-            try{
-                if( gameModel.checkValidRetrieve(coords)){
-                    selectedTiles.clear();
-                    selectedTiles.addAll(coords);
-                    return true;
-                }
-                return false;
 
-            } catch (EmptySlotException e){
-                return false;
+            if( gameModel.checkValidRetrieve(coords)){
+                selectedTiles.clear();
+                selectedTiles.addAll(coords);
+                return true;
             }
+            return false;
+
         }
     }
 
