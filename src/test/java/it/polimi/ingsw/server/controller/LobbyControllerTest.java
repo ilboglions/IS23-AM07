@@ -17,7 +17,7 @@ class LobbyControllerTest {
     void testEnter() throws RemoteException, NicknameAlreadyUsedException {
         LobbyController test = new LobbyController(new Lobby());
 
-        assertEquals(Optional.empty(), test.enterInLobby("Test")); //Player added correctly
+        assertEquals(null, test.enterInLobby("Test")); //Player added correctly
         assertThrows(NicknameAlreadyUsedException.class, () -> test.enterInLobby("Test")); //Player with the same nickname already joined
     }
 
