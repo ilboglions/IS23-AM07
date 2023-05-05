@@ -99,6 +99,12 @@ public class ClientRMI implements ConnectionHandler{
             if(gameController.checkValidRetrieve(this.username,tiles)) return;
         } catch (EmptySlotException e) {
             view.postNotification("the slot selected is empty!",e.getMessage());
+        } catch (GameNotStartedException e) {
+            throw new RuntimeException(e);
+        } catch (GameEndedException e) {
+            throw new RuntimeException(e);
+        } catch (PlayerNotInTurnException e) {
+            throw new RuntimeException(e);
         }
         try {
             if(gameController.checkValidRetrieve(this.username,tiles)) return;
@@ -108,6 +114,8 @@ public class ClientRMI implements ConnectionHandler{
             //...
         } catch (GameEndedException e) {
             //...
+        } catch (EmptySlotException e) {
+            throw new RuntimeException(e);
         }
 
     }

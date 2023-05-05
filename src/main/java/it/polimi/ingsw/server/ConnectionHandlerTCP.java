@@ -138,22 +138,11 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
                 } catch (InvalidPlayerException e) {
                     result = false;
                     errorType = "InvalidPlayerException";
-                } catch (PlayersNumberOutOfRange e) {
-                    result = false;
-                    errorType = "PlayersNumberOutOfRange";
                 }
                 outputMessage = new ConfirmGameMessage(result, errorType, "");
             }
             case TILES_SELECTION -> {
                 TileSelectionMessage tileSelectionMessage = (TileSelectionMessage) inputMessage;
-                try {
-                    result = gameController.checkValidRetrieve(username, tileSelectionMessage.getTiles());
-                } catch (EmptySlotException e) {
-                    result = false;
-                    errorType = "EmptySlotException";
-                    desc = "you cannot select those slots";
-                }
-                outputMessage = new ConfirmSelectionMessage(result,errorType,desc);
                 try {
                     result = gameController.checkValidRetrieve(username, tileSelectionMessage.getTiles());
                     errorType = "";
@@ -169,6 +158,10 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
                     result = false;
                     errorType = "GameEndedException";
                     desc = e.getMessage();
+                } catch (EmptySlotException e) {
+                    result = false;
+                    errorType = "EmptySlotException";
+                    desc = "you cannot select those slots";
                 }
                 outputMessage = new ConfirmSelectionMessage(result, errorType, desc);
             }
