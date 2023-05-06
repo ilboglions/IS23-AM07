@@ -2,7 +2,7 @@
   {
     "cardType": "CheckPattern",
     "description": "Five tiles of the same type forming a diagonal.",
-    "name": "MARIO_PYRAMID",
+    "name": "FIVE_DIAGONAL",
     "Attributes": {
       "pattern":
       [
@@ -41,7 +41,7 @@
   {
     "cardType": "CheckPattern",
     "description": "Four tiles of the same type in the four corners of the bookshelf.",
-    "name": "MARIO_PYRAMID",
+    "name": "CORNERS",
     "Attributes": {
       "pattern":
       [
@@ -58,7 +58,7 @@
   {
     "cardType": "NadjacentElements",
     "description": "Six groups each containing at least 2 tiles of the same type (not necessarily in the depicted shape).\nThe tiles of one group can be different from those of another group.",
-    "name": "MARIO_PYRAMID",
+    "name": "TWO_TILES",
     "Attributes": {
       "nGroups": 6,
       "nElems" : 2,
@@ -68,7 +68,7 @@
   {
     "cardType": "NadjacentElements",
     "description": "Four groups each containing at least 4 tiles of the same type (not necessarily in the depicted shape).\nThe tiles of one group can be different from those of another group.",
-    "name": "MARIO_PYRAMID",
+    "name": "FOUR_TILES",
     "Attributes": {
       "nGroups": 4,
       "nElems" : 4,
@@ -78,7 +78,7 @@
   {
     "cardType": "FullRows",
     "description": "Four lines each formed by 5 tiles of maximum three different types. One line can show the same or a different combination of another line.",
-    "name": "MARIO_PYRAMID",
+    "name": "FOUR_LINES",
     "Attributes": {
       "sameTiles": true,
       "nRows": 4,
@@ -89,7 +89,7 @@
   {
     "cardType": "FullRows",
     "description": "Two lines each formed by 5 different  types of tiles. One line can show the same or a different combination of the other line.",
-    "name": "MARIO_PYRAMID",
+    "name": "TWO_LINES_DIFFERENT",
     "Attributes": {
       "sameTiles": false,
       "nRows": 2,
@@ -99,7 +99,7 @@
   {
     "cardType": "FullColumns",
     "description": "Two columns each formed by 6 different types of tiles.",
-    "name": "MARIO_PYRAMID",
+    "name": "TWO_COLUMN_DIFFERENT",
     "Attributes": {
       "sameTiles": false,
       "nCols": 2,
@@ -109,17 +109,7 @@
   {
     "cardType": "FullColumns",
     "description": "Three columns each formed by 6 tiles of maximum three different types.\n One column can show the same or a different combination of another column.",
-    "name": "MARIO_PYRAMID",
-    "Attributes": {
-      "sameTiles": true,
-      "nCols": 3,
-      "maxTilesFrule": 3
-    }
-  },
-  {
-    "cardType": "FullColumns",
-    "description": "Three columns each formed by 6 tiles of maximum three different types.\n One column can show the same or a different combination of another column.",
-    "name": "MARIO_PYRAMID",
+    "name": "SIX_COLUMN_TILES",
     "Attributes": {
       "sameTiles": true,
       "nCols": 3,
@@ -129,7 +119,7 @@
   {
     "cardType": "NequalsSquares",
     "description": "Two groups each containing 4 tiles of the same type in a 2x2 square.\n The tiles of one square can be different from those of the other square.",
-    "name": "MARIO_PYRAMID",
+    "name": "FOUR_TILES_SQUARE",
     "Attributes": {
       "nSquares": 2,
       "squareDim": 2
@@ -138,7 +128,7 @@
   {
     "cardType": "FiveXTiles",
     "description": "Five tiles of the same type forming an X.",
-    "name": "MARIO_PYRAMID",
+    "name": "X_TILES",
     "Attributes": {
       "sameTiles": true
     }
@@ -146,7 +136,7 @@
   {
     "cardType": "MarioPyramid",
     "description": "Five columns of increasing or decreasing height. Starting from the first column on the left or on the right, each next column must be made of exactly one more tile.  Tiles can be of any type.",
-    "name": "MARIO_PYRAMID"
+    "name": "SAME_TYPE"
   },
   {
     "cardType": "NsameTiles",

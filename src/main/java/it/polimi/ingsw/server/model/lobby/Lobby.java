@@ -4,7 +4,6 @@ import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.player.Player;
 import it.polimi.ingsw.server.model.exceptions.*;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
@@ -84,7 +83,7 @@ public class Lobby {
             waitingPlayers.remove(host.get());
             games.add(newGame);
             return newGame;
-        }  catch (NegativeFieldException | FileNotFoundException | NotEnoughCardsException e) {
+        }  catch (NegativeFieldException | IllegalFilePathException | NotEnoughCardsException e) {
             throw new BrokenInternalGameConfigurations();
         }
 

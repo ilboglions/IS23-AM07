@@ -4,13 +4,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import it.polimi.ingsw.server.model.exceptions.*;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
-import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.player.Player;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 /**
@@ -51,14 +49,14 @@ public class GameTest {
     /**
      * This tests if the method canStart is working correctly
      * @throws NegativeFieldException if the elements to draw are a negative number
-     * @throws FileNotFoundException if the configuration file path is not correct
+     * @throws IllegalFilePathException if the configuration file path is not correct
      * @throws NotEnoughCardsException if there are not enough cards to draw
      * @throws PlayersNumberOutOfRange if the player number is less than 2 or grater than 4
      * @throws NicknameAlreadyUsedException if there is already a player with the same nickname
      */
     @Test
     @DisplayName("Test canStart method")
-    void testCanStart() throws NegativeFieldException, FileNotFoundException, NotEnoughCardsException, PlayersNumberOutOfRange, NicknameAlreadyUsedException {
+    void testCanStart() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, NicknameAlreadyUsedException {
         Player testPlayer = new Player("Test");
         Game test = new Game(3, testPlayer);
 
@@ -75,14 +73,14 @@ public class GameTest {
     /**
      * This tests if the method start is working correctly
      * @throws NegativeFieldException if the elements to draw are a negative number
-     * @throws FileNotFoundException if the configuration file path is not correct
+     * @throws IllegalFilePathException if the configuration file path is not correct
      * @throws NotEnoughCardsException if there are not enough cards to draw
      * @throws PlayersNumberOutOfRange if the player number is less than 2 or grater than 4
      * @throws NicknameAlreadyUsedException if there is already a player with the same nickname
      */
     @Test
     @DisplayName("Test start method")
-    void testStart() throws NegativeFieldException, FileNotFoundException, NotEnoughCardsException, PlayersNumberOutOfRange, NicknameAlreadyUsedException {
+    void testStart() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, NicknameAlreadyUsedException {
         Player testPlayer = new Player("Test");
         Game test = new Game(3, testPlayer);
 
@@ -105,13 +103,13 @@ public class GameTest {
     /**
      * This tests if the method to update player points is working correctly
      * @throws NegativeFieldException if the elements to draw are a negative number
-     * @throws FileNotFoundException if the configuration file path is not correct
+     * @throws IllegalFilePathException if the configuration file path is not correct
      * @throws NotEnoughCardsException if there are not enough cards to draw
      * @throws PlayersNumberOutOfRange if the player number is less than 2 or grater than 4
      */
     @Test
     @DisplayName("Test updatePlayerPoints method")
-    void testUpdatePoints() throws NegativeFieldException, FileNotFoundException, NotEnoughCardsException, PlayersNumberOutOfRange {
+    void testUpdatePoints() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange {
         Player testPlayer = new Player("Test");
         Game test = new Game(3, testPlayer);
 
@@ -125,7 +123,7 @@ public class GameTest {
     /**
      * This tests if the getter for the player turn is working correctly
      * @throws NegativeFieldException if the elements to draw are a negative number
-     * @throws FileNotFoundException if the configuration file path is not correct
+     * @throws IllegalFilePathException if the configuration file path is not correct
      * @throws NotEnoughCardsException if there are not enough cards to draw
      * @throws PlayersNumberOutOfRange if the player number is less than 2 or grater than 4
      * @throws NicknameAlreadyUsedException if there is already a player with the same nickname
@@ -137,7 +135,7 @@ public class GameTest {
      */
     @Test
     @DisplayName("Test getPlayerInTurn method")
-    void testGetPlayerInTurn() throws NegativeFieldException, FileNotFoundException, NotEnoughCardsException, PlayersNumberOutOfRange, NicknameAlreadyUsedException, NotAllPlayersHaveJoinedException, GameNotEndedException, GameNotStartedException, GameEndedException, NotEnoughSpaceException {
+    void testGetPlayerInTurn() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, NicknameAlreadyUsedException, NotAllPlayersHaveJoinedException, GameNotEndedException, GameNotStartedException, GameEndedException, NotEnoughSpaceException {
         Player testPlayer = new Player("Test");
         Game test = new Game(3, testPlayer);
 
@@ -175,7 +173,7 @@ public class GameTest {
     /**
      * This tests if the method to move the tiles from the LivingRoomBoard to a PlayerBookshelf is working correctly
      * @throws NegativeFieldException if the elements to draw are a negative number
-     * @throws FileNotFoundException if the configuration file path is not correct
+     * @throws IllegalFilePathException if the configuration file path is not correct
      * @throws NotEnoughCardsException if there are not enough cards to draw
      * @throws PlayersNumberOutOfRange if the player number is less than 2 or grater than 4
      * @throws NicknameAlreadyUsedException if there is already a player with the same nickname
@@ -185,7 +183,7 @@ public class GameTest {
      */
     @Test
     @DisplayName("Test moveTiles method")
-    void testMove() throws NegativeFieldException, FileNotFoundException, NotEnoughCardsException, PlayersNumberOutOfRange, NicknameAlreadyUsedException, NotAllPlayersHaveJoinedException, GameNotEndedException, InvalidCoordinatesException {
+    void testMove() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, NicknameAlreadyUsedException, NotAllPlayersHaveJoinedException, GameNotEndedException, InvalidCoordinatesException {
         Player testPlayer = new Player("Test");
         Game test = new Game(3, testPlayer);
 
@@ -226,14 +224,14 @@ public class GameTest {
     /**
      * This tests if the method to check if the tiles selected by the player could be chosen is working correctly
      * @throws NegativeFieldException if the elements to draw are a negative number
-     * @throws FileNotFoundException if the configuration file path is not correct
+     * @throws IllegalFilePathException if the configuration file path is not correct
      * @throws NotEnoughCardsException if there are not enough cards to draw
      * @throws PlayersNumberOutOfRange if the player number is less than 2 or grater than 4
      * @throws InvalidCoordinatesException if the coordinates are out of range
      */
     @Test
     @DisplayName("Test getItemTile method")
-    void testGetTile() throws NegativeFieldException, FileNotFoundException, NotEnoughCardsException, PlayersNumberOutOfRange, InvalidCoordinatesException {
+    void testGetTile() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, InvalidCoordinatesException {
         Player testPlayer = new Player("Test");
         Game test = new Game(3, testPlayer);
 
@@ -254,7 +252,7 @@ public class GameTest {
     /**
      * This tests if the method to check if the LivingRoomBoard needs a refill is working correctly
      * @throws NegativeFieldException if the elements to draw are a negative number
-     * @throws FileNotFoundException if the configuration file path is not correct
+     * @throws IllegalFilePathException if the configuration file path is not correct
      * @throws NotEnoughCardsException if there are not enough cards to draw
      * @throws PlayersNumberOutOfRange if the player number is less than 2 or grater than 4
      * @throws NicknameAlreadyUsedException if there is already a player with the same nickname
@@ -267,7 +265,7 @@ public class GameTest {
      */
     @Test
     @DisplayName("Test checkRefill method")
-    void testRefill() throws NegativeFieldException, FileNotFoundException, NotEnoughCardsException, PlayersNumberOutOfRange, NicknameAlreadyUsedException, NotAllPlayersHaveJoinedException, GameNotEndedException, InvalidCoordinatesException, GameNotStartedException, EmptySlotException, NotEnoughSpaceException {
+    void testRefill() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, NicknameAlreadyUsedException, NotAllPlayersHaveJoinedException, GameNotEndedException, InvalidCoordinatesException, GameNotStartedException, EmptySlotException, NotEnoughSpaceException {
         Player testPlayer = new Player("Test");
         Game test = new Game(3, testPlayer);
 
@@ -291,7 +289,7 @@ public class GameTest {
     /**
      * This tests if the method to move the tiles from the LivingRoomBoard to a PlayerBookshelf is working correctly
      * @throws NegativeFieldException if the elements to draw are a negative number
-     * @throws FileNotFoundException if the configuration file path is not correct
+     * @throws IllegalFilePathException if the configuration file path is not correct
      * @throws NotEnoughCardsException if there are not enough cards to draw
      * @throws PlayersNumberOutOfRange if the player number is less than 2 or grater than 4
      * @throws NicknameAlreadyUsedException if there is already a player with the same nickname
@@ -303,7 +301,7 @@ public class GameTest {
      */
     @Test
     @DisplayName("Test checkBookshelfComplete method")
-    void testCheckComplete() throws NegativeFieldException, FileNotFoundException, NotEnoughCardsException, PlayersNumberOutOfRange, NicknameAlreadyUsedException, NotAllPlayersHaveJoinedException, GameNotEndedException, NotEnoughSpaceException, GameNotStartedException, GameEndedException {
+    void testCheckComplete() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, NicknameAlreadyUsedException, NotAllPlayersHaveJoinedException, GameNotEndedException, NotEnoughSpaceException, GameNotStartedException, GameEndedException {
         Player testPlayer = new Player("Test");
         Game test = new Game(3, testPlayer);
 
@@ -335,7 +333,7 @@ public class GameTest {
     /**
      * This tests if the method to get the winner of the game is working correctly
      * @throws NegativeFieldException if the elements to draw are a negative number
-     * @throws FileNotFoundException if the configuration file path is not correct
+     * @throws IllegalFilePathException if the configuration file path is not correct
      * @throws NotEnoughCardsException if there are not enough cards to draw
      * @throws PlayersNumberOutOfRange if the player number is less than 2 or grater than 4
      * @throws NicknameAlreadyUsedException if there is already a player with the same nickname
@@ -347,7 +345,7 @@ public class GameTest {
      */
     @Test
     @DisplayName("Test getWinner method")
-    void testWinner() throws NegativeFieldException, FileNotFoundException, NotEnoughCardsException, PlayersNumberOutOfRange, NicknameAlreadyUsedException, NotAllPlayersHaveJoinedException, GameNotEndedException, NotEnoughSpaceException, GameNotStartedException, GameEndedException {
+    void testWinner() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, NicknameAlreadyUsedException, NotAllPlayersHaveJoinedException, GameNotEndedException, NotEnoughSpaceException, GameNotStartedException, GameEndedException {
         Player testPlayer = new Player("Test");
         Game test = new Game(3, testPlayer);
 
@@ -388,13 +386,13 @@ public class GameTest {
     /**
      * This tests if the method to add a player to the game is working correctly
      * @throws NegativeFieldException if the elements to draw are a negative number
-     * @throws FileNotFoundException if the configuration file path is not correct
+     * @throws IllegalFilePathException if the configuration file path is not correct
      * @throws NotEnoughCardsException if there are not enough cards to draw
      * @throws PlayersNumberOutOfRange if the player number is less than 2 or grater than 4
      */
     @Test
     @DisplayName("Test addPlayer method")
-    void testAddPlayer() throws NegativeFieldException, FileNotFoundException, NotEnoughCardsException, PlayersNumberOutOfRange {
+    void testAddPlayer() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange {
         Player testPlayer = new Player("Test");
         Game test = new Game(3, testPlayer);
 
@@ -424,13 +422,13 @@ public class GameTest {
     /**
      * This tests if the method search if a player has joined the game is working correctly
      * @throws NegativeFieldException if the elements to draw are a negative number
-     * @throws FileNotFoundException if the configuration file path is not correct
+     * @throws IllegalFilePathException if the configuration file path is not correct
      * @throws NotEnoughCardsException if there are not enough cards to draw
      * @throws PlayersNumberOutOfRange if the player number is less than 2 or grater than 4
      */
     @Test
     @DisplayName("Test searchPlayer method")
-    void testSearch() throws NegativeFieldException, FileNotFoundException, NotEnoughCardsException, PlayersNumberOutOfRange {
+    void testSearch() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange {
         Player testPlayer = new Player("Test");
         Game test = new Game(3, testPlayer);
 
@@ -445,7 +443,7 @@ public class GameTest {
     /**
      * This tests if the method to get if the game has started is working correctly
      * @throws NegativeFieldException if the elements to draw are a negative number
-     * @throws FileNotFoundException if the configuration file path is not correct
+     * @throws IllegalFilePathException if the configuration file path is not correct
      * @throws NotEnoughCardsException if there are not enough cards to draw
      * @throws PlayersNumberOutOfRange if the player number is less than 2 or grater than 4
      * @throws NicknameAlreadyUsedException if there is already a player with the same nickname
@@ -454,7 +452,7 @@ public class GameTest {
      */
     @Test
     @DisplayName("Test getIsStarted method")
-    void testStarted() throws NegativeFieldException, FileNotFoundException, NotEnoughCardsException, PlayersNumberOutOfRange, NicknameAlreadyUsedException, NotAllPlayersHaveJoinedException, GameNotEndedException {
+    void testStarted() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, NicknameAlreadyUsedException, NotAllPlayersHaveJoinedException, GameNotEndedException {
         Player testPlayer = new Player("Test");
         Game test = new Game(3, testPlayer);
 
@@ -472,7 +470,7 @@ public class GameTest {
     /**
      * This tests if the method to get all the messages relative to a player is working correctly
      * @throws NegativeFieldException if the elements to draw are a negative number
-     * @throws FileNotFoundException if the configuration file path is not correct
+     * @throws IllegalFilePathException if the configuration file path is not correct
      * @throws NotEnoughCardsException if there are not enough cards to draw
      * @throws PlayersNumberOutOfRange if the player number is less than 2 or grater than 4
      * @throws NicknameAlreadyUsedException if there is already a player with the same nickname
@@ -481,7 +479,7 @@ public class GameTest {
      */
     @Test
     @DisplayName("Test getPlayerMessage method")
-    void testGetMessage() throws NegativeFieldException, FileNotFoundException, NotEnoughCardsException, PlayersNumberOutOfRange, InvalidPlayerException, SenderEqualsRecipientException, NicknameAlreadyUsedException {
+    void testGetMessage() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, InvalidPlayerException, NicknameAlreadyUsedException {
         Player testPlayer = new Player("Test");
         Game test = new Game(3, testPlayer);
 
@@ -506,13 +504,13 @@ public class GameTest {
     /**
      * This tests if the method to post a message in the chat is working correctly
      * @throws NegativeFieldException if the elements to draw are a negative number
-     * @throws FileNotFoundException if the configuration file path is not correct
+     * @throws IllegalFilePathException if the configuration file path is not correct
      * @throws NotEnoughCardsException if there are not enough cards to draw
      * @throws PlayersNumberOutOfRange if the player number is less than 2 or grater than 4
      */
     @Test
     @DisplayName("Test postMessage method")
-    void testPostMessage() throws NegativeFieldException, FileNotFoundException, NotEnoughCardsException, PlayersNumberOutOfRange {
+    void testPostMessage() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange {
         Player testPlayer = new Player("Test");
         Game test = new Game(3, testPlayer);
 

@@ -96,7 +96,7 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
         boolean result;
         String errorType = "";
         String desc = "";
-        boolean IsPlayerrejoined;
+        boolean hasPlayerJoined;
         logger.info(inputMessage.getMessageType().toString());
         switch (inputMessage.getMessageType()) {
             case JOIN_LOBBY -> {
@@ -113,24 +113,24 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
                 try {
                     gameController = lobbyController.enterInLobby(joinLobbyMessage.getUsername());
                      if(gameController != null){
-                          IsPlayerrejoined = true;
+                         hasPlayerJoined = true;
                      } else {
-                         IsPlayerrejoined = false;
+                         hasPlayerJoined = false;
                      }
                     result = true;
                 } catch (NicknameAlreadyUsedException e) {
                     errorType = "NicknameAlreadyUsedException";
                     result = false;
-                    IsPlayerrejoined = false;
+                    hasPlayerJoined = false;
                     desc = e.getMessage();
                 } catch (InvalidPlayerException e) {
                     errorType = "InvalidPlayerException";
                     result = false;
-                    IsPlayerrejoined = false;
+                    hasPlayerJoined = false;
                     desc = e.getMessage();
                 }
 
-                outputMessage = new LoginReturnMessage(result,errorType, desc, IsPlayerrejoined);
+                outputMessage = new LoginReturnMessage(result,errorType, desc, hasPlayerJoined);
             }
             case CREATE_GAME -> {
                 CreateGameMessage createGameMessage = (CreateGameMessage) inputMessage;

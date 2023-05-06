@@ -4,13 +4,13 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import it.polimi.ingsw.server.model.cards.common.*;
+import it.polimi.ingsw.server.model.exceptions.IllegalFilePathException;
 import it.polimi.ingsw.server.model.exceptions.NegativeFieldException;
 import it.polimi.ingsw.server.model.exceptions.PlayersNumberOutOfRange;
 import it.polimi.ingsw.server.model.exceptions.NotEnoughCardsException;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
@@ -36,12 +36,15 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
      * @param configuration the path to the json configuration file
      * @throws PlayersNumberOutOfRange if the nPlayers is less than 2 and grater than 4
      */
-    public DeckCommon(int nPlayers, String configuration) throws PlayersNumberOutOfRange {
+    public DeckCommon(int nPlayers, String configuration) throws PlayersNumberOutOfRange, IllegalFilePathException {
+        Objects.requireNonNull(configuration, "You passed a null instead of a String for the configuration file");
         if(nPlayers < 2 || nPlayers > 4)
             throw new PlayersNumberOutOfRange("Expected min 2 and max 4 players, you gave " + nPlayers);
+        if(configuration.isBlank())
+            throw new IllegalFilePathException("You passed an empty string");
 
         this.nPlayers = nPlayers;
-        this.configuration = Objects.requireNonNull(configuration, "You passed a null instead of a String for the configuration file");
+        this.configuration = configuration;
     }
 
 
@@ -49,12 +52,11 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
      * Draw method consents to draw a number of CommonGoalCard elements
      * @param nElements the number of elements to draw
      * @return an ArrayList that contains the drawn elements
-     * @throws FileNotFoundException if the configuration cannot be found, this exception is thrown
      * @throws NegativeFieldException if the nElements is negative
      * @throws PlayersNumberOutOfRange if the number of players is less than 2 or grater than 4
      * @throws NotEnoughCardsException if the number of the cards read from the JSON file is less than the required cards with nElements
      */
-    public ArrayList<CommonGoalCard> draw(int nElements) throws FileNotFoundException, NegativeFieldException, PlayersNumberOutOfRange, NotEnoughCardsException {
+    public ArrayList<CommonGoalCard> draw(int nElements) throws NegativeFieldException, PlayersNumberOutOfRange, NotEnoughCardsException {
         ArrayList<CommonGoalCard> selected = new ArrayList<>();
         Gson gson = new Gson();
         Random randGenerator = new Random();
@@ -64,7 +66,7 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
         if(nElements < 0)
             throw new NegativeFieldException("You can't draw a negative number of cards");
 
-        JsonArray jsonCards = gson.fromJson(new FileReader(this.configuration), JsonArray.class);
+        JsonArray jsonCards = gson.fromJson(new InputStreamReader(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream(this.configuration))), JsonArray.class);
         if(jsonCards.size() < nElements) throw new NotEnoughCardsException("error! only "+jsonCards.size()+" cards available");
 
         for( int i = 0; i < nElements; i++){

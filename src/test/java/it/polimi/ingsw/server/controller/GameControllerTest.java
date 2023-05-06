@@ -9,7 +9,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.io.FileNotFoundException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
@@ -17,7 +16,7 @@ public class GameControllerTest {
 
     @Test
     @DisplayName("checkValidRetrieve")
-    void testCheckValidRetrieve() throws NegativeFieldException, FileNotFoundException, NotEnoughCardsException, PlayersNumberOutOfRange, RemoteException, NicknameAlreadyUsedException, GameNotStartedException, GameEndedException, InvalidCoordinatesException, NotAllPlayersHaveJoinedException, GameNotEndedException, EmptySlotException, PlayerNotInTurnException {
+    void testCheckValidRetrieve() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, RemoteException, NicknameAlreadyUsedException, GameNotStartedException, GameEndedException, InvalidCoordinatesException, NotAllPlayersHaveJoinedException, GameNotEndedException, EmptySlotException, PlayerNotInTurnException {
 
         Player X,Y;
         X = new Player("X");
@@ -71,7 +70,7 @@ public class GameControllerTest {
 
     @Test
     @DisplayName("moveTiles")
-    void testMoveTiles() throws NicknameAlreadyUsedException, PlayersNumberOutOfRange, NegativeFieldException, FileNotFoundException, NotEnoughCardsException, RemoteException, NotAllPlayersHaveJoinedException, GameNotEndedException, GameNotStartedException, GameEndedException, InvalidCoordinatesException, EmptySlotException, PlayerNotInTurnException, NotEnoughSpaceException {
+    void testMoveTiles() throws NicknameAlreadyUsedException, PlayersNumberOutOfRange, NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, RemoteException, NotAllPlayersHaveJoinedException, GameNotEndedException, GameNotStartedException, GameEndedException, InvalidCoordinatesException, EmptySlotException, PlayerNotInTurnException, NotEnoughSpaceException {
         Player X,Y;
         X = new Player("X");
         Y = new Player("Y");
@@ -130,7 +129,7 @@ public class GameControllerTest {
 
     @Test
     @DisplayName("postBroadcastMessage")
-    void testPostBroadcastMessage() throws NicknameAlreadyUsedException, PlayersNumberOutOfRange, RemoteException, NegativeFieldException, FileNotFoundException, NotEnoughCardsException {
+    void testPostBroadcastMessage() throws NicknameAlreadyUsedException, PlayersNumberOutOfRange, RemoteException, NegativeFieldException, IllegalFilePathException, NotEnoughCardsException {
         Player X,Y;
         X = new Player("X");
         Y = new Player("Y");
@@ -143,7 +142,7 @@ public class GameControllerTest {
 
     @Test
     @DisplayName("postDirectMessage")
-    void testPostDirectMessage() throws NegativeFieldException, FileNotFoundException, NotEnoughCardsException, PlayersNumberOutOfRange, NicknameAlreadyUsedException, RemoteException {
+    void testPostDirectMessage() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, NicknameAlreadyUsedException, RemoteException {
         Player X,Y;
         X = new Player("X");
         Y = new Player("Y");

@@ -7,17 +7,14 @@ import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.EmptySlotException;
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.server.model.exceptions.SlotFullException;
-import it.polimi.ingsw.server.model.livingRoom.exceptions.NotEnoughTilesException;
+import it.polimi.ingsw.server.model.exceptions.NotEnoughTilesException;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import com.google.gson.Gson;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.io.InputStreamReader;
+import java.util.*;
 
 public class LivingRoomBoardTest {
 
@@ -33,9 +30,9 @@ public class LivingRoomBoardTest {
         assertThrows(PlayersNumberOutOfRange.class, () ->{ new LivingRoomBoard(0);});
         assertThrows(PlayersNumberOutOfRange.class, () ->{ new LivingRoomBoard(5);});
         LivingRoomBoard testboard = new LivingRoomBoard(4);
-        String confFilePath = "src/main/resources/4orMorePlayersPattern.json";
+        String confFilePath = "4orMorePlayersPattern.json";
         Gson gson = new Gson();
-        LivingRoomBoard.JsonLivingBoardCell[][] jsonCells = gson.fromJson(new FileReader(confFilePath), LivingRoomBoard.JsonLivingBoardCell[][].class);
+        LivingRoomBoard.JsonLivingBoardCell[][] jsonCells = gson.fromJson(new InputStreamReader(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream(confFilePath))), LivingRoomBoard.JsonLivingBoardCell[][].class);
         SlotType slotType;
         Slot[][] slotmatrix = testboard.getAllSlots();
         for(int i=0; i<9; i++) {
@@ -45,9 +42,9 @@ public class LivingRoomBoardTest {
             }
         }
         testboard = new LivingRoomBoard(3);
-        confFilePath = "src/main/resources/3PlayersPattern.json";
+        confFilePath = "3PlayersPattern.json";
         gson = new Gson();
-        jsonCells = gson.fromJson(new FileReader(confFilePath), LivingRoomBoard.JsonLivingBoardCell[][].class);
+        jsonCells = gson.fromJson(new InputStreamReader(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream(confFilePath))), LivingRoomBoard.JsonLivingBoardCell[][].class);
         slotmatrix = testboard.getAllSlots();
         for(int i=0; i<9; i++) {
             for(int j=0; j<9; j++) {
@@ -56,9 +53,9 @@ public class LivingRoomBoardTest {
             }
         }
         testboard = new LivingRoomBoard(2);
-        confFilePath = "src/main/resources/2PlayersPattern.json";
+        confFilePath = "2PlayersPattern.json";
         gson = new Gson();
-        jsonCells = gson.fromJson(new FileReader(confFilePath), LivingRoomBoard.JsonLivingBoardCell[][].class);
+        jsonCells = gson.fromJson(new InputStreamReader(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream(confFilePath))), LivingRoomBoard.JsonLivingBoardCell[][].class);
         slotmatrix = testboard.getAllSlots();
         for(int i=0; i<9; i++) {
             for(int j=0; j<9; j++) {
@@ -70,17 +67,16 @@ public class LivingRoomBoardTest {
 
     /**
      * This test verifies the correctness of the checkRefill method.
-     * @throws FileNotFoundException
      * @throws PlayersNumberOutOfRange
      * @throws InvalidCoordinatesException
      * @throws SlotFullException
      */
     @Test
     @DisplayName("CheckRefillTester")
-    void checkRefillTest() throws FileNotFoundException, PlayersNumberOutOfRange, InvalidCoordinatesException, SlotFullException {
+    void checkRefillTest() throws PlayersNumberOutOfRange, InvalidCoordinatesException, SlotFullException {
         LivingRoomBoard board = new LivingRoomBoard(2);
         ArrayList<ItemTile> removedtiles= board.emptyBoard();
-        Map<Coordinates, ItemTile> inserttiles = new HashMap<Coordinates, ItemTile>();
+        Map<Coordinates, ItemTile> inserttiles = new HashMap<>();
         inserttiles.put(new Coordinates(3,3), ItemTile.CAT);
         inserttiles.put(new Coordinates(5,3), ItemTile.TROPHY);
         inserttiles.put(new Coordinates(4,4), ItemTile.PLANT);
@@ -101,7 +97,7 @@ public class LivingRoomBoardTest {
      */
     @Test
     @DisplayName("EmptyBoardTester")
-    void emptyBoardTest() throws FileNotFoundException, PlayersNumberOutOfRange, InvalidCoordinatesException {
+    void emptyBoardTest() throws PlayersNumberOutOfRange, InvalidCoordinatesException {
         LivingRoomBoard board = new LivingRoomBoard(3);
         Slot[][] slotmatrix = board.getAllSlots();
         ArrayList<ItemTile> itemTileslist = new ArrayList<>();
@@ -124,7 +120,7 @@ public class LivingRoomBoardTest {
 
     @Test
     @DisplayName("refillBoardTester")
-    void refillBoardTest() throws FileNotFoundException, PlayersNumberOutOfRange, NotEnoughTilesException {
+    void refillBoardTest() throws PlayersNumberOutOfRange, NotEnoughTilesException {
         LivingRoomBoard board = new LivingRoomBoard(4);
         ArrayList<ItemTile> tilesList = createList(board.getNumCells());
         board.refillBoard(new ArrayList<>(tilesList));
@@ -145,7 +141,7 @@ public class LivingRoomBoardTest {
 
     @Test
     @DisplayName("getTileTester")
-    void getTileTest () throws FileNotFoundException, PlayersNumberOutOfRange, NotEnoughTilesException, InvalidCoordinatesException {
+    void getTileTest () throws PlayersNumberOutOfRange, NotEnoughTilesException, InvalidCoordinatesException {
         LivingRoomBoard board = new LivingRoomBoard(4);
         ArrayList<ItemTile> tilesList = createList(board.getNumCells());
         board.refillBoard(new ArrayList<>(tilesList));
@@ -161,7 +157,7 @@ public class LivingRoomBoardTest {
 
     @Test
     @DisplayName("removeTileTester")
-    void removeTile() throws FileNotFoundException, PlayersNumberOutOfRange, NotEnoughTilesException, InvalidCoordinatesException {
+    void removeTile() throws PlayersNumberOutOfRange, NotEnoughTilesException, InvalidCoordinatesException {
         LivingRoomBoard board = new LivingRoomBoard(4);
         ArrayList<ItemTile> tilesList = createList(board.getNumCells());
         board.refillBoard(new ArrayList<>(tilesList));
@@ -172,7 +168,7 @@ public class LivingRoomBoardTest {
 
     @Test
     @DisplayName("checkValidRetrieveTester")
-    void checkValidRetrieveTest() throws FileNotFoundException, PlayersNumberOutOfRange, NotEnoughTilesException, InvalidCoordinatesException, EmptySlotException {
+    void checkValidRetrieveTest() throws PlayersNumberOutOfRange, NotEnoughTilesException, InvalidCoordinatesException, EmptySlotException {
         LivingRoomBoard board = new LivingRoomBoard(4);
         ArrayList<ItemTile> tilesList = createList(board.getNumCells());
         board.refillBoard(new ArrayList<>(tilesList));
