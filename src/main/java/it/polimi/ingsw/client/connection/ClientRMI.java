@@ -54,6 +54,8 @@ public class ClientRMI implements ConnectionHandler{
             }
         } catch (NicknameAlreadyUsedException e) {
             view.postNotification("Nickname already used!", "choose another nickname and retry");
+        } catch (InvalidPlayerException e) {
+            view.postNotification("Invalid player!","you can't use this username!");
         }
     }
 

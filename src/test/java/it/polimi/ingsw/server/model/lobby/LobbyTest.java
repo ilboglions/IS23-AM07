@@ -17,7 +17,7 @@ public class LobbyTest {
      */
     @Test
     @DisplayName("Test all the exceptions")
-    void checkException() throws NicknameAlreadyUsedException {
+    void checkException() throws NicknameAlreadyUsedException, InvalidPlayerException {
         Lobby test = new Lobby();
 
         assertThrows(NullPointerException.class, ()->{
@@ -41,6 +41,15 @@ public class LobbyTest {
         assertThrows(NicknameAlreadyUsedException.class, ()->{
             test.createPlayer("testUser");
         });
+
+        assertThrows(InvalidPlayerException.class, ()->{
+            test.createPlayer("");
+        });
+
+        assertThrows(InvalidPlayerException.class, ()->{
+            test.createPlayer(null);
+        });
+
         assertThrows(PlayersNumberOutOfRange.class, ()->{
             test.createGame(100, "testUser");
         });

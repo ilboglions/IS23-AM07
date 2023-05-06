@@ -14,7 +14,7 @@ class LobbyControllerTest {
 
     @Test
     @DisplayName("Test entering in lobby")
-    void testEnter() throws RemoteException, NicknameAlreadyUsedException {
+    void testEnter() throws RemoteException, NicknameAlreadyUsedException, InvalidPlayerException {
         LobbyController test = new LobbyController(new Lobby());
 
         assertEquals(null, test.enterInLobby("Test")); //Player added correctly
@@ -23,7 +23,7 @@ class LobbyControllerTest {
 
     @Test
     @DisplayName("Test game creation")
-    void testCreation() throws RemoteException, NicknameAlreadyUsedException {
+    void testCreation() throws RemoteException, NicknameAlreadyUsedException, InvalidPlayerException {
         LobbyController test = new LobbyController(new Lobby());
 
         //Invalid values, already tested in LobbyTest class

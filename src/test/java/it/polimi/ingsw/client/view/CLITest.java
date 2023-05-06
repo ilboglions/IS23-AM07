@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client.view;
 
 
+import it.polimi.ingsw.client.connection.ConnectionType;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
@@ -22,7 +23,7 @@ public class CLITest {
     @Test
     @DisplayName("Test the title print of the CLI")
     void testTitle(){
-        CliView cli = new CliView();
+        CliView cli = new CliView(ConnectionType.RMI);
         cli.printTitle();
     }
 
@@ -30,7 +31,7 @@ public class CLITest {
     @Test
     @DisplayName("Test the print of the bookshelfs and the personal goal card")
     void testBookshelfPrint() throws InvalidCoordinatesException {
-        CliView cli = new CliView();
+        CliView cli = new CliView(ConnectionType.RMI);
         Map<Coordinates, ItemTile> testPattern = new HashMap<>();
 
         testPattern.put(new Coordinates(0,0), ItemTile.GAME);

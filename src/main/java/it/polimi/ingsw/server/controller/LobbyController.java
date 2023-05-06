@@ -61,12 +61,12 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
      * @throws NicknameAlreadyUsedException if the player is already inside a game
      * @throws RemoteException              in case of a network error occurs
      */
-    public RemoteGameController enterInLobby(String player) throws RemoteException, NicknameAlreadyUsedException {
+    public RemoteGameController enterInLobby(String player) throws RemoteException, NicknameAlreadyUsedException, InvalidPlayerException {
         synchronized (lobbyLock) {
             try {
                 lobbyModel.createPlayer(player);
                 return null;
-            } catch (NicknameAlreadyUsedException e) {
+            } catch (NicknameAlreadyUsedException | InvalidPlayerException e) {
 
                 /* search if the player is crashed in a game */
                 for( Map.Entry<GameModelInterface, GameController> entry : gameControllers.entrySet()){
@@ -91,7 +91,7 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
      */
     public RemoteGameController addPlayerToGame(String player) throws RemoteException, NicknameAlreadyUsedException, NoAvailableGameException, InvalidPlayerException {
         synchronized (lobbyLock) {
-
+            if(player == null) throw new InvalidPlayerException();
             GameController gameController;
 
             GameModelInterface gameModel = null;
@@ -124,6 +124,7 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
      */
     public RemoteGameController createGame(String player, int nPlayers) throws RemoteException, InvalidPlayerException, PlayersNumberOutOfRange {
         synchronized (lobbyLock) {
+            if(player == null) throw new InvalidPlayerException();
             GameController gameController;
             GameModelInterface gameModel = null;
             try {

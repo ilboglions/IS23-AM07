@@ -2,9 +2,12 @@ package it.polimi.ingsw.server.model.coordinate;
 
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 
+import javax.swing.*;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
+
+import static it.polimi.ingsw.server.model.utilities.UtilityFunctions.isNumeric;
 
 /**
  * the Coordinates class is a useful and immutable class used in many method
@@ -29,6 +32,42 @@ public class Coordinates implements Serializable {
         }
         this.row = row;
         this.column = column;
+    }
+
+    /**
+     * creates an immutable object representing the coordinate point
+     * @param coordinates a string in a form such as ( 3, 5 ) or 3,5 or (3,5)
+     * @throws InvalidCoordinatesException if the format is not correct, or the coordinate is out of range
+     */
+    public Coordinates(String coordinates) throws InvalidCoordinatesException {
+        coordinates = coordinates.replace(" ","").replace("(","").replace(")","");
+
+        String[] coordArray = coordinates.split(",");
+
+        if(coordArray.length < 2 ) throw  new InvalidCoordinatesException("coordinate format is invalid");
+
+        String rowS = coordArray[0];
+        String colS = coordArray[1];
+
+        int row,column;
+        if(isNumeric(rowS))
+            row = Integer.parseInt(rowS);
+        else
+            throw new InvalidCoordinatesException("row is not a number");
+
+        if(isNumeric(colS))
+           column = Integer.parseInt(colS);
+        else
+            throw new InvalidCoordinatesException("column is not a number");
+
+        if(row < 0 || column < 0 || row > 8 || column > 8){
+            throw new InvalidCoordinatesException("Given coordinates are out of range");
+        }
+
+        this.row = row;
+        this.column = column;
+
+
     }
 
     /**

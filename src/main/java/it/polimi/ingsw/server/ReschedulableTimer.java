@@ -29,7 +29,7 @@ public class ReschedulableTimer extends Timer
 
     public void reschedule(long delay)
     {
-        logger.info("RESCHEDULE CALL DONE");
+
         timerTask.cancel();
         timerTask = new TimerTask()
         {

@@ -1,6 +1,7 @@
 package it.polimi.ingsw.server;
 
 import it.polimi.ingsw.client.connection.ClientSocket;
+import it.polimi.ingsw.client.connection.ConnectionType;
 import it.polimi.ingsw.client.view.CliView;
 import it.polimi.ingsw.messages.*;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
@@ -69,7 +70,7 @@ public class ConnectionHandlerTCPTest {
 
     @Test
     void ClientSimulatorTest(){
-        ClientSocket client = new ClientSocket(ip, port, new CliView());
+        ClientSocket client = new ClientSocket(ip, port, new CliView(ConnectionType.TCP));
         client.JoinLobby("Username");
         client.CreateGame(4);
         try {

@@ -95,7 +95,8 @@ public class Lobby {
      * @param nickname the nickname to be assigned to the player
      * @throws NicknameAlreadyUsedException if the nickname has been already chosen by another player
      */
-    public void createPlayer(String nickname) throws NicknameAlreadyUsedException {
+    public void createPlayer(String nickname) throws NicknameAlreadyUsedException, InvalidPlayerException  {
+        if(nickname == null || nickname.isEmpty()) throw new InvalidPlayerException();
         for(Game game : games) {
             if(game.searchPlayer(nickname).isPresent())
                 throw new NicknameAlreadyUsedException("This nickname is already used");

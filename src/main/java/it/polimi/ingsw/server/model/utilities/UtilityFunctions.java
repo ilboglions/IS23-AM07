@@ -44,4 +44,13 @@ public class UtilityFunctions {
 
         return  group.stream().distinct().collect(Collectors.toList());
     }
+
+    public static boolean isNumeric(String str) {
+        try {
+            Integer.parseInt(str);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
 }

@@ -26,6 +26,13 @@ public class CoordinatesTest {
         assertThrows(InvalidCoordinatesException.class, () -> {
             Coordinates test = new Coordinates(3,9);
         });
+
+        assertThrows(InvalidCoordinatesException.class, () -> {
+            Coordinates test = new Coordinates("(3,,4)");
+        });
+        assertThrows(InvalidCoordinatesException.class, () -> {
+            Coordinates test = new Coordinates("(3;4)");
+        });
     }
 
     /**
@@ -60,6 +67,10 @@ public class CoordinatesTest {
 
         assertEquals(test, new Coordinates(0, 0));
         assertNotEquals(test, new Coordinates(1, 3));
+
+        assertEquals(test, new Coordinates("(0,0)"));
+        assertEquals(test, new Coordinates("0,0"));
+        assertEquals(test, new Coordinates("( 0 , 0 )"));
     }
 
 }

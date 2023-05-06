@@ -1,11 +1,24 @@
 package it.polimi.ingsw.client.view;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import it.polimi.ingsw.client.connection.*;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import static it.polimi.ingsw.server.model.utilities.UtilityFunctions.isNumeric;
 
 public class CliView implements ViewInterface {
 
@@ -16,10 +29,127 @@ public class CliView implements ViewInterface {
     private static final int MAX_VERT_TILES = 40; //rows.
     private static final int MAX_HORIZ_TILES = 30; //cols.
 
+    private final ExecutorService inputReaderEx;
+    private final ConnectionHandler controller;
+
+    private final Scanner inputScan;
     String[][] tiles = new String[MAX_VERT_TILES][MAX_HORIZ_TILES];
 
-    public CliView(){
+    public CliView(ConnectionType connectionType){
+        ConnectionHandlerFactory factory = new ConnectionHandlerFactory();
+        controller = factory.createConnection(connectionType, this);
+        inputScan =  new Scanner(System.in);
         fillEmpty();
+        inputReaderEx = Executors.newCachedThreadPool();
+        inputReaderEx.submit( () -> {
+            String cliInput;
+            synchronized (inputScan){
+                while(true){
+                    cliInput = inputScan.nextLine();
+                    String finalCliInput = cliInput;
+                    inputReaderEx.submit(() -> this.handle(finalCliInput));
+                }
+            }
+
+        } );
+    }
+
+    private void handle(String cliInput) {
+
+        String[] inputArray = cliInput.split(">>");
+        String command,specific;
+        if(inputArray.length >= 2) {
+             command = inputArray[0];
+             specific = inputArray[1];
+        } else {
+            command = inputArray[0];
+            specific = "";
+        }
+
+
+
+        switch (command){
+            /*chat>>UserRecipient--ciaooo*/
+            case "chat" ->{
+
+                String[] chatMessageArray = specific.split("--");
+                if( chatMessageArray.length > 1){
+                    controller.sendMessage(chatMessageArray[1],chatMessageArray[0]);
+                } else {
+                    controller.sendMessage(specific);
+                }
+            }
+            /* createGame>>3*/
+            case "createGame" -> {
+                if(isNumeric(specific)){
+                    try {
+                        controller.CreateGame(Integer.parseInt(specific));
+                    } catch (RemoteException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+            /*joinGame>>*/
+            case "joinGame" -> {
+                try {
+                    this.postNotification("trying joining the game","...");
+                    controller.JoinGame();
+                } catch (RemoteException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            /*getTiles>>(2,3);(4,5);(0,1);*/
+            case "getTiles" -> {
+
+                ArrayList<Coordinates> coordinatesList= this.parseCoordinates(specific);
+
+
+                try {
+                    controller.checkValidRetrieve(coordinatesList);
+                } catch (RemoteException e) {
+                    throw new RuntimeException(e);
+                }
+
+            }
+            /* moveTiles>>(2,3);(4,5);(0,1)-->3 */
+            case "moveTiles" -> {
+                String[] moveInputs = specific.split("-->");
+                if(moveInputs.length < 2 ) return;
+
+                ArrayList<Coordinates> coordinatesList= this.parseCoordinates(moveInputs[0]);
+
+                if(isNumeric(moveInputs[1])){
+                    try {
+                        controller.moveTiles(coordinatesList,Integer.parseInt(moveInputs[1]));
+                    } catch (RemoteException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+
+            }
+
+            case "JoinLobby" -> {
+                try {
+                    controller.JoinLobby(specific);
+                } catch (RemoteException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+    }
+
+    private ArrayList<Coordinates> parseCoordinates(String tilesString){
+        ArrayList<Coordinates> coordinatesList = new ArrayList<>();
+        String[] tilesArray = tilesString.split(";");
+        for( String tile : tilesArray){
+            try {
+                coordinatesList.add( new Coordinates(tile));
+            } catch (InvalidCoordinatesException e) {
+                this.postNotification("Coordinates are invalid","");
+            }
+        }
+
+        return coordinatesList;
     }
 
     public void printTitle(){

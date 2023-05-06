@@ -115,7 +115,7 @@ public class ClientSocket implements ConnectionHandler{
             throw new RuntimeException(e);
         }
         NetMessage responseMessage = getMessageFromBuffer(MessageType.LOGIN_RETURN);
-        System.out.println(responseMessage.getMessageType());
+        this.parse(responseMessage);
     }
 
     @Override
@@ -129,6 +129,7 @@ public class ClientSocket implements ConnectionHandler{
             throw new RuntimeException(e);
         }
         NetMessage responseMessage = getMessageFromBuffer(MessageType.CONFIRM_GAME);
+        this.parse(responseMessage);
     }
 
     @Override
@@ -158,6 +159,7 @@ public class ClientSocket implements ConnectionHandler{
             throw new RuntimeException(e);
         }
         NetMessage responseMessage = getMessageFromBuffer(MessageType.CONFIRM_SELECTION);
+        this.parse(responseMessage);
     }
 
     @Override
@@ -171,6 +173,7 @@ public class ClientSocket implements ConnectionHandler{
             throw new RuntimeException(e);
         }
         NetMessage responseMessage = getMessageFromBuffer(MessageType.CONFIRM_MOVE);
+        this.parse(responseMessage);
     }
 
     public void sendMessage(String content){
@@ -183,7 +186,7 @@ public class ClientSocket implements ConnectionHandler{
             throw new RuntimeException(e);
         }
         NetMessage responseMessage = getMessageFromBuffer(MessageType.CONFIRM_CHAT);
-
+        this.parse(responseMessage);
     }
 
     public void sendMessage(String content, String recipient){
@@ -196,7 +199,7 @@ public class ClientSocket implements ConnectionHandler{
             throw new RuntimeException(e);
         }
         NetMessage responseMessage = getMessageFromBuffer(MessageType.CONFIRM_CHAT);
-
+        this.parse(responseMessage);
     }
 
     @Override
@@ -293,7 +296,10 @@ public class ClientSocket implements ConnectionHandler{
                 }
             }
 
-            case NOTIFY_NEW_CHAT -> {}
+            case NOTIFY_NEW_CHAT -> {
+                NotifyNewChatMessage message = (NotifyNewChatMessage) responseMessage;
+                view.postNotification("new message!",message.getSender()+": "+message.getContent());
+            }
 
             case NOTIFY_WINNING_PLAYER -> {}
 

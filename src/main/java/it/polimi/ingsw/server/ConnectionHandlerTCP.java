@@ -15,6 +15,8 @@ import java.net.Socket;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static it.polimi.ingsw.server.ServerMain.logger;
 
@@ -28,6 +30,8 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
     private RemoteGameController gameController;
     private final ObjectInputStream inputStream;
     private final ObjectOutputStream outputStream;
+
+    private final ExecutorService parseExecutors = Executors.newCachedThreadPool();
     public ConnectionHandlerTCP(Socket socket, LobbyController lobbyController) {
         this.socket = socket;
         this.lobbyController = lobbyController;
@@ -44,26 +48,39 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
         }
     }
     public void run() {
-        try {
 
-            ReschedulableTimer timer = new ReschedulableTimer();
-            NetMessage inputMessage;
-            NetMessage outputMessage;
-            timer.schedule(this::handleCrash, 15000);
-            while (true) {
+
+        ReschedulableTimer timer = new ReschedulableTimer();
+        NetMessage inputMessage;
+        timer.schedule(this::handleCrash, 15000);
+        while (!closeConnectionFlag) {
+            try {
                 inputMessage = (NetMessage)inputStream.readObject();
-                logger.info("MESSAGE RECEIVED");
-                timer.reschedule(15000); //15s
-                outputMessage = messageParser(inputMessage);
-                    if(closeConnectionFlag)
-                        break;
-                    synchronized (outputStream) {
+            } catch (IOException | ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+            logger.info("MESSAGE RECEIVED");
+            timer.reschedule(15000); //15s
+            NetMessage finalInputMessage = inputMessage;
+            parseExecutors.submit(() -> {
+                synchronized (outputStream) {
+                    NetMessage outputMessage;
+                    try {
+                        outputMessage = messageParser(finalInputMessage);
+                    } catch (RemoteException e) {
+                        throw new RuntimeException(e);
+                    }
+                    if (closeConnectionFlag)
+                        return;
+                    try {
                         outputStream.writeObject(outputMessage);
+                        outputStream.flush();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
                     }
                 }
-                outputStream.flush();
-            } catch (IOException | ClassNotFoundException ex) {
-            throw new RuntimeException(ex);
+
+            });
         }
         try {
             outputStream.close();
@@ -85,6 +102,13 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
             case JOIN_LOBBY -> {
 
                 JoinLobbyMessage joinLobbyMessage = (JoinLobbyMessage) inputMessage;
+                if(username != null && !username.isEmpty()){
+                    try {
+                        lobbyController.handleCrashedPlayer(username);
+                    } catch (PlayerNotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
                 this.username = joinLobbyMessage.getUsername();
                 try {
                     gameController = lobbyController.enterInLobby(joinLobbyMessage.getUsername());
@@ -98,9 +122,15 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
                     errorType = "NicknameAlreadyUsedException";
                     result = false;
                     IsPlayerrejoined = false;
+                    desc = e.getMessage();
+                } catch (InvalidPlayerException e) {
+                    errorType = "InvalidPlayerException";
+                    result = false;
+                    IsPlayerrejoined = false;
+                    desc = e.getMessage();
                 }
 
-                outputMessage = new LoginReturnMessage(result,errorType, "", IsPlayerrejoined);
+                outputMessage = new LoginReturnMessage(result,errorType, desc, IsPlayerrejoined);
             }
             case CREATE_GAME -> {
                 CreateGameMessage createGameMessage = (CreateGameMessage) inputMessage;
@@ -110,16 +140,19 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
                     result = true;
                     logger.info("Game CREATED Successfully");
                     errorType = "";
+                    desc = "";
                     this.subscribeToAllListeners();
                 } catch (InvalidPlayerException e) {
                     result = false;
                     errorType = "InvalidPlayer";
+                    desc = e.getMessage();
                 } catch (PlayersNumberOutOfRange e) {
                     result = false;
                     errorType = "PlayersNumberOutOfRange";
+                    desc = e.getMessage();
                 }
                 logger.info(String.valueOf(result));
-                outputMessage = new ConfirmGameMessage(result, errorType, "");
+                outputMessage = new ConfirmGameMessage(result, errorType, desc);
             }
             case JOIN_GAME -> {
                 try {
@@ -127,24 +160,28 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
                     result = true;
                     errorType = "";
                     this.subscribeToAllListeners();
-
+                    desc = "";
                 } catch (NicknameAlreadyUsedException e) {
                     result = false;
                     errorType = "NicknameAlreadyUsed";
+                    desc = e.getMessage();
                 } catch (NoAvailableGameException e) {
                     result = false;
                     errorType = "NoAvailableGameException";
+                    desc = e.getMessage();
                 } catch (InvalidPlayerException e) {
                     result = false;
                     errorType = "InvalidPlayerException";
+                    desc = e.getMessage();
                 }
-                outputMessage = new ConfirmGameMessage(result, errorType, "");
+                outputMessage = new ConfirmGameMessage(result, errorType, desc);
             }
             case TILES_SELECTION -> {
                 TileSelectionMessage tileSelectionMessage = (TileSelectionMessage) inputMessage;
                 try {
                     result = gameController.checkValidRetrieve(username, tileSelectionMessage.getTiles());
                     errorType = "";
+                    desc = "";
                 } catch (PlayerNotInTurnException e) {
                     result = false;
                     errorType = "PlayerNotInTurnException";
@@ -170,6 +207,7 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
                     gameController.moveTiles(username, moveTilesMessage.getTiles(), moveTilesMessage.getColumn());
                     result = true;
                     errorType="";
+                    desc = "";
                 } catch (GameNotStartedException e) {
                     result = false;
                     errorType = "GameNotStartedException";
@@ -203,6 +241,7 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
                     try {
                         result = true;
                         gameController.postDirectMessage(username, postMessage.getRecipient(), postMessage.getContent());
+                        desc = "";
                     } catch (InvalidPlayerException e) {
                         result = false;
                         errorType = "InvalidPlayerException";
@@ -297,6 +336,7 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
 
     @Override
     public void receiveMessage(String from, String msg) {
+        logger.info("SENDING MESSAGE TO "+this.username);
         NotifyNewChatMessage update = new NotifyNewChatMessage(from, msg);
         this.sendUpdate(update);
     }
