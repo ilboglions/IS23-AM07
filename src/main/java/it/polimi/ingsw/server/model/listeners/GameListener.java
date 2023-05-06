@@ -22,4 +22,9 @@ public class GameListener extends Listener<GameSubscriber> {
         Set<GameSubscriber> subscribers = this.getSubscribers();
         subscribers.forEach(sub -> sub.notifyWinningPlayer(username, points, scoreboard));
     }
+
+    public void notifyPlayerInTurn(String username){
+        Set<GameSubscriber> subscribers = this.getSubscribers();
+        subscribers.forEach(sub -> sub.notifyPlayerInTurn(username));
+    }
 }

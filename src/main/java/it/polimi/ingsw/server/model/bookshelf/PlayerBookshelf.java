@@ -106,6 +106,6 @@ public class PlayerBookshelf extends Bookshelf{
     public void triggerListener(String userToBeUpdated){
         Objects.requireNonNull(userToBeUpdated);
 
-        this.bookshelfListener.triggerListener(userToBeUpdated, this.getItemTileMap());
+        this.bookshelfListener.triggerListener(userToBeUpdated, this.getItemTileMap(), this.player.getUsername());
     }
 }

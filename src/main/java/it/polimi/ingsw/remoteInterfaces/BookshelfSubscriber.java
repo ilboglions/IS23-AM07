@@ -20,6 +20,7 @@ public interface BookshelfSubscriber extends ListenerSubscriber {
     /**
      * This method is used to notify the complete current status of the bookshelf
      * @param currentTilesMap the map of the coordinates of the bookshelf with a tile in it
+     * @param username the username of the bookshelf owner
      */
-    void updateBookshelfComplete(Map<Coordinates, ItemTile> currentTilesMap);
+    void updateBookshelfComplete(Map<Coordinates, ItemTile> currentTilesMap, String username);
 }

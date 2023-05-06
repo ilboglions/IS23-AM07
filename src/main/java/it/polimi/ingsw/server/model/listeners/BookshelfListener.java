@@ -31,13 +31,14 @@ public class BookshelfListener extends Listener<BookshelfSubscriber> {
      * Method used to trigger the listener when a player joins or re-joins a game after a crash, to receive the complete status of the bookshelf
      * @param userToBeUpdated the username of the user that needs to receive the updates
      * @param currentTilesMap is the map the coordinates of the board with the corresponding ItemTile in it
+     * @param username the username of the bookshelf owner
      */
-    public void triggerListener(String userToBeUpdated, Map<Coordinates, ItemTile> currentTilesMap){
+    public void triggerListener(String userToBeUpdated, Map<Coordinates, ItemTile> currentTilesMap, String username){
         Set<BookshelfSubscriber> subscribers = this.getSubscribers();
 
         for (BookshelfSubscriber sub : subscribers) {
             if(sub.getSubscriberUsername().equals(userToBeUpdated)){
-                sub.updateBookshelfComplete(currentTilesMap);
+                sub.updateBookshelfComplete(currentTilesMap, username);
             }
         }
     }

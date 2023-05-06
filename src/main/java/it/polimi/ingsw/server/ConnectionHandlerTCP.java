@@ -48,11 +48,11 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
         }
     }
     public void run() {
-
-
         ReschedulableTimer timer = new ReschedulableTimer();
         NetMessage inputMessage;
+
         timer.schedule(this::handleCrash, 15000);
+
         while (!closeConnectionFlag) {
             try {
                 inputMessage = (NetMessage)inputStream.readObject();
@@ -62,6 +62,7 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
             logger.info("MESSAGE RECEIVED");
             timer.reschedule(15000); //15s
             NetMessage finalInputMessage = inputMessage;
+
             parseExecutors.submit(() -> {
                 synchronized (outputStream) {
                     NetMessage outputMessage;
@@ -100,7 +101,6 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
         logger.info(inputMessage.getMessageType().toString());
         switch (inputMessage.getMessageType()) {
             case JOIN_LOBBY -> {
-
                 JoinLobbyMessage joinLobbyMessage = (JoinLobbyMessage) inputMessage;
                 if(username != null && !username.isEmpty()){
                     try {
@@ -140,7 +140,6 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
                     result = true;
                     logger.info("Game CREATED Successfully");
                     errorType = "";
-                    desc = "";
                     this.subscribeToAllListeners();
                 } catch (InvalidPlayerException e) {
                     result = false;
@@ -160,7 +159,6 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
                     result = true;
                     errorType = "";
                     this.subscribeToAllListeners();
-                    desc = "";
                 } catch (NicknameAlreadyUsedException e) {
                     result = false;
                     errorType = "NicknameAlreadyUsed";
@@ -181,7 +179,6 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
                 try {
                     result = gameController.checkValidRetrieve(username, tileSelectionMessage.getTiles());
                     errorType = "";
-                    desc = "";
                 } catch (PlayerNotInTurnException e) {
                     result = false;
                     errorType = "PlayerNotInTurnException";
@@ -197,7 +194,7 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
                 } catch (EmptySlotException e) {
                     result = false;
                     errorType = "EmptySlotException";
-                    desc = "you cannot select those slots";
+                    desc = e.getMessage();
                 }
                 outputMessage = new ConfirmSelectionMessage(result, errorType, desc);
             }
@@ -207,7 +204,6 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
                     gameController.moveTiles(username, moveTilesMessage.getTiles(), moveTilesMessage.getColumn());
                     result = true;
                     errorType="";
-                    desc = "";
                 } catch (GameNotStartedException e) {
                     result = false;
                     errorType = "GameNotStartedException";
@@ -241,7 +237,6 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
                     try {
                         result = true;
                         gameController.postDirectMessage(username, postMessage.getRecipient(), postMessage.getContent());
-                        desc = "";
                     } catch (InvalidPlayerException e) {
                         result = false;
                         errorType = "InvalidPlayerException";
@@ -323,13 +318,13 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
 
     @Override
     public void updateBookshelfStatus(String player, ArrayList<ItemTile> tilesInserted, int colChosen) {
-        BookshelfUpdateMessage update = new BookshelfUpdateMessage(tilesInserted, colChosen);
+        BookshelfUpdateMessage update = new BookshelfUpdateMessage(tilesInserted, colChosen, player);
         this.sendUpdate(update);
     }
 
     @Override
-    public void updateBookshelfComplete(Map<Coordinates, ItemTile> currentTilesMap) {
-        BookshelfFullUpdateMessage update = new BookshelfFullUpdateMessage(currentTilesMap);
+    public void updateBookshelfComplete(Map<Coordinates, ItemTile> currentTilesMap, String player) {
+        BookshelfFullUpdateMessage update = new BookshelfFullUpdateMessage(currentTilesMap, player);
         this.sendUpdate(update);
     }
 
@@ -384,6 +379,12 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
     @Override
     public void notifyCommonGoalCards(ArrayList<RemoteCommonGoalCard> commonGoalCards) {
         CommonGoalCardsUpdateMessage update = new CommonGoalCardsUpdateMessage(commonGoalCards);
+        this.sendUpdate(update);
+    }
+
+    @Override
+    public void notifyPlayerInTurn(String username) {
+        NotifyPlayerInTurnMessage update = new NotifyPlayerInTurnMessage(username, this.username.equals(username));
         this.sendUpdate(update);
     }
 

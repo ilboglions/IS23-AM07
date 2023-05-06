@@ -23,4 +23,6 @@ public interface GameSubscriber extends ListenerSubscriber {
      * @param commonGoalCards is the list of the common goals of the game
      */
     void notifyCommonGoalCards(ArrayList<RemoteCommonGoalCard> commonGoalCards);
+
+    void notifyPlayerInTurn(String username);
 }

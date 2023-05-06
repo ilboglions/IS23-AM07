@@ -94,7 +94,7 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
             if(player == null) throw new InvalidPlayerException();
             GameController gameController;
 
-            GameModelInterface gameModel = null;
+            GameModelInterface gameModel;
             try {
                 gameModel = lobbyModel.addPlayerToGame(player);
             } catch (PlayersNumberOutOfRange e) {

@@ -11,13 +11,19 @@ public class BookshelfFullUpdateMessage extends NetMessage{
     private static final long serialVersionUID = 788448996192853106L;
 
     private final Map<Coordinates, ItemTile> currentMap;
+    private final String username;
 
-    public BookshelfFullUpdateMessage(Map<Coordinates, ItemTile> currentMap) {
+    public BookshelfFullUpdateMessage(Map<Coordinates, ItemTile> currentMap, String username) {
         super(MessageType.BOOKSHELF_FULL_UPDATE);
         this.currentMap = currentMap;
+        this.username = username;
     }
 
     public Map<Coordinates, ItemTile> getCurrentMap() {
         return currentMap;
+    }
+
+    public String getUsername() {
+        return username;
     }
 }

@@ -12,11 +12,13 @@ public class BookshelfUpdateMessage extends NetMessage {
 
     private final ArrayList<ItemTile> insertedTiles;
     private final int column;
+    private final String username;
 
-    public BookshelfUpdateMessage(ArrayList<ItemTile> insertedTiles, int column) {
+    public BookshelfUpdateMessage(ArrayList<ItemTile> insertedTiles, int column, String username) {
         super(MessageType.BOOKSHELF_UPDATE);
         this.insertedTiles = insertedTiles;
         this.column = column;
+        this.username = username;
     }
 
     public ArrayList<ItemTile> getInsertedTiles() {
@@ -25,5 +27,9 @@ public class BookshelfUpdateMessage extends NetMessage {
 
     public int getColumn() {
         return column;
+    }
+
+    public String getUsername() {
+        return username;
     }
 }

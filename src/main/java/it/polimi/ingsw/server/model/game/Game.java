@@ -169,6 +169,7 @@ public class Game implements GameModelInterface {
         this.isStarted = true;
         this.playerTurn = 0;
         this.refillLivingRoom();
+        this.gameListener.notifyPlayerInTurn(players.get(0).getUsername());
     }
 
     /**
@@ -437,6 +438,8 @@ public class Game implements GameModelInterface {
             this.playerTurn = (this.playerTurn + 1) % this.numPlayers;
         }
         while(crashedPlayers.contains(players.get(playerTurn)));
+
+        this.gameListener.notifyPlayerInTurn(players.get(playerTurn).getUsername());
 
         return true;
     }
