@@ -1,6 +1,5 @@
 package it.polimi.ingsw.server.model.bookshelf;
 
-import it.polimi.ingsw.server.model.bookshelf.CardBookshelf;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
@@ -78,6 +77,14 @@ class CardBookshelfTest {
         Map<ItemTile, Integer> allTiles = test.getAllItemTiles();
         for(Map.Entry<ItemTile, Integer> entry : allTiles.entrySet()) {
             assertEquals(entry.getValue(), insertedTiles.get(entry.getKey()));
+        }
+
+        Map<Coordinates, ItemTile> fullPattern = test.getItemTileMap();
+        for(Map.Entry<Coordinates, ItemTile> entry : fullPattern.entrySet()){
+            assertEquals(testPattern.get(entry.getKey()), entry.getValue());
+        }
+        for(Map.Entry<Coordinates, ItemTile> entry : testPattern.entrySet()){
+            assertTrue(fullPattern.containsKey(entry.getKey()));
         }
     }
 

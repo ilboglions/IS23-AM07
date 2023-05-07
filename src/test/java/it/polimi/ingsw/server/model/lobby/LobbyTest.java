@@ -2,7 +2,6 @@ package it.polimi.ingsw.server.model.lobby;
 
 import it.polimi.ingsw.server.model.exceptions.*;
 import it.polimi.ingsw.server.model.game.Game;
-import it.polimi.ingsw.server.model.lobby.Lobby;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -23,7 +22,7 @@ public class LobbyTest {
         assertThrows(NullPointerException.class, ()->{
            test.addPlayerToGame(null);
         });
-        assertThrows(NullPointerException.class, ()->{
+        assertThrows(InvalidPlayerException.class, ()->{
             test.createPlayer(null);
         });
         assertThrows(NullPointerException.class, ()->{
@@ -64,6 +63,13 @@ public class LobbyTest {
            test.createGame(4, "testUser");
            test.addPlayerToGame("secondUser");
         });
+
+        assertThrows(NullPointerException.class, ()->{
+           test.handleCrashedPlayer(null);
+        });
+        assertThrows(PlayerNotFoundException.class, ()->{
+           test.handleCrashedPlayer("noPlayer");
+        });
     }
 
     /**
@@ -74,10 +80,11 @@ public class LobbyTest {
      * @throws NotEnoughCardsException if there are not enough cards to draw
      * @throws PlayersNumberOutOfRange if the number of player is less than 2 or grater than 4
      * @throws NoAvailableGameException if there isn't a game where the player can join
+     * @throws PlayerNotFoundException if the username was not found in the game
      */
     @Test
     @DisplayName("Test all the methods")
-    void testMethods() throws NicknameAlreadyUsedException, InvalidPlayerException, BrokenInternalGameConfigurations, NotEnoughCardsException, PlayersNumberOutOfRange, NoAvailableGameException {
+    void testMethods() throws NicknameAlreadyUsedException, InvalidPlayerException, BrokenInternalGameConfigurations, NotEnoughCardsException, PlayersNumberOutOfRange, NoAvailableGameException, PlayerNotFoundException {
         Lobby test = new Lobby();
         test.createPlayer("testUser");
         test.createPlayer("secondUser");
@@ -89,5 +96,9 @@ public class LobbyTest {
         test.createPlayer("fourthUser");
         Game testSecondGame = test.createGame(2, "thirdUser");
         assertEquals(testGame, test.addPlayerToGame("fourthUser"));
+
+        test.createPlayer("crashUser");
+        assertDoesNotThrow(()-> test.handleCrashedPlayer("crashUser"));
+        assertDoesNotThrow(()-> test.createPlayer("crashUser"));
     }
 }

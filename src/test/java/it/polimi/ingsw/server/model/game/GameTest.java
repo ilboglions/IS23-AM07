@@ -475,7 +475,6 @@ public class GameTest {
      * @throws PlayersNumberOutOfRange if the player number is less than 2 or grater than 4
      * @throws NicknameAlreadyUsedException if there is already a player with the same nickname
      * @throws InvalidPlayerException if the player is invalid
-     * @throws SenderEqualsRecipientException if the sender and the recipient of the message are the equals
      */
     @Test
     @DisplayName("Test getPlayerMessage method")
@@ -507,12 +506,15 @@ public class GameTest {
      * @throws IllegalFilePathException if the configuration file path is not correct
      * @throws NotEnoughCardsException if there are not enough cards to draw
      * @throws PlayersNumberOutOfRange if the player number is less than 2 or grater than 4
+     * @throws NicknameAlreadyUsedException if the nickname chosen is already user by another player in game
      */
     @Test
     @DisplayName("Test postMessage method")
-    void testPostMessage() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange {
+    void testPostMessage() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, NicknameAlreadyUsedException {
         Player testPlayer = new Player("Test");
+        Player testPlayer2 = new Player("SecondPlayer");
         Game test = new Game(3, testPlayer);
+        test.addPlayer(testPlayer2);
 
         assertThrows(NullPointerException.class, ()->{
             test.postMessage(null,  "");
@@ -528,6 +530,43 @@ public class GameTest {
         });
 
         assertDoesNotThrow(()->test.postMessage("Test", "Test"));
+        assertDoesNotThrow(()->test.postMessage("Test", "SecondPlayer", ""));
+    }
+
+    /**
+     * This tests if the methods that handle the crash and the re-join are working correctly
+     * @throws NegativeFieldException if the elements to draw are a negative number
+     * @throws IllegalFilePathException if the configuration file path is not correct
+     * @throws NotEnoughCardsException if there are not enough cards to draw
+     * @throws PlayersNumberOutOfRange if the player number is less than 2 or grater than 4
+     * @throws NicknameAlreadyUsedException if the nickname chosen is already user by another player in game
+     * @throws PlayerNotFoundException If the username was not found in the game
+     */
+    @Test
+    @DisplayName("Test crashed player")
+    void testCrashedPlayer() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, NicknameAlreadyUsedException, PlayerNotFoundException {
+        Player testPlayer = new Player("Test");
+        Player testPlayer2 = new Player("SecondPlayer");
+        Game test = new Game(3, testPlayer);
+        test.addPlayer(testPlayer2);
+
+        assertThrows(PlayerNotFoundException.class, ()->{
+           test.handleCrashedPlayer("noPlayer");
+        });
+        assertThrows(PlayerNotFoundException.class, ()->{
+           test.handleRejoinedPlayer("noPlayer");
+        });
+        assertThrows(PlayerNotFoundException.class, ()->{
+           test.handleRejoinedPlayer("Test");
+        });
+
+        assertFalse(test.isCrashedPlayer("SecondPlayer"));
+
+        test.handleCrashedPlayer("SecondPlayer");
+        assertTrue(test.isCrashedPlayer("SecondPlayer"));
+
+        test.handleRejoinedPlayer("SecondPlayer");
+        assertFalse(test.isCrashedPlayer("SecondPlayer"));
     }
 
 }

@@ -1,6 +1,5 @@
 package it.polimi.ingsw.server.model.cards.personal;
 
-import it.polimi.ingsw.server.model.cards.personal.PersonalGoalCard;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
@@ -78,6 +77,12 @@ class PersonalGoalCardTest {
 
         for(Map.Entry<Integer, Integer> entry : testStdPoints.entrySet()) {
             assertEquals(test.getPointsReference().get(entry.getKey()), entry.getValue());
+        }
+
+        Map<Coordinates, ItemTile> itemTileMap = test.getCardPattern();
+        for(Map.Entry<Coordinates, ItemTile> entry : testPattern.entrySet()) {
+            assertTrue(itemTileMap.containsKey(entry.getKey()));
+            assertEquals(entry.getValue(), itemTileMap.get(entry.getKey()));
         }
     }
 }

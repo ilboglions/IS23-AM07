@@ -39,6 +39,7 @@ class CheckPatternTest {
         assertThrows(PlayersNumberOutOfRange.class, () -> {
             new CheckPattern(5,"", CommonCardType.CORNERS, pattern, true);});
         card = new CheckPattern(2,"description_test", CommonCardType.CORNERS, pattern, true);
+        assertEquals(CommonCardType.CORNERS, card.getName());
     }
 
     /**
