@@ -117,16 +117,12 @@ public class Game implements GameModelInterface {
 
     @Override
     public void subscribeToListener(BoardSubscriber subscriber){
-
         livingRoom.subscribeToListener(subscriber);
-
     }
 
     @Override
     public void subscribeToListener(BookshelfSubscriber subscriber){
-
         players.forEach(p -> p.getBookshelf().subscribeToListener( subscriber));
-
     }
 
     @Override
@@ -514,8 +510,17 @@ public class Game implements GameModelInterface {
     public void handleCrashedPlayer(String username) throws PlayerNotFoundException {
         Optional<Player> tmpPlayer = this.searchPlayer(username);
 
-        if(tmpPlayer.isPresent())
+        livingRoom.unsubscribeFromListener(username);
+        players.forEach(p -> {
+            p.getBookshelf().unsubscribeFromListener(username);
+            p.unsubscribeFromListener(username);
+        });
+        chat.unsubscribeFromListener(username);
+        this.gameListener.removeSubscriber(username);
+
+        if(tmpPlayer.isPresent()){
             crashedPlayers.add(tmpPlayer.get());
+        }
         else
             throw new PlayerNotFoundException("The player with this username has not been found in the game");
     }
@@ -530,7 +535,6 @@ public class Game implements GameModelInterface {
 
         if(tmpPlayer.isPresent() && crashedPlayers.contains(tmpPlayer.get())){
             crashedPlayers.remove(tmpPlayer.get());
-            this.triggerAllListeners(username);
         }
         else
             throw new PlayerNotFoundException("The player with this username has not been found in the game");
@@ -540,7 +544,7 @@ public class Game implements GameModelInterface {
      * Method used to trigger all the listeners when a player joins or re-joins a game after a crash, to receive the complete status of the game such as players bookshelf's, points or livingRoomBoard
      * @param userToBeUpdated the username of the user that needs to receive the updates
      */
-    private void triggerAllListeners(String userToBeUpdated) {
+    public void triggerAllListeners(String userToBeUpdated) {
         for(Player player : players){
             player.triggerListener(userToBeUpdated);
             player.getBookshelf().triggerListener(userToBeUpdated);

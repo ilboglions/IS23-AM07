@@ -73,9 +73,12 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
                     if(entry.getKey().isCrashedPlayer(player) ){
                         try {
                             entry.getValue().handleRejoinedPlayer(player);
-                        } catch (PlayerNotFoundException ignored) {
+                            System.out.println("ajejejejejejejejej");
+                            return entry.getValue();
+                        } catch (PlayerNotFoundException ee) {
+                            throw new RuntimeException(ee);
                         }
-                        return entry.getValue();
+
                     }
                 }
                 throw e;
@@ -126,7 +129,7 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
         synchronized (lobbyLock) {
             if(player == null) throw new InvalidPlayerException();
             GameController gameController;
-            GameModelInterface gameModel = null;
+            GameModelInterface gameModel;
             try {
                 gameModel = lobbyModel.createGame(nPlayers, player);
             } catch (BrokenInternalGameConfigurations e) {

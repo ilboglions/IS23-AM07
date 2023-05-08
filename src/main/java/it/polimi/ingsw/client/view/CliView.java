@@ -1,15 +1,10 @@
 package it.polimi.ingsw.client.view;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import it.polimi.ingsw.client.connection.*;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Map;
@@ -65,8 +60,6 @@ public class CliView implements ViewInterface {
             command = inputArray[0];
             specific = "";
         }
-
-
 
         switch (command){
             /*chat>>UserRecipient--cia<ooo*/

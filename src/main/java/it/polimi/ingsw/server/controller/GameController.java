@@ -77,7 +77,7 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
      */
     public void moveTiles(String player, ArrayList<Coordinates> source, int column) throws RemoteException, GameNotStartedException, GameEndedException, NotEnoughSpaceException, PlayerNotInTurnException, EmptySlotException, InvalidCoordinatesException {
         synchronized (gameLock) {
-                if(!player.equals(gameModel.getPlayerInTurn())) throw new PlayerNotInTurnException();
+            if(!player.equals(gameModel.getPlayerInTurn())) throw new PlayerNotInTurnException();
 
             if(!this.selectedTiles.containsAll(source) || this.selectedTiles.size() != source.size()) throw new InvalidCoordinatesException("the selected tiles don't match!");
 
@@ -200,10 +200,18 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
      * @throws PlayerNotFoundException if the player crashed is not found in the game
      * @throws RemoteException
      */
-    public void handleCrashedPlayer(String username) throws PlayerNotFoundException, RemoteException{
+    public void handleCrashedPlayer(String username) throws PlayerNotFoundException, RemoteException {
         gameModel.handleCrashedPlayer(username);
         if( timers.containsKey(username))
             this.stopTimer(username);
+
+        try{
+            if(gameModel.getIsStarted() && gameModel.getPlayerInTurn().equals(username)) {
+                this.selectedTiles.clear();
+                gameModel.setPlayerTurn();
+            }
+        } catch (GameNotStartedException | GameEndedException ignored) {
+        }
     }
 
 
@@ -247,7 +255,15 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
         }
     }
 
+    /**
+     * Method used to trigger all the listeners when a player joins or re-joins a game after a crash, to receive the complete status of the game such as players bookshelf's, points or livingRoomBoard
+     * @param userToBeUpdated the username of the user that needs to receive the updates
+     */
+    public void triggerAllListeners(String userToBeUpdated){
+        gameModel.triggerAllListeners(userToBeUpdated);
+    }
+
     public Set<Coordinates> getSelectedTiles() {
-        return (new HashSet<Coordinates>(selectedTiles));
+        return (new HashSet<>(selectedTiles));
     }
 }

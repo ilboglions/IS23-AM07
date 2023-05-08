@@ -30,4 +30,6 @@ public interface RemoteGameController extends Remote{
     void handleRejoinedPlayer(String username) throws RemoteException, PlayerNotFoundException;
 
     void triggerHeartBeat(String username) throws RemoteException;
+
+    void triggerAllListeners(String userToBeUpdated) throws RemoteException;
 }

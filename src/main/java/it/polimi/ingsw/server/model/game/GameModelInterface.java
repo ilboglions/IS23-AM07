@@ -34,4 +34,5 @@ public interface GameModelInterface {
     void handleRejoinedPlayer(String username) throws PlayerNotFoundException;
     void handleCrashedPlayer(String username) throws PlayerNotFoundException;
     boolean isCrashedPlayer(String player);
+    void triggerAllListeners(String userToBeUpdated);
 }

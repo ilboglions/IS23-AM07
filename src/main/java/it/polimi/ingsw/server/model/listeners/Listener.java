@@ -5,6 +5,7 @@ import it.polimi.ingsw.remoteInterfaces.ListenerSubscriber;
 import java.rmi.Remote;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * the abstract and generic class that describe a listener
@@ -30,6 +31,15 @@ public abstract class Listener<T extends ListenerSubscriber> implements Remote {
      */
     public void addSubscriber(T subscriber) {
         subscribers.add(subscriber);
+    }
+
+    /**
+     * removes all the subscribers that contains the username
+     * @param username the username of the subscriber
+     */
+    public void removeSubscriber(String username){
+        Set<T> subToRemove = subscribers.stream().filter( s -> s.getSubscriberUsername().equals(username)).collect(Collectors.toSet());
+        this.subscribers.removeAll(subToRemove);
     }
 
 }

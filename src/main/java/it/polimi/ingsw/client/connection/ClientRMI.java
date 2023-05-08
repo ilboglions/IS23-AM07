@@ -98,28 +98,19 @@ public class ClientRMI implements ConnectionHandler{
 
         //here the view will be notified that the action has been executed correctly
         try {
-            if(gameController.checkValidRetrieve(this.username,tiles)) return;
+            if(gameController.checkValidRetrieve(this.username,tiles))
+                view.postNotification("Your Selection has been accepted!!","choose the column to fit the selection!");
+            else
+                view.postNotification("Your selection is invalid", "");
         } catch (EmptySlotException e) {
             view.postNotification("the slot selected is empty!",e.getMessage());
         } catch (GameNotStartedException e) {
-            throw new RuntimeException(e);
+            view.postNotification("The game has not started yet!",e.getMessage());
         } catch (GameEndedException e) {
-            throw new RuntimeException(e);
+            view.postNotification("The game has already ended!",e.getMessage());
         } catch (PlayerNotInTurnException e) {
-            throw new RuntimeException(e);
+            view.postNotification("You're not in turn!",e.getMessage());
         }
-        try {
-            if(gameController.checkValidRetrieve(this.username,tiles)) return;
-        } catch (PlayerNotInTurnException e) {
-            //...
-        } catch (GameNotStartedException e) {
-            //...
-        } catch (GameEndedException e) {
-            //...
-        } catch (EmptySlotException e) {
-            throw new RuntimeException(e);
-        }
-
     }
 
     @Override
@@ -133,12 +124,13 @@ public class ClientRMI implements ConnectionHandler{
 
         try {
             gameController.moveTiles(this.username,tiles, column);
+            view.postNotification("Move done!", "");
         } catch (GameNotStartedException e) {
             view.postNotification("The game is not started yet!",e.getMessage());
         } catch (GameEndedException e) {
             view.postNotification("The game is ended!",e.getMessage());
         } catch (EmptySlotException e) {
-            throw new RuntimeException(e);
+            view.postNotification("The slot selected is empty!",e.getMessage());
         } catch (NotEnoughSpaceException e) {
             view.postNotification("No space left",e.getMessage());
         } catch (InvalidCoordinatesException e) {
@@ -152,23 +144,23 @@ public class ClientRMI implements ConnectionHandler{
     @Override
     public void sendHeartBeat() {
         heartBeatManager.scheduleAtFixedRate(
-                () -> {
-                    try {
-                        if(gameController == null && lobbyController != null){
-                            lobbyController.triggerHeartBeat(this.username);
-                            if(!timer.isScheduled()){
-                                timer.schedule(this::close,this.timerDelay);
-                            }
-                            timer.reschedule(this.timerDelay);
-                        } else if(gameController != null){
-                            gameController.triggerHeartBeat(this.username);
-                            timer.reschedule(this.timerDelay);
+            () -> {
+                try {
+                    if(gameController == null && lobbyController != null){
+                        lobbyController.triggerHeartBeat(this.username);
+                        if(!timer.isScheduled()){
+                            timer.schedule(this::close,this.timerDelay);
                         }
-                    } catch (RemoteException e) {
-                        throw new RuntimeException(e);
+                        timer.reschedule(this.timerDelay);
+                    } else if(gameController != null){
+                        gameController.triggerHeartBeat(this.username);
+                        timer.reschedule(this.timerDelay);
                     }
-                },
-                0, 5, TimeUnit.SECONDS);
+                } catch (RemoteException e) {
+                    throw new RuntimeException(e);
+                }
+            },
+            0, 5, TimeUnit.SECONDS);
     }
 
     private void checkGameIsSet() throws NoAvailableGameException {

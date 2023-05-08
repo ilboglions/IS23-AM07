@@ -248,4 +248,8 @@ public class Player {
 
         this.playerListener.triggerListener(this.username, userToBeUpdated, this.points, new ArrayList<>(this.tokenAcquired));
     }
+
+    public void unsubscribeFromListener(String username) {
+        this.playerListener.removeSubscriber(username);
+    }
 }

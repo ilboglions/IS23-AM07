@@ -66,7 +66,7 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
             NetMessage finalInputMessage = inputMessage;
 
             parseExecutors.submit(() -> {
-                synchronized (outputStream) {
+
                     NetMessage outputMessage;
                     try {
                         outputMessage = messageParser(finalInputMessage);
@@ -75,14 +75,8 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
                     }
                     if (closeConnectionFlag)
                         return;
-                    try {
-                        outputStream.writeObject(outputMessage);
-                        outputStream.flush();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
 
+                    this.sendUpdate(outputMessage);
             });
         }
         try {
@@ -117,13 +111,17 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
                             throw new RuntimeException(e);
                         }
                     }
-                    this.username = joinLobbyMessage.getUsername();
                     try {
                         gameController = lobbyController.enterInLobby(joinLobbyMessage.getUsername());
-                        if (gameController != null) {
+                        this.username = joinLobbyMessage.getUsername();
+                        if(gameController != null) {
+                            this.subscribeToAllListeners();
+                            gameController.triggerAllListeners(this.username);
                             hasPlayerJoined = true;
+                            desc ="reconnecting to game...";
                         } else {
                             hasPlayerJoined = false;
+                            desc="welcome in lobby!";
                         }
                         result = true;
                     } catch (NicknameAlreadyUsedException e) {
@@ -138,6 +136,7 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
                         desc = e.getMessage();
                     }
                 }
+                logger.info(desc);
                 outputMessage = new LoginReturnMessage(result,errorType, desc, hasPlayerJoined);
             }
             case CREATE_GAME -> {
@@ -302,9 +301,11 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
 
     public void handleCrash() {
         logger.info("Connection lost");
+        if(username == null || username.isEmpty()) return;
         if (gameController == null) {
             try {
                 lobbyController.handleCrashedPlayer(this.username);
+                logger.info("handling crash in the lobby... player hasn't join any game!");
             } catch (PlayerNotFoundException | RemoteException e) {
                 throw new RuntimeException(e);
             }
@@ -312,6 +313,7 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
         else {
             try {
                 gameController.handleCrashedPlayer(this.username);
+                logger.info("handling crash in the game!");
             } catch (RemoteException | PlayerNotFoundException e) {
                 throw new RuntimeException(e);
             }

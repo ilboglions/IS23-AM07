@@ -229,19 +229,18 @@ public class ClientSocket implements ConnectionHandler{
 
     private void startParserAgent(){
         threadManager.submit( () -> {
-                while(this.connection.isConnected()){
-                    synchronized (lastReceivedMessages){
-                        while(lastReceivedMessages.isEmpty()){
-                            try {
-                                lastReceivedMessages.wait();
-                            } catch (InterruptedException e) {
-                                throw new RuntimeException(e);
-                            }
+            while(this.connection.isConnected()){
+                synchronized (lastReceivedMessages){
+                    while(lastReceivedMessages.isEmpty()){
+                        try {
+                            lastReceivedMessages.wait();
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
                         }
-                        this.parse(lastReceivedMessages.poll());
                     }
+                    this.parse(lastReceivedMessages.poll());
                 }
-
+            }
         });
     }
  /*   private NetMessage getMessageFromBuffer(MessageType type){
@@ -266,9 +265,11 @@ public class ClientSocket implements ConnectionHandler{
             case LOGIN_RETURN -> {
                 LoginReturnMessage message = (LoginReturnMessage) responseMessage;
                     if(message.getConfirmLogin()){
-                      view.postNotification("Logged in as "+this.username+"!","choose either to create or join a game!");
-                    } else if (message.getConfirmRejoined()) {
-                        view.postNotification("Welcome back "+this.username+"!", "reconnecting to your game...");
+                        if (message.getConfirmRejoined()) {
+                            view.postNotification("Welcome back " + this.username + "!", "reconnecting to your game...");
+                        }else {
+                            view.postNotification("Logged in as " + this.username + "!", "choose either to create or join a game!");
+                        }
                     } else {
                         /* an error occurred */
                         view.postNotification(message.getErrorType(),message.getDetails());
@@ -278,7 +279,7 @@ public class ClientSocket implements ConnectionHandler{
             case CONFIRM_GAME -> {
                 ConfirmGameMessage message = (ConfirmGameMessage) responseMessage;
                 if(message.getConfirmGameCreation()){
-                    view.postNotification("Joining game...","sugo");
+                    view.postNotification("Game created successfully","");
                 } else{
                     view.postNotification(message.getErrorType(),message.getDetails());
                 }
@@ -294,7 +295,7 @@ public class ClientSocket implements ConnectionHandler{
             case CONFIRM_MOVE -> {
                 ConfirmMoveMessage message = (ConfirmMoveMessage) responseMessage;
                 if(message.getConfirmSelection()){
-                    view.postNotification("Move done!","grande bro");
+                    view.postNotification("Move done!","");
 
                     /* qui immagino
                     * bookshelf.updateBookshelf( arrayList delle tiles, colonna scelta)

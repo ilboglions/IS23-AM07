@@ -108,4 +108,8 @@ public class PlayerBookshelf extends Bookshelf{
 
         this.bookshelfListener.triggerListener(userToBeUpdated, this.getItemTileMap(), this.player.getUsername());
     }
+
+    public void unsubscribeFromListener(String username) {
+        this.bookshelfListener.removeSubscriber(username);
+    }
 }

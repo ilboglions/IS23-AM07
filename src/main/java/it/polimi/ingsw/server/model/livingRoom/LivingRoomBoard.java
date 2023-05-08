@@ -280,6 +280,10 @@ public class LivingRoomBoard {
         return numCells;
     }
 
+    public void unsubscribeFromListener(String username) {
+        boardListener.removeSubscriber(username);
+    }
+
     /**
      * Nested class used to cast the objects from the configuration file
      */
