@@ -69,18 +69,18 @@ public class CliView implements ViewInterface {
 
 
         switch (command){
-            /*chat>>UserRecipient--ciaooo*/
-            case "chat" ->{
+            /*chat>>UserRecipient--cia<ooo*/
+            case "Chat" ->{
 
                 String[] chatMessageArray = specific.split("--");
                 if( chatMessageArray.length > 1){
-                    controller.sendMessage(chatMessageArray[1],chatMessageArray[0]);
+                    controller.sendMessage(chatMessageArray[0],chatMessageArray[1]);
                 } else {
                     controller.sendMessage(specific);
                 }
             }
             /* createGame>>3*/
-            case "createGame" -> {
+            case "CreateGame" -> {
                 if(isNumeric(specific)){
                     try {
                         controller.CreateGame(Integer.parseInt(specific));
@@ -89,8 +89,8 @@ public class CliView implements ViewInterface {
                     }
                 }
             }
-            /*joinGame>>*/
-            case "joinGame" -> {
+            /*JoinGame>>*/
+            case "JoinGame" -> {
                 try {
                     this.postNotification("trying joining the game","...");
                     controller.JoinGame();
@@ -98,8 +98,8 @@ public class CliView implements ViewInterface {
                     throw new RuntimeException(e);
                 }
             }
-            /*getTiles>>(2,3);(4,5);(0,1);*/
-            case "getTiles" -> {
+            /*GetTiles>>(2,3);(4,5);(0,1);*/
+            case "GetTiles" -> {
 
                 ArrayList<Coordinates> coordinatesList= this.parseCoordinates(specific);
 
@@ -111,8 +111,8 @@ public class CliView implements ViewInterface {
                 }
 
             }
-            /* moveTiles>>(2,3);(4,5);(0,1)-->3 */
-            case "moveTiles" -> {
+            /* MoveTiles>>(2,3);(4,5);(0,1)-->3 */
+            case "MoveTiles" -> {
                 String[] moveInputs = specific.split("-->");
                 if(moveInputs.length < 2 ) return;
 

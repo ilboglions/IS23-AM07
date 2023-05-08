@@ -35,6 +35,8 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
     public ConnectionHandlerTCP(Socket socket, LobbyController lobbyController) {
         this.socket = socket;
         this.lobbyController = lobbyController;
+        this.username = "";
+        this.gameController = null;
         closeConnectionFlag = false;
         try {
             this.outputStream = new ObjectOutputStream(socket.getOutputStream());
@@ -102,34 +104,40 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
         switch (inputMessage.getMessageType()) {
             case JOIN_LOBBY -> {
                 JoinLobbyMessage joinLobbyMessage = (JoinLobbyMessage) inputMessage;
-                if(username != null && !username.isEmpty()){
+                if( gameController != null){
+                    errorType = "Already playing";
+                    result = false;
+                    hasPlayerJoined = false;
+                    desc = "you are already playing a game!";
+                } else {
+                    if (username != null && !username.isEmpty()) {
+                        try {
+                            lobbyController.handleCrashedPlayer(username);
+                        } catch (PlayerNotFoundException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    this.username = joinLobbyMessage.getUsername();
                     try {
-                        lobbyController.handleCrashedPlayer(username);
-                    } catch (PlayerNotFoundException e) {
-                        throw new RuntimeException(e);
+                        gameController = lobbyController.enterInLobby(joinLobbyMessage.getUsername());
+                        if (gameController != null) {
+                            hasPlayerJoined = true;
+                        } else {
+                            hasPlayerJoined = false;
+                        }
+                        result = true;
+                    } catch (NicknameAlreadyUsedException e) {
+                        errorType = "NicknameAlreadyUsedException";
+                        result = false;
+                        hasPlayerJoined = false;
+                        desc = e.getMessage();
+                    } catch (InvalidPlayerException e) {
+                        errorType = "InvalidPlayerException";
+                        result = false;
+                        hasPlayerJoined = false;
+                        desc = e.getMessage();
                     }
                 }
-                this.username = joinLobbyMessage.getUsername();
-                try {
-                    gameController = lobbyController.enterInLobby(joinLobbyMessage.getUsername());
-                     if(gameController != null){
-                         hasPlayerJoined = true;
-                     } else {
-                         hasPlayerJoined = false;
-                     }
-                    result = true;
-                } catch (NicknameAlreadyUsedException e) {
-                    errorType = "NicknameAlreadyUsedException";
-                    result = false;
-                    hasPlayerJoined = false;
-                    desc = e.getMessage();
-                } catch (InvalidPlayerException e) {
-                    errorType = "InvalidPlayerException";
-                    result = false;
-                    hasPlayerJoined = false;
-                    desc = e.getMessage();
-                }
-
                 outputMessage = new LoginReturnMessage(result,errorType, desc, hasPlayerJoined);
             }
             case CREATE_GAME -> {
@@ -178,7 +186,12 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
                 TileSelectionMessage tileSelectionMessage = (TileSelectionMessage) inputMessage;
                 try {
                     result = gameController.checkValidRetrieve(username, tileSelectionMessage.getTiles());
-                    errorType = "";
+                    if(!result) {
+                        errorType = "invalid selection!";
+                        desc = "can't select that!";
+                        logger.info(desc);
+                    }
+
                 } catch (PlayerNotInTurnException e) {
                     result = false;
                     errorType = "PlayerNotInTurnException";
@@ -204,6 +217,7 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
                     gameController.moveTiles(username, moveTilesMessage.getTiles(), moveTilesMessage.getColumn());
                     result = true;
                     errorType="";
+                    desc = "ok t'appost";
                 } catch (GameNotStartedException e) {
                     result = false;
                     errorType = "GameNotStartedException";

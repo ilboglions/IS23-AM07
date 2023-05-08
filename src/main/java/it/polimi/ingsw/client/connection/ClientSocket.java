@@ -77,6 +77,7 @@ public class ClientSocket implements ConnectionHandler{
         timer.schedule(this::handleCrash, this.timerDelay);
         this.messagesHopper();
         this.sendHeartBeat();
+        this.startParserAgent();
 
     }
 
@@ -114,8 +115,6 @@ public class ClientSocket implements ConnectionHandler{
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        NetMessage responseMessage = getMessageFromBuffer(MessageType.LOGIN_RETURN);
-        this.parse(responseMessage);
     }
 
     @Override
@@ -128,8 +127,6 @@ public class ClientSocket implements ConnectionHandler{
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        NetMessage responseMessage = getMessageFromBuffer(MessageType.CONFIRM_GAME);
-        this.parse(responseMessage);
     }
 
     @Override
@@ -142,8 +139,7 @@ public class ClientSocket implements ConnectionHandler{
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        NetMessage responseMessage = getMessageFromBuffer(MessageType.CONFIRM_GAME);
-        this.parse(responseMessage);
+
         //Here the player will receive also the CommonGoalCards, PersonalGoalCard and all the updates of the other players
     }
 
@@ -158,8 +154,6 @@ public class ClientSocket implements ConnectionHandler{
         catch (IOException e) {
             throw new RuntimeException(e);
         }
-        NetMessage responseMessage = getMessageFromBuffer(MessageType.CONFIRM_SELECTION);
-        this.parse(responseMessage);
     }
 
     @Override
@@ -172,8 +166,6 @@ public class ClientSocket implements ConnectionHandler{
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        NetMessage responseMessage = getMessageFromBuffer(MessageType.CONFIRM_MOVE);
-        this.parse(responseMessage);
     }
 
     public void sendMessage(String content){
@@ -185,8 +177,6 @@ public class ClientSocket implements ConnectionHandler{
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        NetMessage responseMessage = getMessageFromBuffer(MessageType.CONFIRM_CHAT);
-        this.parse(responseMessage);
     }
 
     public void sendMessage(String content, String recipient){
@@ -198,8 +188,6 @@ public class ClientSocket implements ConnectionHandler{
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        NetMessage responseMessage = getMessageFromBuffer(MessageType.CONFIRM_CHAT);
-        this.parse(responseMessage);
     }
 
     @Override
@@ -210,7 +198,6 @@ public class ClientSocket implements ConnectionHandler{
                 synchronized (outputStream) {
                     try {
                         outputStream.writeObject(requestMessage);
-                        NetMessage responseMessage = getMessageFromBuffer(MessageType.STILL_ACTIVE);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -221,6 +208,7 @@ public class ClientSocket implements ConnectionHandler{
 
     private void messagesHopper()  {
         threadManager.submit( () -> {
+
             while(true) {
                 synchronized (lastReceivedMessages) {
                     try {
@@ -234,10 +222,29 @@ public class ClientSocket implements ConnectionHandler{
                     }
                 }
 
+
             }
         });
     }
-    private NetMessage getMessageFromBuffer(MessageType type){
+
+    private void startParserAgent(){
+        threadManager.submit( () -> {
+                while(this.connection.isConnected()){
+                    synchronized (lastReceivedMessages){
+                        while(lastReceivedMessages.isEmpty()){
+                            try {
+                                lastReceivedMessages.wait();
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                        this.parse(lastReceivedMessages.poll());
+                    }
+                }
+
+        });
+    }
+ /*   private NetMessage getMessageFromBuffer(MessageType type){
         NetMessage result;
         synchronized (lastReceivedMessages) {
             while (lastReceivedMessages.stream().noneMatch(message -> message.getMessageType().equals(type))) {
@@ -251,9 +258,10 @@ public class ClientSocket implements ConnectionHandler{
             lastReceivedMessages.remove(result);
         }
         return result;
-    }
+    } */
 
     private void parse(NetMessage responseMessage){
+        if(responseMessage == null) return;
         switch (responseMessage.getMessageType()){
             case LOGIN_RETURN -> {
                 LoginReturnMessage message = (LoginReturnMessage) responseMessage;

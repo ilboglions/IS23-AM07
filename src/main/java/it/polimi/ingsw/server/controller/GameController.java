@@ -202,7 +202,8 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
      */
     public void handleCrashedPlayer(String username) throws PlayerNotFoundException, RemoteException{
         gameModel.handleCrashedPlayer(username);
-        this.stopTimer(username);
+        if( timers.containsKey(username))
+            this.stopTimer(username);
     }
 
 
