@@ -4,6 +4,7 @@ import it.polimi.ingsw.remoteInterfaces.BookshelfSubscriber;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
@@ -37,8 +38,12 @@ public class BookshelfListener extends Listener<BookshelfSubscriber> {
         Set<BookshelfSubscriber> subscribers = this.getSubscribers();
 
         for (BookshelfSubscriber sub : subscribers) {
-            if(sub.getSubscriberUsername().equals(userToBeUpdated)){
-                sub.updateBookshelfComplete(currentTilesMap, username);
+            try {
+                if(sub.getSubscriberUsername().equals(userToBeUpdated)){
+                    sub.updateBookshelfComplete(currentTilesMap, username);
+                }
+            } catch (RemoteException ignored) {
+
             }
         }
     }

@@ -1,5 +1,6 @@
 package it.polimi.ingsw.server.model.listeners;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -18,7 +19,7 @@ public class PlayerListener extends Listener<PlayerSubscriber> {
      * @param overallPoints the overall points of a player
      * @param addedPoints the added points of the player
      */
-    public void onPointsUpdate(String player, int overallPoints, int addedPoints) {
+    public void onPointsUpdate(String player, int overallPoints, int addedPoints) throws RemoteException {
 
         Set<PlayerSubscriber> subscribers = this.getSubscribers();
 
@@ -32,7 +33,7 @@ public class PlayerListener extends Listener<PlayerSubscriber> {
      * @param player the username of the player
      * @param tokens the current tokens of the player
      */
-    public void onTokenPointAcquired(String player, ArrayList<ScoringToken> tokens){
+    public void onTokenPointAcquired(String player, ArrayList<ScoringToken> tokens) throws RemoteException {
         Set<PlayerSubscriber> subscribers = this.getSubscribers();
 
         for (PlayerSubscriber sub : subscribers) {
@@ -45,7 +46,7 @@ public class PlayerListener extends Listener<PlayerSubscriber> {
      * @param player the username of the player
      * @param personalGoalCard the RemotePersonalGoalCard that was assigned to the player
      */
-    public void onPersonalGoalCardAssigned(String player, RemotePersonalGoalCard personalGoalCard){
+    public void onPersonalGoalCardAssigned(String player, RemotePersonalGoalCard personalGoalCard) throws RemoteException {
         Set<PlayerSubscriber> subscribers = this.getSubscribers();
 
         for (PlayerSubscriber sub : subscribers) {
@@ -62,7 +63,7 @@ public class PlayerListener extends Listener<PlayerSubscriber> {
      * @param points the current points of the player
      * @param tokens the current tokens of the player
      */
-    public void triggerListener(String username, String userToBeUpdated, int points, ArrayList<ScoringToken> tokens){
+    public void triggerListener(String username, String userToBeUpdated, int points, ArrayList<ScoringToken> tokens) throws RemoteException {
         Set<PlayerSubscriber> subscribers = this.getSubscribers();
 
         for (PlayerSubscriber sub : subscribers) {

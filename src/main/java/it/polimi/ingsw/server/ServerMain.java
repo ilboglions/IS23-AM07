@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 
 
 public class ServerMain {
-    final static Logger logger = Logger.getLogger(ServerMain.class.getName());
+    public final static Logger logger = Logger.getLogger(ServerMain.class.getName());
     private final int port;
     private final String hostName;
 

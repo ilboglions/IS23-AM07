@@ -6,7 +6,7 @@ import it.polimi.ingsw.client.view.ViewInterface;
 
 public class ClientMain {
     public static void main(String[] args) {
-        ViewInterface cliView = new CliView(ConnectionType.TCP);
+        ViewInterface cliView = new CliView(ConnectionType.RMI);
 
     }
 }

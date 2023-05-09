@@ -49,8 +49,10 @@ public class ClientRMI implements ConnectionHandler{
             gameController = lobbyController.enterInLobby(username);
             if( gameController == null){
                 view.postNotification("joined in lobby!","select what2do");
+                lobbyController.triggerHeartBeat(this.username);
             } else {
                 view.postNotification("welcome back!","here's your game "+gameController);
+                gameController.triggerHeartBeat(this.username);
             }
         } catch (NicknameAlreadyUsedException e) {
             view.postNotification("Nickname already used!", "choose another nickname and retry");
@@ -64,6 +66,8 @@ public class ClientRMI implements ConnectionHandler{
 
         try {
             this.gameController = this.lobbyController.createGame(username, nPlayers);
+            gameController.triggerHeartBeat(this.username);
+            view.postNotification("Game created successfully","");
         } catch (InvalidPlayerException e) {
             throw new RuntimeException(e);
         } catch (PlayersNumberOutOfRange e) {
@@ -77,6 +81,8 @@ public class ClientRMI implements ConnectionHandler{
 
         try {
             this.gameController = this.lobbyController.addPlayerToGame(username);
+            gameController.triggerHeartBeat(this.username);
+            view.postNotification("Game joined successfully","");
         } catch (NicknameAlreadyUsedException e) {
             throw new RuntimeException(e);
         } catch (NoAvailableGameException e) {

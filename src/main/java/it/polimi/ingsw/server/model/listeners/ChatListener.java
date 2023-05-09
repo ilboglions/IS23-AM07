@@ -2,6 +2,7 @@ package it.polimi.ingsw.server.model.listeners;
 import it.polimi.ingsw.server.model.chat.Message;
 import it.polimi.ingsw.remoteInterfaces.ChatSubscriber;
 
+import java.rmi.RemoteException;
 import java.util.Optional;
 import java.util.Set;
 
@@ -23,13 +24,26 @@ public class ChatListener extends Listener<ChatSubscriber> {
 
             String recipient = msg.getRecipient().get();
             Optional<ChatSubscriber> interestedOb =   observers.stream()
-                                                    .filter(obs -> obs.getSubscriberUsername().equals(recipient))
+                                                    .filter(obs -> {
+                                                        try {
+                                                            return obs.getSubscriberUsername().equals(recipient);
+                                                        } catch (RemoteException ignored) {
+
+                                                        }
+                                                        return false;
+                                                    })
                                                     .findFirst();
             interestedOb.ifPresent( ob -> ob.receiveMessage(msg.getSender(), msg.getContent()));
 
         } else{
             observers.stream()
-                    .filter( obs -> !obs.getSubscriberUsername().equals(msg.getSender()))
+                    .filter( obs -> {
+                        try {
+                            return !obs.getSubscriberUsername().equals(msg.getSender());
+                        } catch (RemoteException ignored) {
+                        }
+                        return false;
+                    })
                     .forEach( obs -> obs.receiveMessage(msg.getSender(), msg.getContent()));
         }
     }

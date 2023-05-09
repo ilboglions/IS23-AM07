@@ -4,6 +4,7 @@ import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.remoteInterfaces.BoardSubscriber;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 
+import java.rmi.RemoteException;
 import java.util.Map;
 import java.util.Set;
 /**
@@ -32,8 +33,11 @@ public class BoardListener extends Listener<BoardSubscriber> {
         Set<BoardSubscriber> subscribers = this.getSubscribers();
 
         for (BoardSubscriber sub : subscribers) {
-            if(sub.getSubscriberUsername().equals(userToBeUpdated)){
-                sub.updateBoardStatus(currentTilesMap);
+            try {
+                if(sub.getSubscriberUsername().equals(userToBeUpdated)){
+                    sub.updateBoardStatus(currentTilesMap);
+                }
+            } catch (RemoteException ignored) {
             }
         }
     }

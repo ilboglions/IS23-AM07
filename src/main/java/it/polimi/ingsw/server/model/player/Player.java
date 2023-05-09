@@ -11,6 +11,7 @@ import it.polimi.ingsw.server.model.tiles.ItemTile;
 import it.polimi.ingsw.server.model.tokens.ScoringToken;
 import it.polimi.ingsw.server.model.utilities.UtilityFunctions;
 
+import java.rmi.RemoteException;
 import java.util.*;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -182,7 +183,7 @@ public class Player {
      * @param adjacentPointReference is the Map that represent for each size of group the relative points
      * @return the total points scored by the player
      */
-    public int updatePoints(Map<Integer, Integer> adjacentPointReference) {
+    public int updatePoints(Map<Integer, Integer> adjacentPointReference) throws RemoteException {
         int delta;
         Objects.requireNonNull(adjacentPointReference);
         if(adjacentPointReference.isEmpty())
@@ -206,7 +207,7 @@ public class Player {
      * Method used to assign a ScoringToken to the player
      * @param token is the token to assign
      */
-    public void addToken(ScoringToken token) {
+    public void addToken(ScoringToken token) throws RemoteException {
         this.tokenAcquired.add(Objects.requireNonNull(token));
         /* notify the listener */
         this.playerListener.onTokenPointAcquired( this.username, new ArrayList<>(this.tokenAcquired));
@@ -216,7 +217,7 @@ public class Player {
      * Method used to assign a PersonalGoalCard to the player
      * @param card is the card to assign
      */
-    public void assignPersonalCard(PersonalGoalCard card) {
+    public void assignPersonalCard(PersonalGoalCard card) throws RemoteException {
         this.personalCard = Objects.requireNonNull(card);
         playerListener.onPersonalGoalCardAssigned(this.username, card);
     }
@@ -243,7 +244,7 @@ public class Player {
      * Method used to trigger the listener when a player joins or re-joins a game after a crash, to receive the complete status of the player
      * @param userToBeUpdated the username of the user that needs to receive the updates
      */
-    public void triggerListener(String userToBeUpdated){
+    public void triggerListener(String userToBeUpdated) throws RemoteException {
         Objects.requireNonNull(userToBeUpdated);
 
         this.playerListener.triggerListener(this.username, userToBeUpdated, this.points, new ArrayList<>(this.tokenAcquired));

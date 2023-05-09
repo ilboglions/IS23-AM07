@@ -2,6 +2,7 @@ package it.polimi.ingsw.remoteInterfaces;
 
 import it.polimi.ingsw.server.model.tokens.ScoringToken;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 /**
@@ -15,9 +16,9 @@ public interface PlayerSubscriber extends ListenerSubscriber {
      * @param overallPoints the overall points of the player
      * @param addedPoints the points added on this state change
      */
-    void updatePoints(String player, int overallPoints, int addedPoints);
+    void updatePoints(String player, int overallPoints, int addedPoints) throws RemoteException;
 
-    void updateTokens(String player, ArrayList<ScoringToken> tokenPoints);
+    void updateTokens(String player, ArrayList<ScoringToken> tokenPoints) throws RemoteException;
 
-    void updatePersonalGoalCard(String player, RemotePersonalGoalCard remotePersonal);
+    void updatePersonalGoalCard(String player, RemotePersonalGoalCard remotePersonal) throws RemoteException;
 }

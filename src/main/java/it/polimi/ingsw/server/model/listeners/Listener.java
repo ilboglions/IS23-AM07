@@ -3,6 +3,7 @@ package it.polimi.ingsw.server.model.listeners;
 import it.polimi.ingsw.remoteInterfaces.ListenerSubscriber;
 
 import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -38,7 +39,13 @@ public abstract class Listener<T extends ListenerSubscriber> implements Remote {
      * @param username the username of the subscriber
      */
     public void removeSubscriber(String username){
-        Set<T> subToRemove = subscribers.stream().filter( s -> s.getSubscriberUsername().equals(username)).collect(Collectors.toSet());
+        Set<T> subToRemove = subscribers.stream().filter( s -> {
+            try {
+                return s.getSubscriberUsername().equals(username);
+            } catch (RemoteException ignored) {
+            }
+            return false;
+        }).collect(Collectors.toSet());
         this.subscribers.removeAll(subToRemove);
     }
 

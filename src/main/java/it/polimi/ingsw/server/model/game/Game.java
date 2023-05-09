@@ -18,7 +18,10 @@ import it.polimi.ingsw.server.model.tiles.ItemTile;
 import it.polimi.ingsw.server.model.tokens.ScoringToken;
 import it.polimi.ingsw.server.model.tokens.TokenPoint;
 
+import java.rmi.RemoteException;
 import java.util.*;
+
+import static it.polimi.ingsw.server.ServerMain.logger;
 
 /**
  * This class is used to handle the main logic of a Game
@@ -109,7 +112,11 @@ public class Game implements GameModelInterface {
         this.stdPointsReference.put(6, 8); //6 or more adjacent 8 points
         this.commonGoalCards = deckCommon.draw(2);
         this.players.add(host);
-        host.assignPersonalCard(deckPersonal.draw(1).get(0));
+        try {
+            host.assignPersonalCard(deckPersonal.draw(1).get(0));
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
 
         ArrayList<RemoteCommonGoalCard> remoteCards = new ArrayList<>(this.commonGoalCards);
         this.gameListener.onPlayerJoinGame(host.getUsername(), remoteCards);
@@ -186,12 +193,18 @@ public class Game implements GameModelInterface {
                     p.addToken(c.popTokenTo(p.getUsername()));
                 } catch (TokenAlreadyGivenException ignored){
 
+                } catch (RemoteException e) {
+                    throw new RuntimeException(e);
                 }
 
             }
         }
 
-        player.get().updatePoints(stdPointsReference);
+        try {
+            player.get().updatePoints(stdPointsReference);
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
@@ -312,7 +325,11 @@ public class Game implements GameModelInterface {
 
         if(players.get(this.playerTurn).getBookshelf().checkComplete()) {
             this.isLastTurn = true;
-            players.get(this.playerTurn).addToken(new ScoringToken(TokenPoint.FIRSTPLAYER));
+            try {
+                players.get(this.playerTurn).addToken(new ScoringToken(TokenPoint.FIRSTPLAYER));
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
             return true;
         }
 
@@ -336,7 +353,11 @@ public class Game implements GameModelInterface {
             throw new GameNotEndedException("The last turn has not completed yet");
 
         for(Player player : players) {
-            player.updatePoints(stdPointsReference);
+            try {
+                player.updatePoints(stdPointsReference);
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
         }
         Player winner = players.stream().max(Comparator.comparing(Player::getPoints)).get();
         List<Player> tempPlayers = players.stream().sorted(Comparator.comparing(Player::getPoints)).toList();
@@ -371,7 +392,11 @@ public class Game implements GameModelInterface {
                 this.triggerAllListeners(newPlayer.getUsername());
 
                 try {
-                    newPlayer.assignPersonalCard(deckPersonal.draw(1).get(0));
+                    try {
+                        newPlayer.assignPersonalCard(deckPersonal.draw(1).get(0));
+                    } catch (RemoteException e) {
+                        throw new RuntimeException(e);
+                    }
                 } catch (NotEnoughCardsException e) {
                     throw new RuntimeException(e);
                 } catch (NegativeFieldException e) {
@@ -508,6 +533,7 @@ public class Game implements GameModelInterface {
      * @throws PlayerNotFoundException if there isn't a player with that username inside the game
      */
     public void handleCrashedPlayer(String username) throws PlayerNotFoundException {
+
         Optional<Player> tmpPlayer = this.searchPlayer(username);
 
         livingRoom.unsubscribeFromListener(username);
@@ -520,6 +546,7 @@ public class Game implements GameModelInterface {
 
         if(tmpPlayer.isPresent()){
             crashedPlayers.add(tmpPlayer.get());
+            logger.info(username+" crashed!");
         }
         else
             throw new PlayerNotFoundException("The player with this username has not been found in the game");
@@ -531,10 +558,12 @@ public class Game implements GameModelInterface {
      * @throws PlayerNotFoundException if there isn't a player with that username inside the game
      */
     public void handleRejoinedPlayer(String username) throws PlayerNotFoundException {
+
         Optional<Player> tmpPlayer = this.searchPlayer(username);
 
         if(tmpPlayer.isPresent() && crashedPlayers.contains(tmpPlayer.get())){
             crashedPlayers.remove(tmpPlayer.get());
+            logger.info(username+" rejoined!");
         }
         else
             throw new PlayerNotFoundException("The player with this username has not been found in the game");
@@ -546,7 +575,11 @@ public class Game implements GameModelInterface {
      */
     public void triggerAllListeners(String userToBeUpdated) {
         for(Player player : players){
-            player.triggerListener(userToBeUpdated);
+            try {
+                player.triggerListener(userToBeUpdated);
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
             player.getBookshelf().triggerListener(userToBeUpdated);
         }
 
