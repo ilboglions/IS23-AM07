@@ -29,4 +29,6 @@ public interface GameSubscriber extends ListenerSubscriber {
     void notifyCommonGoalCards(ArrayList<RemoteCommonGoalCard> commonGoalCards);
 
     void notifyPlayerInTurn(String username);
+
+    void notifyPlayerCrashed(String userCrashed);
 }

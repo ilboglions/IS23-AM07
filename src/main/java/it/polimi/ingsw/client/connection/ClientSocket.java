@@ -63,7 +63,6 @@ public class ClientSocket implements ConnectionHandler{
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-
         }
 
         this.connection = tempConnection;
@@ -263,51 +262,19 @@ public class ClientSocket implements ConnectionHandler{
         if(responseMessage == null) return;
         switch (responseMessage.getMessageType()){
             case LOGIN_RETURN -> {
-                LoginReturnMessage message = (LoginReturnMessage) responseMessage;
-                    if(message.getConfirmLogin()){
-                        if (message.getConfirmRejoined()) {
-                            view.postNotification("Welcome back " + this.username + "!", "reconnecting to your game...");
-                        }else {
-                            view.postNotification("Logged in as " + this.username + "!", "choose either to create or join a game!");
-                        }
-                    } else {
-                        /* an error occurred */
-                        view.postNotification(message.getErrorType(),message.getDetails());
-                    }
-
-            } /* end LOGIN_RETURN */
+                this.parse((LoginReturnMessage) responseMessage);
+            }
             case CONFIRM_GAME -> {
-                ConfirmGameMessage message = (ConfirmGameMessage) responseMessage;
-                if(message.getConfirmGameCreation()){
-                    view.postNotification("Game created successfully","");
-                } else{
-                    view.postNotification(message.getErrorType(),message.getDetails());
-                }
-            } /* end CONFIRM_GAME */
+                this.parse((ConfirmGameMessage) responseMessage);
+            }
             case CONFIRM_SELECTION -> {
-                ConfirmSelectionMessage message = (ConfirmSelectionMessage) responseMessage;
-                if(message.getConfirmSelection()){
-                    view.postNotification("Your Selection has been accepted!","choose the column to fit the selection!");
-                } else{
-                    view.postNotification(message.getErrorType(),message.getDetails());
-                }
+                this.parse((ConfirmSelectionMessage) responseMessage);
             }
             case CONFIRM_MOVE -> {
-                ConfirmMoveMessage message = (ConfirmMoveMessage) responseMessage;
-                if(message.getConfirmSelection()){
-                    view.postNotification("Move done!","");
-
-                    /* qui immagino
-                    * bookshelf.updateBookshelf( arrayList delle tiles, colonna scelta)
-                    * view.drawBookShelf(bookshelf.getStructure); (questo potrebbe stare benissimo anche in questa sottospecie di minimodel)
-                    * quindi un mini-model lato client che mantiene uno stato (ecco dove stanno i listener!)
-                    **/
-                }
+                this.parse((ConfirmMoveMessage) responseMessage);
             }
-
             case NOTIFY_NEW_CHAT -> {
-                NotifyNewChatMessage message = (NotifyNewChatMessage) responseMessage;
-                view.postNotification("new message!",message.getSender()+": "+message.getContent());
+                this.parse((NotifyNewChatMessage) responseMessage);
             }
 
             case NOTIFY_WINNING_PLAYER -> {}
@@ -330,6 +297,51 @@ public class ClientSocket implements ConnectionHandler{
 
             case USER_GAME_CARDS -> {}
         }
+    }
+
+    private void parse(LoginReturnMessage message){
+        if(message.getConfirmLogin()){
+            if (message.getConfirmRejoined()) {
+                view.postNotification("Welcome back " + this.username + "!", "reconnecting to your game...");
+            }else {
+                view.postNotification("Logged in as " + this.username + "!", "choose either to create or join a game!");
+            }
+        } else {
+            /* an error occurred */
+            view.postNotification(message.getErrorType(),message.getDetails());
+        }
+    }
+
+    private void parse(ConfirmGameMessage message){
+        if(message.getConfirmGameCreation()){
+            view.postNotification("Game created successfully","");
+        } else{
+            view.postNotification(message.getErrorType(),message.getDetails());
+        }
+    }
+
+    private void parse(ConfirmSelectionMessage message){
+        if(message.getConfirmSelection()){
+            view.postNotification("Your Selection has been accepted!","choose the column to fit the selection!");
+        } else{
+            view.postNotification(message.getErrorType(),message.getDetails());
+        }
+    }
+
+    private void parse(ConfirmMoveMessage message){
+        if(message.getConfirmSelection()){
+            view.postNotification("Move done!","");
+
+            /* qui immagino
+             * bookshelf.updateBookshelf( arrayList delle tiles, colonna scelta)
+             * view.drawBookShelf(bookshelf.getStructure); (questo potrebbe stare benissimo anche in questa sottospecie di minimodel)
+             * quindi un mini-model lato client che mantiene uno stato (ecco dove stanno i listener!)
+             **/
+        }
+    }
+
+    private void parse(NotifyNewChatMessage message){
+        view.postNotification("new message!",message.getSender() + ": " + message.getContent());
     }
 }
 

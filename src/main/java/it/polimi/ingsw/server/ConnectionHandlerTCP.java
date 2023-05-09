@@ -437,6 +437,12 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
         this.sendUpdate(update);
     }
 
+    @Override
+    public void notifyPlayerCrashed(String userCrashed){
+        NotifyPlayerCrashed update = new NotifyPlayerCrashed(userCrashed);
+        this.sendUpdate(update);
+    }
+
     /**
      *
      * @param update

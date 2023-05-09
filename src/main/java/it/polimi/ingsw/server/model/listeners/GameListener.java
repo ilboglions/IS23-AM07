@@ -36,4 +36,9 @@ public class GameListener extends Listener<GameSubscriber> {
         Set<GameSubscriber> subscribers = this.getSubscribers();
         subscribers.forEach(sub -> sub.notifyPlayerInTurn(username));
     }
+
+    public void notifyPlayerCrashed(String userCrashed){
+        Set<GameSubscriber> subscribers = this.getSubscribers();
+        subscribers.forEach(sub -> sub.notifyPlayerCrashed(userCrashed));
+    }
 }

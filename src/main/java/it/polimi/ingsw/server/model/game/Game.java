@@ -546,6 +546,7 @@ public class Game implements GameModelInterface {
 
         if(tmpPlayer.isPresent()){
             crashedPlayers.add(tmpPlayer.get());
+            this.gameListener.notifyPlayerCrashed(tmpPlayer.get().getUsername());
             logger.info(username+" crashed!");
         }
         else
