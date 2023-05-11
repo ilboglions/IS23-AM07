@@ -79,6 +79,12 @@
       <version>5.9.2</version>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>com.googlecode.lanterna</groupId>
+      <artifactId>lanterna</artifactId>
+      <version>3.1.1</version>
+    </dependency>
   </dependencies>
 
   <repositories>

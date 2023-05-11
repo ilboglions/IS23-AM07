@@ -28,7 +28,7 @@ public class Coordinates implements Serializable {
      */
     public Coordinates(int row, int column) throws InvalidCoordinatesException {
         if(row < 0 || column < 0 || row > 8 || column > 8){
-            throw new InvalidCoordinatesException("Given coordinates are out of range");
+            throw new InvalidCoordinatesException("Given coordinates are out of range! row:"+row+" col:"+column);
         }
         this.row = row;
         this.column = column;

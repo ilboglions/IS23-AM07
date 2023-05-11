@@ -1,5 +1,6 @@
 package it.polimi.ingsw.client.view;
 
+import com.googlecode.lanterna.TerminalPosition;
 import it.polimi.ingsw.client.connection.*;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
@@ -21,8 +22,10 @@ public class CliView implements ViewInterface {
      * dimension of the game view
      */
 
-    private static final int MAX_VERT_TILES = 40; //rows.
-    private static final int MAX_HORIZ_TILES = 30; //cols.
+    private static final int MAX_VERT_TILES = 50; //rows.
+    private static final int MAX_HORIZ_TILES = 100; //cols.
+    private static final String SPACE = " ";
+    private static final int BASE_TILE_DIM = 3;
 
     private final ExecutorService inputReaderEx;
     private final ConnectionHandler controller;
@@ -131,6 +134,8 @@ public class CliView implements ViewInterface {
         }
     }
 
+
+
     private ArrayList<Coordinates> parseCoordinates(String tilesString){
         ArrayList<Coordinates> coordinatesList = new ArrayList<>();
         String[] tilesArray = tilesString.split(";");
@@ -161,27 +166,24 @@ public class CliView implements ViewInterface {
 
     private void fillEmpty() {
 
-        tiles[0][0] = "╔";
+        tiles[0][0] = Color.RESET.escape()+"╔";
         for (int c = 1; c < MAX_HORIZ_TILES - 1; c++) {
-            tiles[0][c] = "═══";
+            tiles[0][c] = Color.RESET.escape()+"═";
         }
 
-        tiles[0][MAX_HORIZ_TILES - 1] = "╗";
+        tiles[0][MAX_HORIZ_TILES - 1] = Color.RESET.escape()+"╗";
 
         for (int r = 1; r < MAX_VERT_TILES - 1; r++) {
-            tiles[r][0] = "║";
-            for (int c = 1; c < MAX_HORIZ_TILES - 1; c++) {
-                tiles[r][c] = "   ";
-            }
-            tiles[r][MAX_HORIZ_TILES-1] = "║";
+            tiles[r][0] = Color.RESET.escape()+"║";
+            tiles[r][MAX_HORIZ_TILES-1] = Color.RESET.escape()+"║";
         }
 
-        tiles[MAX_VERT_TILES - 1][0] = "╚";
+        tiles[MAX_VERT_TILES - 1][0] = Color.RESET.escape()+"╚";
         for (int c = 1; c < MAX_HORIZ_TILES - 1; c++) {
-            tiles[MAX_VERT_TILES - 1][c] = "═══";
+            tiles[MAX_VERT_TILES - 1][c] = Color.RESET.escape()+"═";
         }
 
-        tiles[MAX_VERT_TILES - 1][MAX_HORIZ_TILES - 1] = "╝";
+        tiles[MAX_VERT_TILES - 1][MAX_HORIZ_TILES - 1] = Color.RESET.escape()+"╝";
 
     }
 
@@ -211,8 +213,9 @@ public class CliView implements ViewInterface {
 
         int[] startingPoints;
         int nCelle;
-        StringBuilder tempString;
+       StringBuilder tempString;
         startingPoints = getStartsFromTurnOrder(order);
+     /*    int[] startingPoints;
         nCelle = playerUsername.length()/3;
 
         for(int i = 0; i < nCelle - 1 && i*3 < playerUsername.length(); i++){
@@ -228,7 +231,7 @@ public class CliView implements ViewInterface {
 
         }
 
-        tiles[startingPoints[0] - 1][startingPoints[1]] =Color.RED_BOLD.escape()+playerUsername;
+        tiles[startingPoints[0] - 1][startingPoints[1]] =Color.RED_BOLD.escape()+playerUsername;  */
         this.drawBookShelf( tilesMap,startingPoints[0], startingPoints[1] );
 
     }
@@ -272,7 +275,38 @@ public class CliView implements ViewInterface {
         System.out.println(" * "+Color.RED_BOLD.escape()+sender+Color.WHITE_BOLD_BRIGHT.escape()+": "+msg);
     }
 
-    public void drawBookShelf(Map<Coordinates,ItemTile> tilesMap, int startR, int startC) throws InvalidCoordinatesException {
+    private void drawTile(int r, int c, String color){
+        tiles[r][c] = color+"⬛";
+        tiles[r][c+1] = "⬛";
+        tiles[r][c+2] = SPACE;
+    }
+
+    private void drawTile(int r, int c, String color, int dimension){
+        int i,j,k;
+        if(dimension == 1){
+            this.drawTile(r,c,color);
+            return;
+        }
+        k=0;
+        for(  i = 0; i < dimension; i++){
+            for( j = 0; j < dimension*(BASE_TILE_DIM-1); j+=BASE_TILE_DIM-1){
+                for(k = 0; k < BASE_TILE_DIM-1; k++){
+                    tiles[r+i][c+j+k] = color+"█";
+                }
+
+            }
+            tiles[r+i][c+j+k] = Color.RESET.escape()+SPACE;
+        }
+
+    }
+
+    private void drawSpace(int r, int c ,int nSpace){
+        for(int i = 0; i < nSpace; i++ ){
+            tiles[r][c+i] = SPACE;
+        }
+    }
+
+    private void drawBookShelf(Map<Coordinates,ItemTile> tilesMap, int startR, int startC) throws InvalidCoordinatesException {
         Coordinates coord;
         String colorTile;
 
@@ -282,19 +316,20 @@ public class CliView implements ViewInterface {
         int bookshelfColumns = 5;
 
         for( c = startC; c < bookshelfColumns + startC; c++){
-            tiles[startR][c] = Color.WHITE_BOLD_BRIGHT.escape()+c+"  ";
+            tiles[startR][c] = Color.WHITE_BOLD_BRIGHT.escape()+c;
+            this.drawSpace(startR,c,2);
         }
 
 
         for(r = bookshelfRows + startR - 1; r >= startR; r--){
             tiles[r][startC] = Color.WHITE_BOLD_BRIGHT.escape()+r+" "+Color.RESET.escape();
-            for( c = startC; c < bookshelfColumns + startC; c++){
-                coord = new Coordinates(r - startR,c - startC);
+            for( c = startC; c < bookshelfColumns*BASE_TILE_DIM + startC; c+=BASE_TILE_DIM){
+                coord = new Coordinates(r - startR,(c- startC)/BASE_TILE_DIM);
                 if (tilesMap.containsKey(coord) )
                     colorTile = getColorFromTileType(tilesMap.get(coord));
                 else
                     colorTile = Color.BLACK.escape();
-                tiles[r][c] = colorTile+"██ ";
+                this.drawTile(r,c,colorTile);
             }
         }
 
@@ -305,7 +340,7 @@ public class CliView implements ViewInterface {
         Coordinates coord;
         String colorTile;
 
-        int startR = 10;
+        int startR = 20;
         int startC = 10;
 
         int r;
@@ -313,28 +348,25 @@ public class CliView implements ViewInterface {
         /* bookshelf settings */
         int livingRoomRows = 9;
         int livingRoomColumns = 9;
-
-        //System.out.println(Color.WHITE_BOLD_BRIGHT.escape()+"== Here's the "+Color.RED_BOLD.escape()+"Living room board"+Color.WHITE_BOLD_BRIGHT.escape()+" =="+Color.RESET.escape());
-
-        for( c = startC; c < livingRoomColumns + startC; c++){
-            tiles[startR - 1][c] =  Color.WHITE_BOLD_BRIGHT.escape()+(c-startC)+"  ";
-        }
-
+        int dimension = 2;
         //System.out.println(Color.RESET.escape());
 
-        for(r = livingRoomRows + startR - 1; r >= startR; r--){
-            tiles[r][startC - 1] = Color.WHITE_BOLD_BRIGHT.escape()+(r-startR)+" "+Color.RESET.escape();
-            for( c = startC; c < livingRoomColumns + startC; c++){
-                coord = new Coordinates(r - startR,c - startC);
+        for(r =  startR - livingRoomRows*dimension + 1; r <= startR; r+=dimension){
+            tiles[r][startC - 1] = Color.WHITE_BOLD_BRIGHT.escape()+(startR-r)/dimension;
+            drawSpace(r,startC,2);
+            for( c = startC; c < livingRoomColumns*BASE_TILE_DIM*dimension + startC; c+=BASE_TILE_DIM*dimension){
+
+                tiles[startR + 1][c] =  Color.WHITE_BOLD_BRIGHT.escape()+(c-startC)/(BASE_TILE_DIM*dimension);
+
+                coord = new Coordinates((startR-r)/dimension,(c- startC)/(BASE_TILE_DIM*dimension));
+
                 if (livingRoomMap.containsKey(coord) ){
                     if (livingRoomMap.get(coord).isPresent()){
                         colorTile = getColorFromTileType(livingRoomMap.get(coord).get());
                     } else {
                         colorTile = Color.BLACK.escape();
                     }
-                    tiles[r][c] =  colorTile+"██ ";
-                } else{
-                    tiles[r][c] ="   ";
+                    this.drawTile(r,c,colorTile,dimension);
                 }
             }
         }
@@ -371,7 +403,39 @@ public class CliView implements ViewInterface {
 
         return Color.BLACK.escape();
     }
+
+    private void drawVertLine(int startR, int startC, int lenght){
+        for(int r = startR; r < startR + lenght; r++){
+            tiles[r][startC] = "│";
+        }
+    }
+
+    private void drawLine(int startR, int startC , int lenght){
+        for(int c = startC; c < startC + lenght; c++){
+            tiles[startR][c] = "─";
+        }
+    }
+    private void drawBox(int startR, int startC, int lenghtR, int lenghtC ){
+        this.drawLine(startR, startC+1, lenghtC-1);
+        this.drawLine(startR+lenghtR, startC+1, lenghtC-1);
+        this.drawVertLine(startR+1,startC, lenghtR-1);
+        this.drawVertLine(startR+1,startC+lenghtC, lenghtR-1);
+
+        tiles[startR][startC] = "┌";
+        tiles[startR][startC+lenghtC] = "┐";
+        tiles[startR+lenghtR][startC] = "└";
+        tiles[startR+lenghtR][startC+lenghtC] = "┘";
+    }
     public final void plot() {
+        this.drawBox(MAX_VERT_TILES-10,MAX_HORIZ_TILES-20,5,5);
+        for (int r = 0; r < MAX_VERT_TILES; r++) {
+            for (int c = 0; c < MAX_HORIZ_TILES; c++) {
+                if(tiles[r][c] == null) tiles[r][c] = SPACE;
+            }
+        }
+
+        this.drawBox(MAX_VERT_TILES-20,MAX_HORIZ_TILES-10,10,5);
+
         System.out.print( Color.GREEN.escape());
         for (int r = 0; r < MAX_VERT_TILES; r++) {
             System.out.println();

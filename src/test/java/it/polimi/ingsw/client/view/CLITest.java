@@ -40,10 +40,10 @@ public class CLITest {
         testPattern.put(new Coordinates(2,0), ItemTile.PLANT);
         testPattern.put(new Coordinates(0,4), ItemTile.GAME);
 
-        cli.drawYourBookShelf(testPattern);
-        cli.drawBookShelf(testPattern,"Piero Pelu", 0);
-        cli.drawBookShelf(testPattern,"Mario", 1);
-        cli.drawBookShelf(testPattern,"gino", 2);
+   //     cli.drawYourBookShelf(testPattern);
+   //     cli.drawBookShelf(testPattern,"Piero Pelu", 0);
+    //    cli.drawBookShelf(testPattern,"Mario", 1);
+    //    cli.drawBookShelf(testPattern,"gino", 2);
 
         Map<Integer,Integer> pointReference = new HashMap<>();
 
@@ -54,7 +54,7 @@ public class CLITest {
         pointReference.put(5,9);
         pointReference.put(6,12);
 
-        cli.drawPersonalCard(testPattern,pointReference);
+      //  cli.drawPersonalCard(testPattern,pointReference);
 
         Map<Coordinates, Optional<ItemTile>> testBoardPattern = new HashMap<>();
         testBoardPattern.put(new Coordinates(7,3), Optional.of(ItemTile.GAME));

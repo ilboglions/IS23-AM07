@@ -55,10 +55,7 @@ public class GUIView extends Application implements ViewInterface{
 
     }
 
-    @Override
-    public void drawBookShelf(Map<Coordinates, ItemTile> tilesMap, int startR, int startC) throws InvalidCoordinatesException {
 
-    }
 
     @Override
     public void drawLivingRoom(Map<Coordinates, Optional<ItemTile>> livingRoomMap) throws InvalidCoordinatesException {
