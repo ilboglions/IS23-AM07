@@ -111,7 +111,9 @@ public class LivingRoomBoard {
                   try {
                       tmpTile = slot[i][j].getItemTile();
                       if(tmpTile.isPresent())
-                        itemTilesmap.put(new Coordinates(i,j), tmpTile.get());
+                          itemTilesmap.put(new Coordinates(i,j), tmpTile.get());
+                      else
+                          itemTilesmap.put(new Coordinates(i,j), ItemTile.EMPTY);
                   } catch (InvalidCoordinatesException e) {
                       throw new RuntimeException(e);
                   }

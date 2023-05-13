@@ -9,5 +9,6 @@ public enum ItemTile {
         GAME(),
         FRAME(),
         TROPHY(),
-        PLANT()
+        PLANT(),
+        EMPTY()
 }

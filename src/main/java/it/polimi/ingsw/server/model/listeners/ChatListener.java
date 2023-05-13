@@ -33,7 +33,7 @@ public class ChatListener extends Listener<ChatSubscriber> {
                                                         return false;
                                                     })
                                                     .findFirst();
-            interestedOb.ifPresent( ob -> ob.receiveMessage(msg.getSender(), msg.getContent()));
+            interestedOb.ifPresent( ob -> ob.receiveMessage(msg.getSender(), msg.getContent(), true));
 
         } else{
             observers.stream()
@@ -44,7 +44,7 @@ public class ChatListener extends Listener<ChatSubscriber> {
                         }
                         return false;
                     })
-                    .forEach( obs -> obs.receiveMessage(msg.getSender(), msg.getContent()));
+                    .forEach( obs -> obs.receiveMessage(msg.getSender(), msg.getContent(), false));
         }
     }
 }

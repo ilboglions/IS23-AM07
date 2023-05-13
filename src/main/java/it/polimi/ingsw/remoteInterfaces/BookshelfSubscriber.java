@@ -15,12 +15,5 @@ public interface BookshelfSubscriber extends ListenerSubscriber {
      * @param tilesInserted the tile inserted by the player
      * @param colChosen the column chosen for the insertion
      */
-    void updateBookshelfStatus(String player, ArrayList<ItemTile> tilesInserted, int colChosen );
-
-    /**
-     * This method is used to notify the complete current status of the bookshelf
-     * @param currentTilesMap the map of the coordinates of the bookshelf with a tile in it
-     * @param username the username of the bookshelf owner
-     */
-    void updateBookshelfComplete(Map<Coordinates, ItemTile> currentTilesMap, String username);
+    void updateBookshelfStatus(String player, ArrayList<ItemTile> tilesInserted, int colChosen, Map<Coordinates, ItemTile> currentTilesMap);
 }

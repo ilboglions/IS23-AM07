@@ -1,8 +1,5 @@
 package it.polimi.ingsw.client.connection;
 // da spostare le coordinates in un altro package (?)
-import it.polimi.ingsw.messages.MessageType;
-import it.polimi.ingsw.messages.NetMessage;
-import it.polimi.ingsw.messages.PostMessage;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 
 import java.io.IOException;

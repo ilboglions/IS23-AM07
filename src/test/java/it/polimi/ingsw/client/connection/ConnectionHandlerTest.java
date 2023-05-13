@@ -1,11 +1,9 @@
 package it.polimi.ingsw.client.connection;
 
-import it.polimi.ingsw.client.view.CliView;
-import jdk.jfr.Description;
+import it.polimi.ingsw.client.view.CLI.CliView;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ConnectionHandlerTest {

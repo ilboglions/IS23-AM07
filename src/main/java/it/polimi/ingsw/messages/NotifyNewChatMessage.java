@@ -8,10 +8,12 @@ public class NotifyNewChatMessage extends NetMessage {
 
     private final String sender;
     private final String content;
-    public NotifyNewChatMessage(String sender, String content) {
+    private final Boolean privateMessage;
+    public NotifyNewChatMessage(String sender, String content, Boolean privateMessage) {
         super(MessageType.NOTIFY_NEW_CHAT);
         this.sender = sender;
         this.content = content;
+        this.privateMessage = privateMessage;
     }
     public String getSender() {
         return sender;
@@ -19,5 +21,9 @@ public class NotifyNewChatMessage extends NetMessage {
 
     public String getContent() {
         return content;
+    }
+
+    public Boolean getPrivateMessage() {
+        return privateMessage;
     }
 }

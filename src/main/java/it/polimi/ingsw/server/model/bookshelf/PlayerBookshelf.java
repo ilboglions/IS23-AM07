@@ -57,7 +57,7 @@ public class PlayerBookshelf extends Bookshelf{
                 firstFreeIndex++;
             }
 
-            bookshelfListener.onBookshelfChange(player.getUsername(),orderedTiles,column);
+            bookshelfListener.onBookshelfChange(player.getUsername(), orderedTiles, column, this.getItemTileMap());
         }
         else
             throw new NotEnoughSpaceException("There isn't enough space in this column!");

@@ -2,7 +2,7 @@ package it.polimi.ingsw.server;
 
 import it.polimi.ingsw.client.connection.ClientSocket;
 import it.polimi.ingsw.client.connection.ConnectionType;
-import it.polimi.ingsw.client.view.CliView;
+import it.polimi.ingsw.client.view.CLI.CliView;
 import it.polimi.ingsw.messages.*;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;

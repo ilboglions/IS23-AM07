@@ -4,12 +4,14 @@ import it.polimi.ingsw.client.view.ViewInterface;
 import it.polimi.ingsw.messages.*;
 import it.polimi.ingsw.server.ReschedulableTimer;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
+import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.rmi.RemoteException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Queue;
@@ -276,26 +278,38 @@ public class ClientSocket implements ConnectionHandler{
             case NOTIFY_NEW_CHAT -> {
                 this.parse((NotifyNewChatMessage) responseMessage);
             }
-
-            case NOTIFY_WINNING_PLAYER -> {}
-
-            case POINTS_UPDATE -> {}
+            case BOARD_UPDATE -> {
+                this.parse((BoardUpdateMessage) responseMessage);
+            }
+            case BOOKSHELF_UPDATE -> {
+                this.parse((BookshelfUpdateMessage) responseMessage);
+            }
+            case PERSONAL_CARD_UPDATE -> {
+                this.parse((PersonalGoalCardUpdateMessage) responseMessage);
+            }
+            case COMMON_CARDS_UPDATE -> {
+                this.parse((CommonGoalCardsUpdateMessage) responseMessage);
+            }
+            case NOTIFY_PLAYER_CRASHED -> {
+                this.parse((NotifyPlayerCrashedMessage) responseMessage);
+            }
+            case NOTIFY_WINNING_PLAYER -> {
+                this.parse((NotifyWinnerPlayerMessage) responseMessage);
+            }
+            case POINTS_UPDATE -> {
+                this.parse((PointsUpdateMessage) responseMessage);
+            }
+            case CONFIRM_CHAT -> {
+                this.parse((ConfirmChatMessage) responseMessage);
+            }
 
             case STILL_ACTIVE -> {}
 
             case TOKEN_UPDATE -> {}
 
-            case CONFIRM_CHAT -> {}
+            case NEW_PLAYER -> {}
 
-            case BOARD_UPDATE -> {}
-
-            case BOOKSHELF_UPDATE -> {}
-
-            case BOOKSHELF_FULL_UPDATE -> {}
-
-            case PERSONAL_CARD_UPDATE -> {}
-
-            case USER_GAME_CARDS -> {}
+            case NOTIFY_PLAYER_IN_TURN -> {}
         }
     }
 
@@ -341,7 +355,60 @@ public class ClientSocket implements ConnectionHandler{
     }
 
     private void parse(NotifyNewChatMessage message){
-        view.postNotification("new message!",message.getSender() + ": " + message.getContent());
+        //TODO: Add message to chat
+    }
+
+    private void parse(BoardUpdateMessage message) {
+        try {
+            view.drawLivingRoom(message.getTilesInBoard());
+        } catch (InvalidCoordinatesException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void parse(BookshelfUpdateMessage message){
+        try {
+            //Decide how to handle orders, pass the arraylist of players ordered? pass in the message the player number?
+            view.drawBookShelf(message.getCurrentMap(), message.getUsername(), 0);
+        } catch (InvalidCoordinatesException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void parse(PersonalGoalCardUpdateMessage message){
+        try {
+            view.drawPersonalCard(message.getCard().getCardPattern(), message.getCard().getPointsReference());
+        } catch (InvalidCoordinatesException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void parse(CommonGoalCardsUpdateMessage message){
+        try {
+            view.drawCommonCards(message.getCommonGoalCards());
+        } catch (InvalidCoordinatesException e) {
+            throw new RuntimeException(e);
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void parse(NotifyPlayerCrashedMessage message){
+        //TODO: Add server message to chat
+    }
+
+    private void parse(NotifyWinnerPlayerMessage message){
+        //TODO: Add server message to chat
+    }
+
+    private  void parse(PointsUpdateMessage message){
+        //TODO: update map of points and players
+    }
+
+    private void parse(ConfirmChatMessage message){
+        if(!message.getResult())
+            //TODO: add error to the chat
+            return;
     }
 }
 

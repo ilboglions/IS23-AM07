@@ -1,15 +1,16 @@
-package it.polimi.ingsw.client.view;
+package it.polimi.ingsw.client.view.CLI;
 
-import com.googlecode.lanterna.TerminalPosition;
 import it.polimi.ingsw.client.connection.*;
+import it.polimi.ingsw.client.view.ViewInterface;
+import it.polimi.ingsw.remoteInterfaces.RemoteCommonGoalCard;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -21,9 +22,18 @@ public class CliView implements ViewInterface {
     /**
      * dimension of the game view
      */
-
-    private static final int MAX_VERT_TILES = 50; //rows.
-    private static final int MAX_HORIZ_TILES = 100; //cols.
+    private static final int MAX_VERT_TILES = 80; //rows.
+    private static final int MAX_HORIZ_TILES = 170; //cols.
+    private static final int START_R_BOX_CARD = 55; //55
+    private static final int START_C_BOX_CARD = 5;
+    private static final int START_C_BOX_CHAT = 110;
+    private static final int LENGTH_R_BOX_CARD = 20;
+    private static final int LENGTH_C_BOX_CARD = 100;
+    private static final int LENGTH_C_BOX_CHAT = 55;
+    private static final int START_R_CHAT = START_R_BOX_CARD + LENGTH_R_BOX_CARD;
+    private static final int START_R_BOX_LEADERBOARD = 44;
+    private static final int LENGTH_R_BOX_LEADERBOARD = 10;
+    private static final int LENGTH_C_BOX_LEADERBOARD = 40;
     private static final String SPACE = " ";
     private static final int BASE_TILE_DIM = 3;
 
@@ -150,7 +160,7 @@ public class CliView implements ViewInterface {
         return coordinatesList;
     }
 
-    public void printTitle(){
+    public void printAsciiArtTitle(){
         System.out.println(Color.YELLOW.escape());
         System.out.println( "███╗   ███╗██╗   ██╗    ███████╗██╗  ██╗███████╗██╗     ███████╗██╗███████╗");
         System.out.println( "████╗ ████║╚██╗ ██╔╝    ██╔════╝██║  ██║██╔════╝██║     ██╔════╝██║██╔════╝");
@@ -188,96 +198,157 @@ public class CliView implements ViewInterface {
     }
 
     public void drawPersonalCard(Map<Coordinates,ItemTile> tilesMap, Map<Integer,Integer> pointsReference) throws InvalidCoordinatesException {
-        int startR = 31;
-        int startC = 2;
+        int startR = START_R_BOX_CARD + 5;
+        int startC = START_C_BOX_CARD + 7;
+        int startCBookshelf;
+        int startCPoints;
+        StringBuilder nTilesTable = new StringBuilder("N tiles :");
+        StringBuilder pointsTable = new StringBuilder("N points:");
 
-        // System.out.println(Color.WHITE_BOLD_BRIGHT.escape()+"Here's your"+Color.RED_BOLD.escape()+" personal goal card"+Color.WHITE_BOLD_BRIGHT.escape()+"!\n");
-        this.drawBookShelf( tilesMap, startR, startC);
-        /* System.out.println(Color.WHITE_BOLD_BRIGHT.escape()+"== points reference ==");
+        String title = "Your Personal Goal Card";
 
         pointsReference.forEach(
-                (key, value) -> System.out.print(key+"->"+value+"pt ")
-        ); */
-
-    }
-
-    public void drawYourBookShelf(Map<Coordinates,ItemTile> tilesMap) throws InvalidCoordinatesException {
-
-        int startR = 22;
-        int startC = 12;
-
-       // System.out.println(Color.WHITE_BOLD_BRIGHT.escape()+"Here's "+Color.RED_BOLD.escape()+"your "+Color.WHITE_BOLD_BRIGHT.escape()+"bookshelf");
-        this.drawBookShelf( tilesMap, startR, startC);
-    }
-    public void drawBookShelf(Map<Coordinates,ItemTile> tilesMap, String playerUsername, int order) throws InvalidCoordinatesException {
-
-        int[] startingPoints;
-        int nCelle;
-       StringBuilder tempString;
-        startingPoints = getStartsFromTurnOrder(order);
-     /*    int[] startingPoints;
-        nCelle = playerUsername.length()/3;
-
-        for(int i = 0; i < nCelle - 1 && i*3 < playerUsername.length(); i++){
-            tempString = new StringBuilder();
-            for(int j = i*3; j < i + 3 && i*3 + j < playerUsername.length(); j++){
-                if( j < playerUsername.length()){
-                    tempString.append(playerUsername.charAt(j));
-                } else {
-                    tempString.append(" ");
+                (key, value) -> {
+                    nTilesTable.append(" ").append(key);
+                    pointsTable.append(" ").append(value);
                 }
-            }
-            tiles[startingPoints[0] - 1][startingPoints[1] + i] = tempString.toString();
+        );
 
+        drawTitle(title, startR, startC, Color.RED_BOLD.escape());
+
+        startCBookshelf = (Math.max(title.length(), nTilesTable.length()) - 14) / 2;
+        startCPoints = (Math.max(title.length(), nTilesTable.length()) - nTilesTable.length()) / 2;
+
+        this.drawBookShelf( tilesMap, startR + 2, startC + startCBookshelf);
+
+        for(int i=0; i < nTilesTable.length(); i++){
+            tiles[startR + 9][startC + startCPoints + i] = Color.WHITE_BOLD_BRIGHT.escape() + nTilesTable.charAt(i);
+            tiles[startR + 11][startC + startCPoints + i] = Color.WHITE_BOLD_BRIGHT.escape() + pointsTable.charAt(i);
         }
 
-        tiles[startingPoints[0] - 1][startingPoints[1]] =Color.RED_BOLD.escape()+playerUsername;  */
-        this.drawBookShelf( tilesMap,startingPoints[0], startingPoints[1] );
-
     }
-    private int[] getStartsFromTurnOrder(int order){
+
+    private int printTruncateText(String text, int startR, int startC, int maxC){
+        int currentC = startC;
+        int currentR = startR;
+        int nLine = 1;
+
+        for(int i=0; i < text.length(); i++){
+            if(currentC == maxC){
+                currentC = startC;
+                currentR++;
+                nLine++;
+            }
+
+            tiles[currentR][currentC] = Color.WHITE_BOLD.escape() + text.charAt(i);
+            currentC ++;
+        }
+
+        return nLine;
+    }
+
+    private int calculateTextLines(String text,  int startC, int maxC){
+        int currentC = startC;
+        int nLine = 1;
+
+        for(int i=0; i < text.length(); i++){
+            if(currentC == maxC){
+                currentC = startC;
+                nLine++;
+            }
+
+            currentC ++;
+        }
+
+        return nLine;
+    }
+
+    public void drawCommonCards(ArrayList<RemoteCommonGoalCard> commonGoalCards) throws RemoteException {
+        int FIXED_MARGIN = 5;
+        int startR = START_R_BOX_CARD + FIXED_MARGIN;
+        int startC = START_C_BOX_CARD + 45;
+        int currentR;
+        int currentC;
+        String title = "Common Goal Cards";
+
+        drawTitle(title, startR, startC, Color.RED_BOLD.escape());
+
+        currentR = startR + 2;
+        currentC = startC;
+        for(RemoteCommonGoalCard card : commonGoalCards){
+            tiles[currentR][currentC] = Color.WHITE_BOLD.escape() +  "•";
+            tiles[currentR][currentC + 1] = " ";
+            currentC += 2;
+
+            currentR += printTruncateText(card.getDescription(), currentR, currentC, START_C_BOX_CARD + LENGTH_C_BOX_CARD - FIXED_MARGIN) + 1;
+
+            currentC = startC;
+        }
+    }
+
+    public void drawBookShelf(Map<Coordinates,ItemTile> tilesMap, String playerUsername, int order) throws InvalidCoordinatesException {
+        int[] startingPoints;
+
+        startingPoints = getStartsFromTurnOrder(order);
+        for(int i=0; i < playerUsername.length(); i++){
+            tiles[startingPoints[0] - 2][startingPoints[1] + i] = Color.RED_BOLD.escape() + playerUsername.charAt(i) ;
+        }
+
+        this.drawBookShelf( tilesMap,startingPoints[0], startingPoints[1] );
+    }
+
+    private int[] getStartsFromTurnOrder(int order) {
         int[] startingPoints = new int[2];
-        if(order == 0){
-            startingPoints[0] = 2;
-            startingPoints[1] = 12;
-        } else if( order == 1){
-            startingPoints[0] = 11;
+        if (order == 0) {
+            //This is always the case of the player personal bookshelf
+            startingPoints[0] = 45;
+            startingPoints[1] = 78;
+        } else if (order == 1) {
+            startingPoints[0] = 25;
             startingPoints[1] = 22;
+        } else if (order == 2) {
+            startingPoints[0] = 5;
+            startingPoints[1] = 78;
         } else {
-            startingPoints[0] = 11;
-            startingPoints[1] = 2;
+            startingPoints[0] = 25;
+            startingPoints[1] = 132;
         }
 
         return startingPoints;
     }
-    public  void drawChatMessage(String sender, String msg){
 
-        String msgToBePrinted = " * "+sender+": "+msg;
-        System.out.print(Color.WHITE_BOLD_BRIGHT.escape()+" ");
+    public void drawChat(ArrayList<String> chat){
+        int FIXED_H_MARGIN = 3;
+        int FIXED_V_MARGIN = 1;
+        int currentRChat = START_R_CHAT;
+        int nLines;
 
-        for(int i = 0; i < msgToBePrinted.length() + 2;i++)
-            System.out.print("-");
+        for (String message : chat) {
+            //TODO: Questo sotto è da spostare nel metodo in cui ci arriva un NOTIFY_NEW_CHAT
+            /*tmp = message;
 
-        System.out.println();
-        System.out.print("|");
+            if (tmp.getRecipient().isPresent())
+                msgToBePrinted = "<" + tmp.getSender() + " -> " + tmp.getRecipient().get() + "> " + tmp.getContent();
+            else
+                msgToBePrinted = "<" + tmp.getSender() + "> " + tmp.getContent();
 
-        for(int i = 0; i < msgToBePrinted.length()/2-1;i++)
-            System.out.print(" ");
+             */
 
-        System.out.print("CHAT");
+            nLines = calculateTextLines(message, START_C_BOX_CHAT + FIXED_H_MARGIN, START_C_BOX_CHAT + LENGTH_C_BOX_CHAT - FIXED_H_MARGIN);
 
-        for(int i = 0; i < msgToBePrinted.length()/2-1;i++)
-         System.out.print(" ");
+            currentRChat -= nLines;
 
-        System.out.print("|\n ");
-        for(int i = 0; i < msgToBePrinted.length() + 2;i++)
-            System.out.print("-");
-        System.out.println(" * "+Color.RED_BOLD.escape()+sender+Color.WHITE_BOLD_BRIGHT.escape()+": "+msg);
+            if (currentRChat > START_R_BOX_CARD - FIXED_V_MARGIN)
+                printTruncateText(message, currentRChat, START_C_BOX_CHAT + FIXED_H_MARGIN, START_C_BOX_CHAT + LENGTH_C_BOX_CHAT - FIXED_H_MARGIN);
+            else
+                break;
+        }
+
     }
 
     private void drawTile(int r, int c, String color){
-        tiles[r][c] = color+"⬛";
-        tiles[r][c+1] = "⬛";
+        tiles[r][c] = color+"█";
+        tiles[r][c+1] = "█";
         tiles[r][c+2] = SPACE;
     }
 
@@ -297,7 +368,6 @@ public class CliView implements ViewInterface {
             }
             tiles[r+i][c+j+k] = Color.RESET.escape()+SPACE;
         }
-
     }
 
     private void drawSpace(int r, int c ,int nSpace){
@@ -336,12 +406,12 @@ public class CliView implements ViewInterface {
 
     }
 
-    public void drawLivingRoom(Map<Coordinates, Optional<ItemTile>> livingRoomMap) throws InvalidCoordinatesException {
+    public void drawLivingRoom(Map<Coordinates, ItemTile> livingRoomMap) throws InvalidCoordinatesException {
         Coordinates coord;
         String colorTile;
 
-        int startR = 20;
-        int startC = 10;
+        int startR = 13;
+        int startC = 58;
 
         int r;
         int c;
@@ -349,26 +419,50 @@ public class CliView implements ViewInterface {
         int livingRoomRows = 9;
         int livingRoomColumns = 9;
         int dimension = 2;
-        //System.out.println(Color.RESET.escape());
 
-        for(r =  startR - livingRoomRows*dimension + 1; r <= startR; r+=dimension){
-            tiles[r][startC - 1] = Color.WHITE_BOLD_BRIGHT.escape()+(startR-r)/dimension;
+        for(r =  startR + livingRoomRows*(dimension+1) - 1; r >= startR; r-=(dimension+1)){
+            tiles[r][startC - 1] = Color.WHITE_BOLD_BRIGHT.escape()+(r-startR)/(dimension+1);
             drawSpace(r,startC,2);
             for( c = startC; c < livingRoomColumns*BASE_TILE_DIM*dimension + startC; c+=BASE_TILE_DIM*dimension){
 
                 tiles[startR + 1][c] =  Color.WHITE_BOLD_BRIGHT.escape()+(c-startC)/(BASE_TILE_DIM*dimension);
 
-                coord = new Coordinates((startR-r)/dimension,(c- startC)/(BASE_TILE_DIM*dimension));
+                coord = new Coordinates((r-startR)/(dimension+1),(c- startC)/(BASE_TILE_DIM*dimension));
 
                 if (livingRoomMap.containsKey(coord) ){
-                    if (livingRoomMap.get(coord).isPresent()){
-                        colorTile = getColorFromTileType(livingRoomMap.get(coord).get());
+                    if (!livingRoomMap.get(coord).equals(ItemTile.EMPTY)){
+                        colorTile = getColorFromTileType(livingRoomMap.get(coord));
                     } else {
                         colorTile = Color.BLACK.escape();
                     }
                     this.drawTile(r,c,colorTile,dimension);
+                    tiles[r+dimension][c] = SPACE;
                 }
             }
+        }
+    }
+
+    private void drawTitle(String title, int startR, int startC, String color){
+        for(int i=0; i < title.length(); i++){
+            tiles[startR][startC + i] = color + title.charAt(i);
+        }
+    }
+
+    public void drawLeaderboard(LinkedHashMap<String,Integer> scoreBoard){
+        String title = "Leaderboard";
+        int H_MARGIN = 3;
+        int startR = START_R_BOX_LEADERBOARD + 1;
+        int startC = START_C_BOX_CARD + 3;
+        int currR;
+        String tmp;
+
+        drawTitle(title, startR, startC, Color.RED_BOLD.escape());
+
+        currR = startR + 2;
+        for(Map.Entry<String, Integer> entry : scoreBoard.entrySet()){
+            tmp = String.format("%2d", entry.getValue()) + " - " + entry.getKey();
+
+            currR += printTruncateText(tmp, currR, startC + 2, START_C_BOX_CARD + LENGTH_C_BOX_LEADERBOARD - H_MARGIN) + 1;
         }
 
     }
@@ -404,39 +498,39 @@ public class CliView implements ViewInterface {
         return Color.BLACK.escape();
     }
 
-    private void drawVertLine(int startR, int startC, int lenght){
-        for(int r = startR; r < startR + lenght; r++){
-            tiles[r][startC] = "│";
+    private void drawVertLine(int startR, int startC, int length, String color){
+        for(int r = startR; r < startR + length; r++){
+            tiles[r][startC] = color+"│";
         }
     }
 
-    private void drawLine(int startR, int startC , int lenght){
-        for(int c = startC; c < startC + lenght; c++){
-            tiles[startR][c] = "─";
+    private void drawLine(int startR, int startC , int length, String color){
+        for(int c = startC; c < startC + length; c++){
+            tiles[startR][c] = color+"─";
         }
     }
-    private void drawBox(int startR, int startC, int lenghtR, int lenghtC ){
-        this.drawLine(startR, startC+1, lenghtC-1);
-        this.drawLine(startR+lenghtR, startC+1, lenghtC-1);
-        this.drawVertLine(startR+1,startC, lenghtR-1);
-        this.drawVertLine(startR+1,startC+lenghtC, lenghtR-1);
+    private void drawBox(int startR, int startC, int lengthR, int lengthC, String color){
+        this.drawLine(startR, startC+1, lengthC-1, color);
+        this.drawLine(startR+lengthR, startC+1, lengthC-1, color);
+        this.drawVertLine(startR+1,startC, lengthR-1, color);
+        this.drawVertLine(startR+1,startC+lengthC, lengthR-1, color);
 
-        tiles[startR][startC] = "┌";
-        tiles[startR][startC+lenghtC] = "┐";
-        tiles[startR+lenghtR][startC] = "└";
-        tiles[startR+lenghtR][startC+lenghtC] = "┘";
+        tiles[startR][startC] = color + "┌";
+        tiles[startR][startC+lengthC] = color + "┐";
+        tiles[startR+lengthR][startC] = color + "└";
+        tiles[startR+lengthR][startC+lengthC] = color + "┘";
     }
     public final void plot() {
-        this.drawBox(MAX_VERT_TILES-10,MAX_HORIZ_TILES-20,5,5);
         for (int r = 0; r < MAX_VERT_TILES; r++) {
             for (int c = 0; c < MAX_HORIZ_TILES; c++) {
                 if(tiles[r][c] == null) tiles[r][c] = SPACE;
             }
         }
 
-        this.drawBox(MAX_VERT_TILES-20,MAX_HORIZ_TILES-10,10,5);
+        this.drawBox(START_R_BOX_CARD, START_C_BOX_CARD, LENGTH_R_BOX_CARD, LENGTH_C_BOX_CARD, Color.WHITE_BOLD_BRIGHT.escape());
+        this.drawBox(START_R_BOX_CARD, START_C_BOX_CHAT, LENGTH_R_BOX_CARD, LENGTH_C_BOX_CHAT, Color.WHITE_BOLD_BRIGHT.escape());
+        this.drawBox(START_R_BOX_LEADERBOARD, START_C_BOX_CARD, LENGTH_R_BOX_LEADERBOARD, LENGTH_C_BOX_LEADERBOARD, Color.WHITE_BOLD_BRIGHT.escape());
 
-        System.out.print( Color.GREEN.escape());
         for (int r = 0; r < MAX_VERT_TILES; r++) {
             System.out.println();
             for (int c = 0; c < MAX_HORIZ_TILES; c++) {

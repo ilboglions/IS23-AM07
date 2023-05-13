@@ -366,22 +366,16 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
     }
 
     @Override
-    public void updateBookshelfStatus(String player, ArrayList<ItemTile> tilesInserted, int colChosen) {
-        BookshelfUpdateMessage update = new BookshelfUpdateMessage(tilesInserted, colChosen, player);
-        this.sendUpdate(update);
-    }
-
-    @Override
-    public void updateBookshelfComplete(Map<Coordinates, ItemTile> currentTilesMap, String player) {
-        BookshelfFullUpdateMessage update = new BookshelfFullUpdateMessage(currentTilesMap, player);
+    public void updateBookshelfStatus(String player, ArrayList<ItemTile> tilesInserted, int colChosen, Map<Coordinates, ItemTile> currentTilesMap) {
+        BookshelfUpdateMessage update = new BookshelfUpdateMessage(tilesInserted, colChosen, currentTilesMap, player);
         this.sendUpdate(update);
     }
 
 
     @Override
-    public void receiveMessage(String from, String msg) {
+    public void receiveMessage(String from, String msg, Boolean privateMessage) {
         logger.info("SENDING MESSAGE TO "+this.username);
-        NotifyNewChatMessage update = new NotifyNewChatMessage(from, msg);
+        NotifyNewChatMessage update = new NotifyNewChatMessage(from, msg, privateMessage);
         this.sendUpdate(update);
     }
 
@@ -439,7 +433,7 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
 
     @Override
     public void notifyPlayerCrashed(String userCrashed){
-        NotifyPlayerCrashed update = new NotifyPlayerCrashed(userCrashed);
+        NotifyPlayerCrashedMessage update = new NotifyPlayerCrashedMessage(userCrashed);
         this.sendUpdate(update);
     }
 

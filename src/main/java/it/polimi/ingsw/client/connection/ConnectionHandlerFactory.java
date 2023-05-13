@@ -2,10 +2,8 @@ package it.polimi.ingsw.client.connection;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import it.polimi.ingsw.client.view.CliView;
 import it.polimi.ingsw.client.view.ViewInterface;
 
-import javax.swing.text.View;
 import java.io.InputStreamReader;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;

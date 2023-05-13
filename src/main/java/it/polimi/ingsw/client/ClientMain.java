@@ -1,13 +1,8 @@
 package it.polimi.ingsw.client;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import it.polimi.ingsw.client.connection.ConnectionType;
-import it.polimi.ingsw.client.view.CliView;
+import it.polimi.ingsw.client.view.CLI.CliView;
 import it.polimi.ingsw.client.view.ViewInterface;
-
-import java.io.InputStreamReader;
-import java.util.Objects;
 
 public class ClientMain {
     public static void main(String[] args) {
