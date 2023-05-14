@@ -4,6 +4,7 @@ import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.player.Player;
 import it.polimi.ingsw.server.model.exceptions.*;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
@@ -72,7 +73,7 @@ public class Lobby {
      * @throws BrokenInternalGameConfigurations if some internal configurations are broken
      * @throws InvalidPlayerException if the host player cannot be found
      */
-    public Game createGame(int nPlayers, String hostNickname) throws PlayersNumberOutOfRange, BrokenInternalGameConfigurations, InvalidPlayerException {
+    public Game createGame(int nPlayers, String hostNickname) throws PlayersNumberOutOfRange, BrokenInternalGameConfigurations, InvalidPlayerException, RemoteException {
         Objects.requireNonNull(hostNickname);
 
         Optional<Player> host =  waitingPlayers.stream().filter(p -> p.getUsername().equals(hostNickname)).findFirst();

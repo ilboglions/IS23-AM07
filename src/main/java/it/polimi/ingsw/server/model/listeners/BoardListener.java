@@ -16,11 +16,11 @@ public class BoardListener extends Listener<BoardSubscriber> {
      * when the tiles on the boards change, the observers are notified
      * @param tilesInBoard the tiles in the board, with a map containing Coordinates and the item tile in that coordinate
      */
-    public void onBoardChange(Map<Coordinates, ItemTile> tilesInBoard ){
+    public void onBoardChange(Map<Coordinates, ItemTile> tilesInBoard ) throws RemoteException {
 
         Set<BoardSubscriber> observers = this.getSubscribers();
         for (BoardSubscriber ob : observers) {
-            ob.updateBoardStatus(tilesInBoard);
+                ob.updateBoardStatus(tilesInBoard);
         }
     }
 

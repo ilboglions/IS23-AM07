@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class GameListener extends Listener<GameSubscriber> {
+
     public void onPlayerJoinGame(String username, ArrayList<RemoteCommonGoalCard> commonGoalCards) {
         Set<GameSubscriber> subscribers = this.getSubscribers();
         subscribers.forEach(sub -> {
@@ -34,11 +35,22 @@ public class GameListener extends Listener<GameSubscriber> {
 
     public void notifyPlayerInTurn(String username){
         Set<GameSubscriber> subscribers = this.getSubscribers();
-        subscribers.forEach(sub -> sub.notifyPlayerInTurn(username));
+        subscribers.forEach(sub -> {
+            try {
+                sub.notifyPlayerInTurn(username);
+            } catch (RemoteException ignored) {
+
+            }
+        });
     }
 
     public void notifyPlayerCrashed(String userCrashed){
         Set<GameSubscriber> subscribers = this.getSubscribers();
-        subscribers.forEach(sub -> sub.notifyPlayerCrashed(userCrashed));
+        subscribers.forEach(sub -> {
+            try {
+                sub.notifyPlayerCrashed(userCrashed);
+            } catch (RemoteException ignored) {
+            }
+        });
     }
 }

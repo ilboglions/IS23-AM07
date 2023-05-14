@@ -90,7 +90,7 @@ public class Game implements GameModelInterface {
      * @throws PlayersNumberOutOfRange if the numPlayers is less than 2 or more than 4
      * @throws NotEnoughCardsException if the cards to be drawn are more than the number of cards loaded with the JSON file configuration
      */
-    public Game(int numPlayers, Player host) throws NegativeFieldException, PlayersNumberOutOfRange, NotEnoughCardsException, IllegalFilePathException {
+    public Game(int numPlayers, Player host) throws NegativeFieldException, PlayersNumberOutOfRange, NotEnoughCardsException, IllegalFilePathException, RemoteException {
         Objects.requireNonNull(host);
         this.gameListener = new GameListener();
         this.numPlayers = numPlayers;
@@ -98,6 +98,7 @@ public class Game implements GameModelInterface {
         this.players = new ArrayList<>();
         this.crashedPlayers = new ArrayList<>();
         this.livingRoom = new LivingRoomBoard(numPlayers);
+
         DeckCommon deckCommon = new DeckCommon(numPlayers, "commonCards.json");
         this.deckPersonal = new DeckPersonal("personalCards.json", "pointsReference.json");
         this.bagHolder = new BagHolder();
@@ -117,7 +118,6 @@ public class Game implements GameModelInterface {
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
-
         ArrayList<RemoteCommonGoalCard> remoteCards = new ArrayList<>(this.commonGoalCards);
         this.gameListener.onPlayerJoinGame(host.getUsername(), remoteCards);
     }
@@ -139,7 +139,12 @@ public class Game implements GameModelInterface {
 
     @Override
     public void subscribeToListener(PlayerSubscriber subscriber){
-        players.forEach(p -> p.subscribeToListener(subscriber));
+        players.forEach(p -> {
+            try {
+                p.subscribeToListener(subscriber);
+            } catch (RemoteException ignored){
+            }
+        });
     }
 
     @Override
@@ -575,6 +580,8 @@ public class Game implements GameModelInterface {
      * @param userToBeUpdated the username of the user that needs to receive the updates
      */
     public void triggerAllListeners(String userToBeUpdated) {
+        ArrayList<RemoteCommonGoalCard> remoteCommons = new ArrayList<>(this.commonGoalCards);
+        this.gameListener.onPlayerJoinGame(userToBeUpdated,remoteCommons);
         for(Player player : players){
             try {
                 player.triggerListener(userToBeUpdated);

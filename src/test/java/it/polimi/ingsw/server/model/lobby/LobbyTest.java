@@ -5,6 +5,8 @@ import it.polimi.ingsw.server.model.game.Game;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.rmi.RemoteException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -84,7 +86,7 @@ public class LobbyTest {
      */
     @Test
     @DisplayName("Test all the methods")
-    void testMethods() throws NicknameAlreadyUsedException, InvalidPlayerException, BrokenInternalGameConfigurations, NotEnoughCardsException, PlayersNumberOutOfRange, NoAvailableGameException, PlayerNotFoundException {
+    void testMethods() throws NicknameAlreadyUsedException, InvalidPlayerException, BrokenInternalGameConfigurations, NotEnoughCardsException, PlayersNumberOutOfRange, NoAvailableGameException, PlayerNotFoundException, RemoteException {
         Lobby test = new Lobby();
         test.createPlayer("testUser");
         test.createPlayer("secondUser");
