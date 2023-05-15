@@ -1,6 +1,5 @@
 package it.polimi.ingsw.server.model.player;
 
-import it.polimi.ingsw.remoteInterfaces.RemotePersonalGoalCard;
 import it.polimi.ingsw.server.model.bookshelf.Bookshelf;
 import it.polimi.ingsw.server.model.bookshelf.PlayerBookshelf;
 import it.polimi.ingsw.server.model.cards.personal.PersonalGoalCard;
@@ -62,10 +61,8 @@ public class Player {
      * permits to subscribe a PlayerSubscriber to the player notifications
      * @param subscriber the interested subscriber
      */
-    public void subscribeToListener(PlayerSubscriber subscriber) throws RemoteException {
+    public void subscribeToListener(PlayerSubscriber subscriber){
         this.playerListener.addSubscriber(subscriber);
-        if(this.personalCard != null)
-            this.playerListener.onPersonalGoalCardAssigned(this.username, this.personalCard);
     }
     /**
      * Method used to retrieve the username
@@ -222,7 +219,7 @@ public class Player {
      */
     public void assignPersonalCard(PersonalGoalCard card) throws RemoteException {
         this.personalCard = Objects.requireNonNull(card);
-        this.playerListener.onPersonalGoalCardAssigned(this.username, this.personalCard);
+        playerListener.onPersonalGoalCardAssigned(this.username, card);
     }
 
     /**
@@ -251,8 +248,6 @@ public class Player {
         Objects.requireNonNull(userToBeUpdated);
 
         this.playerListener.triggerListener(this.username, userToBeUpdated, this.points, new ArrayList<>(this.tokenAcquired));
-
-
     }
 
     public void unsubscribeFromListener(String username) {

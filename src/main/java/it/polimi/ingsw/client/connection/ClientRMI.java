@@ -1,14 +1,13 @@
 package it.polimi.ingsw.client.connection;
 
 
-import it.polimi.ingsw.client.localModel.Game;
 import it.polimi.ingsw.client.view.ViewInterface;
-import it.polimi.ingsw.remoteInterfaces.*;
 import it.polimi.ingsw.server.ReschedulableTimer;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
+import it.polimi.ingsw.remoteInterfaces.RemoteGameController;
+import it.polimi.ingsw.remoteInterfaces.RemoteLobbyController;
 import it.polimi.ingsw.server.model.exceptions.*;
 
-import java.io.Serializable;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -18,7 +17,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class ClientRMI implements ConnectionHandler {
+public class ClientRMI implements ConnectionHandler{
 
     Registry registry;
     private final RemoteLobbyController lobbyController;
@@ -28,7 +27,6 @@ public class ClientRMI implements ConnectionHandler {
     private final ReschedulableTimer timer;
     private final long timerDelay = 15000;
     private final ViewInterface view;
-    private  Game gameModel;
 
     public ClientRMI(ViewInterface view) throws RemoteException, NotBoundException {
         this.timer = new ReschedulableTimer();
@@ -49,11 +47,12 @@ public class ClientRMI implements ConnectionHandler {
         this.username = username;
         try {
             gameController = lobbyController.enterInLobby(username);
-            this.sendHeartBeat();
             if( gameController == null){
                 view.postNotification("joined in lobby!","select what2do");
+                lobbyController.triggerHeartBeat(this.username);
             } else {
                 view.postNotification("welcome back!","here's your game "+gameController);
+                gameController.triggerHeartBeat(this.username);
             }
         } catch (NicknameAlreadyUsedException e) {
             view.postNotification("Nickname already used!", "choose another nickname and retry");
@@ -67,31 +66,12 @@ public class ClientRMI implements ConnectionHandler {
 
         try {
             this.gameController = this.lobbyController.createGame(username, nPlayers);
-            ArrayList<String> players = new ArrayList<>();
-            players.add(this.username);
-            this.gameModel = new Game(players,this.view,this.username);
-            this.subscribeListeners();
-
+            gameController.triggerHeartBeat(this.username);
             view.postNotification("Game created successfully","");
         } catch (InvalidPlayerException e) {
             throw new RuntimeException(e);
         } catch (PlayersNumberOutOfRange e) {
             view.postNotification("The number of player is out of range!","create the game with less players");
-        }
-
-    }
-
-    private void subscribeListeners(){
-
-        try {
-            gameController.subscribeToListener((ChatSubscriber) this.gameModel);
-            gameController.subscribeToListener((GameSubscriber) this.gameModel);
-            gameController.subscribeToListener((PlayerSubscriber) this.gameModel);
-
-            gameController.subscribeToListener((BookshelfSubscriber) this.gameModel);
-            gameController.subscribeToListener((BoardSubscriber) this.gameModel);
-        } catch (RemoteException e) {
-            this.close();
         }
 
     }
@@ -102,11 +82,6 @@ public class ClientRMI implements ConnectionHandler {
         try {
             this.gameController = this.lobbyController.addPlayerToGame(username);
             gameController.triggerHeartBeat(this.username);
-            ArrayList<String> players = new ArrayList<>();
-            players.add(this.username);
-            this.gameModel = new Game(players,this.view,this.username);
-            this.subscribeListeners();
-            gameController.triggerAllListeners(this.username);
             view.postNotification("Game joined successfully","");
         } catch (NicknameAlreadyUsedException e) {
             throw new RuntimeException(e);
@@ -119,7 +94,7 @@ public class ClientRMI implements ConnectionHandler {
     }
 
     @Override
-    public void checkValidRetrieve(ArrayList<Coordinates> tiles) {
+    public void checkValidRetrieve(ArrayList<Coordinates> tiles) throws RemoteException {
 
         try {
             this.checkGameIsSet();
@@ -141,8 +116,6 @@ public class ClientRMI implements ConnectionHandler {
             view.postNotification("The game has already ended!",e.getMessage());
         } catch (PlayerNotInTurnException e) {
             view.postNotification("You're not in turn!",e.getMessage());
-        } catch (RemoteException e) {
-            this.close();
         }
     }
 
@@ -190,7 +163,7 @@ public class ClientRMI implements ConnectionHandler {
                         timer.reschedule(this.timerDelay);
                     }
                 } catch (RemoteException e) {
-                    this.close();
+                    throw new RuntimeException(e);
                 }
             },
             0, 5, TimeUnit.SECONDS);

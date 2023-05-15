@@ -1,6 +1,8 @@
 package it.polimi.ingsw.client.view;
 
-import it.polimi.ingsw.remoteInterfaces.RemoteCommonGoalCard;
+import it.polimi.ingsw.client.connection.ConnectionHandler;
+import it.polimi.ingsw.client.connection.ConnectionHandlerFactory;
+import it.polimi.ingsw.client.connection.ConnectionType;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
@@ -9,10 +11,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class GUIView extends Application implements ViewInterface{
     //private final ConnectionHandler controller;
@@ -40,31 +40,25 @@ public class GUIView extends Application implements ViewInterface{
 
     }
 
+    @Override
+    public void drawYourBookShelf(Map<Coordinates, ItemTile> tilesMap) throws InvalidCoordinatesException {
+
+    }
 
     @Override
     public void drawBookShelf(Map<Coordinates, ItemTile> tilesMap, String playerUsername, int order) throws InvalidCoordinatesException {
 
     }
 
-
     @Override
-    public void drawCommonCards(ArrayList<RemoteCommonGoalCard> commonGoalCards) throws InvalidCoordinatesException, RemoteException {
-
-    }
-
-    @Override
-    public void drawChat(List<String> chat) {
-
-    }
-
-    @Override
-    public void drawLeaderboard(Map<String, Integer> scoreBoard) {
+    public void drawChatMessage(String sender, String msg) {
 
     }
 
 
+
     @Override
-    public void drawLivingRoom(Map<Coordinates, ItemTile> livingRoomMap) throws InvalidCoordinatesException {
+    public void drawLivingRoom(Map<Coordinates, Optional<ItemTile>> livingRoomMap) throws InvalidCoordinatesException {
 
     }
 

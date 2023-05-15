@@ -380,8 +380,6 @@ public class ClientSocket implements ConnectionHandler{
             view.drawPersonalCard(message.getCard().getCardPattern(), message.getCard().getPointsReference());
         } catch (InvalidCoordinatesException e) {
             throw new RuntimeException(e);
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
         }
     }
 

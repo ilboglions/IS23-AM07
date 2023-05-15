@@ -1,7 +1,5 @@
 package it.polimi.ingsw.remoteInterfaces;
 
-import java.rmi.RemoteException;
-
 /**
  * the interface that provides the method to be implemented by an observer of the chat service
  */
@@ -15,5 +13,5 @@ public interface ChatSubscriber extends ListenerSubscriber {
      * @param msg the message
      * @param privateMessage if the message is a private message
      */
-    void receiveMessage(String from, String msg, Boolean privateMessage) throws RemoteException;
+    void receiveMessage(String from, String msg, Boolean privateMessage);
 }

@@ -13,7 +13,6 @@ import it.polimi.ingsw.server.model.tiles.ItemTile;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.rmi.RemoteException;
 import java.util.*;
 import java.util.ArrayList;
 import java.util.Map;
@@ -59,7 +58,7 @@ public class LivingRoomBoard {
      * @param numPlayers Number of players that play the game
      * @throws PlayersNumberOutOfRange if the given number of players is out of range
      */
-    public LivingRoomBoard(int numPlayers) throws PlayersNumberOutOfRange, RemoteException {
+    public LivingRoomBoard(int numPlayers) throws PlayersNumberOutOfRange {
 
         slot = new Slot[rows][cols];
         this.boardListener = new BoardListener();
@@ -94,7 +93,7 @@ public class LivingRoomBoard {
 
 
 
-
+        boardListener.onBoardChange(this.getItemTilesMapFromBoard());
 
     }
 
@@ -217,11 +216,6 @@ public class LivingRoomBoard {
                 }
             }
         }
-        try {
-            boardListener.onBoardChange(this.getItemTilesMapFromBoard());
-        } catch (RemoteException ignored) {
-
-        }
     }
 
     /**
@@ -234,7 +228,6 @@ public class LivingRoomBoard {
     if(coo == null)
             throw new NullPointerException("Given coordinates are null");
         else {
-
             return slot[coo.getRow()][coo.getColumn()].getItemTile();
         }
     }

@@ -7,6 +7,6 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 public interface RemoteCommonGoalCard extends Remote, Serializable {
-    String getDescription() throws RemoteException;
-    CommonCardType getName() throws RemoteException;
+    public String getDescription() throws RemoteException;
+    public CommonCardType getName() throws RemoteException;
 }

@@ -148,7 +148,7 @@ public class CLITest {
         scoreBoard.put("Player4", 0);
 
         cli.drawLeaderboard(scoreBoard);
-        cli.postNotification("NOTIFICA!","notifica inviata dal server che descrive un qualcosa da fare, una azione o un cambio turno!");
 
+        cli.plot();
     }
 }

@@ -26,9 +26,9 @@ public interface GameSubscriber extends ListenerSubscriber {
      * @param commonGoalCards is the list of the common goals of the game
      * @throws RemoteException
      */
-    void notifyCommonGoalCards(ArrayList<RemoteCommonGoalCard> commonGoalCards) throws RemoteException;
+    void notifyCommonGoalCards(ArrayList<RemoteCommonGoalCard> commonGoalCards);
 
-    void notifyPlayerInTurn(String username) throws RemoteException;
+    void notifyPlayerInTurn(String username);
 
-    void notifyPlayerCrashed(String userCrashed) throws RemoteException;
+    void notifyPlayerCrashed(String userCrashed);
 }

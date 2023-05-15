@@ -24,11 +24,7 @@ public class BookshelfListener extends Listener<BookshelfSubscriber> {
         Set<BookshelfSubscriber> observers = this.getSubscribers();
 
         for (BookshelfSubscriber o : observers) {
-            try {
-                o.updateBookshelfStatus(player, insertedTiles, col, currentTilesMap);
-            } catch (RemoteException e) {
-                throw new RuntimeException(e);
-            }
+            o.updateBookshelfStatus(player, insertedTiles, col, currentTilesMap);
         }
     }
 

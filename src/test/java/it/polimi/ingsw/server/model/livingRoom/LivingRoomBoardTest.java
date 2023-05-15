@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import com.google.gson.Gson;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
-import java.rmi.RemoteException;
 import java.util.*;
 
 public class LivingRoomBoardTest {
@@ -27,7 +26,7 @@ public class LivingRoomBoardTest {
      */
     @Test
     @DisplayName("LivingRoomBoardTester")
-    void ConstructorTest() throws FileNotFoundException, PlayersNumberOutOfRange, RemoteException {
+    void ConstructorTest() throws FileNotFoundException, PlayersNumberOutOfRange {
         assertThrows(PlayersNumberOutOfRange.class, () ->{ new LivingRoomBoard(0);});
         assertThrows(PlayersNumberOutOfRange.class, () ->{ new LivingRoomBoard(5);});
         LivingRoomBoard testboard = new LivingRoomBoard(4);
@@ -74,7 +73,7 @@ public class LivingRoomBoardTest {
      */
     @Test
     @DisplayName("CheckRefillTester")
-    void checkRefillTest() throws PlayersNumberOutOfRange, InvalidCoordinatesException, SlotFullException, RemoteException {
+    void checkRefillTest() throws PlayersNumberOutOfRange, InvalidCoordinatesException, SlotFullException {
         LivingRoomBoard board = new LivingRoomBoard(2);
         ArrayList<ItemTile> removedtiles= board.emptyBoard();
         Map<Coordinates, ItemTile> inserttiles = new HashMap<>();
@@ -98,7 +97,7 @@ public class LivingRoomBoardTest {
      */
     @Test
     @DisplayName("EmptyBoardTester")
-    void emptyBoardTest() throws PlayersNumberOutOfRange, InvalidCoordinatesException, RemoteException {
+    void emptyBoardTest() throws PlayersNumberOutOfRange, InvalidCoordinatesException {
         LivingRoomBoard board = new LivingRoomBoard(3);
         Slot[][] slotmatrix = board.getAllSlots();
         ArrayList<ItemTile> itemTileslist = new ArrayList<>();
@@ -121,7 +120,7 @@ public class LivingRoomBoardTest {
 
     @Test
     @DisplayName("refillBoardTester")
-    void refillBoardTest() throws PlayersNumberOutOfRange, NotEnoughTilesException, RemoteException {
+    void refillBoardTest() throws PlayersNumberOutOfRange, NotEnoughTilesException {
         LivingRoomBoard board = new LivingRoomBoard(4);
         ArrayList<ItemTile> tilesList = createList(board.getNumCells());
         board.refillBoard(new ArrayList<>(tilesList));
@@ -142,7 +141,7 @@ public class LivingRoomBoardTest {
 
     @Test
     @DisplayName("getTileTester")
-    void getTileTest () throws PlayersNumberOutOfRange, NotEnoughTilesException, InvalidCoordinatesException, RemoteException {
+    void getTileTest () throws PlayersNumberOutOfRange, NotEnoughTilesException, InvalidCoordinatesException {
         LivingRoomBoard board = new LivingRoomBoard(4);
         ArrayList<ItemTile> tilesList = createList(board.getNumCells());
         board.refillBoard(new ArrayList<>(tilesList));
@@ -158,7 +157,7 @@ public class LivingRoomBoardTest {
 
     @Test
     @DisplayName("removeTileTester")
-    void removeTile() throws PlayersNumberOutOfRange, NotEnoughTilesException, InvalidCoordinatesException, RemoteException {
+    void removeTile() throws PlayersNumberOutOfRange, NotEnoughTilesException, InvalidCoordinatesException {
         LivingRoomBoard board = new LivingRoomBoard(4);
         ArrayList<ItemTile> tilesList = createList(board.getNumCells());
         board.refillBoard(new ArrayList<>(tilesList));
@@ -169,7 +168,7 @@ public class LivingRoomBoardTest {
 
     @Test
     @DisplayName("checkValidRetrieveTester")
-    void checkValidRetrieveTest() throws PlayersNumberOutOfRange, NotEnoughTilesException, InvalidCoordinatesException, EmptySlotException, RemoteException {
+    void checkValidRetrieveTest() throws PlayersNumberOutOfRange, NotEnoughTilesException, InvalidCoordinatesException, EmptySlotException {
         LivingRoomBoard board = new LivingRoomBoard(4);
         ArrayList<ItemTile> tilesList = createList(board.getNumCells());
         board.refillBoard(new ArrayList<>(tilesList));
