@@ -22,7 +22,7 @@ public abstract class Listener<T extends ListenerSubscriber> implements Remote {
      * gets the set of observers
      * @return the set of the subscribed observers
      */
-    protected Set<T> getSubscribers() {
+    public Set<T> getSubscribers() {
         return subscribers;
     }
 

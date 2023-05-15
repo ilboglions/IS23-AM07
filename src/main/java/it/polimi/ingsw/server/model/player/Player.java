@@ -247,10 +247,14 @@ public class Player {
     public void triggerListener(String userToBeUpdated) throws RemoteException {
         Objects.requireNonNull(userToBeUpdated);
 
-        this.playerListener.triggerListener(this.username, userToBeUpdated, this.points, new ArrayList<>(this.tokenAcquired));
+        this.playerListener.triggerListener(this.username, userToBeUpdated, this.points, new ArrayList<>(this.tokenAcquired), this.personalCard);
     }
 
     public void unsubscribeFromListener(String username) {
         this.playerListener.removeSubscriber(username);
+    }
+
+    public Set<PlayerSubscriber> getSubs() {
+        return new HashSet<>(this.playerListener.getSubscribers());
     }
 }

@@ -2,6 +2,8 @@ package it.polimi.ingsw.remoteInterfaces;
 
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
+
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -15,5 +17,5 @@ public interface BookshelfSubscriber extends ListenerSubscriber {
      * @param tilesInserted the tile inserted by the player
      * @param colChosen the column chosen for the insertion
      */
-    void updateBookshelfStatus(String player, ArrayList<ItemTile> tilesInserted, int colChosen, Map<Coordinates, ItemTile> currentTilesMap);
+    void updateBookshelfStatus(String player, ArrayList<ItemTile> tilesInserted, int colChosen, Map<Coordinates, ItemTile> currentTilesMap) throws RemoteException;
 }

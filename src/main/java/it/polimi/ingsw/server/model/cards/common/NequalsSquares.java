@@ -8,13 +8,14 @@ import it.polimi.ingsw.server.model.exceptions.PlayersNumberOutOfRange;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 
+import java.rmi.RemoteException;
 import java.util.*;
 
 public class NequalsSquares extends CommonGoalCard{
 
     private final int nSquares;
     private final int squareDim;
-    public NequalsSquares(int nPlayers, String description, CommonCardType name, int nSquares, int squareDim) throws PlayersNumberOutOfRange, NegativeFieldException {
+    public NequalsSquares(int nPlayers, String description, CommonCardType name, int nSquares, int squareDim) throws PlayersNumberOutOfRange, NegativeFieldException, RemoteException {
         super(nPlayers, description, name);
         if(nSquares <= 0 || squareDim <= 0) throw new NegativeFieldException("can't assign negative parameters!");
         this.nSquares = nSquares;

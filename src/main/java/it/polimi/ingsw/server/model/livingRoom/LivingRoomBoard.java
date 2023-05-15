@@ -13,6 +13,7 @@ import it.polimi.ingsw.server.model.tiles.ItemTile;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.rmi.RemoteException;
 import java.util.*;
 import java.util.ArrayList;
 import java.util.Map;
@@ -215,6 +216,7 @@ public class LivingRoomBoard {
                     }
                 }
             }
+            boardListener.onBoardChange(this.getItemTilesMapFromBoard());
         }
     }
 
@@ -271,6 +273,7 @@ public class LivingRoomBoard {
             row = coo.getRow();
             col = coo.getColumn();
             slot[row][col].setItemTile(Optional.empty());
+            boardListener.onBoardChange(this.getItemTilesMapFromBoard());
         }
     }
 

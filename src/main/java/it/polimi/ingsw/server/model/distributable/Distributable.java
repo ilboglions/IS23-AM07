@@ -5,6 +5,7 @@ import it.polimi.ingsw.server.model.exceptions.PlayersNumberOutOfRange;
 import it.polimi.ingsw.server.model.exceptions.NotEnoughCardsException;
 
 import java.io.FileNotFoundException;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 /**
@@ -23,6 +24,6 @@ public interface Distributable<T> {
      * @throws PlayersNumberOutOfRange as NegativeField exception, this is thrown if some configurations of the game are not permitted, because of the number of players exceeded
      * @throws NotEnoughCardsException if the number of cards read from the JSON is not enough to draw the nElements cards
      */
-    ArrayList<T> draw(int nElements) throws FileNotFoundException, PlayersNumberOutOfRange, NotEnoughCardsException, NegativeFieldException;
+    ArrayList<T> draw(int nElements) throws FileNotFoundException, PlayersNumberOutOfRange, NotEnoughCardsException, NegativeFieldException, RemoteException;
 
 }

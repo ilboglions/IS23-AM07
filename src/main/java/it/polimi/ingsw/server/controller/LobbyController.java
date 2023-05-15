@@ -111,7 +111,6 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
             } catch (NotAllPlayersHaveJoinedException | GameNotEndedException ignored) {
 
             }
-
             this.stopTimer(player);
             return gameController;
         }

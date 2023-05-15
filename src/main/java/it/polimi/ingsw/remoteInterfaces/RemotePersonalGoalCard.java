@@ -5,11 +5,12 @@ import it.polimi.ingsw.server.model.tiles.ItemTile;
 
 import java.io.Serializable;
 import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.util.Map;
 
 public interface RemotePersonalGoalCard extends Remote, Serializable {
-    public Map<Integer, Integer> getPointsReference();
+    Map<Integer, Integer> getPointsReference() throws RemoteException;
 
-    public Map<Coordinates, ItemTile> getCardPattern();
+    Map<Coordinates, ItemTile> getCardPattern() throws RemoteException;
 
 }

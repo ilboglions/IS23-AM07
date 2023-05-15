@@ -8,6 +8,7 @@ import it.polimi.ingsw.server.model.exceptions.PlayersNumberOutOfRange;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -59,7 +60,7 @@ class DeckCommonTest {
      */
     @Test
     @DisplayName("Test the limits cases of draw method")
-    void draw() throws PlayersNumberOutOfRange, NegativeFieldException, NotEnoughCardsException, IllegalFilePathException {
+    void draw() throws PlayersNumberOutOfRange, NegativeFieldException, NotEnoughCardsException, IllegalFilePathException, RemoteException {
         DeckCommon test = new DeckCommon(3, "deckCommonTest.json");
         ArrayList<CommonGoalCard> selected = test.draw(13);
 

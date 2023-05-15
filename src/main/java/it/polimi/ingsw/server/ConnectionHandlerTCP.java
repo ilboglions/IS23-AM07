@@ -164,6 +164,7 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
         String desc = "";
         try {
             gameController = lobbyController.addPlayerToGame(username);
+            gameController.triggerAllListeners(this.username);
             result = true;
             errorType = "";
             this.subscribeToAllListeners();
@@ -327,6 +328,7 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
             gameController.subscribeToListener((BoardSubscriber) this);
             gameController.subscribeToListener((BookshelfSubscriber) this);
             gameController.subscribeToListener((GameSubscriber) this);
+            gameController.triggerAllListeners(this.username);
         } catch (RemoteException e){
             throw new RuntimeException(e);
         }
