@@ -1,11 +1,11 @@
 package it.polimi.ingsw.client.connection;
 
 
+import it.polimi.ingsw.client.localModel.Game;
 import it.polimi.ingsw.client.view.ViewInterface;
+import it.polimi.ingsw.remoteInterfaces.*;
 import it.polimi.ingsw.server.ReschedulableTimer;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
-import it.polimi.ingsw.remoteInterfaces.RemoteGameController;
-import it.polimi.ingsw.remoteInterfaces.RemoteLobbyController;
 import it.polimi.ingsw.server.model.exceptions.*;
 
 import java.rmi.NotBoundException;
@@ -27,6 +27,7 @@ public class ClientRMI implements ConnectionHandler{
     private final ReschedulableTimer timer;
     private final long timerDelay = 15000;
     private final ViewInterface view;
+    private Game gameModel;
 
     public ClientRMI(ViewInterface view) throws RemoteException, NotBoundException {
         this.timer = new ReschedulableTimer();
@@ -35,6 +36,7 @@ public class ClientRMI implements ConnectionHandler{
         String remoteObjectName = "lobby_controller";
         this.lobbyController =  (RemoteLobbyController) registry.lookup(remoteObjectName);
         this.view = view;
+        this.sendHeartBeat();
     }
 
     @Override
@@ -67,11 +69,31 @@ public class ClientRMI implements ConnectionHandler{
         try {
             this.gameController = this.lobbyController.createGame(username, nPlayers);
             gameController.triggerHeartBeat(this.username);
+            ArrayList<String> players = new ArrayList<>();
+            players.add(this.username);
+            this.gameModel = new Game(players,this.view,this.username);
+            this.subscribeListeners();
+
             view.postNotification("Game created successfully","");
         } catch (InvalidPlayerException e) {
             throw new RuntimeException(e);
         } catch (PlayersNumberOutOfRange e) {
             view.postNotification("The number of player is out of range!","create the game with less players");
+        }
+
+    }
+
+    private void subscribeListeners(){
+
+        try {
+            gameController.subscribeToListener((ChatSubscriber) this.gameModel);
+            gameController.subscribeToListener((GameSubscriber) this.gameModel);
+            gameController.subscribeToListener((PlayerSubscriber) this.gameModel);
+
+            gameController.subscribeToListener((BookshelfSubscriber) this.gameModel);
+            gameController.subscribeToListener((BoardSubscriber) this.gameModel);
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
         }
 
     }
@@ -82,6 +104,11 @@ public class ClientRMI implements ConnectionHandler{
         try {
             this.gameController = this.lobbyController.addPlayerToGame(username);
             gameController.triggerHeartBeat(this.username);
+            ArrayList<String> players = new ArrayList<>();
+            players.add(this.username);
+            this.gameModel = new Game(players,this.view,this.username);
+            this.subscribeListeners();
+            gameController.triggerAllListeners(this.username);
             view.postNotification("Game joined successfully","");
         } catch (NicknameAlreadyUsedException e) {
             throw new RuntimeException(e);
@@ -94,7 +121,7 @@ public class ClientRMI implements ConnectionHandler{
     }
 
     @Override
-    public void checkValidRetrieve(ArrayList<Coordinates> tiles) throws RemoteException {
+    public void checkValidRetrieve(ArrayList<Coordinates> tiles) {
 
         try {
             this.checkGameIsSet();
@@ -116,6 +143,8 @@ public class ClientRMI implements ConnectionHandler{
             view.postNotification("The game has already ended!",e.getMessage());
         } catch (PlayerNotInTurnException e) {
             view.postNotification("You're not in turn!",e.getMessage());
+        } catch (RemoteException e) {
+            this.close();
         }
     }
 
@@ -152,7 +181,7 @@ public class ClientRMI implements ConnectionHandler{
         heartBeatManager.scheduleAtFixedRate(
             () -> {
                 try {
-                    if(gameController == null && lobbyController != null){
+                    if(gameController == null && lobbyController != null && this.username != null){
                         lobbyController.triggerHeartBeat(this.username);
                         if(!timer.isScheduled()){
                             timer.schedule(this::close,this.timerDelay);
@@ -163,7 +192,8 @@ public class ClientRMI implements ConnectionHandler{
                         timer.reschedule(this.timerDelay);
                     }
                 } catch (RemoteException e) {
-                    throw new RuntimeException(e);
+                    System.out.println("ERRORE HEARTBEAT!");
+                    this.close();
                 }
             },
             0, 5, TimeUnit.SECONDS);

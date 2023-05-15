@@ -20,7 +20,11 @@ public class BoardListener extends Listener<BoardSubscriber> {
 
         Set<BoardSubscriber> observers = this.getSubscribers();
         for (BoardSubscriber ob : observers) {
-            ob.updateBoardStatus(tilesInBoard);
+            try {
+                ob.updateBoardStatus(tilesInBoard);
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 

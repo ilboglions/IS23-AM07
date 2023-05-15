@@ -8,6 +8,7 @@ import it.polimi.ingsw.server.model.exceptions.PlayersNumberOutOfRange;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 /**
@@ -39,7 +40,7 @@ public class FullRows extends CommonGoalCard{
      * @throws PlayersNumberOutOfRange if the number of player is out of the permitted range
      * @throws NegativeFieldException if some field is negative
      */
-    public FullRows(int nPlayers,  String description, CommonCardType name,int nRows, boolean sameTiles, int numDifferent) throws PlayersNumberOutOfRange, NegativeFieldException {
+    public FullRows(int nPlayers,  String description, CommonCardType name,int nRows, boolean sameTiles, int numDifferent) throws PlayersNumberOutOfRange, NegativeFieldException, RemoteException {
         super(nPlayers, description, name);
         if( nRows <= 0 || numDifferent <= 0 ) throw new NegativeFieldException("can't assign negative parameters!");
         this.nRows = nRows;

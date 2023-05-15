@@ -11,6 +11,7 @@ import it.polimi.ingsw.server.model.exceptions.NotEnoughCardsException;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 
 import java.io.InputStreamReader;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
@@ -56,7 +57,7 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
      * @throws PlayersNumberOutOfRange if the number of players is less than 2 or grater than 4
      * @throws NotEnoughCardsException if the number of the cards read from the JSON file is less than the required cards with nElements
      */
-    public ArrayList<CommonGoalCard> draw(int nElements) throws NegativeFieldException, PlayersNumberOutOfRange, NotEnoughCardsException {
+    public ArrayList<CommonGoalCard> draw(int nElements) throws NegativeFieldException, PlayersNumberOutOfRange, NotEnoughCardsException, RemoteException {
         ArrayList<CommonGoalCard> selected = new ArrayList<>();
         Gson gson = new Gson();
         Random randGenerator = new Random();
@@ -93,7 +94,7 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
      * @throws NegativeFieldException if the JsonObject contains a negative field, NegativeFieldException will be thrown
      * @throws IllegalArgumentException if the JsonObject doesn't match the right pattern, an IllegalArgumentException will be thrown
      */
-    private CommonGoalCard createCard(JsonObject cardConfiguration, int nPlayers) throws PlayersNumberOutOfRange, NegativeFieldException, IllegalArgumentException {
+    private CommonGoalCard createCard(JsonObject cardConfiguration, int nPlayers) throws PlayersNumberOutOfRange, NegativeFieldException, IllegalArgumentException, RemoteException {
         Objects.requireNonNull(cardConfiguration, "You passed a null instead of a JsonObject");
 
         boolean sameTiles;

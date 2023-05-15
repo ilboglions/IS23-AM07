@@ -8,6 +8,7 @@ import it.polimi.ingsw.server.model.exceptions.PlayersNumberOutOfRange;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 public class FullColumns extends CommonGoalCard{
@@ -25,7 +26,7 @@ public class FullColumns extends CommonGoalCard{
      * if sameTiles == false --> minimum number
      */
     private final int numDifferent;
-    public FullColumns(int nPlayers, String description, CommonCardType name, int nCols, boolean sameTiles, int numDifferent) throws PlayersNumberOutOfRange, NegativeFieldException {
+    public FullColumns(int nPlayers, String description, CommonCardType name, int nCols, boolean sameTiles, int numDifferent) throws PlayersNumberOutOfRange, NegativeFieldException, RemoteException {
         super(nPlayers,description, name);
         if( nCols <= 0 || numDifferent <= 0 ) throw new NegativeFieldException("can't assign negative parameters!");
         this.nCols = nCols;

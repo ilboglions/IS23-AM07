@@ -110,16 +110,13 @@ public class Game implements GameModelInterface {
         this.stdPointsReference.put(4, 3); //4 adjacent 3 points
         this.stdPointsReference.put(5, 5); //5 adjacent 5 points
         this.stdPointsReference.put(6, 8); //6 or more adjacent 8 points
-        this.commonGoalCards = deckCommon.draw(2);
-        this.players.add(host);
         try {
-            host.assignPersonalCard(deckPersonal.draw(1).get(0));
+            this.commonGoalCards = deckCommon.draw(2);
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
+        this.players.add(host);
 
-        ArrayList<RemoteCommonGoalCard> remoteCards = new ArrayList<>(this.commonGoalCards);
-        this.gameListener.onPlayerJoinGame(host.getUsername(), remoteCards);
     }
 
     @Override
@@ -169,6 +166,26 @@ public class Game implements GameModelInterface {
         int firstPlayerIndex = random.nextInt(this.numPlayers);
 
         Collections.rotate(players, -firstPlayerIndex);
+
+        players.forEach(
+                p -> {
+                    try {
+                        p.assignPersonalCard(deckPersonal.draw(1).get(0));
+                    } catch (RemoteException e) {
+                        throw new RuntimeException(e);
+                    } catch (NegativeFieldException e) {
+                        throw new RuntimeException(e);
+                    } catch (NotEnoughCardsException e) {
+                        throw new RuntimeException(e);
+                    }
+                    ArrayList<RemoteCommonGoalCard> remoteCards = new ArrayList<>(this.commonGoalCards);
+                    this.gameListener.onCommonCardDraw(p.getUsername(), remoteCards);
+                }
+        );
+
+
+
+
         this.isStarted = true;
         this.playerTurn = 0;
         this.refillLivingRoom();
@@ -387,9 +404,8 @@ public class Game implements GameModelInterface {
             if(!userUsed(newPlayer.getUsername())) {
                 players.add(newPlayer); // player added to game active player
 
-                ArrayList<RemoteCommonGoalCard> remoteCards = new ArrayList<>(this.commonGoalCards);
-                gameListener.onPlayerJoinGame(newPlayer.getUsername(), remoteCards);
-                this.triggerAllListeners(newPlayer.getUsername());
+                gameListener.onPlayerJoinGame(newPlayer.getUsername());
+                this.updateListenerSubscriptions();
 
                 try {
                     try {
@@ -405,6 +421,22 @@ public class Game implements GameModelInterface {
             } else {
                 throw new NicknameAlreadyUsedException("A player with the same nickname is already present in the game");
             }
+        }
+    }
+
+    private void updateListenerSubscriptions() {
+        Set<PlayerSubscriber> psubs = new HashSet<>();
+        Set<BookshelfSubscriber> bsubs = new HashSet<>();
+        for( Player p : players){
+            psubs.addAll(p.getSubs());
+            bsubs.addAll(p.getBookshelf().getSubs());
+        }
+        for( PlayerSubscriber ps : psubs){
+            this.subscribeToListener(ps);
+        }
+
+        for( BookshelfSubscriber bs : bsubs ){
+            this.subscribeToListener(bs);
         }
     }
 
@@ -585,5 +617,7 @@ public class Game implements GameModelInterface {
         }
 
         this.livingRoom.triggerListener(userToBeUpdated);
+        ArrayList<RemoteCommonGoalCard> remoteCards = new ArrayList<>(this.commonGoalCards);
+        this.gameListener.onCommonCardDraw(userToBeUpdated,remoteCards);
     }
 }

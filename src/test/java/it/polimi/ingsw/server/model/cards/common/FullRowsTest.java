@@ -12,6 +12,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+
+import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
 public class FullRowsTest {
@@ -23,7 +25,7 @@ public class FullRowsTest {
      */
     @BeforeEach
     @DisplayName("Card creation test")
-    void  createCard() throws PlayersNumberOutOfRange, NegativeFieldException {
+    void  createCard() throws PlayersNumberOutOfRange, NegativeFieldException, RemoteException {
         assertThrows(PlayersNumberOutOfRange.class, () -> {
             new FullColumns(0,"description_test",CommonCardType.CORNERS,2,true , 3);});
         assertThrows(PlayersNumberOutOfRange.class, () -> {
@@ -125,7 +127,7 @@ public class FullRowsTest {
      */
     @Test
     @DisplayName("sameTiles False test")
-    void FalsesameTilesTest() throws NegativeFieldException, PlayersNumberOutOfRange, InvalidCoordinatesException, NotEnoughSpaceException {
+    void FalsesameTilesTest() throws NegativeFieldException, PlayersNumberOutOfRange, InvalidCoordinatesException, NotEnoughSpaceException, RemoteException {
         card = new FullRows(2,"description_test",CommonCardType.CORNERS,2,false , 5);
         Map<Coordinates, ItemTile> testtiles = new HashMap<>(); //both rows valid
         testtiles.put(new Coordinates(0,0), ItemTile.CAT);
@@ -157,7 +159,7 @@ public class FullRowsTest {
 
     @Test
     @DisplayName("NotEnoughSpaceException")
-    public void NotEnoughSpaceException () throws InvalidCoordinatesException, NegativeFieldException, PlayersNumberOutOfRange {
+    public void NotEnoughSpaceException () throws InvalidCoordinatesException, NegativeFieldException, PlayersNumberOutOfRange, RemoteException {
         card = new FullRows(2,"description_test",CommonCardType.CORNERS,8,false , 1);
         Map<Coordinates, ItemTile> testtiles = new HashMap<>();
         testtiles.put(new Coordinates(0,0), ItemTile.CAT);

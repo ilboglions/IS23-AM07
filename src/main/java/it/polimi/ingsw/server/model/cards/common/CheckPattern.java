@@ -6,6 +6,7 @@ import it.polimi.ingsw.server.model.exceptions.PlayersNumberOutOfRange;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
@@ -30,7 +31,7 @@ public class CheckPattern extends CommonGoalCard{
      * @param sameTiles true, if the tiles should be the same for all the pattern
      * @throws PlayersNumberOutOfRange if the players number do not respect the specific
      */
-    public CheckPattern(int nPlayers, String description, CommonCardType name, ArrayList<ArrayList<Coordinates>> pattern, boolean sameTiles) throws PlayersNumberOutOfRange {
+    public CheckPattern(int nPlayers, String description, CommonCardType name, ArrayList<ArrayList<Coordinates>> pattern, boolean sameTiles) throws PlayersNumberOutOfRange, RemoteException {
 
         super(nPlayers, description, name);
 

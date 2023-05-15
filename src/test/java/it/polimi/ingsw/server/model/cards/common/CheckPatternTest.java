@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +28,7 @@ class CheckPatternTest {
      */
     @BeforeEach
     @DisplayName("Card creation test")
-    void  createCard() throws PlayersNumberOutOfRange, InvalidCoordinatesException {
+    void  createCard() throws PlayersNumberOutOfRange, InvalidCoordinatesException, RemoteException {
         pattern = new ArrayList<>();
         ArrayList<Coordinates> singlepattern = new ArrayList<>();
         singlepattern.add(new Coordinates(2,1));
@@ -71,7 +72,7 @@ class CheckPatternTest {
      */
     @Test
     @DisplayName("Exception Tester")
-    void NotEnoughSpaceExceptionTester() throws InvalidCoordinatesException, PlayersNumberOutOfRange {
+    void NotEnoughSpaceExceptionTester() throws InvalidCoordinatesException, PlayersNumberOutOfRange, RemoteException {
         pattern = new ArrayList<>();
         ArrayList<Coordinates> singlepattern = new ArrayList<>();
         singlepattern.add(new Coordinates(8,8));
@@ -94,7 +95,7 @@ class CheckPatternTest {
      */
     @Test
     @DisplayName("sameTiles False test")
-    void FalsesameTilesTest() throws InvalidCoordinatesException, PlayersNumberOutOfRange, NotEnoughSpaceException {
+    void FalsesameTilesTest() throws InvalidCoordinatesException, PlayersNumberOutOfRange, NotEnoughSpaceException, RemoteException {
         pattern = new ArrayList<>();
         ArrayList<Coordinates> singlepattern = new ArrayList<>();
         singlepattern.add(new Coordinates(2,1));

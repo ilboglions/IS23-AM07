@@ -6,9 +6,11 @@ import it.polimi.ingsw.server.model.exceptions.NotEnoughSpaceException;
 import it.polimi.ingsw.server.model.exceptions.PlayersNumberOutOfRange;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 
+import java.rmi.RemoteException;
+
 public class NsameTiles extends  CommonGoalCard{
     private final int nTiles;
-    public NsameTiles(int nPlayers, String description, CommonCardType name, int nTiles) throws PlayersNumberOutOfRange, NegativeFieldException {
+    public NsameTiles(int nPlayers, String description, CommonCardType name, int nTiles) throws PlayersNumberOutOfRange, NegativeFieldException, RemoteException {
         super(nPlayers, description, name);
         if( nTiles <= 0) throw new NegativeFieldException("can't assign negative parameters!");
         this.nTiles = nTiles;

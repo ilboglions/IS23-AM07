@@ -8,6 +8,8 @@ import it.polimi.ingsw.server.model.exceptions.TokenAlreadyGivenException;
 import it.polimi.ingsw.server.model.tokens.ScoringToken;
 import it.polimi.ingsw.server.model.tokens.TokenPoint;
 
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 
 import static it.polimi.ingsw.server.model.utilities.UtilityFunctions.MAX_PLAYERS;
@@ -15,7 +17,7 @@ import static it.polimi.ingsw.server.model.utilities.UtilityFunctions.MAX_PLAYER
 /**
  * CommonGoalCard is an abstract class used to represent the common cards of the game.
  */
-public abstract class CommonGoalCard implements RemoteCommonGoalCard {
+public abstract class CommonGoalCard extends UnicastRemoteObject implements RemoteCommonGoalCard {
     /**
      * description stores the description of the card constraint
      */
@@ -35,7 +37,8 @@ public abstract class CommonGoalCard implements RemoteCommonGoalCard {
      * @param description it is used for explain the card's constraint
      * @throws PlayersNumberOutOfRange when nPlayers exceed the numbers of the tile, tooManyPlayersException will be thrown
      */
-    public CommonGoalCard(int nPlayers , String description, CommonCardType name) throws PlayersNumberOutOfRange, NullPointerException{
+    public CommonGoalCard(int nPlayers , String description, CommonCardType name) throws PlayersNumberOutOfRange, NullPointerException, RemoteException {
+        super();
 
         if(nPlayers < 2) throw new PlayersNumberOutOfRange("Min excepted players: 2 players received: "+nPlayers);
         tokenStack = new Stack<>();

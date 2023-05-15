@@ -8,10 +8,7 @@ import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -34,6 +31,13 @@ public class CliView implements ViewInterface {
     private static final int START_R_BOX_LEADERBOARD = 44;
     private static final int LENGTH_R_BOX_LEADERBOARD = 10;
     private static final int LENGTH_C_BOX_LEADERBOARD = 40;
+
+    private final int START_R_BOX_NOTIFICATION = START_R_BOX_LEADERBOARD;
+    private final int START_C_BOX_NOTIFICATION = START_C_BOX_CHAT + 10;
+    private final int LENGHT_R_BOX_NOTIFICATION = LENGTH_R_BOX_LEADERBOARD;
+    private final int LENGHT_C_BOX_NOTIFICATION = LENGTH_C_BOX_CHAT - 10;
+    private final int FIXED_H_MARGIN = 3;
+    private final int FIXED_V_MARGIN = 1;
     private static final String SPACE = " ";
     private static final int BASE_TILE_DIM = 3;
 
@@ -41,13 +45,30 @@ public class CliView implements ViewInterface {
     private final ConnectionHandler controller;
 
     private final Scanner inputScan;
-    String[][] tiles = new String[MAX_VERT_TILES][MAX_HORIZ_TILES];
+    private final String[][] tiles = new String[MAX_VERT_TILES][MAX_HORIZ_TILES];
+
+    public static void main(String[] args){
+        ConnectionType c;
+        ViewInterface view;
+        if (args.length == 2) {
+
+            c = args[0].equals("TCP") ? ConnectionType.TCP : ConnectionType.RMI;
+
+            //ViewInterface cliView = args[1].equals("CLI") ?  new CliView(c);
+
+            view = new CliView(c);
+
+        } else {
+            view = new CliView(ConnectionType.RMI);
+
+        }
+    }
 
     public CliView(ConnectionType connectionType){
         ConnectionHandlerFactory factory = new ConnectionHandlerFactory();
         controller = factory.createConnection(connectionType, this);
         inputScan =  new Scanner(System.in);
-        fillEmpty();
+        this.fillEmpty();
         inputReaderEx = Executors.newCachedThreadPool();
         inputReaderEx.submit( () -> {
             String cliInput;
@@ -225,10 +246,14 @@ public class CliView implements ViewInterface {
             tiles[startR + 9][startC + startCPoints + i] = Color.WHITE_BOLD_BRIGHT.escape() + nTilesTable.charAt(i);
             tiles[startR + 11][startC + startCPoints + i] = Color.WHITE_BOLD_BRIGHT.escape() + pointsTable.charAt(i);
         }
-
+        this.plot();
     }
 
     private int printTruncateText(String text, int startR, int startC, int maxC){
+        return this.printTruncateText(text,startR,startC,maxC, Color.WHITE_BOLD.escape());
+    }
+
+    private int printTruncateText(String text, int startR, int startC, int maxC, String color){
         int currentC = startC;
         int currentR = startR;
         int nLine = 1;
@@ -240,7 +265,7 @@ public class CliView implements ViewInterface {
                 nLine++;
             }
 
-            tiles[currentR][currentC] = Color.WHITE_BOLD.escape() + text.charAt(i);
+            tiles[currentR][currentC] = color + text.charAt(i);
             currentC ++;
         }
 
@@ -284,6 +309,8 @@ public class CliView implements ViewInterface {
 
             currentC = startC;
         }
+
+        this.plot();
     }
 
     public void drawBookShelf(Map<Coordinates,ItemTile> tilesMap, String playerUsername, int order) throws InvalidCoordinatesException {
@@ -295,6 +322,8 @@ public class CliView implements ViewInterface {
         }
 
         this.drawBookShelf( tilesMap,startingPoints[0], startingPoints[1] );
+        this.plot();
+
     }
 
     private int[] getStartsFromTurnOrder(int order) {
@@ -317,9 +346,8 @@ public class CliView implements ViewInterface {
         return startingPoints;
     }
 
-    public void drawChat(ArrayList<String> chat){
-        int FIXED_H_MARGIN = 3;
-        int FIXED_V_MARGIN = 1;
+    public void drawChat(List<String> chat){
+
         int currentRChat = START_R_CHAT;
         int nLines;
 
@@ -343,7 +371,7 @@ public class CliView implements ViewInterface {
             else
                 break;
         }
-
+        this.plot();
     }
 
     private void drawTile(int r, int c, String color){
@@ -391,10 +419,9 @@ public class CliView implements ViewInterface {
         }
 
 
-        for(r = bookshelfRows + startR - 1; r >= startR; r--){
-            tiles[r][startC] = Color.WHITE_BOLD_BRIGHT.escape()+r+" "+Color.RESET.escape();
+        for(r = startR + bookshelfRows - 1; r >= startR; r--){
             for( c = startC; c < bookshelfColumns*BASE_TILE_DIM + startC; c+=BASE_TILE_DIM){
-                coord = new Coordinates(r - startR,(c- startC)/BASE_TILE_DIM);
+                coord = new Coordinates(bookshelfRows - (r-startR) - 1,(c- startC)/BASE_TILE_DIM);
                 if (tilesMap.containsKey(coord) )
                     colorTile = getColorFromTileType(tilesMap.get(coord));
                 else
@@ -447,8 +474,8 @@ public class CliView implements ViewInterface {
             tiles[startR][startC + i] = color + title.charAt(i);
         }
     }
-
-    public void drawLeaderboard(LinkedHashMap<String,Integer> scoreBoard){
+    @Override
+    public void drawLeaderboard(Map<String, Integer> scoreBoard) {
         String title = "Leaderboard";
         int H_MARGIN = 3;
         int startR = START_R_BOX_LEADERBOARD + 1;
@@ -464,14 +491,17 @@ public class CliView implements ViewInterface {
 
             currR += printTruncateText(tmp, currR, startC + 2, START_C_BOX_CARD + LENGTH_C_BOX_LEADERBOARD - H_MARGIN) + 1;
         }
-
+        this.plot();
     }
 
     @Override
     public void postNotification(String title, String description) {
-        System.out.println(title);
-        System.out.println(description);
+        printTruncateText(title.toUpperCase(),START_R_BOX_NOTIFICATION + FIXED_V_MARGIN,START_C_BOX_NOTIFICATION+FIXED_H_MARGIN, LENGHT_C_BOX_NOTIFICATION - FIXED_H_MARGIN, Color.RED_BOLD_BRIGHT.escape());
+        int spaceNeeded = this.calculateTextLines(title,START_C_BOX_NOTIFICATION+ FIXED_H_MARGIN,LENGHT_C_BOX_NOTIFICATION - FIXED_H_MARGIN);
+        printTruncateText(description,START_R_BOX_NOTIFICATION + FIXED_V_MARGIN + spaceNeeded,START_C_BOX_NOTIFICATION+FIXED_H_MARGIN, Math.min(START_C_BOX_NOTIFICATION - FIXED_H_MARGIN + LENGHT_C_BOX_NOTIFICATION, MAX_HORIZ_TILES - FIXED_H_MARGIN));
+        this.plot();
     }
+
 
     private String getColorFromTileType(ItemTile tile){
             switch (tile){
@@ -521,15 +551,24 @@ public class CliView implements ViewInterface {
         tiles[startR+lengthR][startC+lengthC] = color + "┘";
     }
     public final void plot() {
+
         for (int r = 0; r < MAX_VERT_TILES; r++) {
             for (int c = 0; c < MAX_HORIZ_TILES; c++) {
                 if(tiles[r][c] == null) tiles[r][c] = SPACE;
             }
         }
 
+        /* cards box */
         this.drawBox(START_R_BOX_CARD, START_C_BOX_CARD, LENGTH_R_BOX_CARD, LENGTH_C_BOX_CARD, Color.WHITE_BOLD_BRIGHT.escape());
+        /* chat box */
         this.drawBox(START_R_BOX_CARD, START_C_BOX_CHAT, LENGTH_R_BOX_CARD, LENGTH_C_BOX_CHAT, Color.WHITE_BOLD_BRIGHT.escape());
+        /* notification box*/
+        this.drawBox(START_R_BOX_NOTIFICATION,START_C_BOX_NOTIFICATION,LENGHT_R_BOX_NOTIFICATION, LENGHT_C_BOX_NOTIFICATION,Color.WHITE_BOLD_BRIGHT.escape() );
+
+        /* leaderboard box */
         this.drawBox(START_R_BOX_LEADERBOARD, START_C_BOX_CARD, LENGTH_R_BOX_LEADERBOARD, LENGTH_C_BOX_LEADERBOARD, Color.WHITE_BOLD_BRIGHT.escape());
+
+        this.clearScreen();
 
         for (int r = 0; r < MAX_VERT_TILES; r++) {
             System.out.println();
@@ -537,5 +576,15 @@ public class CliView implements ViewInterface {
                 System.out.print(tiles[r][c]);
             }
         }
+        System.out.println();
+        System.out.flush();
     }
+
+    private void clearScreen(){
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
+    }
+
+
+
 }

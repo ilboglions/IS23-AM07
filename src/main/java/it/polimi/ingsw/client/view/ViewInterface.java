@@ -7,6 +7,7 @@ import it.polimi.ingsw.server.model.tiles.ItemTile;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public interface ViewInterface {
@@ -17,4 +18,8 @@ public interface ViewInterface {
     void drawLivingRoom(Map<Coordinates, ItemTile> livingRoomMap) throws InvalidCoordinatesException;
     void drawCommonCards(ArrayList<RemoteCommonGoalCard> commonGoalCards) throws InvalidCoordinatesException, RemoteException;
     void postNotification(String title, String description);
+
+    void drawLeaderboard(Map<String, Integer> playerPoints);
+
+    void drawChat(List<String> outputMessages);
 }

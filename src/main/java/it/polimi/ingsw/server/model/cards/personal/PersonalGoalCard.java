@@ -7,6 +7,8 @@ import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 
 import java.io.Serial;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -14,7 +16,7 @@ import java.util.Objects;
 /**
  * PersonalGoalCard represent the card assigned to a specific player. They represent a pattern that should be respected for earning more points
  */
-public class PersonalGoalCard implements RemotePersonalGoalCard {
+public class PersonalGoalCard extends UnicastRemoteObject implements RemotePersonalGoalCard {
     @Serial
     private static final long serialVersionUID = 158808678662870084L;
     /**
@@ -31,7 +33,8 @@ public class PersonalGoalCard implements RemotePersonalGoalCard {
      * @param pattern is the pattern to be load in the card bookshelf assigned to the card
      * @param pointsReference is the parameter to be assigned to the point reference attribute
      */
-    public PersonalGoalCard(Map<Coordinates, ItemTile> pattern, Map<Integer,Integer> pointsReference){
+    public PersonalGoalCard(Map<Coordinates, ItemTile> pattern, Map<Integer,Integer> pointsReference) throws RemoteException {
+        super();
         Objects.requireNonNull(pattern, "You passed a null instead of a pattern Map");
         Objects.requireNonNull(pointsReference, "You passed a null instead of a pointsReference Map");
 

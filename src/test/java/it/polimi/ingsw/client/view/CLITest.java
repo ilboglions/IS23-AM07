@@ -117,7 +117,7 @@ public class CLITest {
         try {
             card1 = new MarioPyramid(3, description1, CommonCardType.CORNERS);
             card2 = new MarioPyramid(3, description2, CommonCardType.CORNERS);
-        } catch (PlayersNumberOutOfRange e) {
+        } catch (PlayersNumberOutOfRange | RemoteException e) {
             throw new RuntimeException(e);
         }
 
