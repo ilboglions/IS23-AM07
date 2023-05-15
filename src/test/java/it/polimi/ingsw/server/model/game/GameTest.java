@@ -9,6 +9,7 @@ import it.polimi.ingsw.server.model.tiles.ItemTile;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 /**
@@ -56,7 +57,7 @@ public class GameTest {
      */
     @Test
     @DisplayName("Test canStart method")
-    void testCanStart() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, NicknameAlreadyUsedException {
+    void testCanStart() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, NicknameAlreadyUsedException, RemoteException {
         Player testPlayer = new Player("Test");
         Game test = new Game(3, testPlayer);
 
@@ -80,7 +81,7 @@ public class GameTest {
      */
     @Test
     @DisplayName("Test start method")
-    void testStart() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, NicknameAlreadyUsedException {
+    void testStart() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, NicknameAlreadyUsedException, RemoteException {
         Player testPlayer = new Player("Test");
         Game test = new Game(3, testPlayer);
 
@@ -109,7 +110,7 @@ public class GameTest {
      */
     @Test
     @DisplayName("Test updatePlayerPoints method")
-    void testUpdatePoints() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange {
+    void testUpdatePoints() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, RemoteException {
         Player testPlayer = new Player("Test");
         Game test = new Game(3, testPlayer);
 
@@ -135,7 +136,7 @@ public class GameTest {
      */
     @Test
     @DisplayName("Test getPlayerInTurn method")
-    void testGetPlayerInTurn() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, NicknameAlreadyUsedException, NotAllPlayersHaveJoinedException, GameNotEndedException, GameNotStartedException, GameEndedException, NotEnoughSpaceException {
+    void testGetPlayerInTurn() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, NicknameAlreadyUsedException, NotAllPlayersHaveJoinedException, GameNotEndedException, GameNotStartedException, GameEndedException, NotEnoughSpaceException, RemoteException {
         Player testPlayer = new Player("Test");
         Game test = new Game(3, testPlayer);
 
@@ -183,7 +184,7 @@ public class GameTest {
      */
     @Test
     @DisplayName("Test moveTiles method")
-    void testMove() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, NicknameAlreadyUsedException, NotAllPlayersHaveJoinedException, GameNotEndedException, InvalidCoordinatesException {
+    void testMove() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, NicknameAlreadyUsedException, NotAllPlayersHaveJoinedException, GameNotEndedException, InvalidCoordinatesException, RemoteException {
         Player testPlayer = new Player("Test");
         Game test = new Game(3, testPlayer);
 
@@ -221,6 +222,34 @@ public class GameTest {
         });
     }
 
+    @Test
+    @DisplayName("Test remove after move")
+    void testRemoveAfterMove() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, NicknameAlreadyUsedException, NotAllPlayersHaveJoinedException, GameNotEndedException, GameNotStartedException, GameEndedException, InvalidCoordinatesException, NotEnoughSpaceException, EmptySlotException, RemoteException {
+        Player testPlayer = new Player("Test");
+        Game test = new Game(3, testPlayer);
+
+
+        Player secondPlayer = new Player("secondPlayer");
+        Player thirdPlayer = new Player("thirdPlayer");
+        test.addPlayer(secondPlayer);
+        test.addPlayer(thirdPlayer);
+        test.start();
+        test.refillLivingRoom();
+
+        while(!test.getPlayerInTurn().equals("Test"))
+            test.setPlayerTurn();
+
+        ArrayList<Coordinates> toMove = new ArrayList<>();
+        toMove.add(new Coordinates(5,0));
+
+        test.moveTiles(toMove,1);
+
+        assertThrows( EmptySlotException.class, () -> {
+            test.moveTiles(toMove,1);
+        });
+
+    }
+
     /**
      * This tests if the method to check if the tiles selected by the player could be chosen is working correctly
      * @throws NegativeFieldException if the elements to draw are a negative number
@@ -231,7 +260,7 @@ public class GameTest {
      */
     @Test
     @DisplayName("Test getItemTile method")
-    void testGetTile() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, InvalidCoordinatesException {
+    void testGetTile() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, InvalidCoordinatesException, RemoteException {
         Player testPlayer = new Player("Test");
         Game test = new Game(3, testPlayer);
 
@@ -265,7 +294,7 @@ public class GameTest {
      */
     @Test
     @DisplayName("Test checkRefill method")
-    void testRefill() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, NicknameAlreadyUsedException, NotAllPlayersHaveJoinedException, GameNotEndedException, InvalidCoordinatesException, GameNotStartedException, EmptySlotException, NotEnoughSpaceException {
+    void testRefill() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, NicknameAlreadyUsedException, NotAllPlayersHaveJoinedException, GameNotEndedException, InvalidCoordinatesException, GameNotStartedException, EmptySlotException, NotEnoughSpaceException, RemoteException {
         Player testPlayer = new Player("Test");
         Game test = new Game(3, testPlayer);
 
@@ -301,7 +330,7 @@ public class GameTest {
      */
     @Test
     @DisplayName("Test checkBookshelfComplete method")
-    void testCheckComplete() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, NicknameAlreadyUsedException, NotAllPlayersHaveJoinedException, GameNotEndedException, NotEnoughSpaceException, GameNotStartedException, GameEndedException {
+    void testCheckComplete() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, NicknameAlreadyUsedException, NotAllPlayersHaveJoinedException, GameNotEndedException, NotEnoughSpaceException, GameNotStartedException, GameEndedException, RemoteException {
         Player testPlayer = new Player("Test");
         Game test = new Game(3, testPlayer);
 
@@ -345,7 +374,7 @@ public class GameTest {
      */
     @Test
     @DisplayName("Test getWinner method")
-    void testWinner() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, NicknameAlreadyUsedException, NotAllPlayersHaveJoinedException, GameNotEndedException, NotEnoughSpaceException, GameNotStartedException, GameEndedException {
+    void testWinner() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, NicknameAlreadyUsedException, NotAllPlayersHaveJoinedException, GameNotEndedException, NotEnoughSpaceException, GameNotStartedException, GameEndedException, RemoteException {
         Player testPlayer = new Player("Test");
         Game test = new Game(3, testPlayer);
 
@@ -392,7 +421,7 @@ public class GameTest {
      */
     @Test
     @DisplayName("Test addPlayer method")
-    void testAddPlayer() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange {
+    void testAddPlayer() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, RemoteException {
         Player testPlayer = new Player("Test");
         Game test = new Game(3, testPlayer);
 
@@ -428,7 +457,7 @@ public class GameTest {
      */
     @Test
     @DisplayName("Test searchPlayer method")
-    void testSearch() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange {
+    void testSearch() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, RemoteException {
         Player testPlayer = new Player("Test");
         Game test = new Game(3, testPlayer);
 
@@ -452,7 +481,7 @@ public class GameTest {
      */
     @Test
     @DisplayName("Test getIsStarted method")
-    void testStarted() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, NicknameAlreadyUsedException, NotAllPlayersHaveJoinedException, GameNotEndedException {
+    void testStarted() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, NicknameAlreadyUsedException, NotAllPlayersHaveJoinedException, GameNotEndedException, RemoteException {
         Player testPlayer = new Player("Test");
         Game test = new Game(3, testPlayer);
 
@@ -478,7 +507,7 @@ public class GameTest {
      */
     @Test
     @DisplayName("Test getPlayerMessage method")
-    void testGetMessage() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, InvalidPlayerException, NicknameAlreadyUsedException {
+    void testGetMessage() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, InvalidPlayerException, NicknameAlreadyUsedException, RemoteException {
         Player testPlayer = new Player("Test");
         Game test = new Game(3, testPlayer);
 
@@ -510,7 +539,7 @@ public class GameTest {
      */
     @Test
     @DisplayName("Test postMessage method")
-    void testPostMessage() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, NicknameAlreadyUsedException {
+    void testPostMessage() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, NicknameAlreadyUsedException, RemoteException {
         Player testPlayer = new Player("Test");
         Player testPlayer2 = new Player("SecondPlayer");
         Game test = new Game(3, testPlayer);
@@ -544,7 +573,7 @@ public class GameTest {
      */
     @Test
     @DisplayName("Test crashed player")
-    void testCrashedPlayer() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, NicknameAlreadyUsedException, PlayerNotFoundException {
+    void testCrashedPlayer() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, NicknameAlreadyUsedException, PlayerNotFoundException, RemoteException {
         Player testPlayer = new Player("Test");
         Player testPlayer2 = new Player("SecondPlayer");
         Game test = new Game(3, testPlayer);
