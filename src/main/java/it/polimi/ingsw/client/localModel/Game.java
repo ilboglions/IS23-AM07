@@ -5,17 +5,13 @@ import it.polimi.ingsw.remoteInterfaces.*;
 import it.polimi.ingsw.server.model.chat.Message;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
-import it.polimi.ingsw.server.model.listeners.GameListener;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 import it.polimi.ingsw.server.model.tokens.ScoringToken;
 
 import java.io.Serial;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerSubscriber, ChatSubscriber, BookshelfSubscriber, BoardSubscriber {
@@ -33,7 +29,7 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
     /**
      * Map to contain the scoring tokens of each player
      */
-    private final Map<String, ArrayList<ScoringToken>> playerScoringTokens;
+    private final Map<String, Set<ScoringToken>> playerScoringTokens;
     /**
      * Map to contain the current points of each player
      */
@@ -56,7 +52,7 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
         this.playerPoints = new HashMap<>();
         this.players = new ArrayList<>(players);
         for (String player : players) {
-            playerScoringTokens.put(player,new ArrayList<>());
+            playerScoringTokens.put(player, new HashSet<>());
             playerPoints.put(player, 0);
             Map<Coordinates,ItemTile> bookshelfMap = new HashMap<>();
             try {
@@ -74,7 +70,7 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
      */
     public void addMessage(Message msg) throws RemoteException{
         playerChat.add(msg);
-        List<String> outputMessages = getLastNMessages(playerChat.size())
+        List<String> outputMessages = this.playerChat
                                             .stream()
                                             .map(
                                                     m ->  m.getRecipient().isPresent() ?
@@ -89,6 +85,8 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
      */
     public void joinPlayer(String player) {
         players.add(player);
+        playerPoints.put(player, 0);
+        playerScoringTokens.put(player, new HashSet<>());
     }
     /**
      * Accept a player inside the game and put it in a certain position. Usually used to handle crashed players
@@ -138,8 +136,8 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
      * @param player the username of the owner of the scoring tokens we want to retrieve
      * @return the list of the scoring tokens of a player
      */
-    public ArrayList<ScoringToken> getPlayerScoringToken(String player) {
-        return new ArrayList<>(playerScoringTokens.get(player));
+    public Set<ScoringToken> getPlayerScoringToken(String player) {
+        return new HashSet<>(playerScoringTokens.get(player));
     }
 
     /**
@@ -160,13 +158,17 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
         playerScoringTokens.get(player).add(scoringToken);
     }
 
+    public Map<String, Integer> getMapPlayerPoints() {
+        return new HashMap<>(playerPoints);
+    }
+
     /**
      * Update the current points of a player
      * @param player the player to which the points have to be updated
      * @param currentPoints value to replace the current points of the player
      */
     public void updatePlayerPoints(String player, int currentPoints) {
-        playerPoints.replace(player,currentPoints);
+        playerPoints.put(player, currentPoints);
         view.drawLeaderboard(playerPoints);
     }
 
@@ -211,14 +213,19 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
     @Override
     public void notifyPlayerInTurn(String username) throws RemoteException {
         if(username.equals(this.username))
-            view.postNotification("It's your turn!","choose the tiles on the board!");
+            view.postNotification("It's your turn!","Choose the tiles on the board!");
         else
-            view.postNotification("It's the turn of "+username,"let's see what's happen!");
+            view.postNotification("It's the turn of "+username,"Let's see what's happen!");
     }
 
     @Override
     public void notifyPlayerCrashed(String userCrashed) throws RemoteException {
-        view.postNotification(username+" crashed!","hope is ok :(");
+        view.postNotification(userCrashed+" crashed!","hope he is ok :(");
+    }
+
+    @Override
+    public void notifyTurnOrder(ArrayList<String> playerOrder) throws RemoteException {
+        this.players.sort(Comparator.comparingInt(playerOrder::indexOf));
     }
 
     @Override
@@ -233,7 +240,9 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
 
     @Override
     public void updateTokens(String player, ArrayList<ScoringToken> tokenPoints) throws RemoteException {
-
+        for(ScoringToken token : tokenPoints){
+            this.addScoringTokenToPlayer(player, token);
+        }
     }
 
     @Override

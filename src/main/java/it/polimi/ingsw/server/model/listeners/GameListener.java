@@ -21,7 +21,7 @@ public class GameListener extends Listener<GameSubscriber> {
     }
     public void onCommonCardDraw(String username, ArrayList<RemoteCommonGoalCard> commonGoalCards) {
         Set<GameSubscriber> subscribers = this.getSubscribers();
-        subscribers.forEach(sub -> {
+        for( GameSubscriber sub :  subscribers ){
             try {
                 if(sub.getSubscriberUsername().equals(username)){
                     sub.notifyCommonGoalCards(commonGoalCards);
@@ -29,7 +29,7 @@ public class GameListener extends Listener<GameSubscriber> {
             } catch (RemoteException e) {
                 throw new RuntimeException(e);
             }
-        });
+        }
     }
 
     public void onPlayerWins(String username, int points, Map<String,Integer> scoreboard){
@@ -57,7 +57,19 @@ public class GameListener extends Listener<GameSubscriber> {
         Set<GameSubscriber> subscribers = this.getSubscribers();
         subscribers.forEach(sub -> {
             try {
-                sub.notifyPlayerCrashed(userCrashed);
+                if(!sub.getSubscriberUsername().equals(userCrashed))
+                    sub.notifyPlayerCrashed(userCrashed);
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    public void notifyTurnOrder(ArrayList<String> playerOrder){
+        Set<GameSubscriber> subscribers = this.getSubscribers();
+        subscribers.forEach(sub -> {
+            try {
+                sub.notifyTurnOrder(playerOrder);
             } catch (RemoteException e) {
                 throw new RuntimeException(e);
             }

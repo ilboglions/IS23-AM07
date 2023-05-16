@@ -1,4 +1,4 @@
-package it.polimi.ingsw.client.view;
+package it.polimi.ingsw.client.view.GUI;
 
 public class GUILaunch {
     public static void main(String[] args) {

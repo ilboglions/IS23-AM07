@@ -56,6 +56,6 @@ public interface ConnectionHandler {
      */
     void sendHeartBeat() throws RemoteException;
     void sendMessage(String content);
-     void sendMessage(String content, String recipient);
+    void sendMessage(String content, String recipient);
 
 }

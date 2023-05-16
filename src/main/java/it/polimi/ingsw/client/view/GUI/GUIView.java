@@ -1,8 +1,6 @@
-package it.polimi.ingsw.client.view;
+package it.polimi.ingsw.client.view.GUI;
 
-import it.polimi.ingsw.client.connection.ConnectionHandler;
-import it.polimi.ingsw.client.connection.ConnectionHandlerFactory;
-import it.polimi.ingsw.client.connection.ConnectionType;
+import it.polimi.ingsw.client.view.ViewInterface;
 import it.polimi.ingsw.remoteInterfaces.RemoteCommonGoalCard;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
@@ -18,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class GUIView extends Application implements ViewInterface{
+public class GUIView extends Application implements ViewInterface {
     //private final ConnectionHandler controller;
 
     /*public GUIView(ConnectionType connectionType) {

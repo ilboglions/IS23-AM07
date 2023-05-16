@@ -66,7 +66,7 @@ public class PersonalGoalCard extends UnicastRemoteObject implements RemotePerso
         return new CardBookshelf(tempPattern);
     }
 
-    public Map<Coordinates, ItemTile> getCardPattern(){
+    public Map<Coordinates, ItemTile> getCardPattern() throws RemoteException{
         Map<Coordinates, ItemTile> itemTileMap = new HashMap<>();
         for( int r = 0; r < bookshelf.getRows(); r++){
             for( int c = 0; c < bookshelf.getColumns(); c++) {
@@ -86,7 +86,7 @@ public class PersonalGoalCard extends UnicastRemoteObject implements RemotePerso
      * a simple getter method that returns the point reference of the card
      * @return the points reference used to evaluate the points acquired
      */
-    public Map<Integer, Integer> getPointsReference() {
+    public Map<Integer, Integer> getPointsReference() throws RemoteException {
         return new HashMap<>(pointsReference);
     }
 }

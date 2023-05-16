@@ -2,6 +2,7 @@ package it.polimi.ingsw.server.model.tokens;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * scoring token is a class that represent the token placed on common cards
@@ -28,5 +29,13 @@ public class ScoringToken implements Serializable {
      */
     public TokenPoint getScoreValue() {
         return scoreValue;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ScoringToken that = (ScoringToken) o;
+        return scoreValue == that.scoreValue;
     }
 }

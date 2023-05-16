@@ -184,11 +184,14 @@ public class Game implements GameModelInterface {
         );
 
 
-
-
         this.isStarted = true;
         this.playerTurn = 0;
         this.refillLivingRoom();
+        ArrayList<String> tmp = new ArrayList<>();
+        for(Player player : this.players){
+            tmp.add(player.getUsername());
+        }
+        this.gameListener.notifyTurnOrder(tmp);
         this.gameListener.notifyPlayerInTurn(players.get(0).getUsername());
     }
 
@@ -197,8 +200,10 @@ public class Game implements GameModelInterface {
      * @param username the username of the player whose points you wish to update
      * @throws InvalidPlayerException if there isn't a player with that username inside the game
      * @throws NotEnoughSpaceException if there was an error with the CommonGoalCard
+     * @throws GameNotStartedException if the game is not started yet
      */
-    public void updatePlayerPoints(String username) throws InvalidPlayerException, NotEnoughSpaceException {
+    public void updatePlayerPoints(String username) throws InvalidPlayerException, NotEnoughSpaceException, GameNotStartedException {
+        if (!this.isStarted) throw new GameNotStartedException("the game has not started yet!");
         Optional<Player> player = searchPlayer(username);
 
         if(player.isEmpty())
@@ -407,7 +412,7 @@ public class Game implements GameModelInterface {
                 gameListener.onPlayerJoinGame(newPlayer.getUsername());
                 this.updateListenerSubscriptions();
 
-                try {
+               /* try {
                     try {
                         newPlayer.assignPersonalCard(deckPersonal.draw(1).get(0));
                     } catch (RemoteException e) {
@@ -417,7 +422,7 @@ public class Game implements GameModelInterface {
                     throw new RuntimeException(e);
                 } catch (NegativeFieldException e) {
                     throw new RuntimeException(e);
-                }
+                } */
             } else {
                 throw new NicknameAlreadyUsedException("A player with the same nickname is already present in the game");
             }

@@ -113,7 +113,25 @@ public class GameTest {
     void testUpdatePoints() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, RemoteException {
         Player testPlayer = new Player("Test");
         Game test = new Game(3, testPlayer);
-
+        Player test2 = new Player("sdd");
+        Player test3 = new Player("asdsad");
+        try {
+            test.addPlayer(test2);
+        } catch (NicknameAlreadyUsedException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            test.addPlayer(test3);
+        } catch (NicknameAlreadyUsedException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            test.start();
+        } catch (NotAllPlayersHaveJoinedException e) {
+            throw new RuntimeException(e);
+        } catch (GameNotEndedException e) {
+            throw new RuntimeException(e);
+        }
         assertThrows(InvalidPlayerException.class, ()->{
            test.updatePlayerPoints("noUser");
         });

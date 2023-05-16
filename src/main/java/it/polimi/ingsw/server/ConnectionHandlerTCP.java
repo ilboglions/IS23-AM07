@@ -13,8 +13,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.rmi.RemoteException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -31,12 +33,17 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
     private final ObjectInputStream inputStream;
     private final ObjectOutputStream outputStream;
 
+    private final int timerDelay = 15000;
+
+    private final Queue<NetMessage> lastReceivedMessages;
+
     private final ExecutorService parseExecutors = Executors.newCachedThreadPool();
     public ConnectionHandlerTCP(Socket socket, LobbyController lobbyController) {
         this.socket = socket;
         this.lobbyController = lobbyController;
         this.username = "";
         this.gameController = null;
+        this.lastReceivedMessages = new ArrayDeque<>();
         closeConnectionFlag = false;
         try {
             this.outputStream = new ObjectOutputStream(socket.getOutputStream());
@@ -50,19 +57,21 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
         }
     }
     public void run() {
-        ReschedulableTimer timer = new ReschedulableTimer();
-        NetMessage inputMessage;
+        //ReschedulableTimer timer = new ReschedulableTimer();
+        //NetMessage inputMessage;
 
-        timer.schedule(this::handleCrash, 15000);
+        //timer.schedule(this::handleCrash, timerDelay);
+        this.startParserAgent();
+        this.messagesHopper();
 
-        while (!closeConnectionFlag) {
+        /*while (!closeConnectionFlag) {
             try {
                 inputMessage = (NetMessage)inputStream.readObject();
             } catch (IOException | ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
             logger.info("MESSAGE RECEIVED");
-            timer.reschedule(15000); //15s
+            timer.reschedule(timerDelay); //15s
             NetMessage finalInputMessage = inputMessage;
 
             parseExecutors.submit(() -> {
@@ -86,18 +95,97 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
         } catch (IOException ex) {
             throw new RuntimeException(ex);}
 
+         */
+
+    }
+
+    private void messagesHopper()  {
+        parseExecutors.submit( () -> {
+            ReschedulableTimer timer = new ReschedulableTimer();
+            timer.schedule(this::handleCrash, timerDelay);
+            while(true) {
+                synchronized (lastReceivedMessages) {
+                    try {
+                        NetMessage incomingMessage = (NetMessage) inputStream.readObject();
+                        lastReceivedMessages.add(incomingMessage);
+                        timer.reschedule(timerDelay);
+                        lastReceivedMessages.notifyAll();
+                        lastReceivedMessages.wait(1);
+                    } catch (IOException | ClassNotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        });
+    }
+
+
+    private void startParserAgent(){
+        parseExecutors.submit( () -> {
+            NetMessage response;
+            while (true)
+                synchronized (lastReceivedMessages) {
+                    while (lastReceivedMessages.isEmpty()) {
+                        try {
+                            lastReceivedMessages.wait();
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    response = this.messageParser(lastReceivedMessages.poll());
+                    sendUpdate(response);
+                }
+        });
+    }
+
+
+    private NetMessage messageParser(NetMessage inputMessage) throws RemoteException {
+        NetMessage outputMessage;
+        logger.info(inputMessage.getMessageType().toString());
+        switch (inputMessage.getMessageType()) {
+            case JOIN_LOBBY -> {
+                outputMessage =  this.parse((JoinLobbyMessage) inputMessage);
+            }
+            case CREATE_GAME -> {
+                outputMessage = this.parse((CreateGameMessage) inputMessage);
+            }
+            case JOIN_GAME -> {
+                outputMessage = this.parse((JoinGameMessage) inputMessage);
+            }
+            case TILES_SELECTION -> {
+                outputMessage = this.parse((TileSelectionMessage) inputMessage);
+            }
+            case MOVE_TILES -> {
+                outputMessage = this.parse((MoveTilesMessage) inputMessage);
+            }
+            case POST_MESSAGE -> {
+                outputMessage = this.parse((PostMessage) inputMessage);
+            }
+            case GAME_RECEIVED_MESSAGE -> {
+                outputMessage = this.parse((GameReceivedMessage) inputMessage);
+            }
+            case STILL_ACTIVE -> {
+                outputMessage = new StillActiveMessage();
+            }
+            default -> {
+                closeConnectionFlag = true;
+                outputMessage = new CloseConnectionMessage();
+            }
+        }
+
+        return outputMessage;
     }
 
     private NetMessage parse(JoinLobbyMessage joinLobbyMessage) throws RemoteException {
         boolean result;
         String errorType = "";
-        String desc = "";
+        String desc;
         boolean hasPlayerJoined;
         if( gameController != null){
             errorType = "Already playing";
             result = false;
             hasPlayerJoined = false;
-            desc = "you are already playing a game!";
+            desc = "You are already playing a game!";
         } else {
             if (username != null && !username.isEmpty()) {
                 try {
@@ -111,12 +199,12 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
                 this.username = joinLobbyMessage.getUsername();
                 if(gameController != null) {
                     this.subscribeToAllListeners();
-                    gameController.triggerAllListeners(this.username);
+                    //gameController.triggerAllListeners(this.username);
                     hasPlayerJoined = true;
-                    desc ="reconnecting to game...";
+                    desc ="Reconnecting to game...";
                 } else {
                     hasPlayerJoined = false;
-                    desc="welcome in lobby!";
+                    desc="Welcome in lobby!";
                 }
                 result = true;
             } catch (NicknameAlreadyUsedException e) {
@@ -131,7 +219,6 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
                 desc = e.getMessage();
             }
         }
-        logger.info(desc);
         return new  LoginReturnMessage(result,errorType, desc, hasPlayerJoined);
 
     }
@@ -141,11 +228,10 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
         String desc = "";
         try {
             gameController = lobbyController.createGame(username, createGameMessage.getPlayerNumber());
-
             result = true;
             logger.info("Game CREATED Successfully");
-            errorType = "";
             this.subscribeToAllListeners();
+            //gameController.triggerAllListeners(this.username);
         } catch (InvalidPlayerException e) {
             result = false;
             errorType = "InvalidPlayer";
@@ -155,8 +241,8 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
             errorType = "PlayersNumberOutOfRange";
             desc = e.getMessage();
         }
-        logger.info(String.valueOf(result));
-        return  new ConfirmGameMessage(result, errorType, desc);
+
+        return new ConfirmGameMessage(result, errorType, desc, false);
     }
     private NetMessage parse(JoinGameMessage inputMessage) throws RemoteException {
         boolean result;
@@ -164,10 +250,9 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
         String desc = "";
         try {
             gameController = lobbyController.addPlayerToGame(username);
-            gameController.triggerAllListeners(this.username);
-            result = true;
-            errorType = "";
             this.subscribeToAllListeners();
+            //gameController.triggerAllListeners(this.username);
+            result = true;
         } catch (NicknameAlreadyUsedException e) {
             result = false;
             errorType = "NicknameAlreadyUsed";
@@ -181,7 +266,8 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
             errorType = "InvalidPlayerException";
             desc = e.getMessage();
         }
-        return new ConfirmGameMessage(result, errorType, desc);
+
+        return new ConfirmGameMessage(false, errorType, desc, result);
     }
     private NetMessage parse(TileSelectionMessage tileSelectionMessage) throws RemoteException {
             boolean result;
@@ -248,13 +334,12 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
     private NetMessage parse(MoveTilesMessage moveTilesMessage) throws RemoteException {
         boolean result;
         String errorType = "";
-        String desc = "";
+        String desc;
 
         try {
             gameController.moveTiles(username, moveTilesMessage.getTiles(), moveTilesMessage.getColumn());
             result = true;
-            errorType="";
-            desc = "ok t'appost";
+            desc = "Moved tiles successfully!";
         } catch (GameNotStartedException e) {
             result = false;
             errorType = "GameNotStartedException";
@@ -283,40 +368,16 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
         return new ConfirmMoveMessage(result,errorType,desc);
     }
 
-    private NetMessage messageParser(NetMessage inputMessage) throws RemoteException {
-        NetMessage outputMessage;
-        logger.info(inputMessage.getMessageType().toString());
-        switch (inputMessage.getMessageType()) {
-            case JOIN_LOBBY -> {
-                outputMessage =  this.parse((JoinLobbyMessage) inputMessage);
-                }
-            case CREATE_GAME -> {
-                outputMessage = this.parse((CreateGameMessage) inputMessage);
-            }
-            case JOIN_GAME -> {
-                outputMessage = this.parse((JoinGameMessage) inputMessage);
-            }
-            case TILES_SELECTION -> {
-                outputMessage = this.parse((TileSelectionMessage) inputMessage);
-            }
-            case MOVE_TILES -> {
-                outputMessage = this.parse((MoveTilesMessage) inputMessage);
-            }
-            case POST_MESSAGE -> {
-                outputMessage = this.parse((PostMessage) inputMessage);
-
-            }
-            case STILL_ACTIVE -> {
-                logger.info("Heartbeat received");
-                outputMessage = new StillActiveMessage();
-            }
-            default -> {
-                closeConnectionFlag = true;
-                outputMessage = new CloseConnectionMessage();
+    private NetMessage parse(GameReceivedMessage inputMessage) {
+        if(!inputMessage.getErrorOccurred()) {
+            try {
+                gameController.triggerAllListeners(this.username);
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
             }
         }
 
-        return outputMessage;
+        return new StillActiveMessage();
     }
 
     private void subscribeToAllListeners(){
@@ -328,7 +389,7 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
             gameController.subscribeToListener((BoardSubscriber) this);
             gameController.subscribeToListener((BookshelfSubscriber) this);
             gameController.subscribeToListener((GameSubscriber) this);
-            gameController.triggerAllListeners(this.username);
+            //gameController.triggerAllListeners(this.username);
         } catch (RemoteException e){
             throw new RuntimeException(e);
         }
@@ -340,7 +401,7 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
         if (gameController == null) {
             try {
                 lobbyController.handleCrashedPlayer(this.username);
-                logger.info("handling crash in the lobby... player hasn't join any game!");
+                logger.info("Handling crash in the lobby... player hasn't join any game!");
             } catch (PlayerNotFoundException | RemoteException e) {
                 throw new RuntimeException(e);
             }
@@ -348,7 +409,7 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
         else {
             try {
                 gameController.handleCrashedPlayer(this.username);
-                logger.info("handling crash in the game!");
+                logger.info("Handling crash in the game!");
             } catch (RemoteException | PlayerNotFoundException e) {
                 throw new RuntimeException(e);
             }
@@ -376,7 +437,7 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
 
     @Override
     public void receiveMessage(String from, String msg, Boolean privateMessage) {
-        logger.info("SENDING MESSAGE TO "+this.username);
+        logger.info("SENDING MESSAGE TO " + this.username);
         NotifyNewChatMessage update = new NotifyNewChatMessage(from, msg, privateMessage);
         this.sendUpdate(update);
     }
@@ -407,17 +468,18 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
     public void notifyPlayerJoined(String username) {
         NewPlayerInGame update = new NewPlayerInGame(username);
         this.sendUpdate(update);
+
         try {
             gameController.subscribeToListener((PlayerSubscriber) this);
             gameController.subscribeToListener((BookshelfSubscriber) this);
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
-    }
+}
 
     @Override
     public void notifyWinningPlayer(String username, int points, Map<String,Integer> scoreboard) {
-        NotifyWinnerPlayerMessage update = new NotifyWinnerPlayerMessage(username, points, scoreboard );
+        NotifyWinnerPlayerMessage update = new NotifyWinnerPlayerMessage(username, points, scoreboard);
         this.sendUpdate(update);
     }
 
@@ -439,6 +501,12 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
         this.sendUpdate(update);
     }
 
+    @Override
+    public void notifyTurnOrder(ArrayList<String> playerOrder){
+        NotifyTurnOrder update = new NotifyTurnOrder(playerOrder);
+        this.sendUpdate(update);
+    }
+
     /**
      *
      * @param update
@@ -446,7 +514,9 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
     private void sendUpdate(NetMessage update) {
         synchronized (outputStream) {
             try {
+                logger.info("SENDING..." + update.getMessageType()+ " to "+this.username );
                 outputStream.writeObject(update);
+                outputStream.flush();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

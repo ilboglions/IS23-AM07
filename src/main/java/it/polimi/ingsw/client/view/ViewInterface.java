@@ -14,12 +14,9 @@ public interface ViewInterface {
 
     void drawPersonalCard(Map<Coordinates, ItemTile> tilesMap, Map<Integer,Integer> pointsReference) throws InvalidCoordinatesException;
     void drawBookShelf(Map<Coordinates,ItemTile> tilesMap, String playerUsername, int order) throws InvalidCoordinatesException;
-    //void drawChatMessage(String sender, String msg, Boolean privateMessage);
     void drawLivingRoom(Map<Coordinates, ItemTile> livingRoomMap) throws InvalidCoordinatesException;
     void drawCommonCards(ArrayList<RemoteCommonGoalCard> commonGoalCards) throws InvalidCoordinatesException, RemoteException;
     void postNotification(String title, String description);
-
     void drawLeaderboard(Map<String, Integer> playerPoints);
-
     void drawChat(List<String> outputMessages);
 }

@@ -114,11 +114,21 @@ public class Player {
 
         if(count == 0)
             return count;
-        else if(count >= Collections.max(personalCard.getPointsReference().keySet())) {
-            count = Collections.max(personalCard.getPointsReference().keySet());
+        else {
+            try {
+                if(count >= Collections.max(personalCard.getPointsReference().keySet())) {
+                    count = Collections.max(personalCard.getPointsReference().keySet());
+                }
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
         }
 
-        return personalCard.getPointsReference().get(count);
+        try {
+            return personalCard.getPointsReference().get(count);
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**

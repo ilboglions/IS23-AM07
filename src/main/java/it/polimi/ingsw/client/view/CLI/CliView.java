@@ -34,8 +34,8 @@ public class CliView implements ViewInterface {
 
     private final int START_R_BOX_NOTIFICATION = START_R_BOX_LEADERBOARD;
     private final int START_C_BOX_NOTIFICATION = START_C_BOX_CHAT + 10;
-    private final int LENGHT_R_BOX_NOTIFICATION = LENGTH_R_BOX_LEADERBOARD;
-    private final int LENGHT_C_BOX_NOTIFICATION = LENGTH_C_BOX_CHAT - 10;
+    private final int LENGTH_R_BOX_NOTIFICATION = LENGTH_R_BOX_LEADERBOARD;
+    private final int LENGTH_C_BOX_NOTIFICATION = LENGTH_C_BOX_CHAT - 10;
     private final int FIXED_H_MARGIN = 3;
     private final int FIXED_V_MARGIN = 1;
     private static final String SPACE = " ";
@@ -119,7 +119,7 @@ public class CliView implements ViewInterface {
             /*JoinGame>>*/
             case "JoinGame" -> {
                 try {
-                    this.postNotification("trying joining the game","...");
+                    this.postNotification("Trying to join a game","...");
                     controller.JoinGame();
                 } catch (RemoteException e) {
                     throw new RuntimeException(e);
@@ -496,10 +496,18 @@ public class CliView implements ViewInterface {
 
     @Override
     public void postNotification(String title, String description) {
-        printTruncateText(title.toUpperCase(),START_R_BOX_NOTIFICATION + FIXED_V_MARGIN,START_C_BOX_NOTIFICATION+FIXED_H_MARGIN, LENGHT_C_BOX_NOTIFICATION - FIXED_H_MARGIN, Color.RED_BOLD_BRIGHT.escape());
-        int spaceNeeded = this.calculateTextLines(title,START_C_BOX_NOTIFICATION+ FIXED_H_MARGIN,LENGHT_C_BOX_NOTIFICATION - FIXED_H_MARGIN);
-        printTruncateText(description,START_R_BOX_NOTIFICATION + FIXED_V_MARGIN + spaceNeeded,START_C_BOX_NOTIFICATION+FIXED_H_MARGIN, Math.min(START_C_BOX_NOTIFICATION - FIXED_H_MARGIN + LENGHT_C_BOX_NOTIFICATION, MAX_HORIZ_TILES - FIXED_H_MARGIN));
+        clearNotificationBox();
+        int spaceNeeded = printTruncateText(title.toUpperCase(),START_R_BOX_NOTIFICATION + FIXED_V_MARGIN,START_C_BOX_NOTIFICATION+FIXED_H_MARGIN, LENGTH_C_BOX_NOTIFICATION - FIXED_H_MARGIN, Color.RED_BOLD_BRIGHT.escape());
+        printTruncateText(description,START_R_BOX_NOTIFICATION + FIXED_V_MARGIN + spaceNeeded,START_C_BOX_NOTIFICATION+FIXED_H_MARGIN, Math.min(START_C_BOX_NOTIFICATION - FIXED_H_MARGIN + LENGTH_C_BOX_NOTIFICATION, MAX_HORIZ_TILES - FIXED_H_MARGIN));
         this.plot();
+    }
+
+    private void clearNotificationBox(){
+        for(int i = START_R_BOX_NOTIFICATION + FIXED_V_MARGIN; i<START_R_BOX_NOTIFICATION + LENGTH_R_BOX_NOTIFICATION; i++){
+            for(int j = START_C_BOX_NOTIFICATION + FIXED_H_MARGIN; j < START_C_BOX_NOTIFICATION + LENGTH_C_BOX_NOTIFICATION - FIXED_H_MARGIN; j++){
+                tiles[i][j] = " ";
+            }
+        }
     }
 
 
@@ -563,7 +571,7 @@ public class CliView implements ViewInterface {
         /* chat box */
         this.drawBox(START_R_BOX_CARD, START_C_BOX_CHAT, LENGTH_R_BOX_CARD, LENGTH_C_BOX_CHAT, Color.WHITE_BOLD_BRIGHT.escape());
         /* notification box*/
-        this.drawBox(START_R_BOX_NOTIFICATION,START_C_BOX_NOTIFICATION,LENGHT_R_BOX_NOTIFICATION, LENGHT_C_BOX_NOTIFICATION,Color.WHITE_BOLD_BRIGHT.escape() );
+        this.drawBox(START_R_BOX_NOTIFICATION,START_C_BOX_NOTIFICATION, LENGTH_R_BOX_NOTIFICATION, LENGTH_C_BOX_NOTIFICATION,Color.WHITE_BOLD_BRIGHT.escape() );
 
         /* leaderboard box */
         this.drawBox(START_R_BOX_LEADERBOARD, START_C_BOX_CARD, LENGTH_R_BOX_LEADERBOARD, LENGTH_C_BOX_LEADERBOARD, Color.WHITE_BOLD_BRIGHT.escape());

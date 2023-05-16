@@ -50,16 +50,18 @@ public class ClientRMI implements ConnectionHandler{
         try {
             gameController = lobbyController.enterInLobby(username);
             if( gameController == null){
-                view.postNotification("joined in lobby!","select what2do");
+                view.postNotification("joined in lobby!","Select what to do");
                 lobbyController.triggerHeartBeat(this.username);
             } else {
-                view.postNotification("welcome back!","here's your game "+gameController);
+                view.postNotification("welcome back!","Reconnected to your previous game");
                 gameController.triggerHeartBeat(this.username);
+                this.subscribeListeners();
+                gameController.triggerAllListeners(this.username);
             }
         } catch (NicknameAlreadyUsedException e) {
-            view.postNotification("Nickname already used!", "choose another nickname and retry");
+            view.postNotification("Nickname already used!", "Choose another nickname and retry");
         } catch (InvalidPlayerException e) {
-            view.postNotification("Invalid player!","you can't use this username!");
+            view.postNotification("Invalid player!","You can't use this username!");
         }
     }
 
@@ -78,7 +80,7 @@ public class ClientRMI implements ConnectionHandler{
         } catch (InvalidPlayerException e) {
             throw new RuntimeException(e);
         } catch (PlayersNumberOutOfRange e) {
-            view.postNotification("The number of player is out of range!","create the game with less players");
+            view.postNotification("The number of player is out of range!","Create the game with less players");
         }
 
     }
@@ -132,11 +134,11 @@ public class ClientRMI implements ConnectionHandler{
         //here the view will be notified that the action has been executed correctly
         try {
             if(gameController.checkValidRetrieve(this.username,tiles))
-                view.postNotification("Your Selection has been accepted!!","choose the column to fit the selection!");
+                view.postNotification("Your Selection has been accepted!!","Choose the column to fit the selection!");
             else
                 view.postNotification("Your selection is invalid", "");
         } catch (EmptySlotException e) {
-            view.postNotification("the slot selected is empty!",e.getMessage());
+            view.postNotification("The slot selected is empty!",e.getMessage());
         } catch (GameNotStartedException e) {
             view.postNotification("The game has not started yet!",e.getMessage());
         } catch (GameEndedException e) {
@@ -200,7 +202,7 @@ public class ClientRMI implements ConnectionHandler{
     }
 
     private void checkGameIsSet() throws NoAvailableGameException {
-        if( gameController == null) throw  new NoAvailableGameException("the client has joined no game!");
+        if( gameController == null) throw  new NoAvailableGameException("The client hasn't joined a game!");
     }
 
     public void sendMessage(String content){

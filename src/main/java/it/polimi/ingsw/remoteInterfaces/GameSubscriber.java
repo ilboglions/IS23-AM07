@@ -31,4 +31,6 @@ public interface GameSubscriber extends ListenerSubscriber {
     void notifyPlayerInTurn(String username) throws RemoteException;
 
     void notifyPlayerCrashed(String userCrashed) throws RemoteException;
+
+    void notifyTurnOrder(ArrayList<String> playerOrder) throws RemoteException;
 }
