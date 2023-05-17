@@ -77,7 +77,7 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
 
             generatedCardsIndex.add(extractedCardInex);
 
-            selected.add(createCard(jsonCards.get(i).getAsJsonObject(), nPlayers));
+            selected.add(createCard(jsonCards.get(extractedCardInex).getAsJsonObject(), nPlayers));
 
         }
 
