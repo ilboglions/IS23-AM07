@@ -1,0 +1,5 @@
+.anchor{
+    -fx-background-image: url('/images/backgroundParquet.jpg');
+    -fx-background-repeat: stretch;
+    -fx-background-position: center;
+}
