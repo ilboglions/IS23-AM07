@@ -74,7 +74,7 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
             timer.reschedule(timerDelay); //15s
             NetMessage finalInputMessage = inputMessage;
 
-            parseExecutors.submit(() -> {
+            parseExecutors.execute(() -> {
 
                     NetMessage outputMessage;
                     try {
@@ -100,7 +100,7 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
     }
 
     private void messagesHopper()  {
-        parseExecutors.submit( () -> {
+        parseExecutors.execute( () -> {
             ReschedulableTimer timer = new ReschedulableTimer();
             timer.schedule(this::handleCrash, timerDelay);
             while(true) {
@@ -111,7 +111,7 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
                         timer.reschedule(timerDelay);
                         lastReceivedMessages.notifyAll();
                         lastReceivedMessages.wait(1);
-                    } catch (IOException | ClassNotFoundException e) {
+                    } catch (IOException | ClassNotFoundException | InterruptedException e) {
                         throw new RuntimeException(e);
                     }
                 }
@@ -121,7 +121,7 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
 
 
     private void startParserAgent(){
-        parseExecutors.submit( () -> {
+        parseExecutors.execute( () -> {
             NetMessage response;
             while (true)
                 synchronized (lastReceivedMessages) {
@@ -132,7 +132,11 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
                             throw new RuntimeException(e);
                         }
                     }
-                    response = this.messageParser(lastReceivedMessages.poll());
+                    try {
+                        response = this.messageParser(lastReceivedMessages.poll());
+                    } catch (RemoteException e) {
+                        throw new RuntimeException(e);
+                    }
                     sendUpdate(response);
                 }
         });

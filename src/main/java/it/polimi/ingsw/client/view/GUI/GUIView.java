@@ -14,7 +14,6 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 public class GUIView extends Application implements ViewInterface {
     //private final ConnectionHandler controller;
@@ -38,22 +37,22 @@ public class GUIView extends Application implements ViewInterface {
     }
 
     @Override
-    public void drawPersonalCard(Map<Coordinates, ItemTile> tilesMap, Map<Integer, Integer> pointsReference) throws InvalidCoordinatesException {
+    public void drawPersonalCard(Map<Coordinates, ItemTile> tilesMap, Map<Integer, Integer> pointsReference) {
 
     }
 
     @Override
-    public void drawBookShelf(Map<Coordinates, ItemTile> tilesMap, String playerUsername, int order) throws InvalidCoordinatesException {
+    public void drawBookShelf(Map<Coordinates, ItemTile> tilesMap, String playerUsername, int order) {
 
     }
 
     @Override
-    public void drawLivingRoom(Map<Coordinates, ItemTile> livingRoomMap) throws InvalidCoordinatesException {
+    public void drawLivingRoom(Map<Coordinates, ItemTile> livingRoomMap) {
 
     }
 
     @Override
-    public void drawCommonCards(ArrayList<RemoteCommonGoalCard> commonGoalCards) throws InvalidCoordinatesException, RemoteException {
+    public void drawCommonCards(ArrayList<RemoteCommonGoalCard> commonGoalCards) {
 
     }
 
@@ -70,6 +69,11 @@ public class GUIView extends Application implements ViewInterface {
 
     @Override
     public void drawChat(List<String> outputMessages) {
+
+    }
+
+    @Override
+    public void drawGameScene() {
 
     }
 }

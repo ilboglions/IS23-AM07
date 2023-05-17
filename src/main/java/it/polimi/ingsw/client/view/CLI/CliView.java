@@ -41,8 +41,8 @@ public class CliView implements ViewInterface {
 
     private int START_R_BOX_NOTIFICATION = START_R_MY_BOOKSHELF;
     private int START_C_BOX_NOTIFICATION = START_C_BOX_CHAT + 10;
-    private static int LENGHT_R_BOX_NOTIFICATION = LENGTH_R_BOX_LEADERBOARD;
-    private int LENGHT_C_BOX_NOTIFICATION = LENGTH_C_BOX_CHAT - 10;
+    private static int LENGTH_R_BOX_NOTIFICATION = LENGTH_R_BOX_LEADERBOARD;
+    private int LENGTH_C_BOX_NOTIFICATION = LENGTH_C_BOX_CHAT - 10;
 
 
 
@@ -83,13 +83,13 @@ public class CliView implements ViewInterface {
         this.printWelcomeText();
         this.plot();
         inputReaderEx = Executors.newCachedThreadPool();
-        inputReaderEx.submit( () -> {
+        inputReaderEx.execute( () -> {
             String cliInput;
             synchronized (inputScan){
                 while(true){
                     cliInput = inputScan.nextLine();
                     String finalCliInput = cliInput;
-                    inputReaderEx.submit(() -> this.handle(finalCliInput));
+                    inputReaderEx.execute(() -> this.handle(finalCliInput));
                 }
             }
 
@@ -189,8 +189,8 @@ public class CliView implements ViewInterface {
         MAX_VERT_TILES = s.getRows();
         START_R_BOX_NOTIFICATION = s.getStartRNotifications();
         START_C_BOX_NOTIFICATION = s.getStartCNotifications();
-        LENGHT_R_BOX_NOTIFICATION = s.getLengthRNotifications();
-        LENGHT_C_BOX_NOTIFICATION = s.getLengthCNotifications();
+        LENGTH_R_BOX_NOTIFICATION = s.getLengthRNotifications();
+        LENGTH_C_BOX_NOTIFICATION = s.getLengthCNotifications();
         this.fillEmpty();
         this.plot();
     }
@@ -621,14 +621,14 @@ public class CliView implements ViewInterface {
         /* chat box */
         this.drawBox(START_R_BOX_CARD, START_C_BOX_CHAT, LENGTH_R_BOX_CARD, LENGTH_C_BOX_CHAT, Color.WHITE_BOLD_BRIGHT.escape());
         /* notification box*/
-        this.drawBox(START_R_BOX_NOTIFICATION,START_C_BOX_NOTIFICATION,LENGHT_R_BOX_NOTIFICATION, LENGHT_C_BOX_NOTIFICATION,Color.WHITE_BOLD_BRIGHT.escape() );
+        this.drawBox(START_R_BOX_NOTIFICATION,START_C_BOX_NOTIFICATION,LENGTH_R_BOX_NOTIFICATION, LENGTH_C_BOX_NOTIFICATION,Color.WHITE_BOLD_BRIGHT.escape() );
 
         /* leaderboard box */
         this.drawBox(START_R_BOX_LEADERBOARD - FIXED_V_MARGIN, START_C_BOX_LEADERBOARD, LENGTH_R_BOX_LEADERBOARD, LENGTH_C_BOX_LEADERBOARD, Color.WHITE_BOLD_BRIGHT.escape());
     }
     private void plotLobby(){
         /* notification box*/
-        this.drawBox(START_R_BOX_NOTIFICATION,START_C_BOX_NOTIFICATION,LENGHT_R_BOX_NOTIFICATION, LENGHT_C_BOX_NOTIFICATION,Color.WHITE_BOLD_BRIGHT.escape() );
+        this.drawBox(START_R_BOX_NOTIFICATION,START_C_BOX_NOTIFICATION,LENGTH_R_BOX_NOTIFICATION, LENGTH_C_BOX_NOTIFICATION,Color.WHITE_BOLD_BRIGHT.escape() );
     }
 
     private void clearScreen(){

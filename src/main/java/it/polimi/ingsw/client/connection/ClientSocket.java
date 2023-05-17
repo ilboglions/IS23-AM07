@@ -155,7 +155,7 @@ public class ClientSocket implements ConnectionHandler{
     }
 
     private void messagesHopper()  {
-        threadManager.submit( () -> {
+        threadManager.execute( () -> {
 
             while(true) {
                 synchronized (lastReceivedMessages) {
@@ -168,6 +168,8 @@ public class ClientSocket implements ConnectionHandler{
                         lastReceivedMessages.wait(1);
                     } catch (IOException | ClassNotFoundException e) {
                         throw new RuntimeException(e);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
                     }
                 }
             }
@@ -176,7 +178,7 @@ public class ClientSocket implements ConnectionHandler{
 
 
     private void startParserAgent(){
-        threadManager.submit( () -> {
+        threadManager.execute( () -> {
             while(this.connection.isConnected()){
                 synchronized (lastReceivedMessages){
                     while(lastReceivedMessages.isEmpty()){
@@ -293,6 +295,7 @@ public class ClientSocket implements ConnectionHandler{
                 throw new RuntimeException(e);
             }
             view.postNotification("Game created successfully","");
+            view.drawGameScene();
         } else if(message.getConfirmJoinedGame()){
             players.add(this.username);
             try {
@@ -302,6 +305,7 @@ public class ClientSocket implements ConnectionHandler{
                 throw new RuntimeException(e);
             }
             view.postNotification("Game joined successfully","");
+            view.drawGameScene();
         }
         else{
             view.postNotification(message.getErrorType(),message.getDetails());
