@@ -79,7 +79,7 @@ public class DeckPersonal implements Distributable<PersonalGoalCard> {
 
             this.generatedCardsIndex.add(extractedCardIndex);
 
-            JsonElement extractedCard = jsonCards.get(i);
+            JsonElement extractedCard = jsonCards.get(extractedCardIndex);
             Map<Coordinates, ItemTile> pattern = gson.fromJson(extractedCard, mapType);
 
             try {

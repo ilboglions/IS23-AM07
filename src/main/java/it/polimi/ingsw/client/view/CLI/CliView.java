@@ -19,25 +19,33 @@ public class CliView implements ViewInterface {
     /**
      * dimension of the game view
      */
-    private static final int MAX_VERT_TILES = 80; //rows.
-    private static final int MAX_HORIZ_TILES = 170; //cols.
-    private static final int START_R_BOX_CARD = 55; //55
+    private static final int FIXED_H_MARGIN = 3;
+    private final int FIXED_V_MARGIN = 1;
+    private static int MAX_VERT_TILES = 70; //rows.
+    private static int MAX_HORIZ_TILES = 170; //cols.
+
+    private static final int START_R_MY_BOOKSHELF = 35;
+    private final int START_C_MY_BOOKSHELF = 78;
+    private static final int START_R_BOX_CARD = 45 + FIXED_H_MARGIN; //55
     private static final int START_C_BOX_CARD = 5;
     private static final int START_C_BOX_CHAT = 110;
     private static final int LENGTH_R_BOX_CARD = 20;
     private static final int LENGTH_C_BOX_CARD = 100;
     private static final int LENGTH_C_BOX_CHAT = 55;
     private static final int START_R_CHAT = START_R_BOX_CARD + LENGTH_R_BOX_CARD;
-    private static final int START_R_BOX_LEADERBOARD = 44;
     private static final int LENGTH_R_BOX_LEADERBOARD = 10;
     private static final int LENGTH_C_BOX_LEADERBOARD = 40;
 
-    private final int START_R_BOX_NOTIFICATION = START_R_BOX_LEADERBOARD;
-    private final int START_C_BOX_NOTIFICATION = START_C_BOX_CHAT + 10;
-    private final int LENGHT_R_BOX_NOTIFICATION = LENGTH_R_BOX_LEADERBOARD;
-    private final int LENGHT_C_BOX_NOTIFICATION = LENGTH_C_BOX_CHAT - 10;
-    private final int FIXED_H_MARGIN = 3;
-    private final int FIXED_V_MARGIN = 1;
+    private static final int START_R_BOX_LEADERBOARD = START_R_MY_BOOKSHELF - LENGTH_R_BOX_LEADERBOARD;
+    private static final int START_C_BOX_LEADERBOARD = START_C_BOX_CHAT + 10;
+
+    private int START_R_BOX_NOTIFICATION = START_R_MY_BOOKSHELF;
+    private int START_C_BOX_NOTIFICATION = START_C_BOX_CHAT + 10;
+    private static int LENGHT_R_BOX_NOTIFICATION = LENGTH_R_BOX_LEADERBOARD;
+    private int LENGHT_C_BOX_NOTIFICATION = LENGTH_C_BOX_CHAT - 10;
+
+
+
     private static final String SPACE = " ";
     private static final int BASE_TILE_DIM = 3;
 
@@ -46,6 +54,8 @@ public class CliView implements ViewInterface {
 
     private final Scanner inputScan;
     private final String[][] tiles = new String[MAX_VERT_TILES][MAX_HORIZ_TILES];
+
+    private Scenario scenario;
 
     public static void main(String[] args){
         ConnectionType c;
@@ -68,7 +78,10 @@ public class CliView implements ViewInterface {
         ConnectionHandlerFactory factory = new ConnectionHandlerFactory();
         controller = factory.createConnection(connectionType, this);
         inputScan =  new Scanner(System.in);
-        this.fillEmpty();
+        this.setScenario(Scenario.LOBBY);
+        this.printAsciiArtTitle();
+        this.printWelcomeText();
+        this.plot();
         inputReaderEx = Executors.newCachedThreadPool();
         inputReaderEx.submit( () -> {
             String cliInput;
@@ -83,6 +96,11 @@ public class CliView implements ViewInterface {
         } );
     }
 
+    private void printWelcomeText(){
+        String welcomeText = "choose your username!";
+        int startC = MAX_HORIZ_TILES/2 - welcomeText.length()/2;
+        this.printTruncateText(welcomeText,10,startC,MAX_HORIZ_TILES - FIXED_H_MARGIN - welcomeText.length());
+    }
     private void handle(String cliInput) {
 
         String[] inputArray = cliInput.split(">>");
@@ -165,7 +183,17 @@ public class CliView implements ViewInterface {
         }
     }
 
-
+    private void setScenario(Scenario s){
+        this.scenario = s;
+        MAX_HORIZ_TILES = s.getCols();
+        MAX_VERT_TILES = s.getRows();
+        START_R_BOX_NOTIFICATION = s.getStartRNotifications();
+        START_C_BOX_NOTIFICATION = s.getStartCNotifications();
+        LENGHT_R_BOX_NOTIFICATION = s.getLengthRNotifications();
+        LENGHT_C_BOX_NOTIFICATION = s.getLengthCNotifications();
+        this.fillEmpty();
+        this.plot();
+    }
 
     private ArrayList<Coordinates> parseCoordinates(String tilesString){
         ArrayList<Coordinates> coordinatesList = new ArrayList<>();
@@ -182,20 +210,24 @@ public class CliView implements ViewInterface {
     }
 
     public void printAsciiArtTitle(){
-        System.out.println(Color.YELLOW.escape());
-        System.out.println( "███╗   ███╗██╗   ██╗    ███████╗██╗  ██╗███████╗██╗     ███████╗██╗███████╗");
-        System.out.println( "████╗ ████║╚██╗ ██╔╝    ██╔════╝██║  ██║██╔════╝██║     ██╔════╝██║██╔════╝");
-        System.out.println( "██╔████╔██║ ╚████╔╝     ███████╗███████║█████╗  ██║     █████╗  ██║█████╗  ");
-        System.out.println( "██║╚██╔╝██║  ╚██╔╝      ╚════██║██╔══██║██╔══╝  ██║     ██╔══╝  ██║██╔══╝  ");
-        System.out.println( "██║ ╚═╝ ██║   ██║       ███████║██║  ██║███████╗███████╗██║     ██║███████╗");
-        System.out.println( "╚═╝     ╚═╝   ╚═╝       ╚══════╝╚═╝  ╚═╝╚══════╝╚══════╝╚═╝     ╚═╝╚══════╝");
-        System.out.println(Color.RESET.escape()+Color.BLACK_BOLD_BRIGHT.escape());
-        System.out.println( Color.WHITE_BOLD_BRIGHT.escape()+"=> Not as good as a "+Color.RED_BOLD.escape()+"MargaraCraft"+Color.WHITE_BOLD_BRIGHT.escape()+" episode, but better than nothing!"+Color.RESET.escape());
-
-        System.out.println();
+        printTruncateText( "███╗   ███╗██╗   ██╗    ███████╗██╗  ██╗███████╗██╗     ███████╗██╗███████╗", FIXED_V_MARGIN, 10, MAX_HORIZ_TILES - FIXED_H_MARGIN - 10, Color.YELLOW.escape());
+        printTruncateText( "███╗   ███╗██╗   ██╗    ███████╗██╗  ██╗███████╗██╗     ███████╗██╗███████╗",FIXED_V_MARGIN + 1, 10, MAX_HORIZ_TILES - FIXED_H_MARGIN - 10, Color.YELLOW.escape());
+        printTruncateText( "████╗ ████║╚██╗ ██╔╝    ██╔════╝██║  ██║██╔════╝██║     ██╔════╝██║██╔════╝", FIXED_V_MARGIN + 2 , 10, MAX_HORIZ_TILES - FIXED_H_MARGIN - 10, Color.YELLOW.escape());
+        printTruncateText( "██╔████╔██║ ╚████╔╝     ███████╗███████║█████╗  ██║     █████╗  ██║█████╗  " ,FIXED_V_MARGIN + 3, 10, MAX_HORIZ_TILES - FIXED_H_MARGIN - 10, Color.YELLOW.escape());
+        printTruncateText( "██║╚██╔╝██║  ╚██╔╝      ╚════██║██╔══██║██╔══╝  ██║     ██╔══╝  ██║██╔══╝  ",FIXED_V_MARGIN + 4, 10, MAX_HORIZ_TILES - FIXED_H_MARGIN - 10, Color.YELLOW.escape());
+        printTruncateText( "██║ ╚═╝ ██║   ██║       ███████║██║  ██║███████╗███████╗██║     ██║███████╗",FIXED_V_MARGIN + 5, 10, MAX_HORIZ_TILES - FIXED_H_MARGIN - 10, Color.YELLOW.escape());
+        printTruncateText( "╚═╝     ╚═╝   ╚═╝       ╚══════╝╚═╝  ╚═╝╚══════╝╚══════╝╚═╝     ╚═╝╚══════╝",FIXED_V_MARGIN + 6, 10, MAX_HORIZ_TILES - FIXED_H_MARGIN - 10, Color.YELLOW.escape());
+        //System.out.println( Color.WHITE_BOLD_BRIGHT.escape()+"=> Not as good as a "+Color.RED_BOLD.escape()+"MargaraCraft"+Color.WHITE_BOLD_BRIGHT.escape()+" episode, but better than nothing!"+Color.RESET.escape());
+        //System.out.println();
     }
 
     private void fillEmpty() {
+
+        for(int i = 0; i < MAX_VERT_TILES; i++){
+            for(int j = 0; j < MAX_HORIZ_TILES;j++){
+                tiles[i][j] = null;
+            }
+        }
 
         tiles[0][0] = Color.RESET.escape()+"╔";
         for (int c = 1; c < MAX_HORIZ_TILES - 1; c++) {
@@ -213,6 +245,7 @@ public class CliView implements ViewInterface {
         for (int c = 1; c < MAX_HORIZ_TILES - 1; c++) {
             tiles[MAX_VERT_TILES - 1][c] = Color.RESET.escape()+"═";
         }
+
 
         tiles[MAX_VERT_TILES - 1][MAX_HORIZ_TILES - 1] = Color.RESET.escape()+"╝";
 
@@ -330,17 +363,17 @@ public class CliView implements ViewInterface {
         int[] startingPoints = new int[2];
         if (order == 0) {
             //This is always the case of the player personal bookshelf
-            startingPoints[0] = 45;
-            startingPoints[1] = 78;
+            startingPoints[0] = START_R_MY_BOOKSHELF;
+            startingPoints[1] = START_C_MY_BOOKSHELF;
         } else if (order == 1) {
-            startingPoints[0] = 25;
+            startingPoints[0] = 15;
             startingPoints[1] = 22;
         } else if (order == 2) {
             startingPoints[0] = 5;
-            startingPoints[1] = 78;
+            startingPoints[1] = 22;
         } else {
             startingPoints[0] = 25;
-            startingPoints[1] = 132;
+            startingPoints[1] = 22;
         }
 
         return startingPoints;
@@ -437,7 +470,7 @@ public class CliView implements ViewInterface {
         Coordinates coord;
         String colorTile;
 
-        int startR = 13;
+        int startR = 5;
         int startC = 58;
 
         int r;
@@ -478,8 +511,8 @@ public class CliView implements ViewInterface {
     public void drawLeaderboard(Map<String, Integer> scoreBoard) {
         String title = "Leaderboard";
         int H_MARGIN = 3;
-        int startR = START_R_BOX_LEADERBOARD + 1;
-        int startC = START_C_BOX_CARD + 3;
+        int startR = START_R_BOX_LEADERBOARD + FIXED_V_MARGIN;
+        int startC = START_C_BOX_LEADERBOARD + FIXED_H_MARGIN;
         int currR;
         String tmp;
 
@@ -496,6 +529,7 @@ public class CliView implements ViewInterface {
 
     @Override
     public void postNotification(String title, String description) {
+
         printTruncateText(title.toUpperCase(),START_R_BOX_NOTIFICATION + FIXED_V_MARGIN,START_C_BOX_NOTIFICATION+FIXED_H_MARGIN, LENGHT_C_BOX_NOTIFICATION - FIXED_H_MARGIN, Color.RED_BOLD_BRIGHT.escape());
         int spaceNeeded = this.calculateTextLines(title,START_C_BOX_NOTIFICATION+ FIXED_H_MARGIN,LENGHT_C_BOX_NOTIFICATION - FIXED_H_MARGIN);
         printTruncateText(description,START_R_BOX_NOTIFICATION + FIXED_V_MARGIN + spaceNeeded,START_C_BOX_NOTIFICATION+FIXED_H_MARGIN, Math.min(START_C_BOX_NOTIFICATION - FIXED_H_MARGIN + LENGHT_C_BOX_NOTIFICATION, MAX_HORIZ_TILES - FIXED_H_MARGIN));
@@ -557,19 +591,13 @@ public class CliView implements ViewInterface {
                 if(tiles[r][c] == null) tiles[r][c] = SPACE;
             }
         }
-
-        /* cards box */
-        this.drawBox(START_R_BOX_CARD, START_C_BOX_CARD, LENGTH_R_BOX_CARD, LENGTH_C_BOX_CARD, Color.WHITE_BOLD_BRIGHT.escape());
-        /* chat box */
-        this.drawBox(START_R_BOX_CARD, START_C_BOX_CHAT, LENGTH_R_BOX_CARD, LENGTH_C_BOX_CHAT, Color.WHITE_BOLD_BRIGHT.escape());
-        /* notification box*/
-        this.drawBox(START_R_BOX_NOTIFICATION,START_C_BOX_NOTIFICATION,LENGHT_R_BOX_NOTIFICATION, LENGHT_C_BOX_NOTIFICATION,Color.WHITE_BOLD_BRIGHT.escape() );
-
-        /* leaderboard box */
-        this.drawBox(START_R_BOX_LEADERBOARD, START_C_BOX_CARD, LENGTH_R_BOX_LEADERBOARD, LENGTH_C_BOX_LEADERBOARD, Color.WHITE_BOLD_BRIGHT.escape());
+        if(this.scenario.equals(Scenario.GAME)){
+            this.plotGame();
+        } else {
+            this.plotLobby();
+        }
 
         this.clearScreen();
-
         for (int r = 0; r < MAX_VERT_TILES; r++) {
             System.out.println();
             for (int c = 0; c < MAX_HORIZ_TILES; c++) {
@@ -580,11 +608,31 @@ public class CliView implements ViewInterface {
         System.out.flush();
     }
 
+    private void plotGame() {
+        /* cards box */
+        this.drawBox(START_R_BOX_CARD, START_C_BOX_CARD, LENGTH_R_BOX_CARD, LENGTH_C_BOX_CARD, Color.WHITE_BOLD_BRIGHT.escape());
+        /* chat box */
+        this.drawBox(START_R_BOX_CARD, START_C_BOX_CHAT, LENGTH_R_BOX_CARD, LENGTH_C_BOX_CHAT, Color.WHITE_BOLD_BRIGHT.escape());
+        /* notification box*/
+        this.drawBox(START_R_BOX_NOTIFICATION,START_C_BOX_NOTIFICATION,LENGHT_R_BOX_NOTIFICATION, LENGHT_C_BOX_NOTIFICATION,Color.WHITE_BOLD_BRIGHT.escape() );
+
+        /* leaderboard box */
+        this.drawBox(START_R_BOX_LEADERBOARD - FIXED_V_MARGIN, START_C_BOX_LEADERBOARD, LENGTH_R_BOX_LEADERBOARD, LENGTH_C_BOX_LEADERBOARD, Color.WHITE_BOLD_BRIGHT.escape());
+    }
+    private void plotLobby(){
+        /* notification box*/
+        this.drawBox(START_R_BOX_NOTIFICATION,START_C_BOX_NOTIFICATION,LENGHT_R_BOX_NOTIFICATION, LENGHT_C_BOX_NOTIFICATION,Color.WHITE_BOLD_BRIGHT.escape() );
+    }
+
     private void clearScreen(){
         System.out.print("\033[H\033[2J");
         System.out.flush();
     }
 
+    @Override
+    public void drawGameScene(){
+        this.setScenario(Scenario.GAME);
+    }
 
 
 }

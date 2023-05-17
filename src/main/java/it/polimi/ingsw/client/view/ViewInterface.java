@@ -22,4 +22,6 @@ public interface ViewInterface {
     void drawLeaderboard(Map<String, Integer> playerPoints);
 
     void drawChat(List<String> outputMessages);
+
+    void drawGameScene();
 }
