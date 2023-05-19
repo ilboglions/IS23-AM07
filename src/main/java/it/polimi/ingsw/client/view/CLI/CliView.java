@@ -287,6 +287,8 @@ public class CliView implements ViewInterface {
     }
 
     private int printTruncateText(String text, int startR, int startC, int maxC, String color){
+        if(text == null) return 0;
+
         int currentC = startC;
         int currentR = startR;
         int nLine = 1;
@@ -356,7 +358,6 @@ public class CliView implements ViewInterface {
 
         this.drawBookShelf( tilesMap,startingPoints[0], startingPoints[1] );
         this.plot();
-
     }
 
     private int[] getStartsFromTurnOrder(int order) {
@@ -380,20 +381,12 @@ public class CliView implements ViewInterface {
     }
 
     public void drawChat(List<String> chat){
-
         int currentRChat = START_R_CHAT;
         int nLines;
 
+        this.clearBox(START_R_BOX_CARD, START_C_BOX_CHAT, START_R_BOX_CARD + LENGTH_R_BOX_CARD, START_C_BOX_CHAT + LENGTH_C_BOX_CHAT);
+
         for (String message : chat) {
-            //TODO: Questo sotto è da spostare nel metodo in cui ci arriva un NOTIFY_NEW_CHAT
-            /*tmp = message;
-
-            if (tmp.getRecipient().isPresent())
-                msgToBePrinted = "<" + tmp.getSender() + " -> " + tmp.getRecipient().get() + "> " + tmp.getContent();
-            else
-                msgToBePrinted = "<" + tmp.getSender() + "> " + tmp.getContent();
-
-             */
 
             nLines = calculateTextLines(message, START_C_BOX_CHAT + FIXED_H_MARGIN, START_C_BOX_CHAT + LENGTH_C_BOX_CHAT - FIXED_H_MARGIN);
 
@@ -516,6 +509,8 @@ public class CliView implements ViewInterface {
         int currR;
         String tmp;
 
+        this.clearBox(START_R_BOX_LEADERBOARD, START_C_BOX_LEADERBOARD, START_R_BOX_LEADERBOARD + LENGTH_R_BOX_LEADERBOARD, START_C_BOX_LEADERBOARD + LENGTH_C_BOX_LEADERBOARD);
+
         drawTitle(title, startR, startC, Color.RED_BOLD.escape());
 
         currR = startR + 2;
@@ -529,15 +524,15 @@ public class CliView implements ViewInterface {
 
     @Override
     public void postNotification(String title, String description) {
-        clearNotificationBox();
+        clearBox(START_R_BOX_NOTIFICATION, START_C_BOX_NOTIFICATION, START_R_BOX_NOTIFICATION + LENGTH_R_BOX_NOTIFICATION, START_C_BOX_NOTIFICATION + LENGTH_C_BOX_NOTIFICATION);
         int spaceNeeded = printTruncateText(title.toUpperCase(),START_R_BOX_NOTIFICATION + FIXED_V_MARGIN,START_C_BOX_NOTIFICATION+FIXED_H_MARGIN, LENGTH_C_BOX_NOTIFICATION - FIXED_H_MARGIN, Color.RED_BOLD_BRIGHT.escape());
         printTruncateText(description,START_R_BOX_NOTIFICATION + FIXED_V_MARGIN + spaceNeeded,START_C_BOX_NOTIFICATION+FIXED_H_MARGIN, Math.min(START_C_BOX_NOTIFICATION - FIXED_H_MARGIN + LENGTH_C_BOX_NOTIFICATION, MAX_HORIZ_TILES - FIXED_H_MARGIN));
         this.plot();
     }
 
-    private void clearNotificationBox(){
-        for(int i = START_R_BOX_NOTIFICATION + FIXED_V_MARGIN; i<START_R_BOX_NOTIFICATION + LENGTH_R_BOX_NOTIFICATION; i++){
-            for(int j = START_C_BOX_NOTIFICATION + FIXED_H_MARGIN; j < START_C_BOX_NOTIFICATION + LENGTH_C_BOX_NOTIFICATION - FIXED_H_MARGIN; j++){
+    private void clearBox(int startR, int startC, int maxR, int maxC){
+        for(int i = startR + 1; i < maxR; i++){
+            for(int j = startC + 1; j < maxC; j++){
                 tiles[i][j] = " ";
             }
         }
@@ -595,7 +590,7 @@ public class CliView implements ViewInterface {
 
         for (int r = 0; r < MAX_VERT_TILES; r++) {
             for (int c = 0; c < MAX_HORIZ_TILES; c++) {
-                if(tiles[r][c] == null) tiles[r][c] = SPACE;
+                if(tiles[r][c] == null || tiles[r][c].isEmpty()) tiles[r][c] = SPACE;
             }
         }
         if(this.scenario.equals(Scenario.GAME)){
@@ -622,7 +617,6 @@ public class CliView implements ViewInterface {
         this.drawBox(START_R_BOX_CARD, START_C_BOX_CHAT, LENGTH_R_BOX_CARD, LENGTH_C_BOX_CHAT, Color.WHITE_BOLD_BRIGHT.escape());
         /* notification box*/
         this.drawBox(START_R_BOX_NOTIFICATION,START_C_BOX_NOTIFICATION,LENGTH_R_BOX_NOTIFICATION, LENGTH_C_BOX_NOTIFICATION,Color.WHITE_BOLD_BRIGHT.escape() );
-
         /* leaderboard box */
         this.drawBox(START_R_BOX_LEADERBOARD - FIXED_V_MARGIN, START_C_BOX_LEADERBOARD, LENGTH_R_BOX_LEADERBOARD, LENGTH_C_BOX_LEADERBOARD, Color.WHITE_BOLD_BRIGHT.escape());
     }

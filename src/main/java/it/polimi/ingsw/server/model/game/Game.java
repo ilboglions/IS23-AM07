@@ -623,6 +623,16 @@ public class Game implements GameModelInterface {
 
         this.livingRoom.triggerListener(userToBeUpdated);
         ArrayList<RemoteCommonGoalCard> remoteCards = new ArrayList<>(this.commonGoalCards);
-        this.gameListener.onCommonCardDraw(userToBeUpdated,remoteCards);
+        this.gameListener.onCommonCardDraw(userToBeUpdated, remoteCards);
+
+        ArrayList<String> tmp = new ArrayList<>();
+        for(Player player : this.players){
+            tmp.add(player.getUsername());
+        }
+
+        if(this.isStarted) {
+            this.gameListener.notifyTurnOrder(tmp);
+            this.gameListener.notifyPlayerInTurn(players.get(playerTurn).getUsername());
+        }
     }
 }

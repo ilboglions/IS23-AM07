@@ -73,9 +73,7 @@ public class ClientRMI implements ConnectionHandler{
             this.gameController = this.lobbyController.createGame(username, nPlayers);
             view.drawGameScene();
             gameController.triggerHeartBeat(this.username);
-            ArrayList<String> players = new ArrayList<>();
-            players.add(this.username);
-            this.gameModel = new Game(players,this.view,this.username);
+            this.gameModel = new Game(this.view,this.username);
             this.subscribeListeners();
             view.postNotification("Game created successfully","");
         } catch (InvalidPlayerException e) {
@@ -108,9 +106,7 @@ public class ClientRMI implements ConnectionHandler{
             this.gameController = this.lobbyController.addPlayerToGame(username);
             view.drawGameScene();
             gameController.triggerHeartBeat(this.username);
-            ArrayList<String> players = new ArrayList<>();
-            players.add(this.username);
-            this.gameModel = new Game(players,this.view,this.username);
+            this.gameModel = new Game(this.view,this.username);
             this.subscribeListeners();
             gameController.triggerAllListeners(this.username);
             view.postNotification("Game joined successfully","");

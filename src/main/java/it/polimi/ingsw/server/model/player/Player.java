@@ -110,7 +110,12 @@ public class Player {
      */
     private int calculatePointsPersonalGoalCard() {
 
-        int count = bookshelf.nElementsOverlapped(personalCard.getBookshelf());
+        int count;
+        try {
+            count = bookshelf.nElementsOverlapped(personalCard.getBookshelf());
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
 
         if(count == 0)
             return count;
@@ -229,7 +234,7 @@ public class Player {
      */
     public void assignPersonalCard(PersonalGoalCard card) throws RemoteException {
         this.personalCard = Objects.requireNonNull(card);
-        playerListener.onPersonalGoalCardAssigned(this.username, card);
+        playerListener.onPersonalGoalCardAssigned(this.username, personalCard);
     }
 
     /**

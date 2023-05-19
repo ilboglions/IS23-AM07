@@ -144,6 +144,11 @@ public class ClientSocket implements ConnectionHandler{
         this.sendUpdate(message);
     }
 
+    private void sendReceivedGame(Boolean errorOccurred) {
+        GameReceivedMessage message = new GameReceivedMessage(errorOccurred);
+        this.sendUpdate(message);
+    }
+
     @Override
     public void sendHeartBeat()  {
         heartBeatManager.scheduleAtFixedRate(
@@ -163,7 +168,7 @@ public class ClientSocket implements ConnectionHandler{
                         NetMessage incomingMessage = (NetMessage) inputStream.readObject();
                         lastReceivedMessages.add(incomingMessage);
                         timer.reschedule(this.timerDelay);
-                        System.out.println(incomingMessage.getMessageType());
+                        //System.out.println(incomingMessage.getMessageType());
                         lastReceivedMessages.notifyAll();
                         lastReceivedMessages.wait(1);
                     } catch (IOException | ClassNotFoundException e) {
@@ -271,7 +276,16 @@ public class ClientSocket implements ConnectionHandler{
     private void parse(LoginReturnMessage message){
         if(message.getConfirmLogin()){
             if (message.getConfirmRejoined()) {
+                try {
+                    this.gameModel = new Game(this.view,this.username);
+                } catch (RemoteException e) {
+                    throw new RuntimeException(e);
+                }
+                this.sendReceivedGame(false);
                 view.postNotification("Welcome back " + this.username + "!", "reconnecting to your game...");
+                view.drawGameScene();
+                view.postNotification("Game rejoined successfully!", "");
+
             }else {
                 view.postNotification("Logged in as " + this.username + "!", "choose either to create or join a game!");
             }
@@ -283,46 +297,34 @@ public class ClientSocket implements ConnectionHandler{
     }
 
     private void parse(ConfirmGameMessage message){
-        ArrayList<String> players = new ArrayList<>();
         boolean errorOccurred = false;
+
         if(message.getConfirmGameCreation()){
-            players.add(this.username);
             try {
-                this.gameModel = new Game(players,this.view,this.username);
+                this.gameModel = new Game(this.view,this.username);
 
             } catch (RemoteException e) {
-                //TODO: Verify that this exception is necessary
                 throw new RuntimeException(e);
             }
+
+            view.drawGameScene();
             view.postNotification("Game created successfully","");
-            view.drawGameScene();
         } else if(message.getConfirmJoinedGame()){
-            players.add(this.username);
             try {
-                this.gameModel = new Game(players,this.view,this.username);
+                this.gameModel = new Game(this.view,this.username);
             } catch (RemoteException e) {
-                //TODO: Verify that this exception is necessary
                 throw new RuntimeException(e);
             }
-            view.postNotification("Game joined successfully","");
+
             view.drawGameScene();
+            view.postNotification("Game joined successfully","");
         }
         else{
             view.postNotification(message.getErrorType(),message.getDetails());
             errorOccurred = true;
         }
-        this.sendReceivedGame(errorOccurred);
-    }
 
-    private void sendReceivedGame(Boolean errorOccurred) {
-        GameReceivedMessage message = new GameReceivedMessage(errorOccurred);
-        try {
-            synchronized (outputStream){
-                outputStream.writeObject(message);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        this.sendReceivedGame(errorOccurred);
     }
 
     private void parse(ConfirmSelectionMessage message){
@@ -336,7 +338,6 @@ public class ClientSocket implements ConnectionHandler{
     private void parse(ConfirmMoveMessage message){
         if(message.getConfirmSelection()){
             view.postNotification("Move done!","");
-
         }
     }
 

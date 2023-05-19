@@ -49,7 +49,7 @@ public class PersonalGoalCard extends UnicastRemoteObject implements RemotePerso
      * The getBookshelf method returns the card bookshelf that represent the pattern of the card
      * @return a copy of the immutable bookshelf assigned to the card
      */
-    public CardBookshelf getBookshelf() {
+    public CardBookshelf getBookshelf() throws RemoteException {
 
         Map<Coordinates, ItemTile> tempPattern = new HashMap<>();
         for( int r = 0; r < bookshelf.getRows(); r++){

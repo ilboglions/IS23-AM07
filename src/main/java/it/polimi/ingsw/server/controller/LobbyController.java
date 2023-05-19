@@ -73,7 +73,6 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
                     if(entry.getKey().isCrashedPlayer(player) ){
                         try {
                             entry.getValue().handleRejoinedPlayer(player);
-                            System.out.println("ajejejejejejejejej");
                             return entry.getValue();
                         } catch (PlayerNotFoundException ee) {
                             throw new RuntimeException(ee);

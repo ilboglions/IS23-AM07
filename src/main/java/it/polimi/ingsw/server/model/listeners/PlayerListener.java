@@ -50,7 +50,7 @@ public class PlayerListener extends Listener<PlayerSubscriber> {
         Set<PlayerSubscriber> subscribers = this.getSubscribers();
 
         for (PlayerSubscriber sub : subscribers) {
-            if( sub.getSubscriberUsername().equals(player)){
+            if(sub.getSubscriberUsername().equals(player)){
                 sub.updatePersonalGoalCard(player, personalGoalCard);
             }
         }
@@ -70,7 +70,9 @@ public class PlayerListener extends Listener<PlayerSubscriber> {
             if(sub.getSubscriberUsername().equals(userToBeUpdated)){
                 sub.updatePoints(username, points, 0);
                 sub.updateTokens(username, tokens);
-                sub.updatePersonalGoalCard(username,personalGoalCard);
+
+                if(personalGoalCard != null && sub.getSubscriberUsername().equals(username))
+                    sub.updatePersonalGoalCard(username,personalGoalCard);
             }
         }
     }

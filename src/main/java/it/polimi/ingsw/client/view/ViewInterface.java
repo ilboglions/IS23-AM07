@@ -19,6 +19,5 @@ public interface ViewInterface {
     void postNotification(String title, String description);
     void drawLeaderboard(Map<String, Integer> playerPoints);
     void drawChat(List<String> outputMessages);
-
     void drawGameScene();
 }

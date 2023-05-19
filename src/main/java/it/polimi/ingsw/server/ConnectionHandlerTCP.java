@@ -203,7 +203,6 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
                 this.username = joinLobbyMessage.getUsername();
                 if(gameController != null) {
                     this.subscribeToAllListeners();
-                    //gameController.triggerAllListeners(this.username);
                     hasPlayerJoined = true;
                     desc ="Reconnecting to game...";
                 } else {
@@ -235,7 +234,6 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
             result = true;
             logger.info("Game CREATED Successfully");
             this.subscribeToAllListeners();
-            //gameController.triggerAllListeners(this.username);
         } catch (InvalidPlayerException e) {
             result = false;
             errorType = "InvalidPlayer";
@@ -255,7 +253,6 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
         try {
             gameController = lobbyController.addPlayerToGame(username);
             this.subscribeToAllListeners();
-            //gameController.triggerAllListeners(this.username);
             result = true;
         } catch (NicknameAlreadyUsedException e) {
             result = false;
@@ -393,7 +390,6 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
             gameController.subscribeToListener((BoardSubscriber) this);
             gameController.subscribeToListener((BookshelfSubscriber) this);
             gameController.subscribeToListener((GameSubscriber) this);
-            //gameController.triggerAllListeners(this.username);
         } catch (RemoteException e){
             throw new RuntimeException(e);
         }
