@@ -343,7 +343,10 @@ public class ClientSocket implements ConnectionHandler{
 
     private void parse(NotifyNewChatMessage message){
         try {
-            gameModel.receiveMessage(message.getSender(),message.getContent(), message.getPrivateMessage());
+            if(message.getRecipient().equals("broadcast"))
+                gameModel.receiveMessage(message.getSender(),message.getContent());
+            else
+                gameModel.receiveMessage(message.getSender(), message.getRecipient(), message.getContent());
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
@@ -367,7 +370,7 @@ public class ClientSocket implements ConnectionHandler{
 
     private void parse(PersonalGoalCardUpdateMessage message){
         try {
-            gameModel.updatePersonalGoalCard(message.getPlayer(),message.getCard());
+            gameModel.updatePersonalGoalCard(message.getPlayer(), message.getCard());
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
@@ -417,7 +420,8 @@ public class ClientSocket implements ConnectionHandler{
 
     private void parse(NewPlayerInGame message){
         try {
-            gameModel.notifyPlayerJoined(message.getNewPlayerUsername());
+            if(!this.username.equals(message.getNewPlayerUsername()))
+                gameModel.notifyPlayerJoined(message.getNewPlayerUsername());
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }

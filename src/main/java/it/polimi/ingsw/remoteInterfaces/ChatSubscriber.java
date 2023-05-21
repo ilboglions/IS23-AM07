@@ -12,8 +12,10 @@ public interface ChatSubscriber extends ListenerSubscriber {
     /**
      * when a message for the player is posted, the listener will trigger this method
      * @param from the sender of the message
+     * @param recipient the recipient of the message
      * @param msg the message
-     * @param privateMessage if the message is a private message
      */
-    void receiveMessage(String from, String msg, Boolean privateMessage) throws RemoteException;
+    void receiveMessage(String from, String recipient, String msg) throws RemoteException;
+
+    void receiveMessage(String from, String msg) throws RemoteException;
 }

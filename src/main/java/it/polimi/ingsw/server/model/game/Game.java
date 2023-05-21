@@ -612,9 +612,20 @@ public class Game implements GameModelInterface {
      * @param userToBeUpdated the username of the user that needs to receive the updates
      */
     public void triggerAllListeners(String userToBeUpdated) {
+        if(this.isStarted){
+            ArrayList<String> tmp = new ArrayList<>();
+            for(Player player : this.players){
+                tmp.add(player.getUsername());
+            }
+
+            this.gameListener.notifyTurnOrder(tmp);
+        }
+
+
         for(Player player : players){
             try {
                 player.triggerListener(userToBeUpdated);
+                gameListener.onPlayerJoinGame(player.getUsername());
             } catch (RemoteException e) {
                 throw new RuntimeException(e);
             }
@@ -625,13 +636,12 @@ public class Game implements GameModelInterface {
         ArrayList<RemoteCommonGoalCard> remoteCards = new ArrayList<>(this.commonGoalCards);
         this.gameListener.onCommonCardDraw(userToBeUpdated, remoteCards);
 
-        ArrayList<String> tmp = new ArrayList<>();
-        for(Player player : this.players){
-            tmp.add(player.getUsername());
-        }
-
         if(this.isStarted) {
-            this.gameListener.notifyTurnOrder(tmp);
+            /*ArrayList<String> tmp = new ArrayList<>();
+            for(Player player : this.players){
+                tmp.add(player.getUsername());
+            }
+            this.gameListener.notifyTurnOrder(tmp);*/
             this.gameListener.notifyPlayerInTurn(players.get(playerTurn).getUsername());
         }
     }

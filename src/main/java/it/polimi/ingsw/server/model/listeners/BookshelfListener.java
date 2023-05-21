@@ -46,8 +46,8 @@ public class BookshelfListener extends Listener<BookshelfSubscriber> {
                 if(sub.getSubscriberUsername().equals(userToBeUpdated)){
                     sub.updateBookshelfStatus(username, new ArrayList<>(), 0, currentTilesMap);
                 }
-            } catch (RemoteException ignored) {
-
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
             }
         }
     }

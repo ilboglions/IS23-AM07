@@ -1,8 +1,10 @@
 package it.polimi.ingsw.client.view.CLI;
 
+import static it.polimi.ingsw.client.view.CLI.CliView.*;
+
 public enum Scenario {
     LOBBY(100,15, 8, 15, 5, 65),
-    GAME( 170,70, 35, 120,10,45);
+    GAME( 170,70, START_R_BOX_NOTIFICATION, START_C_BOX_NOTIFICATION,LENGTH_R_BOX_NOTIFICATION,LENGTH_C_BOX_NOTIFICATION);
 
     private int rows;
     private int cols;
@@ -12,6 +14,7 @@ public enum Scenario {
 
     private int lengthRNotifications;
     private int lengthCNotifications;
+
     Scenario(int cols, int rows, int startRNotifications, int startCNotifications, int lengthRNotifications, int lengthCNotifications){
         this.cols = cols;
         this.rows = rows;

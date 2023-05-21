@@ -41,7 +41,7 @@ public class ClientRMI implements ConnectionHandler{
 
     @Override
     public void close() {
-
+        System.out.println("timer expired");
     }
 
     @Override
@@ -75,6 +75,7 @@ public class ClientRMI implements ConnectionHandler{
             gameController.triggerHeartBeat(this.username);
             this.gameModel = new Game(this.view,this.username);
             this.subscribeListeners();
+            this.gameController.triggerAllListeners(this.username);
             view.postNotification("Game created successfully","");
         } catch (InvalidPlayerException e) {
             throw new RuntimeException(e);
@@ -196,7 +197,7 @@ public class ClientRMI implements ConnectionHandler{
                     this.close();
                 }
             },
-            0, 5, TimeUnit.SECONDS);
+            0, 2, TimeUnit.SECONDS);
     }
 
     private void checkGameIsSet() throws NoAvailableGameException {

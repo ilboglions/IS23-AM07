@@ -110,12 +110,7 @@ public class Player {
      */
     private int calculatePointsPersonalGoalCard() {
 
-        int count;
-        try {
-            count = bookshelf.nElementsOverlapped(personalCard.getBookshelf());
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        }
+        int count = bookshelf.nElementsOverlapped(personalCard.getBookshelf());
 
         if(count == 0)
             return count;

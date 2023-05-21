@@ -3,7 +3,7 @@ import it.polimi.ingsw.server.model.chat.Message;
 import it.polimi.ingsw.remoteInterfaces.ChatSubscriber;
 
 import java.rmi.RemoteException;
-import java.util.Optional;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -24,7 +24,8 @@ public class ChatListener extends Listener<ChatSubscriber> {
 
             String recipient = msg.getRecipient().get();
             String sender = msg.getSender();
-            Optional<ChatSubscriber> interestedOb =   observers.stream()
+
+            List<ChatSubscriber> interestedOb = observers.stream()
                                                     .filter(obs -> {
                                                         try {
                                                             return obs.getSubscriberUsername().equals(recipient) || obs.getSubscriberUsername().equals(sender);
@@ -32,19 +33,21 @@ public class ChatListener extends Listener<ChatSubscriber> {
                                                             throw new RuntimeException(e);
                                                         }
                                                     })
-                                                    .findFirst();
-            interestedOb.ifPresent( ob -> {
+                                                    .toList();
+
+            interestedOb.forEach( ob -> {
                 try {
-                    ob.receiveMessage(msg.getSender(), msg.getContent(), true);
+                    ob.receiveMessage(sender, recipient, msg.getContent());
                 } catch (RemoteException e) {
                     throw new RuntimeException(e);
                 }
             });
 
+
         } else{
             observers.forEach( obs -> {
                         try {
-                            obs.receiveMessage(msg.getSender(), msg.getContent(), false);
+                            obs.receiveMessage(msg.getSender(), msg.getContent());
                         } catch (RemoteException e) {
                             throw new RuntimeException(e);
                         }

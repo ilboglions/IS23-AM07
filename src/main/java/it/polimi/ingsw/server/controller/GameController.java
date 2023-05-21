@@ -10,6 +10,8 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 
+import static it.polimi.ingsw.server.ServerMain.logger;
+
 /**
  * the game controller ensures the communication through client controller and server model
  */
@@ -56,6 +58,7 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
      */
     public boolean checkValidRetrieve(String player, ArrayList<Coordinates> coords) throws RemoteException, PlayerNotInTurnException, GameNotStartedException, GameEndedException, EmptySlotException {
         synchronized (gameLock) {
+            this.rescheduleTimer(player);
             if(!player.equals(gameModel.getPlayerInTurn())) throw new PlayerNotInTurnException();
 
             if( gameModel.checkValidRetrieve(coords)){
@@ -77,6 +80,8 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
      */
     public void moveTiles(String player, ArrayList<Coordinates> source, int column) throws RemoteException, GameNotStartedException, GameEndedException, NotEnoughSpaceException, PlayerNotInTurnException, EmptySlotException, InvalidCoordinatesException {
         synchronized (gameLock) {
+            this.rescheduleTimer(player);
+
             if(!player.equals(gameModel.getPlayerInTurn())) throw new PlayerNotInTurnException();
 
             if(!this.selectedTiles.containsAll(source) || this.selectedTiles.size() != source.size()) throw new InvalidCoordinatesException("the selected tiles don't match!");
@@ -105,6 +110,14 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
         }
     }
 
+    private void rescheduleTimer(String player) {
+        synchronized (timers) {
+            if (this.timers.get(player) != null && this.timers.get(player).isScheduled()) {
+                this.timers.get(player).reschedule(timerDelay);
+            }
+        }
+    }
+
 
     /**
      * used to create a broadcast message
@@ -127,6 +140,7 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
      */
     public void postDirectMessage(String player, String receiver, String message) throws RemoteException, InvalidPlayerException, SenderEqualsRecipientException {
         synchronized (chatLock) {
+            this.rescheduleTimer(player);
             gameModel.postMessage(player,receiver,message);
         }
     }
@@ -267,7 +281,8 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
      */
     public void triggerHeartBeat(String username) throws RemoteException{
         synchronized (gameLock){
-            if(this.timers.get(username) == null ){
+            logger.info("HEARTBEAT RECEIVED BY "+username);
+            if(this.timers.get(username) == null || !this.timers.get(username).isScheduled()){
                 this.initializeTimer(username);
                 return;
             }

@@ -57,46 +57,8 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
         }
     }
     public void run() {
-        //ReschedulableTimer timer = new ReschedulableTimer();
-        //NetMessage inputMessage;
-
-        //timer.schedule(this::handleCrash, timerDelay);
         this.startParserAgent();
         this.messagesHopper();
-
-        /*while (!closeConnectionFlag) {
-            try {
-                inputMessage = (NetMessage)inputStream.readObject();
-            } catch (IOException | ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-            logger.info("MESSAGE RECEIVED");
-            timer.reschedule(timerDelay); //15s
-            NetMessage finalInputMessage = inputMessage;
-
-            parseExecutors.execute(() -> {
-
-                    NetMessage outputMessage;
-                    try {
-                        outputMessage = messageParser(finalInputMessage);
-                    } catch (RemoteException e) {
-                        throw new RuntimeException(e);
-                    }
-                    if (closeConnectionFlag)
-                        return;
-
-                    this.sendUpdate(outputMessage);
-            });
-        }
-        try {
-            outputStream.close();
-            inputStream.close();
-            socket.close();
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);}
-
-         */
-
     }
 
     private void messagesHopper()  {
@@ -436,9 +398,16 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
 
 
     @Override
-    public void receiveMessage(String from, String msg, Boolean privateMessage) {
+    public void receiveMessage(String from, String msg) {
         logger.info("SENDING MESSAGE TO " + this.username);
-        NotifyNewChatMessage update = new NotifyNewChatMessage(from, msg, privateMessage);
+        NotifyNewChatMessage update = new NotifyNewChatMessage(from, msg);
+        this.sendUpdate(update);
+    }
+
+    @Override
+    public void receiveMessage(String from, String recipient, String msg) {
+        logger.info("SENDING MESSAGE TO " + this.username);
+        NotifyNewChatMessage update = new NotifyNewChatMessage(from, recipient, msg);
         this.sendUpdate(update);
     }
 

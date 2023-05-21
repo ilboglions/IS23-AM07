@@ -40,6 +40,7 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
      */
     private final ViewInterface view;
     private final String username;
+    private Boolean gameStarted;
 
 
     public Game(ViewInterface view, String username) throws  RemoteException {
@@ -50,13 +51,13 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
         this.playerScoringTokens = new HashMap<>();
         this.playerPoints = new HashMap<>();
         this.players = new ArrayList<>();
-        //this.players.add(username);
-        //this.playerScoringTokens.put(username, new HashSet<>());
-        //this.playerPoints.put(username, 0);
+        this.players.add(username);
+        this.gameStarted = false;
+        this.playerScoringTokens.put(username, new HashSet<>());
+        this.playerPoints.put(username, 0);
 
         try {
-            //view.drawBookShelf(new HashMap<>(),username,players.indexOf(username));
-            view.drawBookShelf(new HashMap<>(),username, 0);
+            view.drawBookShelf(new HashMap<>(),username, players.indexOf(username));
         } catch (InvalidCoordinatesException e) {
             throw new RuntimeException(e);
         }
@@ -83,9 +84,11 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
      * @param player the username of the joined player
      */
     public void joinPlayer(String player) {
-        players.add(player);
-        playerPoints.put(player, 0);
-        playerScoringTokens.put(player, new HashSet<>());
+        if(!players.contains(player)){
+            players.add(player);
+            playerPoints.put(player, 0);
+            playerScoringTokens.put(player, new HashSet<>());
+        }
     }
     /**
      * Accept a player inside the game and put it in a certain position. Usually used to handle crashed players
@@ -172,13 +175,13 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
     }
 
     @Override
-    public void receiveMessage(String from, String msg, Boolean privateMessage) throws RemoteException {
-        if( privateMessage){
-            this.addMessage(new Message(from, this.username, msg));
-        } else {
-            this.addMessage(new Message(from, msg));
-        }
+    public void receiveMessage(String from, String recipient, String msg) throws RemoteException {
+        this.addMessage(new Message(from, recipient, msg));
+    }
 
+    @Override
+    public void receiveMessage(String from, String msg) throws RemoteException {
+        this.addMessage(new Message(from, msg));
     }
 
     @Override
@@ -225,6 +228,7 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
     @Override
     public synchronized void notifyTurnOrder(ArrayList<String> playerOrder) throws RemoteException {
         this.players.sort(Comparator.comparingInt(playerOrder::indexOf));
+        this.gameStarted = true;
     }
 
     @Override
@@ -255,7 +259,10 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
     @Override
     public synchronized void updateBookshelfStatus(String player, ArrayList<ItemTile> tilesInserted, int colChosen, Map<Coordinates, ItemTile> currentTilesMap) throws RemoteException {
         try {
-            view.drawBookShelf(currentTilesMap,player,this.players.indexOf(player));
+            if(this.gameStarted)
+                view.drawBookShelf(currentTilesMap,player,Math.abs(this.players.indexOf(player) - this.players.indexOf(this.username)) % this.players.size());
+            else
+                view.drawBookShelf(currentTilesMap,player,this.players.indexOf(player));
         } catch (InvalidCoordinatesException e) {
             throw new RuntimeException(e);
         }

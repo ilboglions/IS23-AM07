@@ -11,6 +11,7 @@ import java.rmi.RemoteException;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 import static it.polimi.ingsw.server.model.utilities.UtilityFunctions.isNumeric;
 
@@ -20,13 +21,12 @@ public class CliView implements ViewInterface {
      * dimension of the game view
      */
     private static final int FIXED_H_MARGIN = 3;
-    private final int FIXED_V_MARGIN = 1;
+    private static final int FIXED_V_MARGIN = 1;
     private static int MAX_VERT_TILES = 70; //rows.
     private static int MAX_HORIZ_TILES = 170; //cols.
-
-    private static final int START_R_MY_BOOKSHELF = 35;
-    private final int START_C_MY_BOOKSHELF = 78;
-    private static final int START_R_BOX_CARD = 45 + FIXED_H_MARGIN; //55
+    private static final int START_R_MY_BOOKSHELF = 37;
+    private static final int START_C_MY_BOOKSHELF = 78;
+    private static final int START_R_BOX_CARD = 48;
     private static final int START_C_BOX_CARD = 5;
     private static final int START_C_BOX_CHAT = 110;
     private static final int LENGTH_R_BOX_CARD = 20;
@@ -34,15 +34,13 @@ public class CliView implements ViewInterface {
     private static final int LENGTH_C_BOX_CHAT = 55;
     private static final int START_R_CHAT = START_R_BOX_CARD + LENGTH_R_BOX_CARD;
     private static final int LENGTH_R_BOX_LEADERBOARD = 10;
-    private static final int LENGTH_C_BOX_LEADERBOARD = 40;
-
-    private static final int START_R_BOX_LEADERBOARD = START_R_MY_BOOKSHELF - LENGTH_R_BOX_LEADERBOARD;
+    private static final int LENGTH_C_BOX_LEADERBOARD = LENGTH_C_BOX_CHAT - 10;
+    protected static int LENGTH_R_BOX_NOTIFICATION = 6;
+    protected static int START_R_BOX_NOTIFICATION = START_R_BOX_CARD - LENGTH_R_BOX_NOTIFICATION - 1;
+    private static final int START_R_BOX_LEADERBOARD = START_R_BOX_NOTIFICATION - LENGTH_R_BOX_LEADERBOARD - 1;
     private static final int START_C_BOX_LEADERBOARD = START_C_BOX_CHAT + 10;
-
-    private int START_R_BOX_NOTIFICATION = START_R_MY_BOOKSHELF;
-    private int START_C_BOX_NOTIFICATION = START_C_BOX_CHAT + 10;
-    private static int LENGTH_R_BOX_NOTIFICATION = LENGTH_R_BOX_LEADERBOARD;
-    private int LENGTH_C_BOX_NOTIFICATION = LENGTH_C_BOX_CHAT - 10;
+    protected static int START_C_BOX_NOTIFICATION = START_C_BOX_CHAT + 10;
+    protected static int LENGTH_C_BOX_NOTIFICATION = LENGTH_C_BOX_LEADERBOARD;
 
 
 
@@ -97,7 +95,7 @@ public class CliView implements ViewInterface {
     }
 
     private void printWelcomeText(){
-        String welcomeText = "choose your username!";
+        String welcomeText = "Choose your username!";
         int startC = MAX_HORIZ_TILES/2 - welcomeText.length()/2;
         this.printTruncateText(welcomeText,10,startC,MAX_HORIZ_TILES - FIXED_H_MARGIN - welcomeText.length());
     }
@@ -114,7 +112,7 @@ public class CliView implements ViewInterface {
         }
 
         switch (command){
-            /*chat>>UserRecipient--cia<ooo*/
+            /*chat>>UserRecipient--ciaooo*/
             case "Chat" ->{
 
                 String[] chatMessageArray = specific.split("--");
@@ -279,6 +277,7 @@ public class CliView implements ViewInterface {
             tiles[startR + 9][startC + startCPoints + i] = Color.WHITE_BOLD_BRIGHT.escape() + nTilesTable.charAt(i);
             tiles[startR + 11][startC + startCPoints + i] = Color.WHITE_BOLD_BRIGHT.escape() + pointsTable.charAt(i);
         }
+        tiles[startR + 11][startC + startCPoints + nTilesTable.length()] = Color.WHITE_BOLD_BRIGHT.escape() + pointsTable.charAt(pointsTable.length() - 1);
         this.plot();
     }
 
@@ -352,6 +351,7 @@ public class CliView implements ViewInterface {
         int[] startingPoints;
 
         startingPoints = getStartsFromTurnOrder(order);
+        clearBox(startingPoints[0], startingPoints[0], startingPoints[0] + 8, startingPoints[1] + 30);
         for(int i=0; i < playerUsername.length(); i++){
             tiles[startingPoints[0] - 2][startingPoints[1] + i] = Color.RED_BOLD.escape() + playerUsername.charAt(i) ;
         }
@@ -514,7 +514,11 @@ public class CliView implements ViewInterface {
         drawTitle(title, startR, startC, Color.RED_BOLD.escape());
 
         currR = startR + 2;
-        for(Map.Entry<String, Integer> entry : scoreBoard.entrySet()){
+        Map<String, Integer> orderedMap = scoreBoard.entrySet().stream()
+                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+
+        for(Map.Entry<String, Integer> entry : orderedMap.entrySet()){
             tmp = String.format("%2d", entry.getValue()) + " - " + entry.getKey();
 
             currR += printTruncateText(tmp, currR, startC + 2, START_C_BOX_CARD + LENGTH_C_BOX_LEADERBOARD - H_MARGIN) + 1;
@@ -525,8 +529,8 @@ public class CliView implements ViewInterface {
     @Override
     public void postNotification(String title, String description) {
         clearBox(START_R_BOX_NOTIFICATION, START_C_BOX_NOTIFICATION, START_R_BOX_NOTIFICATION + LENGTH_R_BOX_NOTIFICATION, START_C_BOX_NOTIFICATION + LENGTH_C_BOX_NOTIFICATION);
-        int spaceNeeded = printTruncateText(title.toUpperCase(),START_R_BOX_NOTIFICATION + FIXED_V_MARGIN,START_C_BOX_NOTIFICATION+FIXED_H_MARGIN, LENGTH_C_BOX_NOTIFICATION - FIXED_H_MARGIN, Color.RED_BOLD_BRIGHT.escape());
-        printTruncateText(description,START_R_BOX_NOTIFICATION + FIXED_V_MARGIN + spaceNeeded,START_C_BOX_NOTIFICATION+FIXED_H_MARGIN, Math.min(START_C_BOX_NOTIFICATION - FIXED_H_MARGIN + LENGTH_C_BOX_NOTIFICATION, MAX_HORIZ_TILES - FIXED_H_MARGIN));
+        int spaceNeeded = printTruncateText(title.toUpperCase(),START_R_BOX_NOTIFICATION + FIXED_V_MARGIN,START_C_BOX_NOTIFICATION+FIXED_H_MARGIN, START_C_BOX_NOTIFICATION + LENGTH_C_BOX_NOTIFICATION - FIXED_H_MARGIN, Color.RED_BOLD_BRIGHT.escape());
+        printTruncateText(description,START_R_BOX_NOTIFICATION + FIXED_V_MARGIN + spaceNeeded,START_C_BOX_NOTIFICATION+FIXED_H_MARGIN, START_C_BOX_NOTIFICATION + LENGTH_C_BOX_NOTIFICATION - FIXED_H_MARGIN );
         this.plot();
     }
 
@@ -618,7 +622,7 @@ public class CliView implements ViewInterface {
         /* notification box*/
         this.drawBox(START_R_BOX_NOTIFICATION,START_C_BOX_NOTIFICATION,LENGTH_R_BOX_NOTIFICATION, LENGTH_C_BOX_NOTIFICATION,Color.WHITE_BOLD_BRIGHT.escape() );
         /* leaderboard box */
-        this.drawBox(START_R_BOX_LEADERBOARD - FIXED_V_MARGIN, START_C_BOX_LEADERBOARD, LENGTH_R_BOX_LEADERBOARD, LENGTH_C_BOX_LEADERBOARD, Color.WHITE_BOLD_BRIGHT.escape());
+        this.drawBox(START_R_BOX_LEADERBOARD, START_C_BOX_LEADERBOARD, LENGTH_R_BOX_LEADERBOARD, LENGTH_C_BOX_LEADERBOARD, Color.WHITE_BOLD_BRIGHT.escape());
     }
     private void plotLobby(){
         /* notification box*/
