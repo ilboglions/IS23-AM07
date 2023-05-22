@@ -573,15 +573,15 @@ public class Game implements GameModelInterface {
 
         Optional<Player> tmpPlayer = this.searchPlayer(username);
 
-        livingRoom.unsubscribeFromListener(username);
-        players.forEach(p -> {
-            p.getBookshelf().unsubscribeFromListener(username);
-            p.unsubscribeFromListener(username);
-        });
-        chat.unsubscribeFromListener(username);
-        this.gameListener.removeSubscriber(username);
-
         if(tmpPlayer.isPresent()){
+            livingRoom.unsubscribeFromListener(username);
+            players.forEach(p -> {
+                p.getBookshelf().unsubscribeFromListener(username);
+                p.unsubscribeFromListener(username);
+            });
+            chat.unsubscribeFromListener(username);
+            this.gameListener.removeSubscriber(username);
+
             crashedPlayers.add(tmpPlayer.get());
             this.gameListener.notifyPlayerCrashed(tmpPlayer.get().getUsername());
             logger.info(username+" crashed!");
@@ -612,20 +612,11 @@ public class Game implements GameModelInterface {
      * @param userToBeUpdated the username of the user that needs to receive the updates
      */
     public void triggerAllListeners(String userToBeUpdated) {
-        if(this.isStarted){
-            ArrayList<String> tmp = new ArrayList<>();
-            for(Player player : this.players){
-                tmp.add(player.getUsername());
-            }
-
-            this.gameListener.notifyTurnOrder(tmp);
-        }
-
-
         for(Player player : players){
             try {
                 player.triggerListener(userToBeUpdated);
-                gameListener.onPlayerJoinGame(player.getUsername());
+                if(!player.getUsername().equals(userToBeUpdated))
+                    gameListener.onPlayerJoinGame(player.getUsername());
             } catch (RemoteException e) {
                 throw new RuntimeException(e);
             }
@@ -637,11 +628,12 @@ public class Game implements GameModelInterface {
         this.gameListener.onCommonCardDraw(userToBeUpdated, remoteCards);
 
         if(this.isStarted) {
-            /*ArrayList<String> tmp = new ArrayList<>();
+            ArrayList<String> tmp = new ArrayList<>();
             for(Player player : this.players){
                 tmp.add(player.getUsername());
             }
-            this.gameListener.notifyTurnOrder(tmp);*/
+
+            this.gameListener.notifyTurnOrder(tmp);
             this.gameListener.notifyPlayerInTurn(players.get(playerTurn).getUsername());
         }
     }

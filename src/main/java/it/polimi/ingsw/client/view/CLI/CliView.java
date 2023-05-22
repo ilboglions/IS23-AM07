@@ -20,6 +20,9 @@ public class CliView implements ViewInterface {
     /**
      * dimension of the game view
      */
+    /*
+        OLD DISPOSITION
+
     private static final int FIXED_H_MARGIN = 3;
     private static final int FIXED_V_MARGIN = 1;
     private static int MAX_VERT_TILES = 70; //rows.
@@ -42,7 +45,29 @@ public class CliView implements ViewInterface {
     protected static int START_C_BOX_NOTIFICATION = START_C_BOX_CHAT + 10;
     protected static int LENGTH_C_BOX_NOTIFICATION = LENGTH_C_BOX_LEADERBOARD;
 
+     */
 
+    private static final int FIXED_H_MARGIN = 3;
+    private static final int FIXED_V_MARGIN = 1;
+    protected static int MAX_VERT_TILES = 55; //rows.
+    protected static int MAX_HORIZ_TILES = 170; //cols.
+    private static final int START_C_BOX_CHAT = 110;
+    private static final int LENGTH_R_BOX_CARD = 19;
+    private static final int LENGTH_C_BOX_CARD = 100;
+    private static final int LENGTH_C_BOX_CHAT = 55;
+    private static final int START_R_BOX_CARD = MAX_VERT_TILES - LENGTH_R_BOX_CARD - 2;
+    private static final int START_C_BOX_CARD = 5;
+    private static final int START_R_CHAT = START_R_BOX_CARD + LENGTH_R_BOX_CARD;
+    private static final int LENGTH_R_BOX_LEADERBOARD = 10;
+    private static final int LENGTH_C_BOX_LEADERBOARD = LENGTH_C_BOX_CHAT - 10;
+    protected static int LENGTH_R_BOX_NOTIFICATION = 6;
+    protected static int START_R_BOX_NOTIFICATION = START_R_BOX_CARD - LENGTH_R_BOX_NOTIFICATION - 1;
+    private static final int START_R_BOX_LEADERBOARD = START_R_BOX_NOTIFICATION - LENGTH_R_BOX_LEADERBOARD - 1;
+    private static final int START_C_BOX_LEADERBOARD = START_C_BOX_CHAT + 10;
+    protected static int START_C_BOX_NOTIFICATION = START_C_BOX_CHAT + 10;
+    protected static int LENGTH_C_BOX_NOTIFICATION = LENGTH_C_BOX_LEADERBOARD;
+    private static final int START_R_MY_BOOKSHELF = 8;
+    private static final int START_C_MY_BOOKSHELF = START_C_BOX_LEADERBOARD + (LENGTH_C_BOX_LEADERBOARD - 14) / 2;
 
     private static final String SPACE = " ";
     private static final int BASE_TILE_DIM = 3;
@@ -250,7 +275,7 @@ public class CliView implements ViewInterface {
     }
 
     public void drawPersonalCard(Map<Coordinates,ItemTile> tilesMap, Map<Integer,Integer> pointsReference) throws InvalidCoordinatesException {
-        int startR = START_R_BOX_CARD + 5;
+        int startR = START_R_BOX_CARD + 4;
         int startC = START_C_BOX_CARD + 7;
         int startCBookshelf;
         int startCPoints;
@@ -351,18 +376,18 @@ public class CliView implements ViewInterface {
         int[] startingPoints;
 
         startingPoints = getStartsFromTurnOrder(order);
-        clearBox(startingPoints[0], startingPoints[0], startingPoints[0] + 8, startingPoints[1] + 30);
+        clearBox(startingPoints[0] - 3, startingPoints[1] - 1, startingPoints[0] + 8, startingPoints[1] + 15);
         for(int i=0; i < playerUsername.length(); i++){
             tiles[startingPoints[0] - 2][startingPoints[1] + i] = Color.RED_BOLD.escape() + playerUsername.charAt(i) ;
         }
 
-        this.drawBookShelf( tilesMap,startingPoints[0], startingPoints[1] );
+        this.drawBookShelf(tilesMap, startingPoints[0], startingPoints[1]);
         this.plot();
     }
 
     private int[] getStartsFromTurnOrder(int order) {
         int[] startingPoints = new int[2];
-        if (order == 0) {
+        /*if (order == 0) {
             //This is always the case of the player personal bookshelf
             startingPoints[0] = START_R_MY_BOOKSHELF;
             startingPoints[1] = START_C_MY_BOOKSHELF;
@@ -375,6 +400,21 @@ public class CliView implements ViewInterface {
         } else {
             startingPoints[0] = 25;
             startingPoints[1] = 22;
+        }*/
+
+        if (order == 0) {
+            //This is always the case of the player personal bookshelf
+            startingPoints[0] = START_R_MY_BOOKSHELF;
+            startingPoints[1] = START_C_MY_BOOKSHELF;
+        } else if (order == 1) {
+            startingPoints[0] = 5;
+            startingPoints[1] = 80;
+        } else if (order == 2) {
+            startingPoints[0] = 15;
+            startingPoints[1] = 80;
+        } else {
+            startingPoints[0] = 25;
+            startingPoints[1] = 80;
         }
 
         return startingPoints;
@@ -463,8 +503,8 @@ public class CliView implements ViewInterface {
         Coordinates coord;
         String colorTile;
 
-        int startR = 5;
-        int startC = 58;
+        int startR = 2;
+        int startC = 8;
 
         int r;
         int c;
@@ -526,10 +566,31 @@ public class CliView implements ViewInterface {
         this.plot();
     }
 
+    public void drawPlayerInTurn(String userInTurn, String thisUser){
+        String text;
+        int startR = 3;
+        int startC;
+
+        if(userInTurn.equals(thisUser))
+            text = "It's your turn";
+        else
+            text = "Turn of: " + userInTurn;
+
+        startC = START_C_BOX_LEADERBOARD + (LENGTH_C_BOX_LEADERBOARD - text.length()) / 2;
+
+        clearBox(startR - 1, START_C_BOX_LEADERBOARD - 1, startR + 1, START_C_BOX_LEADERBOARD + LENGTH_C_BOX_LEADERBOARD);
+
+        for(int i = 0; i < text.length(); i++){
+            tiles[startR][startC + i] = Color.RED_BOLD.escape() + text.charAt(i);
+        }
+
+        this.plot();
+    }
+
     @Override
     public void postNotification(String title, String description) {
         clearBox(START_R_BOX_NOTIFICATION, START_C_BOX_NOTIFICATION, START_R_BOX_NOTIFICATION + LENGTH_R_BOX_NOTIFICATION, START_C_BOX_NOTIFICATION + LENGTH_C_BOX_NOTIFICATION);
-        int spaceNeeded = printTruncateText(title.toUpperCase(),START_R_BOX_NOTIFICATION + FIXED_V_MARGIN,START_C_BOX_NOTIFICATION+FIXED_H_MARGIN, START_C_BOX_NOTIFICATION + LENGTH_C_BOX_NOTIFICATION - FIXED_H_MARGIN, Color.RED_BOLD_BRIGHT.escape());
+        int spaceNeeded = printTruncateText(title.toUpperCase(),START_R_BOX_NOTIFICATION + FIXED_V_MARGIN,START_C_BOX_NOTIFICATION+FIXED_H_MARGIN, START_C_BOX_NOTIFICATION + LENGTH_C_BOX_NOTIFICATION - FIXED_H_MARGIN, Color.RED_BOLD.escape());
         printTruncateText(description,START_R_BOX_NOTIFICATION + FIXED_V_MARGIN + spaceNeeded,START_C_BOX_NOTIFICATION+FIXED_H_MARGIN, START_C_BOX_NOTIFICATION + LENGTH_C_BOX_NOTIFICATION - FIXED_H_MARGIN );
         this.plot();
     }

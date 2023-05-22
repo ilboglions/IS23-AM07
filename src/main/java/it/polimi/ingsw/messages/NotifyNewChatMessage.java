@@ -13,7 +13,7 @@ public class NotifyNewChatMessage extends NetMessage {
         super(MessageType.NOTIFY_NEW_CHAT);
         this.sender = sender;
         this.content = content;
-        this.recipient = "broadcast";
+        this.recipient = "";
     }
     public NotifyNewChatMessage(String sender, String recipient, String content) {
         super(MessageType.NOTIFY_NEW_CHAT);

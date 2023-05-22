@@ -214,10 +214,7 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
 
     @Override
     public synchronized void notifyPlayerInTurn(String username) throws RemoteException {
-        if(username.equals(this.username))
-            view.postNotification("It's your turn!","Choose the tiles on the board!");
-        else
-            view.postNotification("It's the turn of "+username,"Let's see what's happen!");
+        view.drawPlayerInTurn(username, this.username);
     }
 
     @Override
@@ -229,6 +226,13 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
     public synchronized void notifyTurnOrder(ArrayList<String> playerOrder) throws RemoteException {
         this.players.sort(Comparator.comparingInt(playerOrder::indexOf));
         this.gameStarted = true;
+
+        for(String player : players){
+            try {
+                view.drawBookShelf(new HashMap<>(), player, (this.players.indexOf(player) - this.players.indexOf(this.username) + this.players.size()) % this.players.size());
+            } catch (InvalidCoordinatesException ignored) {
+            }
+        }
     }
 
     @Override
@@ -260,7 +264,7 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
     public synchronized void updateBookshelfStatus(String player, ArrayList<ItemTile> tilesInserted, int colChosen, Map<Coordinates, ItemTile> currentTilesMap) throws RemoteException {
         try {
             if(this.gameStarted)
-                view.drawBookShelf(currentTilesMap,player,Math.abs(this.players.indexOf(player) - this.players.indexOf(this.username)) % this.players.size());
+                view.drawBookShelf(currentTilesMap, player, (this.players.indexOf(player) - this.players.indexOf(this.username) + this.players.size()) % this.players.size());
             else
                 view.drawBookShelf(currentTilesMap,player,this.players.indexOf(player));
         } catch (InvalidCoordinatesException e) {

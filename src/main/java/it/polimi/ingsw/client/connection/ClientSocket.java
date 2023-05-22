@@ -345,7 +345,7 @@ public class ClientSocket implements ConnectionHandler{
 
     private void parse(NotifyNewChatMessage message){
         try {
-            if(message.getRecipient().equals("broadcast"))
+            if(message.getRecipient().isEmpty())
                 gameModel.receiveMessage(message.getSender(),message.getContent());
             else
                 gameModel.receiveMessage(message.getSender(), message.getRecipient(), message.getContent());

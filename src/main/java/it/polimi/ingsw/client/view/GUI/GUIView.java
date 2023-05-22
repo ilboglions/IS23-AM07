@@ -93,4 +93,9 @@ public class GUIView extends Application implements ViewInterface {
     public void drawGameScene() {
 
     }
+
+    @Override
+    public void drawPlayerInTurn(String userInTurn, String thisUser) {
+
+    }
 }
