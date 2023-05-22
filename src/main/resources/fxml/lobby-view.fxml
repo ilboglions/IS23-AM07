@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane fx:id="backgroundPane" prefHeight="0.0" prefWidth="0.0" stylesheets="@/org/kordamp/bootstrapfx/bootstrapfx.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.view.GUI.LobbyViewController">
+   <children>
+      <AnchorPane prefHeight="1080.0" prefWidth="1920.0" styleClass="anchor" stylesheets="@css/game-view.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <BorderPane layoutX="-1.0" layoutY="1.0" prefHeight="200.0" prefWidth="705.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="30.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="10.0">
+               <top>
+                  <ImageView fitHeight="176.0" fitWidth="477.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+                     <image>
+                        <Image url="@../images/PublisherMaterial/Title_2000x618px.png" />
+                     </image>
+                  </ImageView>
+               </top>
+               <bottom>
+                  <Pane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <Label fx:id="notificationLabel" contentDisplay="CENTER" prefHeight="201.0" prefWidth="740.0" styleClass="text-center" textAlignment="CENTER">
+                           <padding>
+                              <Insets left="100.0" right="100.0" />
+                           </padding>
+                        </Label>
+                     </children>
+                     <styleClass>
+                        <String fx:value="shape_corner" />
+                        <String fx:value="alert" />
+                        <String fx:value="text-center" />
+                     </styleClass>
+                  </Pane>
+               </bottom>
+               <right>
+                  <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+                     <BorderPane.margin>
+                        <Insets top="-1.0" />
+                     </BorderPane.margin>
+                  </VBox>
+               </right>
+               <left>
+                  <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER" />
+               </left>
+               <center>
+                  <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <Button fx:id="joinGameBtn" layoutX="830.0" layoutY="313.0" mnemonicParsing="false" text="Join Game" AnchorPane.rightAnchor="500.0" AnchorPane.topAnchor="313.0">
+                           <styleClass>
+                              <String fx:value="btn-lg" />
+                              <String fx:value="btn-default" />
+                           </styleClass>
+                        </Button>
+                        <Button fx:id="createGameBtn" layoutX="676.0" layoutY="313.0" mnemonicParsing="false" onAction="#onCreateGameButtonClick" text="Create Game" AnchorPane.bottomAnchor="356.0" AnchorPane.leftAnchor="600.0" AnchorPane.topAnchor="313.0">
+                           <styleClass>
+                              <String fx:value="btn-default" />
+                              <String fx:value="btn-lg" />
+                           </styleClass>
+                        </Button>
+                     </children>
+                  </AnchorPane>
+               </center>
+            </BorderPane>
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>

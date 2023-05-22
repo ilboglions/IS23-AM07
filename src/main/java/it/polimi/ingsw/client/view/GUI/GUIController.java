@@ -1,14 +1,21 @@
 package it.polimi.ingsw.client.view.GUI;
 
-import javafx.fxml.FXML;
+import it.polimi.ingsw.client.connection.ConnectionHandler;
 import javafx.scene.control.Label;
 
-public class GUIController {
-    @FXML
-    private Label welcomeText;
+public abstract class GUIController {
+    private ConnectionHandler clientController;
 
-    @FXML
-    protected void onHelloButtonClick() {
-        welcomeText.setText("Welcome to JavaFX Application!");
+    private Label notificationLabel;
+
+    public void setConnectionHandler( ConnectionHandler clientController){
+        this.clientController = clientController;
+    }
+
+    public void postNotification(String title, String desc){
+        notificationLabel.setText(desc);
+    }
+    protected ConnectionHandler getClientController(){
+        return this.clientController;
     }
 }

@@ -1,5 +1,8 @@
 package it.polimi.ingsw.client.view.GUI;
 
+import it.polimi.ingsw.client.connection.ConnectionHandler;
+import it.polimi.ingsw.client.connection.ConnectionHandlerFactory;
+import it.polimi.ingsw.client.connection.ConnectionType;
 import it.polimi.ingsw.client.view.ViewInterface;
 import it.polimi.ingsw.remoteInterfaces.RemoteCommonGoalCard;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
@@ -10,13 +13,13 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class GUIView extends Application implements ViewInterface {
-    //private final ConnectionHandler controller;
+    private ConnectionHandler controller;
+    private GUIController guiController;
 
     /*public GUIView(ConnectionType connectionType) {
         ConnectionHandlerFactory factory = new ConnectionHandlerFactory();
@@ -25,14 +28,28 @@ public class GUIView extends Application implements ViewInterface {
 
     @Override
     public void start(Stage stage) throws Exception {
-        FXMLLoader fxmlLoader = new FXMLLoader(GUIView.class.getResource("/fxml/hello-view.fxml"));
+
+        Parameters parameters = getParameters();
+        List<String> args = parameters.getRaw();
+        ConnectionType connectionType;
+        if ( args.size() == 2) {
+            connectionType = args.get(0).equals("TCP") ? ConnectionType.TCP : ConnectionType.RMI;
+        } else {
+            connectionType = ConnectionType.RMI;
+        }
+        ConnectionHandlerFactory factory = new ConnectionHandlerFactory();
+        controller = factory.createConnection(connectionType, this);
+        FXMLLoader fxmlLoader = new FXMLLoader(GUIView.class.getResource("/fxml/lobby-view.fxml"));
+        guiController = fxmlLoader.getController();
         Scene scene = new Scene(fxmlLoader.load(), 320, 240);
+
         stage.setTitle("Hello!");
         stage.setScene(scene);
         stage.show();
     }
 
     public static void main(String[] args) {
+
         launch(args);
     }
 
@@ -47,7 +64,7 @@ public class GUIView extends Application implements ViewInterface {
     }
 
     @Override
-    public void drawLivingRoom(Map<Coordinates, ItemTile> livingRoomMap) {
+    public void drawLivingRoom(Map<Coordinates, ItemTile> livingRoomMap) throws InvalidCoordinatesException {
 
     }
 

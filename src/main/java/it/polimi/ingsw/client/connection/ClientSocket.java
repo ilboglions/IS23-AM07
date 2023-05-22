@@ -9,6 +9,7 @@ import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.ConnectException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.rmi.RemoteException;
@@ -53,13 +54,14 @@ public class ClientSocket implements ConnectionHandler{
             try {
                 tempConnection = new Socket(ip, port);
                 connected = true;
+                view.postNotification("Connected to the server!", "choose your username!");
                 // here we should create some task that listens the server!
-            } catch ( UnknownHostException e) {
+            } catch ( UnknownHostException | ConnectException e) {
                 view.postNotification("Connection error", "Server this address is not reachable, trying again soon...");
                 try {
-                    this.wait(1000);
+                    TimeUnit.SECONDS.sleep(2);
                 } catch (InterruptedException ex) {
-                    throw new RuntimeException(ex);
+                    ex.printStackTrace();
                 }
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -306,7 +308,7 @@ public class ClientSocket implements ConnectionHandler{
             } catch (RemoteException e) {
                 throw new RuntimeException(e);
             }
-
+            view.postNotification("Game created successfully","");
             view.drawGameScene();
             view.postNotification("Game created successfully","");
         } else if(message.getConfirmJoinedGame()){
