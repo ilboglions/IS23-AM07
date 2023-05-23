@@ -149,7 +149,7 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
      * @throws RemoteException
      */
     public void handleCrashedPlayer(String username) throws PlayerNotFoundException, RemoteException {
-        synchronized (lobbyLock) {
+        synchronized (timers) {
             this.lobbyModel.handleCrashedPlayer(username);
             if( timers.containsKey(username))
                 this.stopTimer(username);
@@ -161,14 +161,16 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
      * @param username the username of the player
      */
     private void initializeTimer(String username){
-        this.timers.put(username, new ReschedulableTimer());
-        this.timers.get(username).schedule(() -> {
-            try {
-                this.handleCrashedPlayer(username);
-            } catch (PlayerNotFoundException | RemoteException e) {
-                throw new RuntimeException(e);
-            }
-        },this.timerDelay);
+        synchronized (this.timers){
+            this.timers.put(username, new ReschedulableTimer());
+            this.timers.get(username).schedule(() -> {
+                try {
+                    this.handleCrashedPlayer(username);
+                } catch (PlayerNotFoundException | RemoteException e) {
+                    throw new RuntimeException(e);
+                }
+            },this.timerDelay);
+        }
     }
 
     /**
@@ -176,8 +178,10 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
      * @param username the username of the player
      */
     private void stopTimer(String username){
-        if(timers.containsKey(username))
-            this.timers.get(username).cancel();
+        synchronized (this.timers){
+            if(timers.containsKey(username))
+                this.timers.get(username).cancel();
+        }
     }
 
     /**

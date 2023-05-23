@@ -57,8 +57,8 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
      * @return true, if the action is permitted
      */
     public boolean checkValidRetrieve(String player, ArrayList<Coordinates> coords) throws RemoteException, PlayerNotInTurnException, GameNotStartedException, GameEndedException, EmptySlotException {
+        this.rescheduleTimer(player);
         synchronized (gameLock) {
-            this.rescheduleTimer(player);
             if(!player.equals(gameModel.getPlayerInTurn())) throw new PlayerNotInTurnException();
 
             if( gameModel.checkValidRetrieve(coords)){
@@ -79,9 +79,8 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
      * @param column the column where the coordinates will be inserted
      */
     public void moveTiles(String player, ArrayList<Coordinates> source, int column) throws RemoteException, GameNotStartedException, GameEndedException, NotEnoughSpaceException, PlayerNotInTurnException, EmptySlotException, InvalidCoordinatesException {
+        this.rescheduleTimer(player);
         synchronized (gameLock) {
-            this.rescheduleTimer(player);
-
             if(!player.equals(gameModel.getPlayerInTurn())) throw new PlayerNotInTurnException();
 
             if(!this.selectedTiles.containsAll(source) || this.selectedTiles.size() != source.size()) throw new InvalidCoordinatesException("the selected tiles don't match!");
@@ -269,7 +268,7 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
      * @param username the username of the player
      */
     private void stopTimer(String username){
-        synchronized (gameLock) {
+        synchronized (timers) {
             this.timers.get(username).cancel();
         }
     }
@@ -280,7 +279,7 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
      * @throws RemoteException if a connection problem occurred
      */
     public void triggerHeartBeat(String username) throws RemoteException{
-        synchronized (gameLock){
+        synchronized (timers){
             logger.info("HEARTBEAT RECEIVED BY "+username);
             if(this.timers.get(username) == null || !this.timers.get(username).isScheduled()){
                 this.initializeTimer(username);

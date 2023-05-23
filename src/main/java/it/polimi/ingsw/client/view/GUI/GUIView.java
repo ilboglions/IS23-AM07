@@ -33,7 +33,7 @@ public class GUIView extends Application implements ViewInterface {
         List<String> args = parameters.getRaw();
         ConnectionType connectionType;
         if ( args.size() == 2) {
-            connectionType = args.get(0).equals("TCP") ? ConnectionType.TCP : ConnectionType.RMI;
+            connectionType = args.get(0).equals("--TCP") ? ConnectionType.TCP : ConnectionType.RMI;
         } else {
             connectionType = ConnectionType.RMI;
         }

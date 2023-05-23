@@ -85,7 +85,7 @@ public class CliView implements ViewInterface {
         ViewInterface view;
         if (args.length == 2) {
 
-            c = args[0].equals("TCP") ? ConnectionType.TCP : ConnectionType.RMI;
+            c = args[1].equals("--TCP") ? ConnectionType.TCP : ConnectionType.RMI;
 
             //ViewInterface cliView = args[1].equals("CLI") ?  new CliView(c);
 
@@ -98,10 +98,10 @@ public class CliView implements ViewInterface {
     }
 
     public CliView(ConnectionType connectionType){
+        this.setScenario(Scenario.LOBBY);
         ConnectionHandlerFactory factory = new ConnectionHandlerFactory();
         controller = factory.createConnection(connectionType, this);
         inputScan =  new Scanner(System.in);
-        this.setScenario(Scenario.LOBBY);
         this.printAsciiArtTitle();
         this.printWelcomeText();
         this.plot();
