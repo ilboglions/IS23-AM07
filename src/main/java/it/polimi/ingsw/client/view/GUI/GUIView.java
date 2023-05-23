@@ -32,10 +32,11 @@ public class GUIView extends Application implements ViewInterface {
         Parameters parameters = getParameters();
         List<String> args = parameters.getRaw();
         ConnectionType connectionType;
-        if ( args.size() == 2) {
+        if ( args.size() == 1) {
             connectionType = args.get(0).equals("--TCP") ? ConnectionType.TCP : ConnectionType.RMI;
         } else {
             connectionType = ConnectionType.RMI;
+
         }
         ConnectionHandlerFactory factory = new ConnectionHandlerFactory();
         controller = factory.createConnection(connectionType, this);

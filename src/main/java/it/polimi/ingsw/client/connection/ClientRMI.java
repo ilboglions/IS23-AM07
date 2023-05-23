@@ -8,6 +8,7 @@ import it.polimi.ingsw.server.ReschedulableTimer;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.*;
 
+import java.rmi.ConnectException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -30,11 +31,27 @@ public class ClientRMI implements ConnectionHandler{
     private Game gameModel;
 
     public ClientRMI(ViewInterface view) throws RemoteException, NotBoundException {
+        boolean connected = false;
+        RemoteLobbyController tempLobbyController = null;
+
         this.timer = new ReschedulableTimer();
         this.heartBeatManager = Executors.newSingleThreadScheduledExecutor();
-        this.registry= LocateRegistry.getRegistry();
-        String remoteObjectName = "lobby_controller";
-        this.lobbyController =  (RemoteLobbyController) registry.lookup(remoteObjectName);
+
+        while(!connected){
+            try{
+                this.registry= LocateRegistry.getRegistry();
+                String remoteObjectName = "lobby_controller";
+                tempLobbyController =  (RemoteLobbyController) registry.lookup(remoteObjectName);
+                connected = true;
+            }catch(ConnectException e){
+                try {
+                    TimeUnit.SECONDS.sleep(2);
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+        this.lobbyController = tempLobbyController;
         this.view = view;
         this.sendHeartBeat();
     }

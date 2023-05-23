@@ -83,9 +83,9 @@ public class CliView implements ViewInterface {
     public static void main(String[] args){
         ConnectionType c;
         ViewInterface view;
-        if (args.length == 2) {
+        if (args.length == 1) {
 
-            c = args[1].equals("--TCP") ? ConnectionType.TCP : ConnectionType.RMI;
+            c = args[0].equals("--TCP") ? ConnectionType.TCP : ConnectionType.RMI;
 
             //ViewInterface cliView = args[1].equals("CLI") ?  new CliView(c);
 
