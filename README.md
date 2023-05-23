@@ -8,14 +8,14 @@
 
 # Development State
 
-| Functionality   | State           | Current | Comment          |
-|-----------------|-----------------| ---- |------------------|
-| Model           | :green_circle:  | | under testing    |
-| Controller      | :yellow_circle: | | under testing    |
-| Chat            | :green_circle:  | |                  |
-| Multi Game      | :green_circle:  | | under testing    |
-| Game Resiliance | :yellow_circle: | | under testing    |
-| RMI             | :yellow_circle: | | under testing    |
-| TCP             | :yellow_circle: | | under testing    |
-| CLI             | :yellow_circle: | | work in progress |
-| GUI             | :red_circle:    | |                  |
+| Functionality   | State | Current | Comment                                         |
+|-----------------|----| ---- |-------------------------------------------------|
+| Model           | :green_circle: | |                                                 |
+| Controller      | :green_circle: | |                                                 |
+| Chat            | :green_circle: | |                                                 |
+| Multi Game      | :green_circle: | |                                                 |
+| Game Resiliance | :green_circle: | | still doing minors check                        |
+| RMI             | :green_circle: | |                                                 |
+| TCP             | :green_circle: | |                                                 |
+| CLI             | :green_circle: | | some improvement will be released in the future |
+| GUI             | :red_circle: | |                                                 |

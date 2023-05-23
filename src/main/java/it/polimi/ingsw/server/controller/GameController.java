@@ -270,6 +270,7 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
     private void stopTimer(String username){
         synchronized (timers) {
             this.timers.get(username).cancel();
+            this.timers.remove(username);
         }
     }
 

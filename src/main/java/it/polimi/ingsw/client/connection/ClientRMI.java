@@ -73,6 +73,7 @@ public class ClientRMI implements ConnectionHandler{
                 view.drawGameScene();
                 view.postNotification("welcome back!","Reconnected to your previous game");
                 gameController.triggerHeartBeat(this.username);
+                this.gameModel = new Game(this.view,this.username);
                 this.subscribeListeners();
                 gameController.triggerAllListeners(this.username);
             }
@@ -95,7 +96,7 @@ public class ClientRMI implements ConnectionHandler{
             this.gameController.triggerAllListeners(this.username);
             view.postNotification("Game created successfully","");
         } catch (InvalidPlayerException e) {
-            throw new RuntimeException(e);
+            view.postNotification("Invalid player!","You can't join a game without loggin in!");
         } catch (PlayersNumberOutOfRange e) {
             view.postNotification("The number of player is out of range!","Create the game with less players");
         }
@@ -133,7 +134,7 @@ public class ClientRMI implements ConnectionHandler{
         } catch (NoAvailableGameException e) {
             view.postNotification("No game is available!",e.getMessage());
         } catch (InvalidPlayerException e) {
-            throw new RuntimeException(e);
+            view.postNotification("Invalid player!","You can't join a game without loggin in!");
         }
 
     }
