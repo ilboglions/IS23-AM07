@@ -22,7 +22,7 @@ public abstract class Listener<T extends ListenerSubscriber> implements Remote {
      * gets the set of observers
      * @return the set of the subscribed observers
      */
-    protected Set<T> getSubscribers() {
+    public Set<T> getSubscribers() {
         return subscribers;
     }
 
@@ -31,6 +31,7 @@ public abstract class Listener<T extends ListenerSubscriber> implements Remote {
      * @param subscriber the observer to be added
      */
     public void addSubscriber(T subscriber) {
+        if(subscriber == null) return;
         subscribers.add(subscriber);
     }
 
@@ -39,12 +40,13 @@ public abstract class Listener<T extends ListenerSubscriber> implements Remote {
      * @param username the username of the subscriber
      */
     public void removeSubscriber(String username){
+
         Set<T> subToRemove = subscribers.stream().filter( s -> {
             try {
                 return s.getSubscriberUsername().equals(username);
-            } catch (RemoteException ignored) {
+            } catch (RemoteException e) {
+                return true;
             }
-            return false;
         }).collect(Collectors.toSet());
         this.subscribers.removeAll(subToRemove);
     }

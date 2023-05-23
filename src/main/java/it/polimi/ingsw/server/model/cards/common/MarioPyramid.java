@@ -5,6 +5,8 @@ import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.server.model.exceptions.PlayersNumberOutOfRange;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 
+import java.rmi.RemoteException;
+
 public class MarioPyramid extends CommonGoalCard{
 
     /**
@@ -14,7 +16,7 @@ public class MarioPyramid extends CommonGoalCard{
      * @param description it is used for explain the card's constraint
      * @throws PlayersNumberOutOfRange when nPlayers exceed the numbers of the tile, tooManyPlayersException will be thrown
      */
-    public MarioPyramid(int nPlayers, String description, CommonCardType name) throws PlayersNumberOutOfRange {
+    public MarioPyramid(int nPlayers, String description, CommonCardType name) throws PlayersNumberOutOfRange, RemoteException {
         super(nPlayers, description, name);
     }
 

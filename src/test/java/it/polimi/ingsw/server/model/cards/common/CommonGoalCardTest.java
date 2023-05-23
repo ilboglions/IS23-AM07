@@ -9,6 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.rmi.RemoteException;
 import java.util.EmptyStackException;
 import java.util.Stack;
 
@@ -36,7 +37,7 @@ public class CommonGoalCardTest {
      */
     @Test
     @DisplayName("getDescriptionTest")
-    void getDescriptionTest() throws PlayersNumberOutOfRange {
+    void getDescriptionTest() throws PlayersNumberOutOfRange, RemoteException {
         CommonGoalCard card = new MarioPyramid(3,"description", CommonCardType.CORNERS);
         assertEquals("description", card.getDescription());
     }
@@ -47,7 +48,7 @@ public class CommonGoalCardTest {
      */
     @Test
     @DisplayName("tokenStackfillingTester")
-    void tokenStackTester () throws PlayersNumberOutOfRange {
+    void tokenStackTester () throws PlayersNumberOutOfRange, RemoteException {
         CommonGoalCard card = new MarioPyramid(2,"description", CommonCardType.CORNERS);
         Stack<ScoringToken> tokens = card.getTokenStack();
         assertEquals(TokenPoint.EIGHT, tokens.pop().getScoreValue());
@@ -70,7 +71,7 @@ public class CommonGoalCardTest {
     }
     @Test
     @DisplayName("popTokenTest")
-    void popTokenToTest () throws PlayersNumberOutOfRange, TokenAlreadyGivenException {
+    void popTokenToTest () throws PlayersNumberOutOfRange, TokenAlreadyGivenException, RemoteException {
         CommonGoalCard card = new MarioPyramid(4,"description", CommonCardType.CORNERS);
         assertEquals(TokenPoint.EIGHT, card.popTokenTo("Player1").getScoreValue());
         assertThrows(TokenAlreadyGivenException.class, () ->{

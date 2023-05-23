@@ -4,6 +4,8 @@ import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -12,7 +14,9 @@ import java.util.Optional;
 /**
  * the bookshelf class stores the tiles taken by the players in the game, it can also been use for a bookshelf pattern reference in cards
  */
-public abstract class Bookshelf {
+public abstract class Bookshelf implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 7808215898704889350L;
     /**
      * the matrix that stores the tiles assigned
      */

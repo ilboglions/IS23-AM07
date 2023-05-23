@@ -114,11 +114,21 @@ public class Player {
 
         if(count == 0)
             return count;
-        else if(count >= Collections.max(personalCard.getPointsReference().keySet())) {
-            count = Collections.max(personalCard.getPointsReference().keySet());
+        else {
+            try {
+                if(count >= Collections.max(personalCard.getPointsReference().keySet())) {
+                    count = Collections.max(personalCard.getPointsReference().keySet());
+                }
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
         }
 
-        return personalCard.getPointsReference().get(count);
+        try {
+            return personalCard.getPointsReference().get(count);
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -219,7 +229,7 @@ public class Player {
      */
     public void assignPersonalCard(PersonalGoalCard card) throws RemoteException {
         this.personalCard = Objects.requireNonNull(card);
-        playerListener.onPersonalGoalCardAssigned(this.username, card);
+        playerListener.onPersonalGoalCardAssigned(this.username, personalCard);
     }
 
     /**
@@ -247,10 +257,14 @@ public class Player {
     public void triggerListener(String userToBeUpdated) throws RemoteException {
         Objects.requireNonNull(userToBeUpdated);
 
-        this.playerListener.triggerListener(this.username, userToBeUpdated, this.points, new ArrayList<>(this.tokenAcquired));
+        this.playerListener.triggerListener(this.username, userToBeUpdated, this.points, new ArrayList<>(this.tokenAcquired), this.personalCard);
     }
 
     public void unsubscribeFromListener(String username) {
         this.playerListener.removeSubscriber(username);
+    }
+
+    public Set<PlayerSubscriber> getSubs() {
+        return new HashSet<>(this.playerListener.getSubscribers());
     }
 }

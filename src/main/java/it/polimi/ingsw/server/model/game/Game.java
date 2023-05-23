@@ -1,6 +1,7 @@
 package it.polimi.ingsw.server.model.game;
 
 import it.polimi.ingsw.remoteInterfaces.*;
+import it.polimi.ingsw.server.ReschedulableTimer;
 import it.polimi.ingsw.server.model.chat.Chat;
 import it.polimi.ingsw.server.model.chat.Message;
 import it.polimi.ingsw.server.model.exceptions.SenderEqualsRecipientException;
@@ -58,6 +59,7 @@ public class Game implements GameModelInterface {
     /**
      * Store the index of the current player in the round
      */
+    private boolean isPaused;
     private int playerTurn;
     /**
      * Store if there is a player that have completed the bookshelf, so if it is the last round of the game
@@ -81,6 +83,8 @@ public class Game implements GameModelInterface {
      * the listener to the game status
      */
     private final GameListener gameListener;
+    private final ReschedulableTimer crashTimer;
+    private final long crashTimerDelay = 60000;
 
     /**
      * Constructor of the Game objects, it initializes all the attributes, set stdPointsReference, draw the CommonGoalCard, add the host to the game and assign to him a PersonalGoalCard
@@ -102,6 +106,7 @@ public class Game implements GameModelInterface {
         this.deckPersonal = new DeckPersonal("personalCards.json", "pointsReference.json");
         this.bagHolder = new BagHolder();
         this.isStarted = false;
+        this.isPaused = false;
         this.isLastTurn = false;
         this.playerTurn = -1; //game not started
         this.stdPointsReference = new HashMap<>();
@@ -110,16 +115,14 @@ public class Game implements GameModelInterface {
         this.stdPointsReference.put(4, 3); //4 adjacent 3 points
         this.stdPointsReference.put(5, 5); //5 adjacent 5 points
         this.stdPointsReference.put(6, 8); //6 or more adjacent 8 points
-        this.commonGoalCards = deckCommon.draw(2);
-        this.players.add(host);
         try {
-            host.assignPersonalCard(deckPersonal.draw(1).get(0));
+            this.commonGoalCards = deckCommon.draw(2);
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
+        this.players.add(host);
 
-        ArrayList<RemoteCommonGoalCard> remoteCards = new ArrayList<>(this.commonGoalCards);
-        this.gameListener.onPlayerJoinGame(host.getUsername(), remoteCards);
+        this.crashTimer = new ReschedulableTimer();
     }
 
     @Override
@@ -169,9 +172,32 @@ public class Game implements GameModelInterface {
         int firstPlayerIndex = random.nextInt(this.numPlayers);
 
         Collections.rotate(players, -firstPlayerIndex);
+
+        players.forEach(
+                p -> {
+                    try {
+                        p.assignPersonalCard(deckPersonal.draw(1).get(0));
+                    } catch (RemoteException e) {
+                        throw new RuntimeException(e);
+                    } catch (NegativeFieldException e) {
+                        throw new RuntimeException(e);
+                    } catch (NotEnoughCardsException e) {
+                        throw new RuntimeException(e);
+                    }
+                    ArrayList<RemoteCommonGoalCard> remoteCards = new ArrayList<>(this.commonGoalCards);
+                    this.gameListener.onCommonCardDraw(p.getUsername(), remoteCards);
+                }
+        );
+
+
         this.isStarted = true;
         this.playerTurn = 0;
         this.refillLivingRoom();
+        ArrayList<String> tmp = new ArrayList<>();
+        for(Player player : this.players){
+            tmp.add(player.getUsername());
+        }
+        this.gameListener.notifyTurnOrder(tmp);
         this.gameListener.notifyPlayerInTurn(players.get(0).getUsername());
     }
 
@@ -180,12 +206,14 @@ public class Game implements GameModelInterface {
      * @param username the username of the player whose points you wish to update
      * @throws InvalidPlayerException if there isn't a player with that username inside the game
      * @throws NotEnoughSpaceException if there was an error with the CommonGoalCard
+     * @throws GameNotStartedException if the game is not started yet
      */
-    public void updatePlayerPoints(String username) throws InvalidPlayerException, NotEnoughSpaceException {
+    public void updatePlayerPoints(String username) throws InvalidPlayerException, NotEnoughSpaceException, GameNotStartedException {
+        if (!this.isStarted) throw new GameNotStartedException("the game has not started yet!");
         Optional<Player> player = searchPlayer(username);
 
         if(player.isEmpty())
-            throw new InvalidPlayerException();
+            throw new InvalidPlayerException("Player is null");
         Player p = player.get();
         for ( CommonGoalCard c : this.commonGoalCards) {
             if( c.verifyConstraint(player.get().getBookshelf()) ){
@@ -387,11 +415,10 @@ public class Game implements GameModelInterface {
             if(!userUsed(newPlayer.getUsername())) {
                 players.add(newPlayer); // player added to game active player
 
-                ArrayList<RemoteCommonGoalCard> remoteCards = new ArrayList<>(this.commonGoalCards);
-                gameListener.onPlayerJoinGame(newPlayer.getUsername(), remoteCards);
-                this.triggerAllListeners(newPlayer.getUsername());
+                gameListener.onPlayerJoinGame(newPlayer.getUsername());
+                this.updateListenerSubscriptions();
 
-                try {
+               /* try {
                     try {
                         newPlayer.assignPersonalCard(deckPersonal.draw(1).get(0));
                     } catch (RemoteException e) {
@@ -401,10 +428,26 @@ public class Game implements GameModelInterface {
                     throw new RuntimeException(e);
                 } catch (NegativeFieldException e) {
                     throw new RuntimeException(e);
-                }
+                } */
             } else {
                 throw new NicknameAlreadyUsedException("A player with the same nickname is already present in the game");
             }
+        }
+    }
+
+    private void updateListenerSubscriptions() {
+        Set<PlayerSubscriber> psubs = new HashSet<>();
+        Set<BookshelfSubscriber> bsubs = new HashSet<>();
+        for( Player p : players){
+            psubs.addAll(p.getSubs());
+            bsubs.addAll(p.getBookshelf().getSubs());
+        }
+        for( PlayerSubscriber ps : psubs){
+            this.subscribeToListener(ps);
+        }
+
+        for( BookshelfSubscriber bs : bsubs ){
+            this.subscribeToListener(bs);
         }
     }
 
@@ -452,6 +495,10 @@ public class Game implements GameModelInterface {
     public boolean setPlayerTurn(){
 
         if(this.isLastTurn && this.playerTurn == this.players.size() - 1){
+            try {
+                this.getWinner();
+            } catch (GameNotEndedException | GameNotStartedException ignored) {
+            }
             return false;
         }
 
@@ -472,7 +519,7 @@ public class Game implements GameModelInterface {
      * @throws InvalidPlayerException if there isn't a player with that username inside the game
      */
     public ArrayList<Message> getPlayerMessages(String player) throws InvalidPlayerException {
-        if(this.searchPlayer(player).isEmpty()) throw new InvalidPlayerException();
+        if(this.searchPlayer(player).isEmpty()) throw new InvalidPlayerException("Player is null");
 
         return chat.getPlayerMessages(player);
     }
@@ -486,8 +533,8 @@ public class Game implements GameModelInterface {
      * @throws InvalidPlayerException if there isn't a player with that username inside the game
      */
     public void postMessage(String sender, String receiver, String message) throws SenderEqualsRecipientException, InvalidPlayerException {
-        if(this.searchPlayer(sender).isEmpty()) throw new InvalidPlayerException();
-        if( this.searchPlayer(receiver).isEmpty() ) throw new InvalidPlayerException();
+        if(this.searchPlayer(sender).isEmpty()) throw new InvalidPlayerException("Player is null");
+        if( this.searchPlayer(receiver).isEmpty() ) throw new InvalidPlayerException("Player is null");
 
         chat.postMessage(new Message(sender, receiver, message));
     }
@@ -499,7 +546,7 @@ public class Game implements GameModelInterface {
      * @throws InvalidPlayerException if there isn't a player with that username inside the game
      */
     public void postMessage(String sender, String message) throws InvalidPlayerException {
-        if(this.searchPlayer(sender).isEmpty()) throw new InvalidPlayerException();
+        if(this.searchPlayer(sender).isEmpty()) throw new InvalidPlayerException("Player is null");
 
         try {
             chat.postMessage(new Message(sender, message));
@@ -536,20 +583,27 @@ public class Game implements GameModelInterface {
 
         Optional<Player> tmpPlayer = this.searchPlayer(username);
 
-        livingRoom.unsubscribeFromListener(username);
-        players.forEach(p -> {
-            p.getBookshelf().unsubscribeFromListener(username);
-            p.unsubscribeFromListener(username);
-        });
-        chat.unsubscribeFromListener(username);
-        this.gameListener.removeSubscriber(username);
-
         if(tmpPlayer.isPresent()){
+            livingRoom.unsubscribeFromListener(username);
+            players.forEach(p -> {
+                p.getBookshelf().unsubscribeFromListener(username);
+                p.unsubscribeFromListener(username);
+            });
+            chat.unsubscribeFromListener(username);
+            this.gameListener.removeSubscriber(username);
+
             crashedPlayers.add(tmpPlayer.get());
+            this.gameListener.notifyPlayerCrashed(tmpPlayer.get().getUsername());
             logger.info(username+" crashed!");
         }
         else
             throw new PlayerNotFoundException("The player with this username has not been found in the game");
+
+        if(crashedPlayers.size() == numPlayers - 1) {
+            this.isPaused = true;
+            this.crashTimer.schedule(this.gameListener::notifyCrashedGame, this.crashTimerDelay);
+            this.gameListener.notifyPausedGame();
+        }
     }
 
     /**
@@ -567,6 +621,12 @@ public class Game implements GameModelInterface {
         }
         else
             throw new PlayerNotFoundException("The player with this username has not been found in the game");
+
+        if(this.isPaused) {
+            isPaused = false;
+            this.crashTimer.cancel();
+            this.gameListener.notifyResumedGame();
+        }
     }
 
     /**
@@ -577,6 +637,8 @@ public class Game implements GameModelInterface {
         for(Player player : players){
             try {
                 player.triggerListener(userToBeUpdated);
+                if(!player.getUsername().equals(userToBeUpdated))
+                    gameListener.onPlayerJoinGame(player.getUsername());
             } catch (RemoteException e) {
                 throw new RuntimeException(e);
             }
@@ -584,5 +646,17 @@ public class Game implements GameModelInterface {
         }
 
         this.livingRoom.triggerListener(userToBeUpdated);
+        ArrayList<RemoteCommonGoalCard> remoteCards = new ArrayList<>(this.commonGoalCards);
+        this.gameListener.onCommonCardDraw(userToBeUpdated, remoteCards);
+
+        if(this.isStarted) {
+            ArrayList<String> tmp = new ArrayList<>();
+            for(Player player : this.players){
+                tmp.add(player.getUsername());
+            }
+
+            this.gameListener.notifyTurnOrder(tmp);
+            this.gameListener.notifyPlayerInTurn(players.get(playerTurn).getUsername());
+        }
     }
 }

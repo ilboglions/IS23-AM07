@@ -10,6 +10,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+
+import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,7 +23,7 @@ public class FiveXTilesTest {
      */
     @BeforeEach
     @DisplayName("Card creation test")
-    void  createCard() throws PlayersNumberOutOfRange {
+    void  createCard() throws PlayersNumberOutOfRange, RemoteException {
         assertThrows(PlayersNumberOutOfRange.class, () -> {
             new FiveXTiles(0,"",CommonCardType.CORNERS, true);});
         assertThrows(PlayersNumberOutOfRange.class, () -> {
@@ -58,7 +60,7 @@ public class FiveXTilesTest {
      */
     @Test
     @DisplayName("sameTiles False test")
-    void FalsesameTilesTest() throws InvalidCoordinatesException, PlayersNumberOutOfRange {
+    void FalsesameTilesTest() throws InvalidCoordinatesException, PlayersNumberOutOfRange, RemoteException {
         card = new FiveXTiles(2,"description_test",CommonCardType.CORNERS, false);
         Map<Coordinates, ItemTile> testtiles = new HashMap<>();
         testtiles.put(new Coordinates(1,1), ItemTile.CAT);

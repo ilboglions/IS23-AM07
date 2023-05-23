@@ -12,7 +12,7 @@ public class CommonGoalCardsUpdateMessage extends NetMessage {
     private final ArrayList<RemoteCommonGoalCard> commonGoalCards;
 
     public CommonGoalCardsUpdateMessage(ArrayList<RemoteCommonGoalCard> commonGoalCards) {
-        super(MessageType.USER_GAME_CARDS);
+        super(MessageType.COMMON_CARDS_UPDATE);
         this.commonGoalCards = commonGoalCards;
     }
 

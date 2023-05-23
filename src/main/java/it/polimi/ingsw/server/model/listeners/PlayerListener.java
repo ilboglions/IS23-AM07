@@ -50,7 +50,7 @@ public class PlayerListener extends Listener<PlayerSubscriber> {
         Set<PlayerSubscriber> subscribers = this.getSubscribers();
 
         for (PlayerSubscriber sub : subscribers) {
-            if( sub.getSubscriberUsername().equals(player)){
+            if(sub.getSubscriberUsername().equals(player)){
                 sub.updatePersonalGoalCard(player, personalGoalCard);
             }
         }
@@ -63,13 +63,16 @@ public class PlayerListener extends Listener<PlayerSubscriber> {
      * @param points the current points of the player
      * @param tokens the current tokens of the player
      */
-    public void triggerListener(String username, String userToBeUpdated, int points, ArrayList<ScoringToken> tokens) throws RemoteException {
+    public void triggerListener(String username, String userToBeUpdated, int points, ArrayList<ScoringToken> tokens, RemotePersonalGoalCard personalGoalCard) throws RemoteException {
         Set<PlayerSubscriber> subscribers = this.getSubscribers();
 
         for (PlayerSubscriber sub : subscribers) {
             if(sub.getSubscriberUsername().equals(userToBeUpdated)){
                 sub.updatePoints(username, points, 0);
                 sub.updateTokens(username, tokens);
+
+                if(personalGoalCard != null && sub.getSubscriberUsername().equals(username))
+                    sub.updatePersonalGoalCard(username,personalGoalCard);
             }
         }
     }

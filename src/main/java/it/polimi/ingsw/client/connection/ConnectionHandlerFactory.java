@@ -1,11 +1,13 @@
 package it.polimi.ingsw.client.connection;
 
-import it.polimi.ingsw.client.view.CliView;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import it.polimi.ingsw.client.view.ViewInterface;
 
-import javax.swing.text.View;
+import java.io.InputStreamReader;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.Objects;
 
 public class ConnectionHandlerFactory {
     public ConnectionHandler createConnection(ConnectionType type, ViewInterface view){
@@ -16,6 +18,12 @@ public class ConnectionHandlerFactory {
                 throw new RuntimeException(e);
             }
         }
-        return new ClientSocket("127.0.0.1",4567,view);
+
+        Gson gson = new Gson();
+        JsonObject job = gson.fromJson(new InputStreamReader(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("HostAndPort.json"))), JsonObject.class);
+        int portNumber = gson.fromJson(job.get("portNumber"), Integer.class);
+        String hostName = gson.fromJson(job.get("hostName"), String.class);
+
+        return new ClientSocket(hostName,portNumber,view);
     }
 }

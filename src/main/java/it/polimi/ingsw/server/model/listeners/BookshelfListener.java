@@ -20,11 +20,15 @@ public class BookshelfListener extends Listener<BookshelfSubscriber> {
      * @param insertedTiles the tiles inserted, the first one is the first to be inserted in the bookshelf
      * @param col the column where the tiles are insert
      */
-    public void onBookshelfChange(String player, ArrayList<ItemTile> insertedTiles, int col){
+    public void onBookshelfChange(String player, ArrayList<ItemTile> insertedTiles, int col, Map<Coordinates, ItemTile> currentTilesMap){
         Set<BookshelfSubscriber> observers = this.getSubscribers();
 
         for (BookshelfSubscriber o : observers) {
-            o.updateBookshelfStatus(player, insertedTiles, col);
+            try {
+                o.updateBookshelfStatus(player, insertedTiles, col, currentTilesMap);
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -40,10 +44,10 @@ public class BookshelfListener extends Listener<BookshelfSubscriber> {
         for (BookshelfSubscriber sub : subscribers) {
             try {
                 if(sub.getSubscriberUsername().equals(userToBeUpdated)){
-                    sub.updateBookshelfComplete(currentTilesMap, username);
+                    sub.updateBookshelfStatus(username, new ArrayList<>(), 0, currentTilesMap);
                 }
-            } catch (RemoteException ignored) {
-
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
             }
         }
     }

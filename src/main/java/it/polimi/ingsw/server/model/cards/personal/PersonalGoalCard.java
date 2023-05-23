@@ -7,6 +7,8 @@ import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 
 import java.io.Serial;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -14,7 +16,7 @@ import java.util.Objects;
 /**
  * PersonalGoalCard represent the card assigned to a specific player. They represent a pattern that should be respected for earning more points
  */
-public class PersonalGoalCard implements RemotePersonalGoalCard {
+public class PersonalGoalCard extends UnicastRemoteObject implements RemotePersonalGoalCard {
     @Serial
     private static final long serialVersionUID = 158808678662870084L;
     /**
@@ -31,7 +33,8 @@ public class PersonalGoalCard implements RemotePersonalGoalCard {
      * @param pattern is the pattern to be load in the card bookshelf assigned to the card
      * @param pointsReference is the parameter to be assigned to the point reference attribute
      */
-    public PersonalGoalCard(Map<Coordinates, ItemTile> pattern, Map<Integer,Integer> pointsReference){
+    public PersonalGoalCard(Map<Coordinates, ItemTile> pattern, Map<Integer,Integer> pointsReference) throws RemoteException {
+        super();
         Objects.requireNonNull(pattern, "You passed a null instead of a pattern Map");
         Objects.requireNonNull(pointsReference, "You passed a null instead of a pointsReference Map");
 
@@ -63,7 +66,7 @@ public class PersonalGoalCard implements RemotePersonalGoalCard {
         return new CardBookshelf(tempPattern);
     }
 
-    public Map<Coordinates, ItemTile> getCardPattern(){
+    public Map<Coordinates, ItemTile> getCardPattern() throws RemoteException{
         Map<Coordinates, ItemTile> itemTileMap = new HashMap<>();
         for( int r = 0; r < bookshelf.getRows(); r++){
             for( int c = 0; c < bookshelf.getColumns(); c++) {
@@ -83,7 +86,7 @@ public class PersonalGoalCard implements RemotePersonalGoalCard {
      * a simple getter method that returns the point reference of the card
      * @return the points reference used to evaluate the points acquired
      */
-    public Map<Integer, Integer> getPointsReference() {
+    public Map<Integer, Integer> getPointsReference() throws RemoteException {
         return new HashMap<>(pointsReference);
     }
 }

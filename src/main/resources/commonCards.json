@@ -57,7 +57,7 @@
   },
   {
     "cardType": "NadjacentElements",
-    "description": "Six groups each containing at least 2 tiles of the same type (not necessarily in the depicted shape).\nThe tiles of one group can be different from those of another group.",
+    "description": "Six groups each containing at least 2 tiles of the same type (not necessarily in the depicted shape). The tiles of one group can be different from those of another group.",
     "name": "TWO_TILES",
     "Attributes": {
       "nGroups": 6,
@@ -67,7 +67,7 @@
   },
   {
     "cardType": "NadjacentElements",
-    "description": "Four groups each containing at least 4 tiles of the same type (not necessarily in the depicted shape).\nThe tiles of one group can be different from those of another group.",
+    "description": "Four groups each containing at least 4 tiles of the same type (not necessarily in the depicted shape). The tiles of one group can be different from those of another group.",
     "name": "FOUR_TILES",
     "Attributes": {
       "nGroups": 4,
@@ -88,7 +88,7 @@
   },
   {
     "cardType": "FullRows",
-    "description": "Two lines each formed by 5 different  types of tiles. One line can show the same or a different combination of the other line.",
+    "description": "Two lines each formed by 5 different types of tiles. One line can show the same or a different combination of the other line.",
     "name": "TWO_LINES_DIFFERENT",
     "Attributes": {
       "sameTiles": false,
@@ -108,7 +108,7 @@
   },
   {
     "cardType": "FullColumns",
-    "description": "Three columns each formed by 6 tiles of maximum three different types.\n One column can show the same or a different combination of another column.",
+    "description": "Three columns each formed by 6 tiles of maximum three different types. One column can show the same or a different combination of another column.",
     "name": "SIX_COLUMN_TILES",
     "Attributes": {
       "sameTiles": true,
@@ -118,7 +118,7 @@
   },
   {
     "cardType": "NequalsSquares",
-    "description": "Two groups each containing 4 tiles of the same type in a 2x2 square.\n The tiles of one square can be different from those of the other square.",
+    "description": "Two groups each containing 4 tiles of the same type in a 2x2 square. The tiles of one square can be different from those of the other square.",
     "name": "FOUR_TILES_SQUARE",
     "Attributes": {
       "nSquares": 2,
@@ -136,12 +136,12 @@
   {
     "cardType": "MarioPyramid",
     "description": "Five columns of increasing or decreasing height. Starting from the first column on the left or on the right, each next column must be made of exactly one more tile.  Tiles can be of any type.",
-    "name": "SAME_TYPE"
+    "name": "MARIO_PYRAMID"
   },
   {
     "cardType": "NsameTiles",
     "description": "Eight tiles of the same type. There’s no restriction about the position of these tiles.",
-    "name": "MARIO_PYRAMID",
+    "name": "SAME_TYPE",
     "Attributes": {
       "nTiles" : 8
     }

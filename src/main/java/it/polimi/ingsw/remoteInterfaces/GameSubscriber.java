@@ -1,5 +1,7 @@
 package it.polimi.ingsw.remoteInterfaces;
 
+import it.polimi.ingsw.messages.GameState;
+
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Map;
@@ -26,7 +28,13 @@ public interface GameSubscriber extends ListenerSubscriber {
      * @param commonGoalCards is the list of the common goals of the game
      * @throws RemoteException
      */
-    void notifyCommonGoalCards(ArrayList<RemoteCommonGoalCard> commonGoalCards);
+    void notifyCommonGoalCards(ArrayList<RemoteCommonGoalCard> commonGoalCards) throws RemoteException;
 
-    void notifyPlayerInTurn(String username);
+    void notifyPlayerInTurn(String username) throws RemoteException;
+
+    void notifyPlayerCrashed(String userCrashed) throws RemoteException;
+
+    void notifyTurnOrder(ArrayList<String> playerOrder) throws RemoteException;
+
+    void notifyGameStatus(GameState gameState, String details) throws RemoteException;
 }

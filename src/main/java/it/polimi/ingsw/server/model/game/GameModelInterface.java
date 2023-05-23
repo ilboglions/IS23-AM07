@@ -24,7 +24,7 @@ public interface GameModelInterface {
     boolean checkBookshelfComplete();
     String getWinner() throws GameNotEndedException, GameNotStartedException;
     boolean checkRefill();
-    void updatePlayerPoints(String username) throws InvalidPlayerException, NotEnoughSpaceException, TokenAlreadyGivenException;
+    void updatePlayerPoints(String username) throws InvalidPlayerException, NotEnoughSpaceException, TokenAlreadyGivenException, GameNotStartedException;
     boolean setPlayerTurn();
     boolean canStart();
      // CHAT FUNCTIONALITIES

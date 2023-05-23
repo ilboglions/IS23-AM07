@@ -13,6 +13,7 @@ import it.polimi.ingsw.server.model.tiles.ItemTile;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.rmi.RemoteException;
 import java.util.*;
 import java.util.ArrayList;
 import java.util.Map;
@@ -111,7 +112,9 @@ public class LivingRoomBoard {
                   try {
                       tmpTile = slot[i][j].getItemTile();
                       if(tmpTile.isPresent())
-                        itemTilesmap.put(new Coordinates(i,j), tmpTile.get());
+                          itemTilesmap.put(new Coordinates(i,j), tmpTile.get());
+                      else
+                          itemTilesmap.put(new Coordinates(i,j), ItemTile.EMPTY);
                   } catch (InvalidCoordinatesException e) {
                       throw new RuntimeException(e);
                   }
@@ -213,6 +216,7 @@ public class LivingRoomBoard {
                     }
                 }
             }
+            boardListener.onBoardChange(this.getItemTilesMapFromBoard());
         }
     }
 
@@ -269,6 +273,7 @@ public class LivingRoomBoard {
             row = coo.getRow();
             col = coo.getColumn();
             slot[row][col].setItemTile(Optional.empty());
+            boardListener.onBoardChange(this.getItemTilesMapFromBoard());
         }
     }
 

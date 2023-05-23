@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,7 +28,7 @@ public class NequalsSquaresTest {
      */
     @BeforeEach
     @DisplayName("Card creation test")
-    void  createCard() throws PlayersNumberOutOfRange, NegativeFieldException {
+    void  createCard() throws PlayersNumberOutOfRange, NegativeFieldException, RemoteException {
         assertThrows(PlayersNumberOutOfRange.class, () -> {
             new NequalsSquares(0,"description_test",CommonCardType.CORNERS,2,3);});
         assertThrows(PlayersNumberOutOfRange.class, () -> {
@@ -128,7 +129,7 @@ public class NequalsSquaresTest {
      */
     @Test
     @DisplayName("NotEnoughSpaceExceptionTester")
-    void NotEnoughSpaceExceptionTest () throws NegativeFieldException, PlayersNumberOutOfRange, InvalidCoordinatesException {
+    void NotEnoughSpaceExceptionTest () throws NegativeFieldException, PlayersNumberOutOfRange, InvalidCoordinatesException, RemoteException {
         card = new NequalsSquares(2,"description_test",CommonCardType.CORNERS,5,7);
         Map<Coordinates, ItemTile> testtiles = new HashMap<>(); //shape valid groups
         testtiles.put(new Coordinates(0,0), ItemTile.CAT);

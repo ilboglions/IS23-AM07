@@ -6,6 +6,7 @@ import it.polimi.ingsw.server.model.exceptions.PlayersNumberOutOfRange;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -17,7 +18,7 @@ public class FiveXTiles extends  CommonGoalCard{
      * if true, the constraint will verify that all the tiles following it are of the same type
      */
     private final boolean sameTiles;
-    public FiveXTiles(int nPlayers, String description, CommonCardType name,boolean sameTiles) throws PlayersNumberOutOfRange {
+    public FiveXTiles(int nPlayers, String description, CommonCardType name,boolean sameTiles) throws PlayersNumberOutOfRange, RemoteException {
         super(nPlayers, description, name);
         this.sameTiles = sameTiles;
     }

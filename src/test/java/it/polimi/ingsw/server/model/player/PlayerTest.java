@@ -4,13 +4,13 @@ import it.polimi.ingsw.server.model.cards.personal.PersonalGoalCard;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.server.model.exceptions.NotEnoughSpaceException;
-import it.polimi.ingsw.server.model.player.Player;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 import it.polimi.ingsw.server.model.tokens.ScoringToken;
 import it.polimi.ingsw.server.model.tokens.TokenPoint;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -59,7 +59,7 @@ class PlayerTest {
      */
     @Test
     @DisplayName("Test getter and equals")
-    void testGetter() throws InvalidCoordinatesException {
+    void testGetter() throws InvalidCoordinatesException, RemoteException {
         ScoringToken testToken = new ScoringToken(TokenPoint.EIGHT);
         Map<Integer,Integer> testPointsReference = new HashMap<>();
         Map<Coordinates, ItemTile> testPattern = new HashMap<>();
@@ -88,7 +88,7 @@ class PlayerTest {
      */
     @Test
     @DisplayName("Test zero points calculation")
-    void testZeroPoints() throws InvalidCoordinatesException {
+    void testZeroPoints() throws InvalidCoordinatesException, RemoteException {
         Player test = new Player("test");
         Map<Integer,Integer> testPointsReference = new HashMap<>();
         Map<Coordinates, ItemTile> testPattern = new HashMap<>();
@@ -111,7 +111,7 @@ class PlayerTest {
      */
     @Test
     @DisplayName("Test generic scoring token and personalCard points calculation")
-    void testPoints() throws NotEnoughSpaceException, InvalidCoordinatesException {
+    void testPoints() throws NotEnoughSpaceException, InvalidCoordinatesException, RemoteException {
         Player test = new Player("test");
         Map<Coordinates, ItemTile> testPattern = new HashMap<>();
         Map<Integer, Integer> testCardPointsReference = new HashMap<>();
@@ -154,7 +154,7 @@ class PlayerTest {
      */
     @Test
     @DisplayName("Test scoring token and personalCard points calculation exceeding max elements overlapped")
-    void testPersonalCardPoints() throws NotEnoughSpaceException, InvalidCoordinatesException {
+    void testPersonalCardPoints() throws NotEnoughSpaceException, InvalidCoordinatesException, RemoteException {
         Player test = new Player("test");
         Map<Coordinates, ItemTile> testPattern = new HashMap<>();
         Map<Integer, Integer> testCardPointsReference = new HashMap<>();
@@ -212,7 +212,7 @@ class PlayerTest {
      */
     @Test
     @DisplayName("Test adjacency points calculation")
-    void testPointsAdjacency() throws NotEnoughSpaceException, InvalidCoordinatesException {
+    void testPointsAdjacency() throws NotEnoughSpaceException, InvalidCoordinatesException, RemoteException {
         Player test = new Player("test");
         Map<Integer,Integer> testCardPointsReference = new HashMap<>();
         Map<Coordinates, ItemTile> testPattern = new HashMap<>();

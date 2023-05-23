@@ -10,6 +10,8 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 
+import static it.polimi.ingsw.server.ServerMain.logger;
+
 /**
  * the game controller ensures the communication through client controller and server model
  */
@@ -55,6 +57,7 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
      * @return true, if the action is permitted
      */
     public boolean checkValidRetrieve(String player, ArrayList<Coordinates> coords) throws RemoteException, PlayerNotInTurnException, GameNotStartedException, GameEndedException, EmptySlotException {
+        this.rescheduleTimer(player);
         synchronized (gameLock) {
             if(!player.equals(gameModel.getPlayerInTurn())) throw new PlayerNotInTurnException();
 
@@ -76,6 +79,7 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
      * @param column the column where the coordinates will be inserted
      */
     public void moveTiles(String player, ArrayList<Coordinates> source, int column) throws RemoteException, GameNotStartedException, GameEndedException, NotEnoughSpaceException, PlayerNotInTurnException, EmptySlotException, InvalidCoordinatesException {
+        this.rescheduleTimer(player);
         synchronized (gameLock) {
             if(!player.equals(gameModel.getPlayerInTurn())) throw new PlayerNotInTurnException();
 
@@ -105,6 +109,14 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
         }
     }
 
+    private void rescheduleTimer(String player) {
+        synchronized (timers) {
+            if (this.timers.get(player) != null && this.timers.get(player).isScheduled()) {
+                this.timers.get(player).reschedule(timerDelay);
+            }
+        }
+    }
+
 
     /**
      * used to create a broadcast message
@@ -127,6 +139,7 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
      */
     public void postDirectMessage(String player, String receiver, String message) throws RemoteException, InvalidPlayerException, SenderEqualsRecipientException {
         synchronized (chatLock) {
+            this.rescheduleTimer(player);
             gameModel.postMessage(player,receiver,message);
         }
     }
@@ -137,7 +150,9 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
      */
     @Override
     public void subscribeToListener(BoardSubscriber subscriber) throws RemoteException {
-        gameModel.subscribeToListener(subscriber);
+        synchronized (gameLock) {
+            gameModel.subscribeToListener(subscriber);
+        }
     }
 
     /**
@@ -146,7 +161,9 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
      */
     @Override
     public void subscribeToListener(BookshelfSubscriber subscriber) throws RemoteException {
-        gameModel.subscribeToListener(subscriber);
+        synchronized (gameLock) {
+            gameModel.subscribeToListener(subscriber);
+        }
     }
 
     /**
@@ -155,7 +172,9 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
      */
     @Override
     public void subscribeToListener(ChatSubscriber subscriber) throws RemoteException {
-        gameModel.subscribeToListener(subscriber);
+        synchronized (gameLock) {
+            gameModel.subscribeToListener(subscriber);
+        }
     }
 
     /**
@@ -163,8 +182,11 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
      * @param subscriber a PlayerSubscriber
      */
     @Override
-    public void subscribeToListener(PlayerSubscriber subscriber) {
-        gameModel.subscribeToListener(subscriber);
+    public void subscribeToListener(PlayerSubscriber subscriber) throws RemoteException
+    {
+        synchronized (gameLock) {
+            gameModel.subscribeToListener(subscriber);
+        }
     }
 
     /**
@@ -172,8 +194,11 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
      * @param subscriber a game subscriber
      */
     @Override
-    public void subscribeToListener(GameSubscriber subscriber) {
-        gameModel.subscribeToListener(subscriber);
+    public void subscribeToListener(GameSubscriber subscriber) throws RemoteException
+    {
+        synchronized (gameLock) {
+            gameModel.subscribeToListener(subscriber);
+        }
     }
 
     /**
@@ -191,7 +216,9 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
      * @throws RemoteException
      */
     public void handleRejoinedPlayer(String username) throws PlayerNotFoundException, RemoteException {
-        gameModel.handleRejoinedPlayer(username);
+        synchronized (gameLock) {
+            gameModel.handleRejoinedPlayer(username);
+        }
     }
 
     /**
@@ -201,16 +228,18 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
      * @throws RemoteException
      */
     public void handleCrashedPlayer(String username) throws PlayerNotFoundException, RemoteException {
-        gameModel.handleCrashedPlayer(username);
-        if( timers.containsKey(username))
-            this.stopTimer(username);
+        synchronized (gameLock) {
+            gameModel.handleCrashedPlayer(username);
+            if (timers.containsKey(username))
+                this.stopTimer(username);
 
-        try{
-            if(gameModel.getIsStarted() && gameModel.getPlayerInTurn().equals(username)) {
-                this.selectedTiles.clear();
-                gameModel.setPlayerTurn();
+            try {
+                if (gameModel.getIsStarted() && gameModel.getPlayerInTurn().equals(username)) {
+                    this.selectedTiles.clear();
+                    gameModel.setPlayerTurn();
+                }
+            } catch (GameNotStartedException | GameEndedException ignored) {
             }
-        } catch (GameNotStartedException | GameEndedException ignored) {
         }
     }
 
@@ -220,16 +249,18 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
      * @param username the username of the player
      */
     private void initializeTimer(String username){
-        this.timers.put(username, new ReschedulableTimer());
-        this.timers.get(username).schedule(() -> {
-            try {
-                this.handleCrashedPlayer(username);
-            } catch (PlayerNotFoundException e) {
-                throw new RuntimeException(e);
-            } catch (RemoteException e) {
-                throw new RuntimeException(e);
-            }
-        },this.timerDelay);
+        synchronized (timers) {
+            this.timers.put(username, new ReschedulableTimer());
+            this.timers.get(username).schedule(() -> {
+                try {
+                    this.handleCrashedPlayer(username);
+                } catch (PlayerNotFoundException e) {
+                    throw new RuntimeException(e);
+                } catch (RemoteException e) {
+                    throw new RuntimeException(e);
+                }
+            }, this.timerDelay);
+        }
     }
 
     /**
@@ -237,7 +268,10 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
      * @param username the username of the player
      */
     private void stopTimer(String username){
-        this.timers.get(username).cancel();
+        synchronized (timers) {
+            this.timers.get(username).cancel();
+            this.timers.remove(username);
+        }
     }
 
     /**
@@ -246,8 +280,9 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
      * @throws RemoteException if a connection problem occurred
      */
     public void triggerHeartBeat(String username) throws RemoteException{
-        synchronized (this.timers){
-            if(this.timers.get(username) == null ){
+        synchronized (timers){
+            logger.info("HEARTBEAT RECEIVED BY "+username);
+            if(this.timers.get(username) == null || !this.timers.get(username).isScheduled()){
                 this.initializeTimer(username);
                 return;
             }
@@ -259,8 +294,10 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
      * Method used to trigger all the listeners when a player joins or re-joins a game after a crash, to receive the complete status of the game such as players bookshelf's, points or livingRoomBoard
      * @param userToBeUpdated the username of the user that needs to receive the updates
      */
-    public void triggerAllListeners(String userToBeUpdated){
-        gameModel.triggerAllListeners(userToBeUpdated);
+    public void triggerAllListeners(String userToBeUpdated) throws RemoteException{
+        synchronized (gameLock) {
+            gameModel.triggerAllListeners(userToBeUpdated);
+        }
     }
 
     public Set<Coordinates> getSelectedTiles() {

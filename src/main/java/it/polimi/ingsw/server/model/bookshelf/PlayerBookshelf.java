@@ -1,5 +1,6 @@
 package it.polimi.ingsw.server.model.bookshelf;
 
+import it.polimi.ingsw.remoteInterfaces.PlayerSubscriber;
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.server.model.exceptions.NotEnoughSpaceException;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
@@ -9,7 +10,9 @@ import it.polimi.ingsw.remoteInterfaces.BookshelfSubscriber;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * the player bookshelf extends the bookshelf class, it is a mutable class, used for stores players tiles
@@ -57,7 +60,7 @@ public class PlayerBookshelf extends Bookshelf{
                 firstFreeIndex++;
             }
 
-            bookshelfListener.onBookshelfChange(player.getUsername(),orderedTiles,column);
+            bookshelfListener.onBookshelfChange(player.getUsername(), orderedTiles, column, this.getItemTileMap());
         }
         else
             throw new NotEnoughSpaceException("There isn't enough space in this column!");
@@ -111,5 +114,9 @@ public class PlayerBookshelf extends Bookshelf{
 
     public void unsubscribeFromListener(String username) {
         this.bookshelfListener.removeSubscriber(username);
+    }
+
+    public Set<BookshelfSubscriber> getSubs() {
+            return new HashSet<>(this.bookshelfListener.getSubscribers());
     }
 }

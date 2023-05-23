@@ -10,6 +10,7 @@ import it.polimi.ingsw.server.model.exceptions.NotEnoughCardsException;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 
 import java.io.InputStreamReader;
+import java.rmi.RemoteException;
 import java.util.*;
 
 /**
@@ -78,10 +79,14 @@ public class DeckPersonal implements Distributable<PersonalGoalCard> {
 
             this.generatedCardsIndex.add(extractedCardIndex);
 
-            JsonElement extractedCard = jsonCards.get(i);
+            JsonElement extractedCard = jsonCards.get(extractedCardIndex);
             Map<Coordinates, ItemTile> pattern = gson.fromJson(extractedCard, mapType);
 
-            selected.add(new PersonalGoalCard(pattern, pointsReference));
+            try {
+                selected.add(new PersonalGoalCard(pattern, pointsReference));
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         return selected;

@@ -1,6 +1,6 @@
 package it.polimi.ingsw.client.connection;
 
-import it.polimi.ingsw.client.view.CliView;
+import it.polimi.ingsw.client.view.CLI.CliView;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +14,7 @@ public class ClientRMITest {
     }
     @Test
     @DisplayName("Test the connection to the lobby")
-    void testJoin() throws InterruptedException, RemoteException, NotBoundException {
+    void testJoin() throws RemoteException {
         client.JoinLobby("piero");
         client.JoinGame();
 

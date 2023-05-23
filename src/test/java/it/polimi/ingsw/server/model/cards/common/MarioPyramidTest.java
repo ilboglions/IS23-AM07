@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,7 +24,7 @@ public class MarioPyramidTest {
      */
     @BeforeEach
     @DisplayName("Card creation test")
-    void  createCard() throws PlayersNumberOutOfRange {
+    void  createCard() throws PlayersNumberOutOfRange, RemoteException {
         assertThrows(PlayersNumberOutOfRange.class, () -> {
             new MarioPyramid(0,"", CommonCardType.CORNERS);});
         assertThrows(PlayersNumberOutOfRange.class, () -> {

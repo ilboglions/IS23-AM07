@@ -3,13 +3,17 @@ package it.polimi.ingsw.server.model.bookshelf;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 
+import java.io.Serial;
 import java.util.Map;
 import java.util.Objects;
 
 /**
  * cardBookshelf is an immutable extension of the bookshelf class, that make it possible to create a pattern used in personal cards
  */
-public class CardBookshelf extends Bookshelf{
+public class CardBookshelf extends Bookshelf {
+    @Serial
+    private static final long serialVersionUID = -278285169223776141L;
+
     /**
      * the constructor creates a bookshelf with a certain pattern
      * @param pattern the pattern used to create the bookshelf

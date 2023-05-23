@@ -6,6 +6,7 @@ import it.polimi.ingsw.server.model.tiles.ItemTile;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,7 +52,7 @@ class PersonalGoalCardTest {
      */
     @Test
     @DisplayName("Test that the personal card is instantiated correctly")
-    void getBookshelf() throws InvalidCoordinatesException {
+    void getBookshelf() throws InvalidCoordinatesException, RemoteException {
         Map<Coordinates, ItemTile> testPattern = new HashMap<>();
         Map<Integer, Integer> testStdPoints = new HashMap<>();
 

@@ -1,0 +1,9 @@
+.anchor{
+    -fx-background-image: url("../../images/misc/backgroundParquet.jpg");
+    -fx-background-repeat: stretch;
+    -fx-background-position: center;
+}
+
+.shape_corner{
+    -fx-border-radius: 5px;
+}

@@ -1,4 +1,5 @@
 package it.polimi.ingsw.server.model.listeners;
+import it.polimi.ingsw.messages.GameState;
 import it.polimi.ingsw.remoteInterfaces.GameSubscriber;
 import it.polimi.ingsw.remoteInterfaces.RemoteCommonGoalCard;
 
@@ -8,18 +9,28 @@ import java.util.Map;
 import java.util.Set;
 
 public class GameListener extends Listener<GameSubscriber> {
-    public void onPlayerJoinGame(String username, ArrayList<RemoteCommonGoalCard> commonGoalCards) {
+
+    public void onPlayerJoinGame(String username){
         Set<GameSubscriber> subscribers = this.getSubscribers();
-        subscribers.forEach(sub -> {
+        for (GameSubscriber sub : subscribers) {
+            try {
+                sub.notifyPlayerJoined(username);
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+    public void onCommonCardDraw(String username, ArrayList<RemoteCommonGoalCard> commonGoalCards) {
+        Set<GameSubscriber> subscribers = this.getSubscribers();
+        for( GameSubscriber sub :  subscribers ){
             try {
                 if(sub.getSubscriberUsername().equals(username)){
                     sub.notifyCommonGoalCards(commonGoalCards);
-                } else {
-                    sub.notifyPlayerJoined(username);
                 }
-            } catch (RemoteException ignored) {
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
             }
-        });
+        }
     }
 
     public void onPlayerWins(String username, int points, Map<String,Integer> scoreboard){
@@ -34,6 +45,70 @@ public class GameListener extends Listener<GameSubscriber> {
 
     public void notifyPlayerInTurn(String username){
         Set<GameSubscriber> subscribers = this.getSubscribers();
-        subscribers.forEach(sub -> sub.notifyPlayerInTurn(username));
+        subscribers.forEach(sub -> {
+            try {
+                sub.notifyPlayerInTurn(username);
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
+
+    public void notifyPlayerCrashed(String userCrashed){
+        Set<GameSubscriber> subscribers = this.getSubscribers();
+        subscribers.forEach(sub -> {
+            try {
+                if(!sub.getSubscriberUsername().equals(userCrashed))
+                    sub.notifyPlayerCrashed(userCrashed);
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    public void notifyTurnOrder(ArrayList<String> playerOrder){
+        Set<GameSubscriber> subscribers = this.getSubscribers();
+        subscribers.forEach(sub -> {
+            try {
+                sub.notifyTurnOrder(playerOrder);
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    public void notifyPausedGame() {
+        Set<GameSubscriber> subscribers = this.getSubscribers();
+        subscribers.forEach(sub -> {
+            try {
+                sub.notifyGameStatus(GameState.PAUSED, "Too many players have crashed, let's wait if someone comes back");
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    public void notifyResumedGame() {
+        Set<GameSubscriber> subscribers = this.getSubscribers();
+        subscribers.forEach(sub -> {
+            try {
+                sub.notifyGameStatus(GameState.RESUMED, "Someone came back, the game is resumed");
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    public void notifyCrashedGame() {
+        Set<GameSubscriber> subscribers = this.getSubscribers();
+        subscribers.forEach(sub -> {
+            try {
+                sub.notifyGameStatus(GameState.CRASHED, "No one came back, ending the game");
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+
 }

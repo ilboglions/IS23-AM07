@@ -3,7 +3,7 @@ import it.polimi.ingsw.server.model.chat.Message;
 import it.polimi.ingsw.remoteInterfaces.ChatSubscriber;
 
 import java.rmi.RemoteException;
-import java.util.Optional;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -23,28 +23,35 @@ public class ChatListener extends Listener<ChatSubscriber> {
         if( msg.getRecipient().isPresent() ){
 
             String recipient = msg.getRecipient().get();
-            Optional<ChatSubscriber> interestedOb =   observers.stream()
+            String sender = msg.getSender();
+
+            List<ChatSubscriber> interestedOb = observers.stream()
                                                     .filter(obs -> {
                                                         try {
-                                                            return obs.getSubscriberUsername().equals(recipient);
-                                                        } catch (RemoteException ignored) {
-
+                                                            return obs.getSubscriberUsername().equals(recipient) || obs.getSubscriberUsername().equals(sender);
+                                                        } catch (RemoteException e) {
+                                                            throw new RuntimeException(e);
                                                         }
-                                                        return false;
                                                     })
-                                                    .findFirst();
-            interestedOb.ifPresent( ob -> ob.receiveMessage(msg.getSender(), msg.getContent()));
+                                                    .toList();
+
+            interestedOb.forEach( ob -> {
+                try {
+                    ob.receiveMessage(sender, recipient, msg.getContent());
+                } catch (RemoteException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+
 
         } else{
-            observers.stream()
-                    .filter( obs -> {
+            observers.forEach( obs -> {
                         try {
-                            return !obs.getSubscriberUsername().equals(msg.getSender());
-                        } catch (RemoteException ignored) {
+                            obs.receiveMessage(msg.getSender(), msg.getContent());
+                        } catch (RemoteException e) {
+                            throw new RuntimeException(e);
                         }
-                        return false;
-                    })
-                    .forEach( obs -> obs.receiveMessage(msg.getSender(), msg.getContent()));
+                    });
         }
     }
 }

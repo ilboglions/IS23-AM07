@@ -8,6 +8,7 @@ import it.polimi.ingsw.server.model.exceptions.NegativeFieldException;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -21,7 +22,7 @@ public class NadjacentElements extends CommonGoalCard{
     private final int nGroups;
     private final int nElems;
 
-    public NadjacentElements(int nPlayers, String description, CommonCardType name,int nGroups, int nElems) throws PlayersNumberOutOfRange, NegativeFieldException {
+    public NadjacentElements(int nPlayers, String description, CommonCardType name,int nGroups, int nElems) throws PlayersNumberOutOfRange, NegativeFieldException, RemoteException {
         super(nPlayers, description, name);
         if( nGroups <= 0 || nElems <= 0 ) throw new NegativeFieldException("can't assign negative paramaters!");
         this.nGroups = nGroups;
