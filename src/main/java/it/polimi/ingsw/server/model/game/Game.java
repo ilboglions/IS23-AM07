@@ -1,6 +1,7 @@
 package it.polimi.ingsw.server.model.game;
 
 import it.polimi.ingsw.remoteInterfaces.*;
+import it.polimi.ingsw.server.ReschedulableTimer;
 import it.polimi.ingsw.server.model.chat.Chat;
 import it.polimi.ingsw.server.model.chat.Message;
 import it.polimi.ingsw.server.model.exceptions.SenderEqualsRecipientException;
@@ -58,6 +59,7 @@ public class Game implements GameModelInterface {
     /**
      * Store the index of the current player in the round
      */
+    private boolean isPaused;
     private int playerTurn;
     /**
      * Store if there is a player that have completed the bookshelf, so if it is the last round of the game
@@ -81,6 +83,8 @@ public class Game implements GameModelInterface {
      * the listener to the game status
      */
     private final GameListener gameListener;
+    private final ReschedulableTimer crashTimer;
+    private final long crashTimerDelay = 60000;
 
     /**
      * Constructor of the Game objects, it initializes all the attributes, set stdPointsReference, draw the CommonGoalCard, add the host to the game and assign to him a PersonalGoalCard
@@ -102,6 +106,7 @@ public class Game implements GameModelInterface {
         this.deckPersonal = new DeckPersonal("personalCards.json", "pointsReference.json");
         this.bagHolder = new BagHolder();
         this.isStarted = false;
+        this.isPaused = false;
         this.isLastTurn = false;
         this.playerTurn = -1; //game not started
         this.stdPointsReference = new HashMap<>();
@@ -117,6 +122,7 @@ public class Game implements GameModelInterface {
         }
         this.players.add(host);
 
+        this.crashTimer = new ReschedulableTimer();
     }
 
     @Override
@@ -207,7 +213,7 @@ public class Game implements GameModelInterface {
         Optional<Player> player = searchPlayer(username);
 
         if(player.isEmpty())
-            throw new InvalidPlayerException();
+            throw new InvalidPlayerException("Player is null");
         Player p = player.get();
         for ( CommonGoalCard c : this.commonGoalCards) {
             if( c.verifyConstraint(player.get().getBookshelf()) ){
@@ -489,6 +495,10 @@ public class Game implements GameModelInterface {
     public boolean setPlayerTurn(){
 
         if(this.isLastTurn && this.playerTurn == this.players.size() - 1){
+            try {
+                this.getWinner();
+            } catch (GameNotEndedException | GameNotStartedException ignored) {
+            }
             return false;
         }
 
@@ -509,7 +519,7 @@ public class Game implements GameModelInterface {
      * @throws InvalidPlayerException if there isn't a player with that username inside the game
      */
     public ArrayList<Message> getPlayerMessages(String player) throws InvalidPlayerException {
-        if(this.searchPlayer(player).isEmpty()) throw new InvalidPlayerException();
+        if(this.searchPlayer(player).isEmpty()) throw new InvalidPlayerException("Player is null");
 
         return chat.getPlayerMessages(player);
     }
@@ -523,8 +533,8 @@ public class Game implements GameModelInterface {
      * @throws InvalidPlayerException if there isn't a player with that username inside the game
      */
     public void postMessage(String sender, String receiver, String message) throws SenderEqualsRecipientException, InvalidPlayerException {
-        if(this.searchPlayer(sender).isEmpty()) throw new InvalidPlayerException();
-        if( this.searchPlayer(receiver).isEmpty() ) throw new InvalidPlayerException();
+        if(this.searchPlayer(sender).isEmpty()) throw new InvalidPlayerException("Player is null");
+        if( this.searchPlayer(receiver).isEmpty() ) throw new InvalidPlayerException("Player is null");
 
         chat.postMessage(new Message(sender, receiver, message));
     }
@@ -536,7 +546,7 @@ public class Game implements GameModelInterface {
      * @throws InvalidPlayerException if there isn't a player with that username inside the game
      */
     public void postMessage(String sender, String message) throws InvalidPlayerException {
-        if(this.searchPlayer(sender).isEmpty()) throw new InvalidPlayerException();
+        if(this.searchPlayer(sender).isEmpty()) throw new InvalidPlayerException("Player is null");
 
         try {
             chat.postMessage(new Message(sender, message));
@@ -588,6 +598,12 @@ public class Game implements GameModelInterface {
         }
         else
             throw new PlayerNotFoundException("The player with this username has not been found in the game");
+
+        if(crashedPlayers.size() == numPlayers - 1) {
+            this.isPaused = true;
+            this.crashTimer.schedule(this.gameListener::notifyCrashedGame, this.crashTimerDelay);
+            this.gameListener.notifyPausedGame();
+        }
     }
 
     /**
@@ -605,6 +621,12 @@ public class Game implements GameModelInterface {
         }
         else
             throw new PlayerNotFoundException("The player with this username has not been found in the game");
+
+        if(this.isPaused) {
+            isPaused = false;
+            this.crashTimer.cancel();
+            this.gameListener.notifyResumedGame();
+        }
     }
 
     /**

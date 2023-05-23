@@ -57,7 +57,7 @@ public class Lobby {
 
         }
         else {
-            throw new InvalidPlayerException();
+            throw new InvalidPlayerException("Player is null");
         }
 
 
@@ -77,7 +77,7 @@ public class Lobby {
 
         Optional<Player> host =  waitingPlayers.stream().filter(p -> p.getUsername().equals(hostNickname)).findFirst();
         if(host.isEmpty())
-            throw new InvalidPlayerException();
+            throw new InvalidPlayerException("Player is null");
         try{
             Game newGame = new Game(nPlayers, host.get());
             waitingPlayers.remove(host.get());
@@ -95,7 +95,14 @@ public class Lobby {
      * @throws NicknameAlreadyUsedException if the nickname has been already chosen by another player
      */
     public void createPlayer(String nickname) throws NicknameAlreadyUsedException, InvalidPlayerException  {
-        if(nickname == null || nickname.isEmpty()) throw new InvalidPlayerException();
+        if(nickname == null)
+            throw new InvalidPlayerException("Player is null");
+        else if (nickname.isBlank())
+            throw new InvalidPlayerException("Nickname is blank");
+        else if(nickname.length() >= 15)
+            throw new InvalidPlayerException("Nickname is too long");
+
+
         for(Game game : games) {
             if(game.searchPlayer(nickname).isPresent())
                 throw new NicknameAlreadyUsedException("This nickname is already used");

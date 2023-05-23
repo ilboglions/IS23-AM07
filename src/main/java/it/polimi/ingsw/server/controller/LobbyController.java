@@ -93,7 +93,7 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
      */
     public RemoteGameController addPlayerToGame(String player) throws RemoteException, NicknameAlreadyUsedException, NoAvailableGameException, InvalidPlayerException {
         synchronized (lobbyLock) {
-            if(player == null) throw new InvalidPlayerException();
+            if(player == null) throw new InvalidPlayerException("Player is null");
             GameController gameController;
 
             GameModelInterface gameModel;
@@ -126,7 +126,7 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
      */
     public RemoteGameController createGame(String player, int nPlayers) throws RemoteException, InvalidPlayerException, PlayersNumberOutOfRange {
         synchronized (lobbyLock) {
-            if(player == null) throw new InvalidPlayerException();
+            if(player == null) throw new InvalidPlayerException("Player is null");
             GameController gameController;
             GameModelInterface gameModel;
             try {

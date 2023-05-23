@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client.localModel;
 
 import it.polimi.ingsw.client.view.ViewInterface;
+import it.polimi.ingsw.messages.GameState;
 import it.polimi.ingsw.remoteInterfaces.*;
 import it.polimi.ingsw.server.model.chat.Message;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
@@ -224,7 +225,7 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
 
     @Override
     public synchronized void notifyTurnOrder(ArrayList<String> playerOrder) throws RemoteException {
-        this.players.sort(Comparator.comparingInt(playerOrder::indexOf));
+        //this.players.sort(Comparator.comparingInt(playerOrder::indexOf));
         this.gameStarted = true;
 
         for(String player : players){
@@ -263,9 +264,9 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
     @Override
     public synchronized void updateBookshelfStatus(String player, ArrayList<ItemTile> tilesInserted, int colChosen, Map<Coordinates, ItemTile> currentTilesMap) throws RemoteException {
         try {
-            if(this.gameStarted)
+            /*if(this.gameStarted)
                 view.drawBookShelf(currentTilesMap, player, (this.players.indexOf(player) - this.players.indexOf(this.username) + this.players.size()) % this.players.size());
-            else
+            else*/
                 view.drawBookShelf(currentTilesMap,player,this.players.indexOf(player));
         } catch (InvalidCoordinatesException e) {
             throw new RuntimeException(e);
@@ -279,5 +280,10 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
         } catch (InvalidCoordinatesException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public void notifyGameStatus(GameState gameState, String details) throws RemoteException {
+        view.postNotification("Game is" + gameState.toString(),details);
     }
 }

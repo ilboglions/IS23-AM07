@@ -270,6 +270,9 @@ public class ClientSocket implements ConnectionHandler{
             case NOTIFY_TURN_ORDER -> {
                 this.parse((NotifyTurnOrder) responseMessage);
             }
+            case GAME_STATUS -> {
+                this.parse((GameStatusMessage) responseMessage);
+            }
             default -> {
             }
         }
@@ -440,6 +443,14 @@ public class ClientSocket implements ConnectionHandler{
     private void parse(NotifyTurnOrder message){
         try {
             gameModel.notifyTurnOrder(message.getPlayerOrder());
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void parse(GameStatusMessage message) {
+        try {
+            gameModel.notifyGameStatus(message.getState(), message.getDetails());
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }

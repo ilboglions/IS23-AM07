@@ -477,6 +477,16 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
     }
 
     /**
+     * @param gameState
+     * @throws RemoteException
+     */
+    @Override
+    public void notifyGameStatus(GameState gameState, String details) throws RemoteException {
+        GameStatusMessage update = new GameStatusMessage(gameState, details);
+        this.sendUpdate(update);
+    }
+
+    /**
      *
      * @param update
      */
