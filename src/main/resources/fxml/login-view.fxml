@@ -1,65 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.String?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
 
-
-
-<AnchorPane fx:id="backgroundPane" prefHeight="600.0" prefWidth="800.0" stylesheets="@/org/kordamp/bootstrapfx/bootstrapfx.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.view.GUI.LobbyViewController">
+<AnchorPane fx:id="backgroundPane" prefHeight="800.0" prefWidth="1200.0" stylesheets="@/org/kordamp/bootstrapfx/bootstrapfx.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.view.GUI.LobbyViewController">
    <children>
       <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="anchor" stylesheets="@css/game-view.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <BorderPane layoutX="-1.0" layoutY="1.0" prefHeight="200.0" prefWidth="705.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="30.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="10.0">
-               <top>
-                  <ImageView fitHeight="176.0" fitWidth="477.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
-                     <image>
-                        <Image url="@../images/PublisherMaterial/Title_2000x618px.png" />
-                     </image>
-                  </ImageView>
-               </top>
-               <bottom>
-                  <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
-               </bottom>
-               <left>
-                  <Pane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
-               </left>
-               <right>
-                  <Pane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
-               </right>
-               <center>
-                  <GridPane prefHeight="170.0" prefWidth="340.0" BorderPane.alignment="CENTER">
-                    <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="171.0" minWidth="10.0" prefWidth="171.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="170.0" minWidth="10.0" prefWidth="169.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
-                     <children>
-                        <Button mnemonicParsing="false" text="Button" textAlignment="CENTER">
-                           <styleClass>
-                              <String fx:value="btn-default" />
-                              <String fx:value="btn-lg" />
-                           </styleClass>
-                        </Button>
-                        <Button mnemonicParsing="false" text="Button" GridPane.columnIndex="1">
-                           <styleClass>
-                              <String fx:value="btn-default" />
-                              <String fx:value="btn-lg" />
-                           </styleClass>
-                        </Button>
-                     </children>
-                  </GridPane>
-               </center>
-            </BorderPane>
+            <ImageView fitHeight="193.0" fitWidth="534.0" layoutX="333.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../images/PublisherMaterial/Title_2000x618px.png" />
+               </image>
+            </ImageView>
+            <Label alignment="CENTER" graphicTextGap="6.0" layoutX="487.0" layoutY="179.0" prefHeight="93.0" prefWidth="227.0" text="Welcome!" textAlignment="CENTER">
+               <font>
+                  <Font name="Arial" size="40.0" />
+               </font>
+            </Label>
+            <Pane layoutX="427.0" layoutY="300.0" prefHeight="165.0" prefWidth="346.0">
+               <children>
+                  <Label alignment="CENTER" layoutY="14.0" prefHeight="46.0" prefWidth="346.0" text="Select your username" textAlignment="CENTER">
+                     <font>
+                        <Font size="24.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="usernameField" layoutX="62.0" layoutY="65.0" prefHeight="35.0" prefWidth="227.0">
+                     <font>
+                        <Font name="Arial" size="18.0" />
+                     </font>
+                  </TextField>
+                  <Label fx:id="errorLabel" alignment="CENTER" layoutX="24.0" layoutY="107.0" prefHeight="20.0" prefWidth="303.0" textFill="#eb1e1e">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="errorLabelDesc" alignment="CENTER" layoutX="24.0" layoutY="134.0" prefHeight="20.0" prefWidth="303.0" textFill="#eb1e1e">
+                     <font>
+                        <Font size="15.0" />
+                     </font>
+                  </Label>
+               </children>
+            </Pane>
+            <Button fx:id="login" alignment="CENTER" layoutX="509.0" layoutY="465.0" mnemonicParsing="false" onAction="#onLoginButtonClick" prefHeight="35.0" prefWidth="182.0" text="Login" textAlignment="CENTER">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Button>
          </children>
       </AnchorPane>
    </children>

@@ -4,18 +4,13 @@ import it.polimi.ingsw.client.connection.ConnectionHandler;
 import javafx.scene.control.Label;
 
 public abstract class GUIController {
-    private ConnectionHandler clientController;
-
-    private Label notificationLabel;
+    private static ConnectionHandler clientController;
 
     public void setConnectionHandler( ConnectionHandler clientController){
-        this.clientController = clientController;
+        GUIController.clientController = clientController;
     }
-
-    public void postNotification(String title, String desc){
-        notificationLabel.setText(desc);
-    }
+    public abstract void postNotification(String title, String desc);
     protected ConnectionHandler getClientController(){
-        return this.clientController;
+        return GUIController.clientController;
     }
 }

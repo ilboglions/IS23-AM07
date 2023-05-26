@@ -2,6 +2,7 @@ package it.polimi.ingsw.client.connection;
 
 
 import it.polimi.ingsw.client.localModel.Game;
+import it.polimi.ingsw.client.view.SceneType;
 import it.polimi.ingsw.client.view.ViewInterface;
 import it.polimi.ingsw.remoteInterfaces.*;
 import it.polimi.ingsw.server.ReschedulableTimer;
@@ -67,10 +68,11 @@ public class ClientRMI implements ConnectionHandler{
         try {
             gameController = lobbyController.enterInLobby(username);
             if( gameController == null){
+                view.drawScene(SceneType.LOBBY);
                 view.postNotification("joined in lobby!","Select what to do");
                 lobbyController.triggerHeartBeat(this.username);
             } else {
-                view.drawGameScene();
+                view.drawScene(SceneType.GAME);
                 view.postNotification("welcome back!","Reconnected to your previous game");
                 gameController.triggerHeartBeat(this.username);
                 this.gameModel = new Game(this.view,this.username);
@@ -89,7 +91,7 @@ public class ClientRMI implements ConnectionHandler{
 
         try {
             this.gameController = this.lobbyController.createGame(username, nPlayers);
-            view.drawGameScene();
+            view.drawScene(SceneType.GAME);
             gameController.triggerHeartBeat(this.username);
             this.gameModel = new Game(this.view,this.username);
             this.subscribeListeners();
@@ -123,7 +125,7 @@ public class ClientRMI implements ConnectionHandler{
 
         try {
             this.gameController = this.lobbyController.addPlayerToGame(username);
-            view.drawGameScene();
+            view.drawScene(SceneType.GAME);
             gameController.triggerHeartBeat(this.username);
             this.gameModel = new Game(this.view,this.username);
             this.subscribeListeners();

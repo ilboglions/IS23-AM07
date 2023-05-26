@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client.connection;
 
 import it.polimi.ingsw.client.localModel.Game;
+import it.polimi.ingsw.client.view.SceneType;
 import it.polimi.ingsw.client.view.ViewInterface;
 import it.polimi.ingsw.messages.*;
 import it.polimi.ingsw.server.ReschedulableTimer;
@@ -54,6 +55,9 @@ public class ClientSocket implements ConnectionHandler{
             try {
                 tempConnection = new Socket(ip, port);
                 connected = true;
+
+                //TODO: This postNotification broke things when using the GUI because they call the GuiController before it is initializated
+
                 view.postNotification("Connected to the server!", "choose your username!");
                 // here we should create some task that listens the server!
             } catch ( UnknownHostException | ConnectException e) {
@@ -288,7 +292,7 @@ public class ClientSocket implements ConnectionHandler{
                 }
                 this.sendReceivedGame(false);
                 view.postNotification("Welcome back " + this.username + "!", "reconnecting to your game...");
-                view.drawGameScene();
+                view.drawScene(SceneType.GAME);
                 view.postNotification("Game rejoined successfully!", "");
 
             }else {
@@ -312,7 +316,7 @@ public class ClientSocket implements ConnectionHandler{
                 throw new RuntimeException(e);
             }
             view.postNotification("Game created successfully","");
-            view.drawGameScene();
+            view.drawScene(SceneType.GAME);
             view.postNotification("Game created successfully","");
         } else if(message.getConfirmJoinedGame()){
             try {
@@ -321,7 +325,7 @@ public class ClientSocket implements ConnectionHandler{
                 throw new RuntimeException(e);
             }
 
-            view.drawGameScene();
+            view.drawScene(SceneType.GAME);
             view.postNotification("Game joined successfully","");
         }
         else{

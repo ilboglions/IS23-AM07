@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client.view.CLI;
 
 import it.polimi.ingsw.client.connection.*;
+import it.polimi.ingsw.client.view.SceneType;
 import it.polimi.ingsw.client.view.ViewInterface;
 import it.polimi.ingsw.remoteInterfaces.RemoteCommonGoalCard;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
@@ -580,7 +581,7 @@ public class CliView implements ViewInterface {
         else
             text = "Turn of: " + userInTurn;
 
-        startC = START_C_BOX_LEADERBOARD + (LENGTH_C_BOX_LEADERBOARD - text.length()) / 2;
+        startC = START_C_BOX_LEADERBOARD + ((LENGTH_C_BOX_LEADERBOARD - text.length()) / 2);
 
         clearBox(startR - 1, START_C_BOX_LEADERBOARD - 1, startR + 1, START_C_BOX_LEADERBOARD + LENGTH_C_BOX_LEADERBOARD);
 
@@ -714,8 +715,12 @@ public class CliView implements ViewInterface {
     }
 
     @Override
-    public void drawGameScene(){
-        this.setScenario(Scenario.GAME);
+    public void drawScene(SceneType scene){
+        if (scene == SceneType.GAME) {
+            this.setScenario(Scenario.GAME);
+        } else {
+            this.setScenario(Scenario.LOBBY);
+        }
     }
 
 

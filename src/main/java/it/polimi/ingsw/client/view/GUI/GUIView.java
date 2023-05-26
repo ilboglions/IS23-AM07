@@ -3,16 +3,17 @@ package it.polimi.ingsw.client.view.GUI;
 import it.polimi.ingsw.client.connection.ConnectionHandler;
 import it.polimi.ingsw.client.connection.ConnectionHandlerFactory;
 import it.polimi.ingsw.client.connection.ConnectionType;
+import it.polimi.ingsw.client.view.SceneType;
 import it.polimi.ingsw.client.view.ViewInterface;
 import it.polimi.ingsw.remoteInterfaces.RemoteCommonGoalCard;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
-import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -20,15 +21,12 @@ import java.util.Map;
 public class GUIView extends Application implements ViewInterface {
     private ConnectionHandler controller;
     private GUIController guiController;
-
-    /*public GUIView(ConnectionType connectionType) {
-        ConnectionHandlerFactory factory = new ConnectionHandlerFactory();
-        controller = factory.createConnection(connectionType, this);
-    }*/
+    private FXMLLoader fxmlLoader;
+    private Scene scene;
+    private Stage stage;
 
     @Override
     public void start(Stage stage) throws Exception {
-
         Parameters parameters = getParameters();
         List<String> args = parameters.getRaw();
         ConnectionType connectionType;
@@ -36,21 +34,25 @@ public class GUIView extends Application implements ViewInterface {
             connectionType = args.get(0).equals("--TCP") ? ConnectionType.TCP : ConnectionType.RMI;
         } else {
             connectionType = ConnectionType.RMI;
-
         }
+
+        this.stage = stage;
+
         ConnectionHandlerFactory factory = new ConnectionHandlerFactory();
         controller = factory.createConnection(connectionType, this);
-        FXMLLoader fxmlLoader = new FXMLLoader(GUIView.class.getResource("/fxml/lobby-view.fxml"));
-        guiController = fxmlLoader.getController();
-        Scene scene = new Scene(fxmlLoader.load(), 320, 240);
+        fxmlLoader = new FXMLLoader(GUIView.class.getResource("/fxml/login-view.fxml"));
 
-        stage.setTitle("Hello!");
-        stage.setScene(scene);
-        stage.show();
+        scene = new Scene(fxmlLoader.load());
+
+        guiController = fxmlLoader.getController();
+        guiController.setConnectionHandler(controller);
+
+        this.stage.setTitle("MyShelfie");
+        this.stage.setScene(scene);
+        this.stage.show();
     }
 
     public static void main(String[] args) {
-
         launch(args);
     }
 
@@ -65,7 +67,7 @@ public class GUIView extends Application implements ViewInterface {
     }
 
     @Override
-    public void drawLivingRoom(Map<Coordinates, ItemTile> livingRoomMap) throws InvalidCoordinatesException {
+    public void drawLivingRoom(Map<Coordinates, ItemTile> livingRoomMap)  {
 
     }
 
@@ -77,7 +79,8 @@ public class GUIView extends Application implements ViewInterface {
 
     @Override
     public void postNotification(String title, String description) {
-
+        GUIController controller = fxmlLoader.getController();
+        controller.postNotification(title, description);
     }
 
     @Override
@@ -91,8 +94,28 @@ public class GUIView extends Application implements ViewInterface {
     }
 
     @Override
-    public void drawGameScene() {
+    public void drawScene(SceneType sceneType) {
+        String fxmlPath;
 
+        switch(sceneType){
+            case GAME -> fxmlPath = "/fxml/game-view.fxml";
+            case LOBBY -> fxmlPath = "/fxml/lobby-view.fxml";
+            default -> fxmlPath = "/fxml/login-view.fxml";
+        }
+
+        fxmlLoader = new FXMLLoader();
+        fxmlLoader.setLocation(GUIView.class.getResource(fxmlPath));
+
+        try {
+            scene = new Scene(fxmlLoader.load());
+        } catch (IOException e) {
+            //TODO: add a way to show error in this case
+        }
+
+        guiController = fxmlLoader.getController();
+
+        stage.setScene(scene);
+        stage.show();
     }
 
     @Override
