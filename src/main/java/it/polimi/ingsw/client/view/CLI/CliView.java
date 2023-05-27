@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client.view.CLI;
 
 import it.polimi.ingsw.client.connection.*;
+import it.polimi.ingsw.Notifications;
 import it.polimi.ingsw.client.view.SceneType;
 import it.polimi.ingsw.client.view.ViewInterface;
 import it.polimi.ingsw.remoteInterfaces.RemoteCommonGoalCard;
@@ -252,9 +253,7 @@ public class CliView implements ViewInterface {
     private void fillEmpty() {
 
         for(int i = 0; i < MAX_VERT_TILES; i++){
-            for(int j = 0; j < MAX_HORIZ_TILES;j++){
-                tiles[i][j] = null;
-            }
+            Arrays.fill(tiles[i], null);
         }
 
         tiles[0][0] = Color.RESET.escape()+"╔";
@@ -600,6 +599,10 @@ public class CliView implements ViewInterface {
         this.plot();
     }
 
+    public void postNotification(Notifications n){
+        this.postNotification(n.getTitle(),n.getDescription());
+    }
+
     private void clearBox(int startR, int startC, int maxR, int maxC){
         for(int i = startR + 1; i < maxR; i++){
             for(int j = startC + 1; j < maxC; j++){
@@ -716,7 +719,7 @@ public class CliView implements ViewInterface {
 
     @Override
     public void drawScene(SceneType scene){
-        if (scene == SceneType.GAME) {
+        if (scene.equals(SceneType.GAME)) {
             this.setScenario(Scenario.GAME);
         } else {
             this.setScenario(Scenario.LOBBY);

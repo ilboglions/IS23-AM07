@@ -33,6 +33,7 @@ public class ServerMain {
     }
     public void startServer() {
         ExecutorService executor = Executors.newCachedThreadPool();
+
         ServerSocket serverSocket;
         logger.info("Server started!");
 

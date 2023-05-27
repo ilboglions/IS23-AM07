@@ -2,6 +2,7 @@ package it.polimi.ingsw.client.connection;
 
 
 import it.polimi.ingsw.client.localModel.Game;
+import it.polimi.ingsw.Notifications;
 import it.polimi.ingsw.client.view.SceneType;
 import it.polimi.ingsw.client.view.ViewInterface;
 import it.polimi.ingsw.remoteInterfaces.*;
@@ -37,7 +38,7 @@ public class ClientRMI implements ConnectionHandler{
 
         this.timer = new ReschedulableTimer();
         this.heartBeatManager = Executors.newSingleThreadScheduledExecutor();
-
+        this.view = view;
         while(!connected){
             try{
                 this.registry= LocateRegistry.getRegistry();
@@ -46,6 +47,7 @@ public class ClientRMI implements ConnectionHandler{
                 connected = true;
             }catch(ConnectException e){
                 try {
+                    this.view.postNotification(Notifications.ERR_CONNECTION_NO_AVAILABLE);
                     TimeUnit.SECONDS.sleep(2);
                 } catch (InterruptedException ex) {
                     ex.printStackTrace();
@@ -53,7 +55,7 @@ public class ClientRMI implements ConnectionHandler{
             }
         }
         this.lobbyController = tempLobbyController;
-        this.view = view;
+        this.view.postNotification(Notifications.CONNECTED_SUCCESSFULLY);
         this.sendHeartBeat();
     }
 
@@ -64,25 +66,29 @@ public class ClientRMI implements ConnectionHandler{
 
     @Override
     public void JoinLobby(String username) throws RemoteException {
+        if(gameController != null ){
+            view.postNotification(Notifications.ERR_ALREADY_PLAYING_A_GAME);
+            return;
+        }
         this.username = username;
         try {
             gameController = lobbyController.enterInLobby(username);
             if( gameController == null){
                 view.drawScene(SceneType.LOBBY);
-                view.postNotification("joined in lobby!","Select what to do");
+                view.postNotification(Notifications.JOINED_LOBBY_SUCCESSFULLY);
                 lobbyController.triggerHeartBeat(this.username);
             } else {
                 view.drawScene(SceneType.GAME);
-                view.postNotification("welcome back!","Reconnected to your previous game");
+                view.postNotification(Notifications.GAME_RECONNECTION_SUCCEFFULLY);
                 gameController.triggerHeartBeat(this.username);
                 this.gameModel = new Game(this.view,this.username);
                 this.subscribeListeners();
                 gameController.triggerAllListeners(this.username);
             }
         } catch (NicknameAlreadyUsedException e) {
-            view.postNotification("Nickname already used!", "Choose another nickname and retry");
+            view.postNotification(Notifications.ERR_USERNAME_ALREADY_TAKEN);
         } catch (InvalidPlayerException e) {
-            view.postNotification("Invalid player!","You can't use this username!");
+            view.postNotification(Notifications.ERR_INVALID_USERNAME);
         }
     }
 
@@ -96,11 +102,11 @@ public class ClientRMI implements ConnectionHandler{
             this.gameModel = new Game(this.view,this.username);
             this.subscribeListeners();
             this.gameController.triggerAllListeners(this.username);
-            view.postNotification("Game created successfully","");
+            this.view.postNotification(Notifications.GAME_CREATED_SUCCESSFULLY);
         } catch (InvalidPlayerException e) {
-            view.postNotification("Invalid player!","You can't join a game without loggin in!");
+            this.view.postNotification(Notifications.ERR_PLAYER_NO_JOINED_IN_LOBBY);
         } catch (PlayersNumberOutOfRange e) {
-            view.postNotification("The number of player is out of range!","Create the game with less players");
+            view.postNotification(Notifications.ERR_GAME_N_PLAYER_OUT_OF_RANGE);
         }
 
     }
@@ -130,13 +136,13 @@ public class ClientRMI implements ConnectionHandler{
             this.gameModel = new Game(this.view,this.username);
             this.subscribeListeners();
             gameController.triggerAllListeners(this.username);
-            view.postNotification("Game joined successfully","");
+            view.postNotification(Notifications.GAME_JOINED_SUCCESSFULLY);
         } catch (NicknameAlreadyUsedException e) {
             throw new RuntimeException(e);
         } catch (NoAvailableGameException e) {
-            view.postNotification("No game is available!",e.getMessage());
+            view.postNotification(Notifications.ERR_GAME_NO_AVAILABLE);
         } catch (InvalidPlayerException e) {
-            view.postNotification("Invalid player!","You can't join a game without loggin in!");
+            view.postNotification(Notifications.ERR_PLAYER_NO_JOINED_IN_LOBBY);
         }
 
     }
@@ -153,17 +159,17 @@ public class ClientRMI implements ConnectionHandler{
         //here the view will be notified that the action has been executed correctly
         try {
             if(gameController.checkValidRetrieve(this.username,tiles))
-                view.postNotification("Your Selection has been accepted!!","Choose the column to fit the selection!");
+                view.postNotification(Notifications.TILES_SELECTION_ACCEPTED);
             else
-                view.postNotification("Your selection is invalid", "");
+                view.postNotification(Notifications.INVALID_TILES_SELECTION);
         } catch (EmptySlotException e) {
-            view.postNotification("The slot selected is empty!",e.getMessage());
+            view.postNotification(Notifications.ERR_EMPTY_SLOT_SELECTED);
         } catch (GameNotStartedException e) {
-            view.postNotification("The game has not started yet!",e.getMessage());
+            view.postNotification(Notifications.ERR_GAME_NOT_STARTED);
         } catch (GameEndedException e) {
-            view.postNotification("The game has already ended!",e.getMessage());
+            view.postNotification(Notifications.ERR_GAME_ENDED);
         } catch (PlayerNotInTurnException e) {
-            view.postNotification("You're not in turn!",e.getMessage());
+            view.postNotification(Notifications.NOT_YOUR_TURN);
         } catch (RemoteException e) {
             this.close();
         }
@@ -180,19 +186,19 @@ public class ClientRMI implements ConnectionHandler{
 
         try {
             gameController.moveTiles(this.username,tiles, column);
-            view.postNotification("Move done!", "");
+            view.postNotification(Notifications.TILES_MOVED_SUCCESSFULLY);
         } catch (GameNotStartedException e) {
-            view.postNotification("The game is not started yet!",e.getMessage());
+            view.postNotification(Notifications.ERR_GAME_NOT_STARTED);
         } catch (GameEndedException e) {
-            view.postNotification("The game is ended!",e.getMessage());
+            view.postNotification(Notifications.ERR_GAME_ENDED);
         } catch (EmptySlotException e) {
-            view.postNotification("The slot selected is empty!",e.getMessage());
+            view.postNotification(Notifications.ERR_EMPTY_SLOT_SELECTED);
         } catch (NotEnoughSpaceException e) {
-            view.postNotification("No space left",e.getMessage());
+            view.postNotification(Notifications.NO_SPACE_IN_BOOKSHELF_COLUMN);
         } catch (InvalidCoordinatesException e) {
-            throw new RuntimeException(e);
+            view.postNotification(Notifications.INVALID_TILES_SELECTION);
         }  catch (PlayerNotInTurnException e) {
-            view.postNotification("That's not your turn!",e.getMessage());
+            view.postNotification(Notifications.PLAYER_NOT_IN_TURN);
         }
 
     }
@@ -229,8 +235,7 @@ public class ClientRMI implements ConnectionHandler{
             gameController.postBroadCastMessage(this.username,content);
         } catch (RemoteException e) {
             throw new RuntimeException(e);
-        } catch (InvalidPlayerException e) {
-            throw new RuntimeException(e);
+        } catch (InvalidPlayerException ignored) {
         }
     }
 
@@ -239,10 +244,10 @@ public class ClientRMI implements ConnectionHandler{
             gameController.postDirectMessage(this.username,content,recipient);
         } catch (RemoteException e) {
             throw new RuntimeException(e);
-        } catch (InvalidPlayerException e) {
-            throw new RuntimeException(e);
+        } catch (InvalidPlayerException ignored) {
+            /* to decide, if the written recipient does not exists, we could just ignore the chat message*/
         } catch (SenderEqualsRecipientException e) {
-            view.postNotification("Sender equals recipient!","you can not send a message to yourself!");
+            view.postNotification(Notifications.CHAT_SENDER_EQUALS_RECIPIENT);
         }
     }
 }

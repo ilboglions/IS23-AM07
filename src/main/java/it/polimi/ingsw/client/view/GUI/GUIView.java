@@ -3,6 +3,7 @@ package it.polimi.ingsw.client.view.GUI;
 import it.polimi.ingsw.client.connection.ConnectionHandler;
 import it.polimi.ingsw.client.connection.ConnectionHandlerFactory;
 import it.polimi.ingsw.client.connection.ConnectionType;
+import it.polimi.ingsw.Notifications;
 import it.polimi.ingsw.client.view.SceneType;
 import it.polimi.ingsw.client.view.ViewInterface;
 import it.polimi.ingsw.remoteInterfaces.RemoteCommonGoalCard;
@@ -81,6 +82,11 @@ public class GUIView extends Application implements ViewInterface {
     public void postNotification(String title, String description) {
         GUIController controller = fxmlLoader.getController();
         controller.postNotification(title, description);
+    }
+
+    @Override
+    public void postNotification(Notifications n) {
+        this.postNotification(n.getTitle(),n.getDescription());
     }
 
     @Override
