@@ -1,5 +1,6 @@
 package it.polimi.ingsw.client.view;
 
+import it.polimi.ingsw.Notifications;
 import it.polimi.ingsw.remoteInterfaces.RemoteCommonGoalCard;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
@@ -17,6 +18,7 @@ public interface ViewInterface {
     void drawLivingRoom(Map<Coordinates, ItemTile> livingRoomMap) throws InvalidCoordinatesException;
     void drawCommonCards(ArrayList<RemoteCommonGoalCard> commonGoalCards) throws InvalidCoordinatesException, RemoteException;
     void postNotification(String title, String description);
+    void postNotification(Notifications n);
     void drawLeaderboard(Map<String, Integer> playerPoints);
     void drawChat(List<String> outputMessages);
     void drawScene(SceneType scene);

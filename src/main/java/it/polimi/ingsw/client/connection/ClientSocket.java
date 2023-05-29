@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client.connection;
 
 import it.polimi.ingsw.client.localModel.Game;
+import it.polimi.ingsw.Notifications;
 import it.polimi.ingsw.client.view.SceneType;
 import it.polimi.ingsw.client.view.ViewInterface;
 import it.polimi.ingsw.messages.*;
@@ -57,11 +58,9 @@ public class ClientSocket implements ConnectionHandler{
                 connected = true;
 
                 //TODO: This postNotification broke things when using the GUI because they call the GuiController before it is initializated
-
-                view.postNotification("Connected to the server!", "choose your username!");
-                // here we should create some task that listens the server!
+                this.view.postNotification(Notifications.CONNECTED_SUCCESSFULLY);
             } catch ( UnknownHostException | ConnectException e) {
-                view.postNotification("Connection error", "Server this address is not reachable, trying again soon...");
+                view.postNotification(Notifications.ERR_CONNECTION_NO_AVAILABLE);
                 try {
                     TimeUnit.SECONDS.sleep(2);
                 } catch (InterruptedException ex) {
@@ -87,8 +86,7 @@ public class ClientSocket implements ConnectionHandler{
     }
 
     private void handleCrash() {
-        view.postNotification("Connection error", "connection with server no longer available!");
-
+        view.postNotification(Notifications.ERR_CONNECTION_NO_LONGER_AVAILABLE);
         this.close();
     }
 
@@ -291,12 +289,10 @@ public class ClientSocket implements ConnectionHandler{
                     throw new RuntimeException(e);
                 }
                 this.sendReceivedGame(false);
-                view.postNotification("Welcome back " + this.username + "!", "reconnecting to your game...");
                 view.drawScene(SceneType.GAME);
-                view.postNotification("Game rejoined successfully!", "");
-
+                view.postNotification(Notifications.GAME_RECONNECTION_SUCCEFFULLY);
             }else {
-                view.postNotification("Logged in as " + this.username + "!", "choose either to create or join a game!");
+                view.postNotification(Notifications.JOINED_LOBBY_SUCCESSFULLY);
             }
         } else {
             /* an error occurred */
@@ -315,9 +311,8 @@ public class ClientSocket implements ConnectionHandler{
             } catch (RemoteException e) {
                 throw new RuntimeException(e);
             }
-            view.postNotification("Game created successfully","");
             view.drawScene(SceneType.GAME);
-            view.postNotification("Game created successfully","");
+            view.postNotification(Notifications.GAME_CREATED_SUCCESSFULLY);
         } else if(message.getConfirmJoinedGame()){
             try {
                 this.gameModel = new Game(this.view,this.username);
@@ -326,7 +321,7 @@ public class ClientSocket implements ConnectionHandler{
             }
 
             view.drawScene(SceneType.GAME);
-            view.postNotification("Game joined successfully","");
+            view.postNotification(Notifications.GAME_JOINED_SUCCESSFULLY);
         }
         else{
             view.postNotification(message.getErrorType(),message.getDetails());
@@ -338,7 +333,7 @@ public class ClientSocket implements ConnectionHandler{
 
     private void parse(ConfirmSelectionMessage message){
         if(message.getConfirmSelection()){
-            view.postNotification("Your Selection has been accepted!","choose the column to fit the selection!");
+            view.postNotification(Notifications.TILES_SELECTION_ACCEPTED);
         } else{
             view.postNotification(message.getErrorType(),message.getDetails());
         }
@@ -346,7 +341,7 @@ public class ClientSocket implements ConnectionHandler{
 
     private void parse(ConfirmMoveMessage message){
         if(message.getConfirmSelection()){
-            view.postNotification("Move done!","");
+            view.postNotification(Notifications.TILES_MOVED_SUCCESSFULLY);
         }
     }
 
@@ -394,7 +389,11 @@ public class ClientSocket implements ConnectionHandler{
     }
 
     private void parse(NotifyPlayerCrashedMessage message){
-        view.postNotification(message.getUserCrashed() + " has crashed", "Will skip his turn until he reconnects");
+        try {
+            this.gameModel.notifyPlayerCrashed(message.getUserCrashed());
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void parse(NotifyWinnerPlayerMessage message){

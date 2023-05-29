@@ -1,5 +1,6 @@
 package it.polimi.ingsw.server;
 
+import it.polimi.ingsw.Notifications;
 import it.polimi.ingsw.messages.*;
 import it.polimi.ingsw.remoteInterfaces.*;
 import it.polimi.ingsw.server.controller.LobbyController;
@@ -148,10 +149,10 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
         String desc;
         boolean hasPlayerJoined;
         if( gameController != null){
-            errorType = "Already playing";
+            errorType = Notifications.ERR_ALREADY_PLAYING_A_GAME.getTitle();
             result = false;
             hasPlayerJoined = false;
-            desc = "You are already playing a game!";
+            desc = Notifications.ERR_ALREADY_PLAYING_A_GAME.getDescription();
         } else {
             if (username != null && !username.isEmpty()) {
                 try {
@@ -173,15 +174,15 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
                 }
                 result = true;
             } catch (NicknameAlreadyUsedException e) {
-                errorType = "NicknameAlreadyUsedException";
+                errorType = Notifications.ERR_USERNAME_ALREADY_TAKEN.getTitle();
                 result = false;
                 hasPlayerJoined = false;
-                desc = e.getMessage();
+                desc = Notifications.ERR_USERNAME_ALREADY_TAKEN.getDescription();
             } catch (InvalidPlayerException e) {
-                errorType = "InvalidPlayerException";
+                errorType = Notifications.ERR_INVALID_USERNAME.getTitle();
                 result = false;
                 hasPlayerJoined = false;
-                desc = e.getMessage();
+                desc = Notifications.ERR_INVALID_USERNAME.getDescription();
             }
         }
         return new  LoginReturnMessage(result,errorType, desc, hasPlayerJoined);
@@ -198,12 +199,12 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
             this.subscribeToAllListeners();
         } catch (InvalidPlayerException e) {
             result = false;
-            errorType = "InvalidPlayer";
-            desc = e.getMessage();
+            errorType = Notifications.ERR_PLAYER_NO_JOINED_IN_LOBBY.getTitle();
+            desc = Notifications.ERR_PLAYER_NO_JOINED_IN_LOBBY.getDescription();
         } catch (PlayersNumberOutOfRange e) {
             result = false;
-            errorType = "PlayersNumberOutOfRange";
-            desc = e.getMessage();
+            errorType = Notifications.ERR_GAME_N_PLAYER_OUT_OF_RANGE.getTitle();
+            desc = Notifications.ERR_GAME_N_PLAYER_OUT_OF_RANGE.getDescription();
         }
 
         return new ConfirmGameMessage(result, errorType, desc, false);
@@ -218,16 +219,16 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
             result = true;
         } catch (NicknameAlreadyUsedException e) {
             result = false;
-            errorType = "NicknameAlreadyUsed";
-            desc = e.getMessage();
+            errorType = Notifications.ERR_USERNAME_ALREADY_TAKEN.getTitle();
+            desc = Notifications.ERR_USERNAME_ALREADY_TAKEN.getDescription();
         } catch (NoAvailableGameException e) {
             result = false;
-            errorType = "NoAvailableGameException";
-            desc = e.getMessage();
+            errorType = Notifications.ERR_GAME_NO_AVAILABLE.getTitle();
+            desc = Notifications.ERR_GAME_NO_AVAILABLE.getDescription();
         } catch (InvalidPlayerException e) {
             result = false;
-            errorType = "InvalidPlayerException";
-            desc = e.getMessage();
+            errorType = Notifications.ERR_PLAYER_NO_JOINED_IN_LOBBY.getTitle();
+            desc = Notifications.ERR_PLAYER_NO_JOINED_IN_LOBBY.getDescription();
         }
 
         return new ConfirmGameMessage(false, errorType, desc, result);
@@ -239,27 +240,27 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
         try {
             result = gameController.checkValidRetrieve(username, tileSelectionMessage.getTiles());
             if(!result) {
-                errorType = "invalid selection!";
-                desc = "can't select that!";
+                errorType = Notifications.INVALID_TILES_SELECTION.getTitle();
+                desc = Notifications.INVALID_TILES_SELECTION.getDescription();
                 logger.info(desc);
             }
 
         } catch (PlayerNotInTurnException e) {
             result = false;
-            errorType = "PlayerNotInTurnException";
-            desc = e.getMessage();
+            errorType = Notifications.PLAYER_NOT_IN_TURN.getTitle();
+            desc = Notifications.PLAYER_NOT_IN_TURN.getDescription();
         } catch (GameNotStartedException e) {
             result = false;
-            errorType = "GameNotStartedException";
-            desc = e.getMessage();
+            errorType = Notifications.ERR_GAME_NOT_STARTED.getTitle();
+            desc = Notifications.ERR_GAME_NOT_STARTED.getDescription();
         } catch (GameEndedException e) {
             result = false;
-            errorType = "GameEndedException";
-            desc = e.getMessage();
+            errorType = Notifications.ERR_GAME_ENDED.getTitle();
+            desc = Notifications.ERR_GAME_ENDED.getDescription();
         } catch (EmptySlotException e) {
             result = false;
-            errorType = "EmptySlotException";
-            desc = e.getMessage();
+            errorType = Notifications.ERR_EMPTY_SLOT_SELECTED.getTitle();
+            desc = Notifications.ERR_EMPTY_SLOT_SELECTED.getDescription();
         }
         return new ConfirmSelectionMessage(result, errorType, desc);
     }
@@ -277,8 +278,8 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
                 desc = e.getMessage();
             } catch (SenderEqualsRecipientException e) {
                 result = false;
-                errorType = "SenderEqualsRecipientException";
-                desc = e.getMessage();
+                errorType = Notifications.CHAT_SENDER_EQUALS_RECIPIENT.getTitle();
+                desc = Notifications.CHAT_SENDER_EQUALS_RECIPIENT.getDescription();
             }
         } else {
             try {
@@ -297,36 +298,35 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
     private NetMessage parse(MoveTilesMessage moveTilesMessage) throws RemoteException {
         boolean result;
         String errorType = "";
-        String desc;
+        String desc = "";
 
         try {
             gameController.moveTiles(username, moveTilesMessage.getTiles(), moveTilesMessage.getColumn());
             result = true;
-            desc = "Moved tiles successfully!";
         } catch (GameNotStartedException e) {
             result = false;
-            errorType = "GameNotStartedException";
-            desc = e.getMessage();
+            errorType = Notifications.ERR_GAME_NOT_STARTED.getTitle();
+            desc = Notifications.ERR_GAME_NOT_STARTED.getDescription();
         } catch (GameEndedException e) {
             result = false;
-            errorType = "GameEndedException";
-            desc = e.getMessage();
+            errorType = Notifications.ERR_GAME_ENDED.getTitle();
+            desc = Notifications.ERR_GAME_ENDED.getDescription();
         } catch (EmptySlotException e) {
             result = false;
-            errorType = "EmptySlotException";
-            desc = e.getMessage();
+            errorType = Notifications.ERR_EMPTY_SLOT_SELECTED.getTitle();
+            desc = Notifications.ERR_EMPTY_SLOT_SELECTED.getDescription();
         } catch (NotEnoughSpaceException e) {
             result = false;
-            errorType = "NotEnoughSpaceException";
-            desc = e.getMessage();
+            errorType = Notifications.NO_SPACE_IN_BOOKSHELF_COLUMN.getTitle();
+            desc = Notifications.NO_SPACE_IN_BOOKSHELF_COLUMN.getDescription();
         } catch (InvalidCoordinatesException e) {
             result = false;
-            errorType = "InvalidCoordinatesException";
-            desc = e.getMessage();
+            errorType = Notifications.INVALID_TILES_SELECTION.getTitle();
+            desc = Notifications.INVALID_TILES_SELECTION.getDescription();
         } catch (PlayerNotInTurnException e) {
             result = false;
-            errorType = "PlayerNotInTurnException";
-            desc = e.getMessage();
+            errorType = Notifications.PLAYER_NOT_IN_TURN.getTitle();
+            desc = Notifications.PLAYER_NOT_IN_TURN.getDescription();
         }
         return new ConfirmMoveMessage(result,errorType,desc);
     }
