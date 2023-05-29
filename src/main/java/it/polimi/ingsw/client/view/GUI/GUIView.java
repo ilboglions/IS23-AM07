@@ -10,6 +10,7 @@ import it.polimi.ingsw.remoteInterfaces.RemoteCommonGoalCard;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -40,11 +41,12 @@ public class GUIView extends Application implements ViewInterface {
 
         this.stage = stage;
 
-        ConnectionHandlerFactory factory = new ConnectionHandlerFactory();
-        controller = factory.createConnection(connectionType, this);
         fxmlLoader = new FXMLLoader(GUIView.class.getResource("/fxml/login-view.fxml"));
 
         scene = new Scene(fxmlLoader.load());
+
+        ConnectionHandlerFactory factory = new ConnectionHandlerFactory();
+        controller = factory.createConnection(connectionType, this);
 
         guiController = fxmlLoader.getController();
         guiController.setConnectionHandler(controller);
@@ -81,8 +83,11 @@ public class GUIView extends Application implements ViewInterface {
 
     @Override
     public void postNotification(String title, String description) {
-        GUIController controller = fxmlLoader.getController();
-        controller.postNotification(title, description);
+        Platform.runLater(() -> {
+            GUIController controller = fxmlLoader.getController();
+            controller.postNotification(title, description);
+        });
+
     }
 
     @Override
@@ -102,29 +107,31 @@ public class GUIView extends Application implements ViewInterface {
 
     @Override
     public void drawScene(SceneType sceneType) {
-        String fxmlPath;
+        Platform.runLater(() -> {
+            String fxmlPath;
 
-        switch(sceneType){
-            case GAME -> fxmlPath = "/fxml/game-view.fxml";
-            case LOBBY -> fxmlPath = "/fxml/lobby-view.fxml";
-            default -> fxmlPath = "/fxml/login-view.fxml";
-        }
+            switch(sceneType){
+                case GAME -> fxmlPath = "/fxml/game-view.fxml";
+                case LOBBY -> fxmlPath = "/fxml/lobby-view.fxml";
+                default -> fxmlPath = "/fxml/login-view.fxml";
+            }
 
-        fxmlLoader = new FXMLLoader();
-        fxmlLoader.setLocation(GUIView.class.getResource(fxmlPath));
+            fxmlLoader = new FXMLLoader();
+            fxmlLoader.setLocation(GUIView.class.getResource(fxmlPath));
 
-        try {
-            //scene = new Scene(fxmlLoader.load());
-            Parent newRoot = fxmlLoader.load();
-            scene.setRoot(newRoot);
-        } catch (IOException e) {
-            //TODO: add a way to show error in this case
-        }
+            try {
+                //scene = new Scene(fxmlLoader.load());
+                Parent newRoot = fxmlLoader.load();
+                scene.setRoot(newRoot);
+            } catch (IOException e) {
+                //TODO: add a way to show error in this case
+            }
 
-        guiController = fxmlLoader.getController();
+            guiController = fxmlLoader.getController();
 
-        stage.setScene(scene);
-        stage.show();
+            stage.setScene(scene);
+            stage.show();
+        });
     }
 
     @Override

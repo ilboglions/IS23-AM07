@@ -292,6 +292,7 @@ public class ClientSocket implements ConnectionHandler{
                 view.drawScene(SceneType.GAME);
                 view.postNotification(Notifications.GAME_RECONNECTION_SUCCEFFULLY);
             }else {
+                view.drawScene(SceneType.LOBBY);
                 view.postNotification(Notifications.JOINED_LOBBY_SUCCESSFULLY);
             }
         } else {
