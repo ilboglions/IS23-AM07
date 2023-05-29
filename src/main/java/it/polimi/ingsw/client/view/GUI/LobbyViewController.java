@@ -5,7 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 
 import java.rmi.RemoteException;
 
@@ -15,8 +15,8 @@ public class LobbyViewController extends GUIController {
     public Button login;
     public Button joinGameButton;
     public Button createGameButton;
-    public Pane selectionPane;
-    public Pane createGamePane;
+    public VBox selectionBox;
+    public VBox createGameBox;
     public Button confirmCreateButton;
     public TextField nPlayerField;
     @FXML private TextField usernameField;
@@ -42,8 +42,11 @@ public class LobbyViewController extends GUIController {
     }
 
     public void onCreateGameButtonClick(ActionEvent actionEvent){
-        selectionPane.setVisible(false);
-        createGamePane.setVisible(true);
+        selectionBox.setManaged(false);
+        selectionBox.setVisible(false);
+
+        createGameBox.setManaged(true);
+        createGameBox.setVisible(true);
     }
 
     public void onConfirmCreateButtonClick(ActionEvent actionEvent){

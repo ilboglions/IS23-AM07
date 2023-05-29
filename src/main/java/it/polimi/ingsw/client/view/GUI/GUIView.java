@@ -10,6 +10,7 @@ import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
@@ -107,7 +108,9 @@ public class GUIView extends Application implements ViewInterface {
         fxmlLoader.setLocation(GUIView.class.getResource(fxmlPath));
 
         try {
-            scene = new Scene(fxmlLoader.load());
+            //scene = new Scene(fxmlLoader.load());
+            Parent newRoot = fxmlLoader.load();
+            scene.setRoot(newRoot);
         } catch (IOException e) {
             //TODO: add a way to show error in this case
         }

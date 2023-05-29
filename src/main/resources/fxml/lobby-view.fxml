@@ -1,82 +1,105 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="backgroundPane" prefHeight="800.0" prefWidth="1200.0" stylesheets="@/org/kordamp/bootstrapfx/bootstrapfx.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.view.GUI.LobbyViewController">
-   <children>
-      <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="anchor" stylesheets="@css/game-view.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+<BorderPane prefHeight="800.0" prefWidth="1200.0" styleClass="anchor" stylesheets="@css/lobby-view.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.view.GUI.LobbyViewController">
+   <top>
+      <ImageView fitHeight="193.0" fitWidth="534.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+         <image>
+            <Image url="@../images/PublisherMaterial/Title_2000x618px.png" />
+         </image>
+      </ImageView>
+   </top>
+   <center>
+      <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
          <children>
-            <ImageView fitHeight="193.0" fitWidth="534.0" layoutX="333.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../images/PublisherMaterial/Title_2000x618px.png" />
-               </image>
-            </ImageView>
-            <Label alignment="CENTER" graphicTextGap="6.0" layoutX="488.0" layoutY="170.0" prefHeight="93.0" prefWidth="227.0" text="Logged in!" textAlignment="CENTER">
+            <Label alignment="CENTER" graphicTextGap="6.0" prefHeight="93.0" prefWidth="227.0" text="Logged in!" textAlignment="CENTER">
                <font>
                   <Font name="Arial" size="40.0" />
                </font>
             </Label>
-            <Label fx:id="errorLabel" alignment="CENTER" layoutX="451.0" layoutY="263.0" prefHeight="20.0" prefWidth="300.0" textFill="#eb1e1e">
+            <Label fx:id="errorLabel" alignment="CENTER" prefHeight="20.0" prefWidth="300.0" textFill="#eb1e1e">
                <font>
                   <Font size="18.0" />
                </font>
             </Label>
-            <Label fx:id="errorLabelDesc" alignment="CENTER" layoutX="450.0" layoutY="290.0" prefHeight="20.0" prefWidth="303.0" textFill="#eb1e1e">
+            <Label fx:id="errorLabelDesc" alignment="CENTER" prefHeight="20.0" prefWidth="303.0" textFill="#eb1e1e">
                <font>
                   <Font size="15.0" />
                </font>
+               <VBox.margin>
+                  <Insets bottom="15.0" />
+               </VBox.margin>
             </Label>
-            <Pane fx:id="selectionPane" layoutX="372.0" layoutY="311.0" prefHeight="189.0" prefWidth="458.0">
+            <VBox fx:id="selectionBox" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS">
                <children>
-                  <Label alignment="CENTER" layoutX="56.0" layoutY="40.0" prefHeight="46.0" prefWidth="346.0" text="Select what you want to do" textAlignment="CENTER">
+                  <Label alignment="CENTER" prefHeight="46.0" prefWidth="346.0" text="Select what you want to do" textAlignment="CENTER">
                      <font>
                         <Font size="24.0" />
                      </font>
+                     <VBox.margin>
+                        <Insets bottom="20.0" top="30.0" />
+                     </VBox.margin>
                   </Label>
-                  <Button fx:id="joinGameButton" layoutX="56.0" layoutY="103.0" mnemonicParsing="false" onAction="#onJoinGameButtonClick" prefHeight="46.0" prefWidth="128.0" text="Join Game">
-                     <font>
-                        <Font name="Arial" size="16.0" />
-                     </font>
-                  </Button>
-                  <Button fx:id="createGameButton" layoutX="274.0" layoutY="103.0" mnemonicParsing="false" onAction="#onCreateGameButtonClick" prefHeight="46.0" prefWidth="128.0" text="Create Game">
-                     <font>
-                        <Font name="Arial" size="16.0" />
-                     </font>
-                  </Button>
+                  <HBox alignment="CENTER" prefHeight="63.0" prefWidth="461.0" spacing="100.0">
+                     <children>
+                        <Button fx:id="joinGameButton" mnemonicParsing="false" onAction="#onJoinGameButtonClick" prefHeight="46.0" prefWidth="128.0" text="Join Game">
+                           <font>
+                              <Font name="Arial" size="16.0" />
+                           </font>
+                        </Button>
+                        <Button fx:id="createGameButton" mnemonicParsing="false" onAction="#onCreateGameButtonClick" prefHeight="46.0" prefWidth="128.0" text="Create Game">
+                           <font>
+                              <Font name="Arial" size="16.0" />
+                           </font>
+                        </Button>
+                     </children>
+                  </HBox>
                </children>
-            </Pane>
-            <Pane fx:id="createGamePane" layoutX="372.0" layoutY="311.0" prefHeight="206.0" prefWidth="473.0" visible="false">
+            </VBox>
+            <VBox fx:id="createGameBox" alignment="TOP_CENTER" fillWidth="false" managed="false" prefHeight="200.0" prefWidth="100.0" visible="false" VBox.vgrow="ALWAYS">
                <children>
-                  <Label alignment="CENTER" layoutX="15.0" layoutY="26.0" prefHeight="35.0" prefWidth="444.0" text="Insert how many player the game is for">
+                  <Label alignment="TOP_CENTER" prefHeight="35.0" prefWidth="444.0" text="Insert how many player the game is for">
                      <font>
                         <Font size="24.0" />
                      </font>
+                     <VBox.margin>
+                        <Insets top="30.0" />
+                     </VBox.margin>
                   </Label>
-                  <Label alignment="CENTER" layoutX="149.0" layoutY="61.0" prefHeight="17.0" prefWidth="176.0" text="(Min 2, Max 4)">
+                  <Label alignment="CENTER" prefHeight="17.0" prefWidth="176.0" text="(Min 2, Max 4)">
                      <font>
                         <Font size="16.0" />
                      </font>
+                     <VBox.margin>
+                        <Insets bottom="25.0" />
+                     </VBox.margin>
                   </Label>
-                  <TextField fx:id="nPlayerField" alignment="CENTER" layoutX="192.0" layoutY="97.0" prefHeight="35.0" prefWidth="92.0">
+                  <TextField fx:id="nPlayerField" alignment="CENTER" prefHeight="35.0" prefWidth="300.0">
                      <font>
                         <Font size="16.0" />
                      </font>
+                     <VBox.margin>
+                        <Insets bottom="25.0" />
+                     </VBox.margin>
                   </TextField>
-                  <Button fx:id="confirmCreateButton" layoutX="188.0" layoutY="150.0" mnemonicParsing="false" onAction="#onConfirmCreateButtonClick" prefHeight="25.0" prefWidth="101.0" text="Confirm">
+                  <Button fx:id="confirmCreateButton" mnemonicParsing="false" onAction="#onConfirmCreateButtonClick" prefHeight="30.0" prefWidth="115.0" text="Confirm">
                      <font>
                         <Font name="Arial" size="16.0" />
                      </font>
                   </Button>
                </children>
-            </Pane>
+            </VBox>
          </children>
-      </AnchorPane>
-   </children>
-</AnchorPane>
+      </VBox>
+   </center>
+</BorderPane>
