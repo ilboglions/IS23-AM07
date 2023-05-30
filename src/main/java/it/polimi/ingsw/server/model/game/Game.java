@@ -13,6 +13,7 @@ import it.polimi.ingsw.server.model.distributable.BagHolder;
 import it.polimi.ingsw.server.model.distributable.DeckCommon;
 import it.polimi.ingsw.server.model.distributable.DeckPersonal;
 import it.polimi.ingsw.server.model.listeners.GameListener;
+import it.polimi.ingsw.server.model.listeners.GameStateListener;
 import it.polimi.ingsw.server.model.livingRoom.LivingRoomBoard;
 import it.polimi.ingsw.server.model.exceptions.NotEnoughTilesException;
 import it.polimi.ingsw.server.model.player.Player;
@@ -79,7 +80,8 @@ public class Game implements GameModelInterface {
      * the listener to the game status
      */
     private final GameListener gameListener;
-    private final ReschedulableTimer crashTimer;
+    private final GameStateListener gameStateListener;
+    private ReschedulableTimer crashTimer;
     private final long crashTimerDelay = 60000;
 
     /**
@@ -93,6 +95,7 @@ public class Game implements GameModelInterface {
     public Game(int numPlayers, Player host) throws NegativeFieldException, PlayersNumberOutOfRange, NotEnoughCardsException, IllegalFilePathException {
         Objects.requireNonNull(host);
         this.gameListener = new GameListener();
+        this.gameStateListener = new GameStateListener();
         this.numPlayers = numPlayers;
         this.chat = new Chat();
         this.players = new ArrayList<>();
@@ -117,7 +120,6 @@ public class Game implements GameModelInterface {
         }
         this.players.add(host);
 
-        this.crashTimer = new ReschedulableTimer();
     }
 
     @Override
@@ -145,7 +147,10 @@ public class Game implements GameModelInterface {
         this.gameListener.addSubscriber(subscriber);
     }
 
-
+    @Override
+    public void subscriberToListener(GameStateSubscriber subscriber) {
+        this.gameStateListener.addSubscriber(subscriber);
+    }
     /**
      * check if the game can be started
      * @return true, if the game have the right conditions to start, false otherwise
@@ -247,7 +252,7 @@ public class Game implements GameModelInterface {
      */
     public String getPlayerInTurn() throws GameEndedException, GameNotStartedException {
         if(isLastTurn && this.playerTurn == this.players.size() - 1) throw new GameEndedException();
-        if(this.isStarted()) throw new GameNotStartedException("The game has not started yet");
+        if(!this.isStarted()) throw new GameNotStartedException("The game has not started yet");
 
         return players.get(playerTurn).getUsername();
     }
@@ -468,7 +473,7 @@ public class Game implements GameModelInterface {
      * @return true, if the game is started
      */
     public boolean isStarted() {
-        return (this.state.equals(GameState.STARTED) || this.state.equals(GameState.RESUMED));
+        return (this.state == GameState.STARTED || this.state == GameState.RESUMED);
     }
 
     /**
@@ -568,6 +573,7 @@ public class Game implements GameModelInterface {
 
         if(tmpPlayer.isPresent()){
             livingRoom.unsubscribeFromListener(username);
+            this.gameStateListener.removeSubscriber(username);
             players.forEach(p -> {
                 p.getBookshelf().unsubscribeFromListener(username);
                 p.unsubscribeFromListener(username);
@@ -577,6 +583,7 @@ public class Game implements GameModelInterface {
 
             crashedPlayers.add(tmpPlayer.get());
             this.gameListener.notifyPlayerCrashed(tmpPlayer.get().getUsername());
+
             logger.info(username+" crashed!");
         }
         else
@@ -584,6 +591,7 @@ public class Game implements GameModelInterface {
 
         if(crashedPlayers.size() == numPlayers - 1) {
             this.changeState(GameState.PAUSED);
+            this.crashTimer = new ReschedulableTimer();
             this.crashTimer.schedule(this::endGame, this.crashTimerDelay);
 
         }
@@ -595,7 +603,8 @@ public class Game implements GameModelInterface {
 
     private void changeState(GameState gameState) {
         this.state = gameState;
-        this.gameListener.notifyGameState(this.state);
+        logger.info("GAME "+this+": GAME STATE CHANGED TO "+this.state);
+        this.gameStateListener.onGameStateChange(this.state);
     }
 
     /**
@@ -615,9 +624,9 @@ public class Game implements GameModelInterface {
             throw new PlayerNotFoundException("The player with this username has not been found in the game");
 
         if(this.state.equals(GameState.PAUSED)) {
-            this.changeState(GameState.RESUMED);
             this.crashTimer.cancel();
-            this.gameListener.notifyGameState(this.state);
+            this.changeState(GameState.RESUMED);
+
         }
     }
 

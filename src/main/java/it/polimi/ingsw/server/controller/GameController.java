@@ -200,6 +200,12 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
             gameModel.subscribeToListener(subscriber);
         }
     }
+    @Override
+    public void subscriberToListener(GameStateSubscriber subscriber) throws RemoteException {
+        synchronized (gameLock) {
+            gameModel.subscriberToListener(subscriber);
+        }
+    }
 
     /**
      * protected method that gets the game controlled, used by the lobby controller
