@@ -43,7 +43,7 @@ public class GUIView extends Application implements ViewInterface {
 
         fxmlLoader = new FXMLLoader(GUIView.class.getResource("/fxml/login-view.fxml"));
 
-        scene = new Scene(fxmlLoader.load());
+        scene = new Scene(fxmlLoader.load(), 1500, 750);
 
         ConnectionHandlerFactory factory = new ConnectionHandlerFactory();
         controller = factory.createConnection(connectionType, this);
@@ -67,7 +67,10 @@ public class GUIView extends Application implements ViewInterface {
 
     @Override
     public void drawBookShelf(Map<Coordinates, ItemTile> tilesMap, String playerUsername, int order) {
-
+        Platform.runLater(() -> {
+            GameViewController controller = fxmlLoader.getController();
+            controller.drawBookshelf(tilesMap, playerUsername, order);
+        });
     }
 
     @Override
@@ -102,7 +105,10 @@ public class GUIView extends Application implements ViewInterface {
 
     @Override
     public void drawChat(List<String> outputMessages) {
-
+        Platform.runLater(() -> {
+            GameViewController controller = fxmlLoader.getController();
+            controller.drawChat(outputMessages);
+        });
     }
 
     @Override

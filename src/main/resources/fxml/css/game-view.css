@@ -4,6 +4,13 @@
     -fx-background-position: center;
 }
 
+.livingRoom{
+    -fx-background-image: url("../../images/boards/livingroom.png");
+    -fx-background-repeat: stretch;
+    -fx-background-position: center;
+    -fx-background-size: contain;
+}
+
 .shape_corner{
     -fx-border-radius: 5px;
 }
