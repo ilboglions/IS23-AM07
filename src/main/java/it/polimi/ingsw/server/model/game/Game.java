@@ -626,17 +626,19 @@ public class Game implements GameModelInterface {
      * @param userToBeUpdated the username of the user that needs to receive the updates
      */
     public void triggerAllListeners(String userToBeUpdated) {
+        Set<String> alreadyJoinedPlayers = new HashSet<>();
         for(Player player : players){
             try {
                 player.triggerListener(userToBeUpdated);
                 if(!player.getUsername().equals(userToBeUpdated))
-                    gameListener.onPlayerJoinGame(player.getUsername());
+                    alreadyJoinedPlayers.add(player.getUsername());
+
             } catch (RemoteException e) {
                 throw new RuntimeException(e);
             }
             player.getBookshelf().triggerListener(userToBeUpdated);
         }
-
+        gameListener.notifyAlreadyJoinedPlayers(alreadyJoinedPlayers, userToBeUpdated);
         this.livingRoom.triggerListener(userToBeUpdated);
         ArrayList<RemoteCommonGoalCard> remoteCards = new ArrayList<>(this.commonGoalCards);
         this.gameListener.onCommonCardDraw(userToBeUpdated, remoteCards);

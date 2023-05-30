@@ -89,5 +89,15 @@ public class GameListener extends Listener<GameSubscriber> {
     }
 
 
-
+    public void notifyAlreadyJoinedPlayers(Set<String> alreadyJoinedPlayers, String userToBeUpdated) {
+        Set<GameSubscriber> subscribers = this.getSubscribers();
+        for(GameSubscriber sub : subscribers){
+            try {
+                if( sub.getSubscriberUsername().equals(userToBeUpdated))
+                    sub.notifyAlreadyJoinedPlayers(alreadyJoinedPlayers);
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
 }

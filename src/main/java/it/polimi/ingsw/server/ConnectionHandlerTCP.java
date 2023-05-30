@@ -15,10 +15,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.rmi.RemoteException;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -111,30 +108,14 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
         NetMessage outputMessage;
         logger.info(inputMessage.getMessageType().toString());
         switch (inputMessage.getMessageType()) {
-            case JOIN_LOBBY -> {
-                outputMessage =  this.parse((JoinLobbyMessage) inputMessage);
-            }
-            case CREATE_GAME -> {
-                outputMessage = this.parse((CreateGameMessage) inputMessage);
-            }
-            case JOIN_GAME -> {
-                outputMessage = this.parse((JoinGameMessage) inputMessage);
-            }
-            case TILES_SELECTION -> {
-                outputMessage = this.parse((TileSelectionMessage) inputMessage);
-            }
-            case MOVE_TILES -> {
-                outputMessage = this.parse((MoveTilesMessage) inputMessage);
-            }
-            case POST_MESSAGE -> {
-                outputMessage = this.parse((PostMessage) inputMessage);
-            }
-            case GAME_RECEIVED_MESSAGE -> {
-                outputMessage = this.parse((GameReceivedMessage) inputMessage);
-            }
-            case STILL_ACTIVE -> {
-                outputMessage = new StillActiveMessage();
-            }
+            case JOIN_LOBBY -> outputMessage =  this.parse((JoinLobbyMessage) inputMessage);
+            case CREATE_GAME -> outputMessage = this.parse((CreateGameMessage) inputMessage);
+            case JOIN_GAME -> outputMessage = this.parse((JoinGameMessage) inputMessage);
+            case TILES_SELECTION -> outputMessage = this.parse((TileSelectionMessage) inputMessage);
+            case MOVE_TILES -> outputMessage = this.parse((MoveTilesMessage) inputMessage);
+            case POST_MESSAGE -> outputMessage = this.parse((PostMessage) inputMessage);
+            case GAME_RECEIVED_MESSAGE -> outputMessage = this.parse((GameReceivedMessage) inputMessage);
+            case STILL_ACTIVE -> outputMessage = new StillActiveMessage();
             default -> {
                 closeConnectionFlag = true;
                 outputMessage = new CloseConnectionMessage();
@@ -485,6 +466,11 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
     public void notifyGameStatus(GameState gameState) throws RemoteException {
         GameStatusMessage update = new GameStatusMessage(gameState);
         this.sendUpdate(update);
+    }
+
+    @Override
+    public void notifyAlreadyJoinedPlayers(Set<String> alreadyJoinedPlayers) throws RemoteException {
+        this.sendUpdate( new AlreadyJoinedPlayersMessage(alreadyJoinedPlayers));
     }
 
     /**

@@ -34,16 +34,15 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
     /**
      * Map to contain the current points of each player
      */
-    private final Map<String, Integer> playerPoints;
-    /**
-     * Create a new local game to remember the state of the game for a single client
-     * @param players the list of players that are currently in the game
-     */
     private final ViewInterface view;
     private final String username;
     private Boolean gameStarted;
-
-
+    private final Map<String, Integer> playerPoints;
+    /**
+     * Create a new local game to remember the state of the game for a single client
+     * @param username the  player that is currently in the game
+     * @param view the view of the game
+     */
     public Game(ViewInterface view, String username) throws  RemoteException {
         super();
 
@@ -89,6 +88,14 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
             players.add(player);
             playerPoints.put(player, 0);
             playerScoringTokens.put(player, new HashSet<>());
+        }
+
+        view.drawLeaderboard(this.playerPoints);
+        Map<Coordinates,ItemTile> bookshelfMap = new HashMap<>();
+        try {
+            view.drawBookShelf(bookshelfMap,username,players.indexOf(username));
+        } catch (InvalidCoordinatesException e) {
+            throw new RuntimeException(e);
         }
     }
     /**
@@ -188,13 +195,6 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
     @Override
     public synchronized void notifyPlayerJoined(String username) throws RemoteException {
         this.joinPlayer(username);
-        view.drawLeaderboard(this.playerPoints);
-        Map<Coordinates,ItemTile> bookshelfMap = new HashMap<>();
-        try {
-            view.drawBookShelf(bookshelfMap,username,players.indexOf(username));
-        } catch (InvalidCoordinatesException e) {
-            throw new RuntimeException(e);
-        }
         view.postNotification("New player joined!",username+" joined the game");
     }
 
@@ -285,5 +285,12 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
     @Override
     public void notifyGameStatus(GameState gameState) throws RemoteException {
         view.postNotification("Game is" + gameState.toString(), "");
+    }
+
+    @Override
+    public void notifyAlreadyJoinedPlayers(Set<String> alreadyJoinedPlayers) throws RemoteException {
+        for(String p : alreadyJoinedPlayers){
+            this.joinPlayer(p);
+        }
     }
 }
