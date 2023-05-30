@@ -15,7 +15,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 
 
-public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerSubscriber, ChatSubscriber, BookshelfSubscriber, BoardSubscriber {
+public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerSubscriber, ChatSubscriber, BookshelfSubscriber, BoardSubscriber, GameStateSubscriber {
 
     @Serial
     private static final long serialVersionUID = 2696723449577327966L;
@@ -282,9 +282,14 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
         }
     }
 
+
+    /**
+     * @param newState
+     * @throws RemoteException
+     */
     @Override
-    public void notifyGameStatus(GameState gameState) throws RemoteException {
-        view.postNotification("Game is" + gameState.toString(), "");
+    public void notifyChangeGameStatus(GameState newState) throws RemoteException {
+        view.postNotification("Game is" + newState.toString(), "");
     }
 
     @Override

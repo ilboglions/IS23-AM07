@@ -77,16 +77,6 @@ public class GameListener extends Listener<GameSubscriber> {
         });
     }
 
-    public void notifyGameState(GameState status) {
-        Set<GameSubscriber> subscribers = this.getSubscribers();
-        subscribers.forEach(sub -> {
-            try {
-                sub.notifyGameStatus(status);
-            } catch (RemoteException e) {
-                throw new RuntimeException(e);
-            }
-        });
-    }
 
 
     public void notifyAlreadyJoinedPlayers(Set<String> alreadyJoinedPlayers, String userToBeUpdated) {

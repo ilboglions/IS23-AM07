@@ -1,5 +1,7 @@
 package it.polimi.ingsw.server.controller;
 
+import it.polimi.ingsw.GameState;
+import it.polimi.ingsw.remoteInterfaces.GameStateSubscriber;
 import it.polimi.ingsw.server.ReschedulableTimer;
 import it.polimi.ingsw.server.model.exceptions.*;
 import it.polimi.ingsw.server.model.game.GameModelInterface;
@@ -16,7 +18,7 @@ import java.rmi.server.*;
 /**
  * the lobby controller ensures the communication through client controller and server model
  */
-public class LobbyController extends UnicastRemoteObject implements RemoteLobbyController {
+public class LobbyController extends UnicastRemoteObject implements RemoteLobbyController,GameStateSubscriber {
 
 
     /**
@@ -135,12 +137,14 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
                 throw new RuntimeException(e);
             }
             gameController = new GameController(gameModel);
+            gameController.subscriberToListener((GameStateSubscriber) this);
             this.gameControllers.put(gameModel, gameController);
 
             this.stopTimer(player);
             return gameController;
         }
     }
+
 
     /**
      * used to handle the crash of the player, it removes the player from the waiting list
@@ -200,4 +204,20 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
         }
     }
 
+    /**
+     * @param newState
+     */
+    @Override
+    public void notifyChangeGameStatus(GameState newState) {
+
+    }
+
+    /**
+     * @return
+     * @throws RemoteException
+     */
+    @Override
+    public String getSubscriberUsername() throws RemoteException {
+        return "lobby";
+    }
 }
