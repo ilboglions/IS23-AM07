@@ -1,5 +1,6 @@
 package it.polimi.ingsw.server;
 
+import it.polimi.ingsw.GameState;
 import it.polimi.ingsw.Notifications;
 import it.polimi.ingsw.messages.*;
 import it.polimi.ingsw.remoteInterfaces.*;
@@ -481,8 +482,8 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
      * @throws RemoteException
      */
     @Override
-    public void notifyGameStatus(GameState gameState, String details) throws RemoteException {
-        GameStatusMessage update = new GameStatusMessage(gameState, details);
+    public void notifyGameStatus(GameState gameState) throws RemoteException {
+        GameStatusMessage update = new GameStatusMessage(gameState);
         this.sendUpdate(update);
     }
 

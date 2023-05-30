@@ -1,7 +1,7 @@
 package it.polimi.ingsw.client.localModel;
 
 import it.polimi.ingsw.client.view.ViewInterface;
-import it.polimi.ingsw.messages.GameState;
+import it.polimi.ingsw.GameState;
 import it.polimi.ingsw.remoteInterfaces.*;
 import it.polimi.ingsw.server.model.chat.Message;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
@@ -283,7 +283,7 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
     }
 
     @Override
-    public void notifyGameStatus(GameState gameState, String details) throws RemoteException {
-        view.postNotification("Game is" + gameState.toString(),details);
+    public void notifyGameStatus(GameState gameState) throws RemoteException {
+        view.postNotification("Game is" + gameState.toString(), "");
     }
 }

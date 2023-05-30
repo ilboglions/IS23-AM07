@@ -45,7 +45,7 @@ public class Lobby {
         Optional<Player> op =  waitingPlayers.stream().filter(p -> p.getUsername().equals(playerName)).findFirst();
         if ( op.isPresent() ){
             Game result = games.stream()
-                    .filter(tmp -> !tmp.getIsStarted())
+                    .filter(tmp -> !tmp.isStarted())
                     .findFirst()
                     .orElseThrow(()-> new NoAvailableGameException("All the games have already started"));
 

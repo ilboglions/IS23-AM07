@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public interface GameModelInterface {
 
-    boolean getIsStarted();
+    boolean isStarted();
     void subscribeToListener(BoardSubscriber subscriber);
     void subscribeToListener(BookshelfSubscriber subscriber);
     void subscribeToListener(ChatSubscriber subscriber);

@@ -454,7 +454,7 @@ public class ClientSocket implements ConnectionHandler{
 
     private void parse(GameStatusMessage message) {
         try {
-            gameModel.notifyGameStatus(message.getState(), message.getDetails());
+            gameModel.notifyGameStatus(message.getState());
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }

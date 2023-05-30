@@ -1,6 +1,6 @@
 package it.polimi.ingsw.remoteInterfaces;
 
-import it.polimi.ingsw.messages.GameState;
+import it.polimi.ingsw.GameState;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -36,5 +36,5 @@ public interface GameSubscriber extends ListenerSubscriber {
 
     void notifyTurnOrder(ArrayList<String> playerOrder) throws RemoteException;
 
-    void notifyGameStatus(GameState gameState, String details) throws RemoteException;
+    void notifyGameStatus(GameState gameState) throws RemoteException;
 }
