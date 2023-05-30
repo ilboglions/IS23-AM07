@@ -276,60 +276,25 @@ public class ClientSocket implements ConnectionHandler{
     private void parse(NetMessage responseMessage){
         if(responseMessage == null) return;
         switch (responseMessage.getMessageType()){
-            case LOGIN_RETURN -> {
-                this.parse((LoginReturnMessage) responseMessage);
-            }
-            case CONFIRM_GAME -> {
-                this.parse((ConfirmGameMessage) responseMessage);
-            }
-            case CONFIRM_SELECTION -> {
-                this.parse((ConfirmSelectionMessage) responseMessage);
-            }
-            case CONFIRM_MOVE -> {
-                this.parse((ConfirmMoveMessage) responseMessage);
-            }
-            case NOTIFY_NEW_CHAT -> {
-                this.parse((NotifyNewChatMessage) responseMessage);
-            }
-            case BOARD_UPDATE -> {
-                this.parse((BoardUpdateMessage) responseMessage);
-            }
-            case BOOKSHELF_UPDATE -> {
-                this.parse((BookshelfUpdateMessage) responseMessage);
-            }
-            case PERSONAL_CARD_UPDATE -> {
-                this.parse((PersonalGoalCardUpdateMessage) responseMessage);
-            }
-            case COMMON_CARDS_UPDATE -> {
-                this.parse((CommonGoalCardsUpdateMessage) responseMessage);
-            }
-            case NOTIFY_PLAYER_CRASHED -> {
-                this.parse((NotifyPlayerCrashedMessage) responseMessage);
-            }
-            case NOTIFY_WINNING_PLAYER -> {
-                this.parse((NotifyWinnerPlayerMessage) responseMessage);
-            }
-            case POINTS_UPDATE -> {
-                this.parse((PointsUpdateMessage) responseMessage);
-            }
-            case CONFIRM_CHAT -> {
-                this.parse((ConfirmChatMessage) responseMessage);
-            }
-            case TOKEN_UPDATE -> {
-                this.parse((TokenUpdateMessage) responseMessage);
-            }
-            case NEW_PLAYER -> {
-                this.parse((NewPlayerInGame) responseMessage);
-            }
-            case NOTIFY_PLAYER_IN_TURN -> {
-                this.parse((NotifyPlayerInTurnMessage) responseMessage);
-            }
-            case NOTIFY_TURN_ORDER -> {
-                this.parse((NotifyTurnOrder) responseMessage);
-            }
-            case GAME_STATUS -> {
-                this.parse((GameStatusMessage) responseMessage);
-            }
+            case LOGIN_RETURN -> this.parse((LoginReturnMessage) responseMessage);
+            case CONFIRM_GAME -> this.parse((ConfirmGameMessage) responseMessage);
+            case CONFIRM_SELECTION -> this.parse((ConfirmSelectionMessage) responseMessage);
+            case CONFIRM_MOVE -> this.parse((ConfirmMoveMessage) responseMessage);
+            case NOTIFY_NEW_CHAT -> this.parse((NotifyNewChatMessage) responseMessage);
+            case BOARD_UPDATE -> this.parse((BoardUpdateMessage) responseMessage);
+            case BOOKSHELF_UPDATE -> this.parse((BookshelfUpdateMessage) responseMessage);
+            case PERSONAL_CARD_UPDATE -> this.parse((PersonalGoalCardUpdateMessage) responseMessage);
+            case COMMON_CARDS_UPDATE -> this.parse((CommonGoalCardsUpdateMessage) responseMessage);
+            case NOTIFY_PLAYER_CRASHED -> this.parse((NotifyPlayerCrashedMessage) responseMessage);
+            case NOTIFY_WINNING_PLAYER -> this.parse((NotifyWinnerPlayerMessage) responseMessage);
+            case POINTS_UPDATE -> this.parse((PointsUpdateMessage) responseMessage);
+            case CONFIRM_CHAT -> this.parse((ConfirmChatMessage) responseMessage);
+            case TOKEN_UPDATE -> this.parse((TokenUpdateMessage) responseMessage);
+            case NEW_PLAYER -> this.parse((NewPlayerInGame) responseMessage);
+            case NOTIFY_PLAYER_IN_TURN -> this.parse((NotifyPlayerInTurnMessage) responseMessage);
+            case NOTIFY_TURN_ORDER -> this.parse((NotifyTurnOrder) responseMessage);
+            case GAME_STATUS -> this.parse((GameStatusMessage) responseMessage);
+            case ALREADY_JOINED_PLAYERS -> this.parse((AlreadyJoinedPlayersMessage) responseMessage);
             default -> {
             }
         }
@@ -543,6 +508,14 @@ public class ClientSocket implements ConnectionHandler{
         }
     }
 
+    private void parse(AlreadyJoinedPlayersMessage message){
+        try {
+            gameModel.notifyAlreadyJoinedPlayers(message.getAlreadyJoinedPlayers());
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private void parse(NotifyPlayerInTurnMessage message){
         try {
             gameModel.notifyPlayerInTurn(message.getUserInTurn());
@@ -561,7 +534,7 @@ public class ClientSocket implements ConnectionHandler{
 
     private void parse(GameStatusMessage message) {
         try {
-            gameModel.notifyGameStatus(message.getState(), message.getDetails());
+            gameModel.notifyChangeGameStatus(message.getState());
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }

@@ -1,5 +1,6 @@
 package it.polimi.ingsw.server;
 
+import it.polimi.ingsw.GameState;
 import it.polimi.ingsw.Notifications;
 import it.polimi.ingsw.messages.*;
 import it.polimi.ingsw.remoteInterfaces.*;
@@ -9,22 +10,20 @@ import it.polimi.ingsw.server.model.exceptions.*;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 import it.polimi.ingsw.server.model.tokens.ScoringToken;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.rmi.RemoteException;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static it.polimi.ingsw.server.ServerMain.logger;
 
 
-public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, BookshelfSubscriber, ChatSubscriber, PlayerSubscriber, GameSubscriber {
+public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, BookshelfSubscriber, ChatSubscriber, PlayerSubscriber, GameSubscriber, GameStateSubscriber {
 
     private final Socket socket;
     private boolean closeConnectionFlag;
@@ -74,8 +73,10 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
                         timer.reschedule(timerDelay);
                         lastReceivedMessages.notifyAll();
                         lastReceivedMessages.wait(1);
-                    } catch (IOException | ClassNotFoundException | InterruptedException e) {
+                    } catch ( ClassNotFoundException | InterruptedException e) {
                         throw new RuntimeException(e);
+                    } catch ( IOException ignored){
+
                     }
                 }
             }
@@ -110,30 +111,14 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
         NetMessage outputMessage;
         logger.info(inputMessage.getMessageType().toString());
         switch (inputMessage.getMessageType()) {
-            case JOIN_LOBBY -> {
-                outputMessage =  this.parse((JoinLobbyMessage) inputMessage);
-            }
-            case CREATE_GAME -> {
-                outputMessage = this.parse((CreateGameMessage) inputMessage);
-            }
-            case JOIN_GAME -> {
-                outputMessage = this.parse((JoinGameMessage) inputMessage);
-            }
-            case TILES_SELECTION -> {
-                outputMessage = this.parse((TileSelectionMessage) inputMessage);
-            }
-            case MOVE_TILES -> {
-                outputMessage = this.parse((MoveTilesMessage) inputMessage);
-            }
-            case POST_MESSAGE -> {
-                outputMessage = this.parse((PostMessage) inputMessage);
-            }
-            case GAME_RECEIVED_MESSAGE -> {
-                outputMessage = this.parse((GameReceivedMessage) inputMessage);
-            }
-            case STILL_ACTIVE -> {
-                outputMessage = new StillActiveMessage();
-            }
+            case JOIN_LOBBY -> outputMessage =  this.parse((JoinLobbyMessage) inputMessage);
+            case CREATE_GAME -> outputMessage = this.parse((CreateGameMessage) inputMessage);
+            case JOIN_GAME -> outputMessage = this.parse((JoinGameMessage) inputMessage);
+            case TILES_SELECTION -> outputMessage = this.parse((TileSelectionMessage) inputMessage);
+            case MOVE_TILES -> outputMessage = this.parse((MoveTilesMessage) inputMessage);
+            case POST_MESSAGE -> outputMessage = this.parse((PostMessage) inputMessage);
+            case GAME_RECEIVED_MESSAGE -> outputMessage = this.parse((GameReceivedMessage) inputMessage);
+            case STILL_ACTIVE -> outputMessage = new StillActiveMessage();
             default -> {
                 closeConnectionFlag = true;
                 outputMessage = new CloseConnectionMessage();
@@ -352,6 +337,7 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
             gameController.subscribeToListener((BoardSubscriber) this);
             gameController.subscribeToListener((BookshelfSubscriber) this);
             gameController.subscribeToListener((GameSubscriber) this);
+            gameController.subscriberToListener((GameStateSubscriber) this);
         } catch (RemoteException e){
             throw new RuntimeException(e);
         }
@@ -476,14 +462,10 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
         this.sendUpdate(update);
     }
 
-    /**
-     * @param gameState
-     * @throws RemoteException
-     */
+
     @Override
-    public void notifyGameStatus(GameState gameState, String details) throws RemoteException {
-        GameStatusMessage update = new GameStatusMessage(gameState, details);
-        this.sendUpdate(update);
+    public void notifyAlreadyJoinedPlayers(Set<String> alreadyJoinedPlayers) throws RemoteException {
+        this.sendUpdate( new AlreadyJoinedPlayersMessage(alreadyJoinedPlayers));
     }
 
     /**
@@ -500,6 +482,15 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    /**
+     * @param newState
+     */
+    @Override
+    public void notifyChangeGameStatus(GameState newState) {
+        GameStatusMessage update = new GameStatusMessage(newState);
+        this.sendUpdate(update);
     }
 }
 

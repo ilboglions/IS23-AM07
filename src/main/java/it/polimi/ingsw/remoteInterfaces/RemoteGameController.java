@@ -27,6 +27,8 @@ public interface RemoteGameController extends Remote{
 
     void handleCrashedPlayer(String username) throws RemoteException, PlayerNotFoundException;
 
+    void subscriberToListener(GameStateSubscriber subscriber) throws RemoteException;
+
     void handleRejoinedPlayer(String username) throws RemoteException, PlayerNotFoundException;
 
     void triggerHeartBeat(String username) throws RemoteException;

@@ -10,4 +10,5 @@ public interface RemoteLobbyController extends Remote{
     RemoteGameController addPlayerToGame(String player) throws RemoteException, NicknameAlreadyUsedException, NoAvailableGameException, InvalidPlayerException;
 
     RemoteGameController createGame(String player, int nPlayers) throws RemoteException, InvalidPlayerException, PlayersNumberOutOfRange;
+
 }

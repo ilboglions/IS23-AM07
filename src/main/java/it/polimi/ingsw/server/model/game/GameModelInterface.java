@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public interface GameModelInterface {
 
-    boolean getIsStarted();
+    boolean isStarted();
     void subscribeToListener(BoardSubscriber subscriber);
     void subscribeToListener(BookshelfSubscriber subscriber);
     void subscribeToListener(ChatSubscriber subscriber);
@@ -26,6 +26,9 @@ public interface GameModelInterface {
     boolean checkRefill();
     void updatePlayerPoints(String username) throws InvalidPlayerException, NotEnoughSpaceException, TokenAlreadyGivenException, GameNotStartedException;
     boolean setPlayerTurn();
+
+    void subscriberToListener(GameStateSubscriber subscriber);
+
     boolean canStart();
      // CHAT FUNCTIONALITIES
     ArrayList<Message> getPlayerMessages(String player) throws InvalidPlayerException;

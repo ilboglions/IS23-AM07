@@ -1,5 +1,5 @@
 package it.polimi.ingsw.server.model.listeners;
-import it.polimi.ingsw.messages.GameState;
+import it.polimi.ingsw.GameState;
 import it.polimi.ingsw.remoteInterfaces.GameSubscriber;
 import it.polimi.ingsw.remoteInterfaces.RemoteCommonGoalCard;
 
@@ -77,38 +77,17 @@ public class GameListener extends Listener<GameSubscriber> {
         });
     }
 
-    public void notifyPausedGame() {
+
+
+    public void notifyAlreadyJoinedPlayers(Set<String> alreadyJoinedPlayers, String userToBeUpdated) {
         Set<GameSubscriber> subscribers = this.getSubscribers();
-        subscribers.forEach(sub -> {
+        for(GameSubscriber sub : subscribers){
             try {
-                sub.notifyGameStatus(GameState.PAUSED, "Too many players have crashed, let's wait if someone comes back");
+                if( sub.getSubscriberUsername().equals(userToBeUpdated))
+                    sub.notifyAlreadyJoinedPlayers(alreadyJoinedPlayers);
             } catch (RemoteException e) {
                 throw new RuntimeException(e);
             }
-        });
+        }
     }
-
-    public void notifyResumedGame() {
-        Set<GameSubscriber> subscribers = this.getSubscribers();
-        subscribers.forEach(sub -> {
-            try {
-                sub.notifyGameStatus(GameState.RESUMED, "Someone came back, the game is resumed");
-            } catch (RemoteException e) {
-                throw new RuntimeException(e);
-            }
-        });
-    }
-
-    public void notifyCrashedGame() {
-        Set<GameSubscriber> subscribers = this.getSubscribers();
-        subscribers.forEach(sub -> {
-            try {
-                sub.notifyGameStatus(GameState.CRASHED, "No one came back, ending the game");
-            } catch (RemoteException e) {
-                throw new RuntimeException(e);
-            }
-        });
-    }
-
-
 }

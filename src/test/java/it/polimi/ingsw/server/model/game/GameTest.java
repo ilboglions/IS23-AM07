@@ -503,7 +503,7 @@ public class GameTest {
         Player testPlayer = new Player("Test");
         Game test = new Game(3, testPlayer);
 
-        assertFalse(test.getIsStarted());
+        assertFalse(test.isStarted());
 
         Player secondPlayer = new Player("secondPlayer");
         Player thirdPlayer = new Player("thirdPlayer");
@@ -511,7 +511,7 @@ public class GameTest {
         test.addPlayer(thirdPlayer);
         test.start();
 
-        assertTrue(test.getIsStarted());
+        assertTrue(test.isStarted());
     }
 
     /**
