@@ -39,6 +39,12 @@ public class ClientSocket implements ConnectionHandler{
     private final long timerDelay = 15000;
     private Game gameModel;
 
+    /**
+     * Creates an instance of ClientSocket
+     * @param ip ip of the server
+     * @param port port of the server
+     * @param view the view will be notified for updates
+     */
     public ClientSocket(String ip, int port, ViewInterface view) {
         this.ip = ip;
         this.port = port;
@@ -85,12 +91,18 @@ public class ClientSocket implements ConnectionHandler{
         this.startParserAgent();
     }
 
+    /**
+     * Handles connection crash closing the connection
+     */
     private void handleCrash() {
         view.postNotification(Notifications.ERR_CONNECTION_NO_LONGER_AVAILABLE);
         this.close();
     }
 
 
+    /**
+     * Closes the client connection to the server
+     */
     @Override
     public void close(){
         synchronized (outputStream) {
@@ -107,6 +119,10 @@ public class ClientSocket implements ConnectionHandler{
         }
     }
 
+    /**
+     * Adds player to the lobby
+     * @param username the username used for joining the lobby
+     */
     @Override
     public void JoinLobby(String username) {
         this.username = username;
@@ -114,17 +130,29 @@ public class ClientSocket implements ConnectionHandler{
         this.sendUpdate(requestMessage);
     }
 
+    /**
+     * Creates a new game
+     * @param nPlayers the number of player for the game
+     */
     @Override
     public void CreateGame(int nPlayers) {
         CreateGameMessage requestMessage = new CreateGameMessage(nPlayers);
         this.sendUpdate(requestMessage);
     }
 
+    /**
+     * Joins a Game
+     */
     @Override
     public void JoinGame() {
         JoinGameMessage requestMessage = new JoinGameMessage();
         this.sendUpdate(requestMessage);
     }
+
+    /**
+     * Checks if a tiles retrieval is admissible
+     * @param tiles the tiles to be selected
+     */
 
     @Override
     public void checkValidRetrieve(ArrayList<Coordinates> tiles) {
@@ -132,16 +160,32 @@ public class ClientSocket implements ConnectionHandler{
         this.sendUpdate(requestMessage);
     }
 
+    /**
+     * Moves tiles in a personal bookshelf
+     * @param tiles the selected tiles
+     * @param column the column of the bookshelf that has been chosen
+     */
+
     @Override
     public void moveTiles(ArrayList<Coordinates> tiles, int column) {
         MoveTilesMessage requestMessage = new MoveTilesMessage(tiles, column);
         this.sendUpdate(requestMessage);
     }
 
+    /**
+     * Sends a broadcast message to the game chat
+     * @param content content of the message
+     */
     public void sendMessage(String content){
         PostMessage message = new PostMessage(content);
         this.sendUpdate(message);
     }
+
+    /**
+     * Sends a private message to a player in the game
+     * @param content content of the message
+     * @param recipient recipient of the message
+     */
 
     public void sendMessage(String content, String recipient){
         PostMessage message = new PostMessage(content, recipient);
@@ -153,6 +197,9 @@ public class ClientSocket implements ConnectionHandler{
         this.sendUpdate(message);
     }
 
+    /**
+     * Sends periodic signals to the server for connection checking
+     */
     @Override
     public void sendHeartBeat()  {
         heartBeatManager.scheduleAtFixedRate(
@@ -163,6 +210,10 @@ public class ClientSocket implements ConnectionHandler{
             0, 5, TimeUnit.SECONDS);
     }
 
+
+    /**
+     * Continuously reads from the inputStream for new messages and notifies threads waiting for messages
+     */
     private void messagesHopper()  {
         threadManager.execute( () -> {
 
@@ -218,6 +269,10 @@ public class ClientSocket implements ConnectionHandler{
         return result;
     } */
 
+    /**
+     * Parser of NetMessage, calls specific method for every message type
+     * @param responseMessage message to be parsed
+     */
     private void parse(NetMessage responseMessage){
         if(responseMessage == null) return;
         switch (responseMessage.getMessageType()){
@@ -280,6 +335,10 @@ public class ClientSocket implements ConnectionHandler{
         }
     }
 
+    /**
+     * Manages the login return message notifying the view
+     * @param message response message
+     */
     private void parse(LoginReturnMessage message){
         if(message.getConfirmLogin()){
             if (message.getConfirmRejoined()) {
@@ -302,6 +361,10 @@ public class ClientSocket implements ConnectionHandler{
         }
     }
 
+    /**
+     * Manages the game confirmation message notifying the view
+     * @param message response message
+     */
     private void parse(ConfirmGameMessage message){
         boolean errorOccurred = false;
 
@@ -332,6 +395,10 @@ public class ClientSocket implements ConnectionHandler{
         this.sendReceivedGame(errorOccurred);
     }
 
+    /**
+     * Manages the confirm selection message notifying the view
+     * @param message response message
+     */
     private void parse(ConfirmSelectionMessage message){
         if(message.getConfirmSelection()){
             view.postNotification(Notifications.TILES_SELECTION_ACCEPTED);
@@ -340,12 +407,20 @@ public class ClientSocket implements ConnectionHandler{
         }
     }
 
+    /**
+     * Manages the confirm move message notifying the view
+     * @param message response the message
+     */
     private void parse(ConfirmMoveMessage message){
         if(message.getConfirmSelection()){
             view.postNotification(Notifications.TILES_MOVED_SUCCESSFULLY);
         }
     }
 
+    /**
+     * Adds a message to the chat notifying the view
+     * @param message chat notification message
+     */
     private void parse(NotifyNewChatMessage message){
         try {
             if(message.getRecipient().isEmpty())
@@ -357,6 +432,10 @@ public class ClientSocket implements ConnectionHandler{
         }
     }
 
+    /**
+     * Manages an update on the board notifying the view
+     * @param message update message
+     */
     private void parse(BoardUpdateMessage message) {
         try {
             gameModel.updateBoardStatus(message.getTilesInBoard());
@@ -365,6 +444,10 @@ public class ClientSocket implements ConnectionHandler{
         }
     }
 
+    /**
+     * Manages an update on the bookshelf notifying the view
+     * @param message update message
+     */
     private void parse(BookshelfUpdateMessage message){
         try {
             gameModel.updateBookshelfStatus(message.getUsername(), message.getInsertedTiles(),message.getColumn(), message.getCurrentMap());
@@ -373,6 +456,10 @@ public class ClientSocket implements ConnectionHandler{
         }
     }
 
+    /**
+     * Manages an update on the personal goal card notifying the view
+     * @param message update message
+     */
     private void parse(PersonalGoalCardUpdateMessage message){
         try {
             gameModel.updatePersonalGoalCard(message.getPlayer(), message.getCard());
@@ -381,6 +468,10 @@ public class ClientSocket implements ConnectionHandler{
         }
     }
 
+    /**
+     * Manages an update on the common goal card notifying the view
+     * @param message update message
+     */
     private void parse(CommonGoalCardsUpdateMessage message){
         try {
             gameModel.notifyCommonGoalCards(message.getCommonGoalCards());
@@ -389,6 +480,10 @@ public class ClientSocket implements ConnectionHandler{
         }
     }
 
+    /**
+     * Notifies the view that another player crashed
+     * @param message notification message
+     */
     private void parse(NotifyPlayerCrashedMessage message){
         try {
             this.gameModel.notifyPlayerCrashed(message.getUserCrashed());
@@ -397,6 +492,10 @@ public class ClientSocket implements ConnectionHandler{
         }
     }
 
+    /**
+     * Notifies the view that a player won the game
+     * @param message notification message
+     */
     private void parse(NotifyWinnerPlayerMessage message){
         try {
             gameModel.notifyWinningPlayer(message.getWinnerUser(),message.getWinnerPoints(),message.getScoreboard());
@@ -405,6 +504,10 @@ public class ClientSocket implements ConnectionHandler{
         }
     }
 
+    /**
+     * Manages an update in the points
+     * @param message update message
+     */
     private  void parse(PointsUpdateMessage message){
         try {
             gameModel.updatePoints(message.getUsername(), message.getTotalPoints(), message.getAddedPoints());
@@ -413,6 +516,10 @@ public class ClientSocket implements ConnectionHandler{
         }
     }
 
+    /**
+     * Manages a confirmchat message
+     * @param message notification message
+     */
     private void parse(ConfirmChatMessage message){
         if(!message.getResult())
             view.postNotification("Error while posting your message", "Your message was not posted in the chat due to an error, please retry.");

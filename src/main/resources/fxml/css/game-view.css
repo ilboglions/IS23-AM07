@@ -14,3 +14,16 @@
 .shape_corner{
     -fx-border-radius: 5px;
 }
+
+.selectedImage{
+    -fx-opacity: 0.5;
+    -fx-border-color: red;
+    -fx-border-width: 2;
+    -fx-border-style: solid;
+}
+/*
+.livingRoom{
+    -fx-background-image: url("../../images/boards/livingroom.png");
+    -fx-background-repeat:
+    -fx-background-position: center;
+}*/

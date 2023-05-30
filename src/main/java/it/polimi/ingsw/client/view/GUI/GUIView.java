@@ -75,7 +75,10 @@ public class GUIView extends Application implements ViewInterface {
 
     @Override
     public void drawLivingRoom(Map<Coordinates, ItemTile> livingRoomMap)  {
-
+        Platform.runLater(() -> {
+            GameViewController controller = fxmlLoader.getController();
+            controller.drawLivingRoom(livingRoomMap);
+        });
     }
 
     @Override
@@ -142,6 +145,9 @@ public class GUIView extends Application implements ViewInterface {
 
     @Override
     public void drawPlayerInTurn(String userInTurn, String thisUser) {
-
+        Platform.runLater(() -> {
+            GameViewController controller = fxmlLoader.getController();
+            controller.drawPlayerInTurn(userInTurn, thisUser);
+        });
     }
 }

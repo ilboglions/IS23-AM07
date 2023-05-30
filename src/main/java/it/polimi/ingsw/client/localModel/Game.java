@@ -43,7 +43,12 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
     private final String username;
     private Boolean gameStarted;
 
-
+    /**
+     * Creates a local Game Model
+     * @param view view of the client
+     * @param username username of the local player
+     * @throws RemoteException RMI error
+     */
     public Game(ViewInterface view, String username) throws  RemoteException {
         super();
 
@@ -175,11 +180,21 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
         view.drawLeaderboard(playerPoints);
     }
 
+    /**
+     * Parse the message between private & broadcast
+     * @param from the sender of the message
+     * @param msg the message
+     * @throws RemoteException
+     */
     @Override
     public void receiveMessage(String from, String recipient, String msg) throws RemoteException {
         this.addMessage(new Message(from, recipient, msg));
     }
 
+    /**
+     * Notifies the local player that a new one joined the game, updating the viewhe username of the player that has joined
+     * @throws RemoteException
+     */
     @Override
     public void receiveMessage(String from, String msg) throws RemoteException {
         this.addMessage(new Message(from, msg));
@@ -198,12 +213,24 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
         view.postNotification("New player joined!",username+" joined the game");
     }
 
+    /**
+     * Notifies that a player won the game, updating the view
+     * @param username the username of the winning player
+     * @param points the points of the player that won the game
+     * @param scoreboard the total scoreboard, already ordered, the key is the username and the value the points of the user
+     * @throws RemoteException
+     */
     @Override
     public synchronized void notifyWinningPlayer(String username, int points, Map<String, Integer> scoreboard) throws RemoteException {
         view.postNotification("Game ended!",username+" won the game!");
         view.drawLeaderboard(scoreboard);
     }
 
+    /**
+     * Notifies the presence of  common goal cards
+     * @param commonGoalCards is the list of the common goals of the game
+     * @throws RemoteException RMI exception
+     */
     @Override
     public synchronized void notifyCommonGoalCards(ArrayList<RemoteCommonGoalCard> commonGoalCards) throws RemoteException {
         try {
@@ -213,11 +240,21 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
         }
     }
 
+    /**
+     * Notifies that is the turn of a player
+     * @param username username of the player
+     * @throws RemoteException RMI exception
+     */
     @Override
     public synchronized void notifyPlayerInTurn(String username) throws RemoteException {
         view.drawPlayerInTurn(username, this.username);
     }
 
+    /**
+     * Norifies the player that another player crashed
+     * @param userCrashed username of the crashed player
+     * @throws RemoteException
+     */
     @Override
     public synchronized void notifyPlayerCrashed(String userCrashed) throws RemoteException {
         view.postNotification(userCrashed + "crashed!", "Will skip his turn until he reconnects");
@@ -236,15 +273,28 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
         }
     }
 
+    /**
+     * Get the username of the local player
+     * @return username of the player
+     * @throws RemoteException
+     */
     @Override
     public String getSubscriberUsername() throws RemoteException {
         return this.username;
     }
 
+    /**
+     * Update the points of a plater
+     * @param player the player which points are updated
+     * @param overallPoints the overall points of the player
+     * @param addedPoints the points added on this state change
+     * @throws RemoteException RMI exception
+     */
     @Override
     public synchronized void updatePoints(String player, int overallPoints, int addedPoints) throws RemoteException {
         this.updatePlayerPoints(player,overallPoints);
     }
+
 
     @Override
     public synchronized void updateTokens(String player, ArrayList<ScoringToken> tokenPoints) throws RemoteException {
@@ -253,6 +303,12 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
         }
     }
 
+    /**
+     * Updates the player's personal goal card
+     * @param player player username
+     * @param remotePersonal personal goal card
+     * @throws RemoteException
+     */
     @Override
     public synchronized void updatePersonalGoalCard(String player, RemotePersonalGoalCard remotePersonal) throws RemoteException {
         try {
@@ -261,6 +317,14 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
         }
     }
 
+    /**
+     * Updates the personal bookshelf statis
+     * @param player the username of the players that owns the bookshelf
+     * @param tilesInserted the tile inserted by the player
+     * @param colChosen the column chosen for the insertion
+     * @param currentTilesMap old bookshelf status
+     * @throws RemoteException RMI exception
+     */
     @Override
     public synchronized void updateBookshelfStatus(String player, ArrayList<ItemTile> tilesInserted, int colChosen, Map<Coordinates, ItemTile> currentTilesMap) throws RemoteException {
         try {
@@ -273,6 +337,11 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
         }
     }
 
+    /**
+     * Updates the livingroom board notifing the view
+     * @param tilesInBoard all the tiles that are in the board, key is the coordinate, tile is the value
+     * @throws RemoteException RMI exception
+     */
     @Override
     public synchronized void updateBoardStatus(Map<Coordinates, ItemTile> tilesInBoard) throws RemoteException {
         try {

@@ -10,6 +10,12 @@ import java.rmi.RemoteException;
 import java.util.Objects;
 
 public class ConnectionHandlerFactory {
+    /**
+     * Creates a ConnectionHandler of the type specified (RMI/TCP)
+     * @param type type of the connection
+     * @param view view interface used
+     * @return a ConnectionHandler of the desired type
+     */
     public ConnectionHandler createConnection(ConnectionType type, ViewInterface view){
         if( type.equals(ConnectionType.RMI)) {
             try {

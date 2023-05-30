@@ -32,6 +32,12 @@ public class ClientRMI implements ConnectionHandler{
     private final ViewInterface view;
     private Game gameModel;
 
+    /**
+     * Creates an instance of ClientRMI
+     * @param view the view will be notified for updates
+     * @throws RemoteException RMI remote error
+     * @throws NotBoundException lookup or unbind in the registry a name that has no associated binding
+     */
     public ClientRMI(ViewInterface view) throws RemoteException, NotBoundException {
         boolean connected = false;
         RemoteLobbyController tempLobbyController = null;
@@ -59,11 +65,19 @@ public class ClientRMI implements ConnectionHandler{
         this.sendHeartBeat();
     }
 
+    /**
+     * Close the connection with the server
+     */
     @Override
     public void close() {
         System.out.println("timer expired");
     }
 
+    /**
+     * Adds player to the lobby
+     * @param username the username used for joining the lobby
+     * @throws RemoteException RMI remote error
+     */
     @Override
     public void JoinLobby(String username) throws RemoteException {
         if(gameController != null ){
@@ -92,6 +106,12 @@ public class ClientRMI implements ConnectionHandler{
         }
     }
 
+
+    /**
+     * Creates a new game
+     * @param nPlayers the number of player for the game
+     * @throws RemoteException RMI remote error
+     */
     @Override
     public void CreateGame(int nPlayers) throws RemoteException {
 
@@ -111,6 +131,10 @@ public class ClientRMI implements ConnectionHandler{
 
     }
 
+
+    /**
+     * Subscribe the client gameModel as an observer for game notifications
+     */
     private void subscribeListeners(){
 
         try {
@@ -126,6 +150,10 @@ public class ClientRMI implements ConnectionHandler{
 
     }
 
+    /**
+     * Joins a Game
+     * @throws RemoteException RMI remote error
+     */
     @Override
     public void JoinGame() throws RemoteException {
 
@@ -147,6 +175,10 @@ public class ClientRMI implements ConnectionHandler{
 
     }
 
+    /**
+     * Checks if a tiles retrieval is admissible
+     * @param tiles the tiles to be selected
+     */
     @Override
     public void checkValidRetrieve(ArrayList<Coordinates> tiles) {
 
@@ -175,6 +207,12 @@ public class ClientRMI implements ConnectionHandler{
         }
     }
 
+    /**
+     * Moves tiles in a personal bookshelf
+     * @param tiles the selected tiles
+     * @param column the column of the bookshelf that has been chosen
+     * @throws RemoteException RMI remote error
+     */
     @Override
     public void moveTiles(ArrayList<Coordinates> tiles, int column) throws RemoteException {
 
@@ -203,6 +241,9 @@ public class ClientRMI implements ConnectionHandler{
 
     }
 
+    /**
+     * Sends periodic signals to the server for connection checking
+     */
     @Override
     public void sendHeartBeat() {
         heartBeatManager.scheduleAtFixedRate(
@@ -219,17 +260,25 @@ public class ClientRMI implements ConnectionHandler{
                         timer.reschedule(this.timerDelay);
                     }
                 } catch (RemoteException e) {
-                    System.out.println("ERRORE HEARTBEAT!");
+                    System.out.println("ERROR HEARTBEAT!");
                     this.close();
                 }
             },
             0, 2, TimeUnit.SECONDS);
     }
 
+    /**
+     *
+     * @throws NoAvailableGameException
+     */
     private void checkGameIsSet() throws NoAvailableGameException {
         if( gameController == null) throw  new NoAvailableGameException("The client hasn't joined a game!");
     }
 
+    /**
+     * Sends a broadcast message to the game chat
+     * @param content content of the message
+     */
     public void sendMessage(String content){
         try {
             gameController.postBroadCastMessage(this.username,content);
@@ -238,6 +287,12 @@ public class ClientRMI implements ConnectionHandler{
         } catch (InvalidPlayerException ignored) {
         }
     }
+
+    /**
+     * Sends a private message to a player in the game
+     * @param content content of the message
+     * @param recipient recipient of the message
+     */
 
     public void sendMessage(String content, String recipient){
         try {
