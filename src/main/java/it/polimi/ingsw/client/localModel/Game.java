@@ -91,9 +91,8 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
         }
 
         view.drawLeaderboard(this.playerPoints);
-        Map<Coordinates,ItemTile> bookshelfMap = new HashMap<>();
         try {
-            view.drawBookShelf(bookshelfMap,username,players.indexOf(username));
+            view.drawBookShelf(new HashMap<>(), player, (this.players.indexOf(player) - this.players.indexOf(this.username) + this.players.size()) % this.players.size());
         } catch (InvalidCoordinatesException e) {
             throw new RuntimeException(e);
         }
@@ -257,7 +256,7 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
 
     @Override
     public synchronized void notifyTurnOrder(ArrayList<String> playerOrder) throws RemoteException {
-        //this.players.sort(Comparator.comparingInt(playerOrder::indexOf));
+        this.players.sort(Comparator.comparingInt(playerOrder::indexOf));
         this.gameStarted = true;
 
         for(String player : players){
@@ -326,7 +325,7 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
             /*if(this.gameStarted)
                 view.drawBookShelf(currentTilesMap, player, (this.players.indexOf(player) - this.players.indexOf(this.username) + this.players.size()) % this.players.size());
             else*/
-                view.drawBookShelf(currentTilesMap,player,this.players.indexOf(player));
+            view.drawBookShelf(currentTilesMap, player, (this.players.indexOf(player) - this.players.indexOf(this.username) + this.players.size()) % this.players.size());
         } catch (InvalidCoordinatesException e) {
             throw new RuntimeException(e);
         }

@@ -104,8 +104,6 @@ public class CliView implements ViewInterface {
         ConnectionHandlerFactory factory = new ConnectionHandlerFactory();
         controller = factory.createConnection(connectionType, this);
         inputScan =  new Scanner(System.in);
-        this.printAsciiArtTitle();
-        this.printWelcomeText();
         this.plot();
         inputReaderEx = Executors.newCachedThreadPool();
         inputReaderEx.execute( () -> {
@@ -121,11 +119,6 @@ public class CliView implements ViewInterface {
         } );
     }
 
-    private void printWelcomeText(){
-        String welcomeText = "Choose your username!";
-        int startC = MAX_HORIZ_TILES/2 - welcomeText.length()/2;
-        this.printTruncateText(welcomeText,10,startC,MAX_HORIZ_TILES - FIXED_H_MARGIN - welcomeText.length());
-    }
     private void handle(String cliInput) {
 
         String[] inputArray = cliInput.split(">>");
@@ -696,6 +689,7 @@ public class CliView implements ViewInterface {
     private void plotLobby(){
         /* notification box*/
         this.drawBox(START_R_BOX_NOTIFICATION,START_C_BOX_NOTIFICATION,LENGTH_R_BOX_NOTIFICATION, LENGTH_C_BOX_NOTIFICATION,Color.WHITE_BOLD_BRIGHT.escape() );
+        this.printAsciiArtTitle();
     }
 
     private void clearScreen(){
@@ -725,6 +719,4 @@ public class CliView implements ViewInterface {
             this.setScenario(Scenario.LOBBY);
         }
     }
-
-
 }
