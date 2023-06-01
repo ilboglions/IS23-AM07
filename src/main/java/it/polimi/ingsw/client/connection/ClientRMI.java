@@ -141,7 +141,6 @@ public class ClientRMI implements ConnectionHandler{
             gameController.subscribeToListener((ChatSubscriber) this.gameModel);
             gameController.subscribeToListener((GameSubscriber) this.gameModel);
             gameController.subscribeToListener((PlayerSubscriber) this.gameModel);
-
             gameController.subscribeToListener((BookshelfSubscriber) this.gameModel);
             gameController.subscribeToListener((BoardSubscriber) this.gameModel);
         } catch (RemoteException e) {
@@ -250,21 +249,29 @@ public class ClientRMI implements ConnectionHandler{
             () -> {
                 try {
                     if(gameController == null && lobbyController != null && this.username != null){
+                        this.scheduleTimer();
                         lobbyController.triggerHeartBeat(this.username);
-                        if(!timer.isScheduled()){
-                            timer.schedule(this::close,this.timerDelay);
-                        }
                         timer.reschedule(this.timerDelay);
                     } else if(gameController != null){
+                        this.scheduleTimer();
                         gameController.triggerHeartBeat(this.username);
+
                         timer.reschedule(this.timerDelay);
                     }
                 } catch (RemoteException e) {
                     System.out.println("ERROR HEARTBEAT!");
                     this.close();
+                } catch ( Exception e){
+                    e.printStackTrace();
                 }
             },
             0, 2, TimeUnit.SECONDS);
+    }
+
+    private void scheduleTimer() {
+        if(!timer.isScheduled()){
+            timer.schedule(this::close,this.timerDelay);
+        }
     }
 
     /**
