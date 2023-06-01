@@ -7,6 +7,7 @@ import it.polimi.ingsw.remoteInterfaces.*;
 import it.polimi.ingsw.server.controller.LobbyController;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.*;
+import it.polimi.ingsw.server.model.game.GameModelInterface;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 import it.polimi.ingsw.server.model.tokens.ScoringToken;
 
@@ -23,7 +24,7 @@ import java.util.concurrent.Executors;
 import static it.polimi.ingsw.server.ServerMain.logger;
 
 
-public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, BookshelfSubscriber, ChatSubscriber, PlayerSubscriber, GameSubscriber, GameStateSubscriber {
+public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, BookshelfSubscriber, ChatSubscriber, PlayerSubscriber, GameSubscriber {
 
     private final Socket socket;
     private boolean closeConnectionFlag;
@@ -337,7 +338,6 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
             gameController.subscribeToListener((BoardSubscriber) this);
             gameController.subscribeToListener((BookshelfSubscriber) this);
             gameController.subscribeToListener((GameSubscriber) this);
-            gameController.subscriberToListener((GameStateSubscriber) this);
         } catch (RemoteException e){
             throw new RuntimeException(e);
         }
@@ -469,6 +469,16 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
     }
 
     /**
+     * @param newState
+     * @throws RemoteException
+     */
+    @Override
+    public void notifyChangedGameState(GameState newState) throws RemoteException {
+        GameStatusMessage update = new GameStatusMessage(newState);
+        this.sendUpdate(update);
+    }
+
+    /**
      *
      * @param update
      */
@@ -484,14 +494,6 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
         }
     }
 
-    /**
-     * @param newState
-     */
-    @Override
-    public void notifyChangeGameStatus(GameState newState) {
-        GameStatusMessage update = new GameStatusMessage(newState);
-        this.sendUpdate(update);
-    }
 }
 
 

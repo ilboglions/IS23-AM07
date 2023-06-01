@@ -90,4 +90,15 @@ public class GameListener extends Listener<GameSubscriber> {
             }
         }
     }
+
+    public void notifyChangedGameState(GameState newState) {
+        Set<GameSubscriber> subscribers = this.getSubscribers();
+        for(GameSubscriber sub : subscribers){
+            try {
+                sub.notifyChangedGameState(newState);
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
 }

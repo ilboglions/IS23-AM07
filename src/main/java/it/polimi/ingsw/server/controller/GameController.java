@@ -201,9 +201,9 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
         }
     }
     @Override
-    public void subscriberToListener(GameStateSubscriber subscriber) throws RemoteException {
+    public void subscribeToListener(GameStateSubscriber subscriber) throws RemoteException {
         synchronized (gameLock) {
-            gameModel.subscriberToListener(subscriber);
+            gameModel.subscribeToListener(subscriber);
         }
     }
 

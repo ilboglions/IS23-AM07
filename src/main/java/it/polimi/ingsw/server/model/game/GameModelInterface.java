@@ -16,6 +16,7 @@ public interface GameModelInterface {
     void subscribeToListener(ChatSubscriber subscriber);
     void subscribeToListener(PlayerSubscriber subscriber);
     void subscribeToListener(GameSubscriber subscriber);
+    void subscribeToListener(GameStateSubscriber subscriber);
     void start() throws NotAllPlayersHaveJoinedException, GameNotEndedException;
     String getPlayerInTurn() throws GameEndedException, GameNotStartedException;
     void moveTiles(ArrayList<Coordinates> source, int column) throws InvalidCoordinatesException, EmptySlotException, NotEnoughSpaceException, GameNotStartedException;
@@ -26,9 +27,6 @@ public interface GameModelInterface {
     boolean checkRefill();
     void updatePlayerPoints(String username) throws InvalidPlayerException, NotEnoughSpaceException, TokenAlreadyGivenException, GameNotStartedException;
     boolean setPlayerTurn();
-
-    void subscriberToListener(GameStateSubscriber subscriber);
-
     boolean canStart();
      // CHAT FUNCTIONALITIES
     ArrayList<Message> getPlayerMessages(String player) throws InvalidPlayerException;

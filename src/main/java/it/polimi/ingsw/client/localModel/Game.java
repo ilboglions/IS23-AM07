@@ -6,6 +6,7 @@ import it.polimi.ingsw.remoteInterfaces.*;
 import it.polimi.ingsw.server.model.chat.Message;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
+import it.polimi.ingsw.server.model.game.GameModelInterface;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 import it.polimi.ingsw.server.model.tokens.ScoringToken;
 
@@ -15,7 +16,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 
 
-public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerSubscriber, ChatSubscriber, BookshelfSubscriber, BoardSubscriber, GameStateSubscriber {
+public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerSubscriber, ChatSubscriber, BookshelfSubscriber, BoardSubscriber {
 
     @Serial
     private static final long serialVersionUID = 2696723449577327966L;
@@ -345,20 +346,18 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
         }
     }
 
-
-    /**
-     * @param newState
-     * @throws RemoteException
-     */
-    @Override
-    public void notifyChangeGameStatus(GameState newState) throws RemoteException {
-        view.postNotification("Game is" + newState.toString(), "");
-    }
-
     @Override
     public void notifyAlreadyJoinedPlayers(Set<String> alreadyJoinedPlayers) throws RemoteException {
         for(String p : alreadyJoinedPlayers){
             this.joinPlayer(p);
         }
+    }
+    /**
+     * @param newState
+     * @throws RemoteException
+     */
+    @Override
+    public void notifyChangedGameState(GameState newState) throws RemoteException {
+        view.postNotification("Game is" + newState.toString(), "");
     }
 }

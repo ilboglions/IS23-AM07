@@ -148,7 +148,7 @@ public class Game implements GameModelInterface {
     }
 
     @Override
-    public void subscriberToListener(GameStateSubscriber subscriber) {
+    public void subscribeToListener(GameStateSubscriber subscriber) {
         this.gameStateListener.addSubscriber(subscriber);
     }
     /**
@@ -573,7 +573,6 @@ public class Game implements GameModelInterface {
 
         if(tmpPlayer.isPresent()){
             livingRoom.unsubscribeFromListener(username);
-            this.gameStateListener.removeSubscriber(username);
             players.forEach(p -> {
                 p.getBookshelf().unsubscribeFromListener(username);
                 p.unsubscribeFromListener(username);
@@ -604,7 +603,12 @@ public class Game implements GameModelInterface {
     private void changeState(GameState gameState) {
         this.state = gameState;
         logger.info("GAME "+this+": GAME STATE CHANGED TO "+this.state);
-        this.gameStateListener.onGameStateChange(this.state);
+        this.gameListener.notifyChangedGameState(this.state);
+        try {
+            this.gameStateListener.notifyChangedGameState(this.state, this);
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -626,7 +630,6 @@ public class Game implements GameModelInterface {
         if(this.state.equals(GameState.PAUSED)) {
             this.crashTimer.cancel();
             this.changeState(GameState.RESUMED);
-
         }
     }
 
@@ -648,6 +651,7 @@ public class Game implements GameModelInterface {
             player.getBookshelf().triggerListener(userToBeUpdated);
         }
         gameListener.notifyAlreadyJoinedPlayers(alreadyJoinedPlayers, userToBeUpdated);
+
         this.livingRoom.triggerListener(userToBeUpdated);
         ArrayList<RemoteCommonGoalCard> remoteCards = new ArrayList<>(this.commonGoalCards);
         this.gameListener.onCommonCardDraw(userToBeUpdated, remoteCards);
@@ -661,5 +665,6 @@ public class Game implements GameModelInterface {
             this.gameListener.notifyTurnOrder(tmp);
             this.gameListener.notifyPlayerInTurn(players.get(playerTurn).getUsername());
         }
+
     }
 }

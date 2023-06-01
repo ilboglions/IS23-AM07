@@ -38,4 +38,6 @@ public interface GameSubscriber extends ListenerSubscriber {
     void notifyTurnOrder(ArrayList<String> playerOrder) throws RemoteException;
 
     void notifyAlreadyJoinedPlayers(Set<String> alreadyJoinedPlayers) throws RemoteException;
+
+    void notifyChangedGameState(GameState newState) throws RemoteException;
 }

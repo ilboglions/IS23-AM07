@@ -9,6 +9,7 @@ import it.polimi.ingsw.server.model.lobby.Lobby;
 import it.polimi.ingsw.remoteInterfaces.RemoteGameController;
 import it.polimi.ingsw.remoteInterfaces.RemoteLobbyController;
 
+import java.io.Serial;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,9 +19,10 @@ import java.rmi.server.*;
 /**
  * the lobby controller ensures the communication through client controller and server model
  */
-public class LobbyController extends UnicastRemoteObject implements RemoteLobbyController,GameStateSubscriber {
+public class LobbyController extends UnicastRemoteObject implements RemoteLobbyController, GameStateSubscriber {
 
 
+    private static final Long ID = -8605724040966311592L;
     /**
      * the reference to the lobby model
      */
@@ -65,6 +67,8 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
      */
     public RemoteGameController enterInLobby(String player) throws RemoteException, NicknameAlreadyUsedException, InvalidPlayerException {
         synchronized (lobbyLock) {
+            if(player.equals(ID.toString()))
+                throw new InvalidPlayerException("Invalid username");
             try {
                 lobbyModel.createPlayer(player);
                 return null;
@@ -137,9 +141,8 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
                 throw new RuntimeException(e);
             }
             gameController = new GameController(gameModel);
-            gameController.subscriberToListener((GameStateSubscriber) this);
+            gameController.subscribeToListener((GameStateSubscriber) this);
             this.gameControllers.put(gameModel, gameController);
-
             this.stopTimer(player);
             return gameController;
         }
@@ -205,19 +208,25 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
     }
 
     /**
-     * @param newState
-     */
-    @Override
-    public void notifyChangeGameStatus(GameState newState) {
-
-    }
-
-    /**
      * @return
      * @throws RemoteException
      */
     @Override
     public String getSubscriberUsername() throws RemoteException {
-        return "lobby";
+        return ID.toString();
+    }
+
+    /**
+     * @param newState
+     * @param gameModelInterface
+     */
+    @Override
+    public void notifyChangedGameStatus(GameState newState, GameModelInterface gameModelInterface) {
+        //if the game is ended delete the record of the game from the map
+        if(newState == GameState.ENDED) {
+            gameControllers.remove(gameModelInterface);
+        }
+
+        // handle exit players from the game
     }
 }
