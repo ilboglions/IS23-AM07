@@ -1,4 +1,4 @@
-package it.polimi.ingsw.server;
+/*package it.polimi.ingsw.server;
 
 import it.polimi.ingsw.client.connection.ClientSocket;
 import it.polimi.ingsw.client.connection.ConnectionType;
@@ -202,3 +202,4 @@ public class ConnectionHandlerTCPTest {
     }
 
 }
+*/

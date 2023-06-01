@@ -273,7 +273,7 @@ public class Game implements GameModelInterface {
              - column is in the proper range
              - destination coordinates refer to only a common column
          */
-        if(!this.isStarted())
+        if(!this.isRunning())
             throw new GameNotStartedException("The game has not started yet");
 
         ArrayList<ItemTile> temp = new ArrayList<>(); // tile to be added to the playerBookshelf
@@ -310,7 +310,8 @@ public class Game implements GameModelInterface {
      * @return true, if is possible to get that tiles, false otherwise
      * @throws EmptySlotException if one of the  coordinates referes to an empty slot
      */
-    public boolean checkValidRetrieve(ArrayList<Coordinates> coords) throws EmptySlotException {
+    public boolean checkValidRetrieve(ArrayList<Coordinates> coords) throws EmptySlotException, GameNotStartedException {
+        if(!this.isRunning()) throw new GameNotStartedException("the game is not running!");
         return  livingRoom.checkValidRetrieve(coords);
     }
 
@@ -473,7 +474,11 @@ public class Game implements GameModelInterface {
      * @return true, if the game is started
      */
     public boolean isStarted() {
-        return (this.state == GameState.STARTED || this.state == GameState.RESUMED);
+        return this.state != GameState.CREATED;
+    }
+
+    private boolean isRunning(){
+        return this.state == GameState.STARTED || this.state == GameState.RESUMED;
     }
 
     /**
