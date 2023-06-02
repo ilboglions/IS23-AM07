@@ -306,14 +306,15 @@ public class ClientSocket implements ConnectionHandler{
      */
     private void parse(LoginReturnMessage message){
         if(message.getConfirmLogin()){
+
             if (message.getConfirmRejoined()) {
+                view.drawScene(SceneType.GAME);
                 try {
                     this.gameModel = new Game(this.view,this.username);
                 } catch (RemoteException e) {
                     throw new RuntimeException(e);
                 }
                 this.sendReceivedGame(false);
-                view.drawScene(SceneType.GAME);
                 view.postNotification(Notifications.GAME_RECONNECTION_SUCCEFFULLY);
             }else {
                 view.drawScene(SceneType.LOBBY);
@@ -334,22 +335,23 @@ public class ClientSocket implements ConnectionHandler{
         boolean errorOccurred = false;
 
         if(message.getConfirmGameCreation()){
+            view.drawScene(SceneType.GAME);
             try {
                 this.gameModel = new Game(this.view,this.username);
 
             } catch (RemoteException e) {
                 throw new RuntimeException(e);
             }
-            view.drawScene(SceneType.GAME);
+
             view.postNotification(Notifications.GAME_CREATED_SUCCESSFULLY);
         } else if(message.getConfirmJoinedGame()){
+            view.drawScene(SceneType.GAME);
             try {
                 this.gameModel = new Game(this.view,this.username);
             } catch (RemoteException e) {
                 throw new RuntimeException(e);
             }
 
-            view.drawScene(SceneType.GAME);
             view.postNotification(Notifications.GAME_JOINED_SUCCESSFULLY);
         }
         else{
