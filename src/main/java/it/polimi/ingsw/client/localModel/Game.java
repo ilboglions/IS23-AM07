@@ -307,9 +307,8 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
     @Override
     public synchronized void updatePersonalGoalCard(String player, RemotePersonalGoalCard remotePersonal) throws RemoteException {
         try {
-            view.drawPersonalCard(remotePersonal.getCardPattern(), remotePersonal.getPointsReference());
-        } catch (InvalidCoordinatesException ignored) {
-        }
+            view.drawPersonalCard(remotePersonal);//remotePersonal.getCardPattern(), remotePersonal.getPointsReference());
+        } catch (InvalidCoordinatesException ignored) {}
     }
 
     /**

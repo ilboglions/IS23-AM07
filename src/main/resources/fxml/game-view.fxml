@@ -148,14 +148,23 @@
                         <Font name="Arial" size="16.0" />
                     </font>
                  </Label>
-                 <Label alignment="CENTER" prefHeight="17.0" prefWidth="193.0" text="Common 2" GridPane.columnIndex="2">
+                 <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="193.0" text="Common 2" GridPane.columnIndex="2">
                     <font>
                         <Font name="Arial" size="16.0" />
                     </font>
                  </Label>
-                 <StackPane fx:id="personalGoalPane" prefHeight="150.0" prefWidth="200.0" GridPane.hgrow="NEVER" GridPane.rowIndex="1" GridPane.vgrow="NEVER" />
-                 <StackPane fx:id="commonGoal1Pane" prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.hgrow="NEVER" GridPane.rowIndex="1" GridPane.vgrow="NEVER" />
-                 <StackPane fx:id="commonGoal2Pane" prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.hgrow="NEVER" GridPane.rowIndex="1" GridPane.vgrow="NEVER" />
+                 <StackPane fx:id="personalGoalPane" prefHeight="150.0" prefWidth="200.0" GridPane.hgrow="NEVER" GridPane.rowIndex="1" GridPane.vgrow="NEVER">
+                  <children>
+                     <ImageView fx:id="personalCard" fitHeight="150.0" fitWidth="200.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" />
+                  </children></StackPane>
+                 <StackPane fx:id="commonGoal1Pane" prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.hgrow="NEVER" GridPane.rowIndex="1" GridPane.vgrow="NEVER">
+                  <children>
+                     <ImageView fx:id="common1" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+                  </children></StackPane>
+                 <StackPane fx:id="commonGoal2Pane" prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.hgrow="NEVER" GridPane.rowIndex="1" GridPane.vgrow="NEVER">
+                  <children>
+                     <ImageView fx:id="common2" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+                  </children></StackPane>
              </GridPane>
          </children>
       </VBox>

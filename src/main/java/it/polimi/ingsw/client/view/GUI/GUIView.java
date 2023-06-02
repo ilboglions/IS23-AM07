@@ -7,7 +7,9 @@ import it.polimi.ingsw.Notifications;
 import it.polimi.ingsw.client.view.SceneType;
 import it.polimi.ingsw.client.view.ViewInterface;
 import it.polimi.ingsw.remoteInterfaces.RemoteCommonGoalCard;
+import it.polimi.ingsw.remoteInterfaces.RemotePersonalGoalCard;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
+import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -17,6 +19,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -61,10 +64,11 @@ public class GUIView extends Application implements ViewInterface {
     }
 
     @Override
-    public void drawPersonalCard(Map<Coordinates, ItemTile> tilesMap, Map<Integer, Integer> pointsReference) {
+    public void drawPersonalCard(RemotePersonalGoalCard card) throws RemoteException{
+        int id = card.getID();
         Platform.runLater(() -> {
             GameViewController controller = fxmlLoader.getController();
-            //controller.drawPersonalCard()
+            controller.drawPersonalCard(id);
         });
     }
 

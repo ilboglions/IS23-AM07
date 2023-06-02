@@ -13,6 +13,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -45,7 +46,9 @@ public class GameViewController extends GUIController implements Initializable {
     public StackPane commonGoal2Pane;
     public GridPane cardsGrid;
     public VBox leftvbox;
-
+    public ImageView personalCard;
+    public ImageView common1;
+    public ImageView common2;
 
 
     @Override
@@ -271,7 +274,6 @@ public class GameViewController extends GUIController implements Initializable {
     }
 
     public void drawCommonCards(ArrayList<RemoteCommonGoalCard> commonGoalCards) {
-        ImageView common1, common2;
         cardsGrid.setManaged(true);
         cardsGrid.setVisible(true);
         String url1, url2;
@@ -280,10 +282,8 @@ public class GameViewController extends GUIController implements Initializable {
             CommonCardType type2 = commonGoalCards.get(1).getName();
             url1 = getUrlFromCommonType(type1);
             url2 = getUrlFromCommonType(type2);
-            common1 = new ImageView(Objects.requireNonNull(url1));
-            common2 = new ImageView(Objects.requireNonNull(url2));
-            commonGoal1Pane.getChildren().add(common1);
-            commonGoal2Pane.getChildren().add(common2);
+            common1.setImage(new Image(url1));
+            common2.setImage(new Image(url2));
             common1.setPreserveRatio(true);
             common1.fitWidthProperty().bind(Bindings.min(leftvbox.widthProperty().divide(3.5).subtract(15),leftvbox.heightProperty().divide(4)));
             common2.setPreserveRatio(true);
@@ -297,7 +297,7 @@ public class GameViewController extends GUIController implements Initializable {
             case CORNERS -> url = GameViewController.class.getResource("/images/commonGoalCards/corners.jpg").toString();
             case SAME_TYPE -> url = GameViewController.class.getResource("/images/commonGoalCards/sametype.jpg").toString();
             case X_TILES -> url = GameViewController.class.getResource("/images/commonGoalCards/xtiles.jpg").toString();
-            case TWO_TILES -> url = GameViewController.class.getResource("/images/commonGoalCards/twolines.jpg").toString();
+            case TWO_TILES -> url = GameViewController.class.getResource("/images/commonGoalCards/twotiles.jpg").toString();
             case FOUR_LINES -> url = GameViewController.class.getResource("/images/commonGoalCards/fourlines.jpg").toString();
             case FOUR_TILES -> url = GameViewController.class.getResource("/images/commonGoalCards/fourtiles.jpg").toString();
             case FIVE_DIAGONAL -> url = GameViewController.class.getResource("/images/commonGoalCards/fivediagonal.jpg").toString();
@@ -308,5 +308,12 @@ public class GameViewController extends GUIController implements Initializable {
             default -> url = GameViewController.class.getResource("/images/commonGoalCards/twocolumndifferent.jpg").toString();
         }
         return url;
+    }
+
+    public void drawPersonalCard(int card){
+        personalCard.setImage(new Image(Objects.requireNonNull(GameViewController.class.getResource("/images/personalGoalCards/Personal_Goals"+ card +".png").toString())));
+        personalGoalPane.setAlignment(Pos.CENTER);
+        personalCard.setPreserveRatio(true);
+        personalCard.fitHeightProperty().bind(Bindings.min(leftvbox.widthProperty().divide(5), leftvbox.heightProperty().divide(3.5)));
     }
 }

@@ -5,6 +5,7 @@ import it.polimi.ingsw.Notifications;
 import it.polimi.ingsw.client.view.SceneType;
 import it.polimi.ingsw.client.view.ViewInterface;
 import it.polimi.ingsw.remoteInterfaces.RemoteCommonGoalCard;
+import it.polimi.ingsw.remoteInterfaces.RemotePersonalGoalCard;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
@@ -271,7 +272,9 @@ public class CliView implements ViewInterface {
 
     }
 
-    public void drawPersonalCard(Map<Coordinates,ItemTile> tilesMap, Map<Integer,Integer> pointsReference) throws InvalidCoordinatesException {
+    public void drawPersonalCard(RemotePersonalGoalCard card) throws InvalidCoordinatesException, RemoteException{
+        Map <Coordinates,ItemTile> tilesMap = card.getCardPattern();
+        Map <Integer, Integer> pointsReference = card.getPointsReference();
         int startR = START_R_BOX_CARD + 4;
         int startC = START_C_BOX_CARD + 7;
         int startCBookshelf;
