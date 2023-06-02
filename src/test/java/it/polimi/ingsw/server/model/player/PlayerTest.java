@@ -67,7 +67,7 @@ class PlayerTest {
         testPattern.put(new Coordinates(1,1), ItemTile.BOOK);
         testPointsReference.put(1,1);
 
-        PersonalGoalCard testCard = new PersonalGoalCard(testPattern, testPointsReference);
+        PersonalGoalCard testCard = new PersonalGoalCard(testPattern, testPointsReference, 0);
 
         Player test = new Player("test");
         test.addToken(testToken);
@@ -96,7 +96,7 @@ class PlayerTest {
         testPattern.put(new Coordinates(1,1), ItemTile.BOOK);
         testPointsReference.put(1,1);
 
-        PersonalGoalCard testCard = new PersonalGoalCard(testPattern, testPointsReference);
+        PersonalGoalCard testCard = new PersonalGoalCard(testPattern, testPointsReference, 1);
 
         test.assignPersonalCard(testCard);
 
@@ -130,7 +130,7 @@ class PlayerTest {
 
         testAdjacentPointsReference.put(0,0);
 
-        PersonalGoalCard testCard = new PersonalGoalCard(testPattern, testCardPointsReference);
+        PersonalGoalCard testCard = new PersonalGoalCard(testPattern, testCardPointsReference, 0);
 
         test.addToken(new ScoringToken(TokenPoint.EIGHT));
         test.assignPersonalCard(testCard);
@@ -176,7 +176,7 @@ class PlayerTest {
 
         testAdjacentPointsReference.put(0,0);
 
-        PersonalGoalCard testCard = new PersonalGoalCard(testPattern, testCardPointsReference);
+        PersonalGoalCard testCard = new PersonalGoalCard(testPattern, testCardPointsReference, 0);
 
         test.addToken(new ScoringToken(TokenPoint.EIGHT));
         test.assignPersonalCard(testCard);
@@ -226,7 +226,7 @@ class PlayerTest {
         testAdjacentPointsReference.put(5,5);
         testAdjacentPointsReference.put(6,8);
 
-        PersonalGoalCard testCard = new PersonalGoalCard(testPattern, testCardPointsReference);
+        PersonalGoalCard testCard = new PersonalGoalCard(testPattern, testCardPointsReference, 0);
 
         test.assignPersonalCard(testCard);
 
