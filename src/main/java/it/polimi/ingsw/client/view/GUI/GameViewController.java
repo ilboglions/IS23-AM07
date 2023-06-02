@@ -226,8 +226,8 @@ public class GameViewController extends GUIController implements Initializable {
                         return -1;
                     return 1;
                 });
-                result = this.checkValidRetrieve((ArrayList<Coordinates>) coords.subList(0, 2)) &&
-                        this.checkValidRetrieve((ArrayList<Coordinates>) coords.subList(1, 3)) &&
+                result = this.checkValidRetrieve(new ArrayList<>(coords.subList(0, 2))) &&
+                        this.checkValidRetrieve(new ArrayList<>(coords.subList(1, 3))) &&
                         checkNeighbors(coords.get(0), coords.get(1)) == checkNeighbors(coords.get(1), coords.get(2));
             }
             default -> result = false;
