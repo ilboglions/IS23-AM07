@@ -147,7 +147,7 @@ public class GUIView extends Application implements ViewInterface {
             }
 
             guiController = fxmlLoader.getController();
-
+            guiController.setStage(stage);
             stage.setScene(scene);
             stage.show();
         });

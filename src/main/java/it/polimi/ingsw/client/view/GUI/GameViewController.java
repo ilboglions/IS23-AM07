@@ -10,6 +10,7 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -17,6 +18,12 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+import javafx.stage.Popup;
 
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -50,6 +57,8 @@ public class GameViewController extends GUIController implements Initializable {
     public ImageView common1;
     public ImageView common2;
 
+    private Popup commonGoalInfo1, commonGoalInfo2;
+
 
     @Override
     public void postNotification(String title, String desc) {
@@ -75,6 +84,8 @@ public class GameViewController extends GUIController implements Initializable {
         }
         cardsGrid.setManaged(false);
         cardsGrid.setVisible(false);
+        commonGoalInfo1 = new Popup();
+        commonGoalInfo2 = new Popup();
     }
 
     public void drawBookshelf(Map<Coordinates, ItemTile> tilesMap, String playerUsername, int order) {
@@ -288,7 +299,30 @@ public class GameViewController extends GUIController implements Initializable {
             common1.fitWidthProperty().bind(Bindings.min(leftvbox.widthProperty().divide(3.5).subtract(15),leftvbox.heightProperty().divide(4)));
             common2.setPreserveRatio(true);
             common2.fitWidthProperty().bind(Bindings.min(leftvbox.widthProperty().divide(3.5).subtract(15), leftvbox.heightProperty().divide(4)));
+
+            this.drawCommonGoalPopup(commonGoalInfo1, commonGoalCards.get(0));
+            this.drawCommonGoalPopup(commonGoalInfo2, commonGoalCards.get(1));
         } catch (RemoteException ignored ){}
+    }
+
+    private void drawCommonGoalPopup(Popup commonGoalInfo, RemoteCommonGoalCard commonCard) throws RemoteException {
+        Text description = new Text();
+        HBox container = new HBox();
+        ImageView cardImage = new ImageView(getUrlFromCommonType(commonCard.getName()));
+        commonGoalInfo.getContent().add(container);
+        //container.getStyleClass().add("popupCommonCards");
+        container.setStyle("-fx-background-image: url('"+ GameViewController.class.getResource("/images/misc/base_pagina2.jpg").toString() +"'); -fx-background-repeat: stretch; -fx-background-position: center; -fx-background-size: auto;");
+        //container.setMaxHeight(100);
+        HBox.setMargin(cardImage, new Insets(10, 10, 10, 10));
+        description.setText(commonCard.getDescription());
+        description.setFill(Color.WHITE);
+        description.setFont(Font.font("Arial", FontWeight.NORMAL, FontPosture.REGULAR, 15));
+        description.wrappingWidthProperty().bind(container.heightProperty());
+        container.setAlignment(Pos.CENTER);
+        container.getChildren().add(cardImage);
+        cardImage.setPreserveRatio(true);
+        cardImage.fitHeightProperty().bind(stage.heightProperty().divide(3));
+        container.getChildren().add(description);
     }
 
     private String getUrlFromCommonType(CommonCardType type) {
@@ -315,5 +349,21 @@ public class GameViewController extends GUIController implements Initializable {
         personalGoalPane.setAlignment(Pos.CENTER);
         personalCard.setPreserveRatio(true);
         personalCard.fitHeightProperty().bind(Bindings.min(leftvbox.widthProperty().divide(5), leftvbox.heightProperty().divide(3.5)));
+    }
+
+    public void clickCommon1(MouseEvent mouseEvent) {
+        if(!commonGoalInfo1.isShowing()){
+            commonGoalInfo1.show(this.stage);
+        }
+        else
+            commonGoalInfo1.hide();
+    }
+
+    public void clickCommon2(MouseEvent mouseEvent)  {
+        if(!commonGoalInfo2.isShowing()){
+            commonGoalInfo2.show(this.stage);
+        }
+        else
+            commonGoalInfo2.hide();
     }
 }
