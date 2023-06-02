@@ -83,7 +83,7 @@ public class DeckPersonal implements Distributable<PersonalGoalCard> {
             Map<Coordinates, ItemTile> pattern = gson.fromJson(extractedCard, mapType);
 
             try {
-                selected.add(new PersonalGoalCard(pattern, pointsReference));
+                selected.add(new PersonalGoalCard(pattern, pointsReference, extractedCardIndex));
             } catch (RemoteException e) {
                 throw new RuntimeException(e);
             }

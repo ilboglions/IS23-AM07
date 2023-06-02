@@ -9,6 +9,8 @@ import java.rmi.RemoteException;
 import java.util.Map;
 
 public interface RemotePersonalGoalCard extends Remote, Serializable {
+
+    int getID() throws RemoteException;
     Map<Integer, Integer> getPointsReference() throws RemoteException;
 
     Map<Coordinates, ItemTile> getCardPattern() throws RemoteException;
