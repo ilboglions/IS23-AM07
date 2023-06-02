@@ -219,6 +219,8 @@ public class Game implements GameModelInterface {
             if( c.verifyConstraint(player.get().getBookshelf()) ){
                 try{
                     p.addToken(c.popTokenTo(p.getUsername()));
+                    ArrayList<RemoteCommonGoalCard> remoteCards = new ArrayList<>(this.commonGoalCards);
+                    this.gameListener.onCommonCardStateChange(remoteCards);
                 } catch (TokenAlreadyGivenException ignored){
 
                 } catch (RemoteException e) {

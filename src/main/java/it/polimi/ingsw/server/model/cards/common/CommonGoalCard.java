@@ -8,6 +8,7 @@ import it.polimi.ingsw.server.model.exceptions.TokenAlreadyGivenException;
 import it.polimi.ingsw.server.model.tokens.ScoringToken;
 import it.polimi.ingsw.server.model.tokens.TokenPoint;
 
+import java.io.Serial;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
@@ -18,6 +19,8 @@ import static it.polimi.ingsw.server.model.utilities.UtilityFunctions.MAX_PLAYER
  * CommonGoalCard is an abstract class used to represent the common cards of the game.
  */
 public abstract class CommonGoalCard extends UnicastRemoteObject implements RemoteCommonGoalCard {
+    @Serial
+    private static final long serialVersionUID = -3210639418443007263L;
     /**
      * description stores the description of the card constraint
      */
@@ -87,17 +90,18 @@ public abstract class CommonGoalCard extends UnicastRemoteObject implements Remo
      *
      * @return the card description
      */
-    public String getDescription() {
+    public String getDescription() throws RemoteException{
         return description;
     }
 
-    protected Stack<ScoringToken> getTokenStack(){
+    @Override
+    public Stack<ScoringToken> getTokenStack() throws RemoteException{
         Stack<ScoringToken> tokens= new Stack<>();
         tokens.addAll(tokenStack);
         return  tokens;
     }
 
-    public CommonCardType getName() {
+    public CommonCardType getName() throws RemoteException{
         return name;
     }
 }

@@ -101,4 +101,15 @@ public class GameListener extends Listener<GameSubscriber> {
             }
         }
     }
+
+    public void onCommonCardStateChange(ArrayList<RemoteCommonGoalCard> c) {
+        Set<GameSubscriber> subscribers = this.getSubscribers();
+        for(GameSubscriber sub : subscribers){
+            try{
+                sub.notifyCommonGoalCards(c);
+            } catch ( RemoteException ignored){
+
+            }
+        }
+    }
 }
