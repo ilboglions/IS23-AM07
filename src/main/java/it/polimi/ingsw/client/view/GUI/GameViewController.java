@@ -5,6 +5,7 @@ import it.polimi.ingsw.server.model.cards.common.CommonCardType;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
+import it.polimi.ingsw.server.model.tokens.ScoringToken;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -118,7 +119,7 @@ public class GameViewController extends GUIController implements Initializable {
 
     public void sendMessage(ActionEvent actionEvent) {
         String recipient = (String) chatRecipientSelector.getValue();
-        if(recipient.equals(""))
+        if(recipient == null || recipient.isBlank())
             this.getClientController().sendMessage(textFieldChat.getText());
         else
             this.getClientController().sendMessage(recipient,textFieldChat.getText());
@@ -285,8 +286,15 @@ public class GameViewController extends GUIController implements Initializable {
     }
 
     public void drawCommonCards(ArrayList<RemoteCommonGoalCard> commonGoalCards) {
+        Stack<ScoringToken> tokensStack;
+        ImageView tokenImage;
+        HBox tokensBox1,tokensBox2;
         cardsGrid.setManaged(true);
         cardsGrid.setVisible(true);
+        commonGoal1Pane.getChildren().clear();
+        commonGoal2Pane.getChildren().clear();
+        commonGoal1Pane.getChildren().add(common1);
+        commonGoal2Pane.getChildren().add(common2);
         String url1, url2;
         try {
             CommonCardType type1 = commonGoalCards.get(0).getName();
@@ -299,7 +307,32 @@ public class GameViewController extends GUIController implements Initializable {
             common1.fitWidthProperty().bind(Bindings.min(leftvbox.widthProperty().divide(3.5).subtract(15),leftvbox.heightProperty().divide(4)));
             common2.setPreserveRatio(true);
             common2.fitWidthProperty().bind(Bindings.min(leftvbox.widthProperty().divide(3.5).subtract(15), leftvbox.heightProperty().divide(4)));
-
+            tokensBox1 = new HBox();
+            tokensBox2 = new HBox();
+            tokensStack = commonGoalCards.get(0).getTokenStack();
+            commonGoal1Pane.getChildren().add(tokensBox1);
+            tokensBox1.setAlignment(Pos.BOTTOM_CENTER);
+            for (ScoringToken t : tokensStack) {
+                try {
+                    tokenImage = new ImageView(GameViewController.class.getResource("/images/scoringTokens/scoring_" + t.getScoreValue().getValue() + ".jpg").toString());
+                    tokensBox1.getChildren().add(tokenImage);
+                    tokenImage.setPreserveRatio(true);
+                    tokenImage.fitWidthProperty().bind(cardsGrid.widthProperty().divide(20));
+                } catch (NullPointerException ignored) {
+                }
+            }
+            tokensStack = commonGoalCards.get(1).getTokenStack();
+            commonGoal2Pane.getChildren().add(tokensBox2);
+            tokensBox2.setAlignment(Pos.BOTTOM_CENTER);
+            for (ScoringToken t : tokensStack) {
+                try {
+                    tokenImage = new ImageView(GameViewController.class.getResource("/images/scoringTokens/scoring_" + t.getScoreValue().getValue() + ".jpg").toString());
+                    tokensBox2.getChildren().add(tokenImage);
+                    tokenImage.setPreserveRatio(true);
+                    tokenImage.fitWidthProperty().bind(cardsGrid.widthProperty().divide(20));
+                } catch (NullPointerException ignored) {
+                }
+            }
             this.drawCommonGoalPopup(commonGoalInfo1, commonGoalCards.get(0));
             this.drawCommonGoalPopup(commonGoalInfo2, commonGoalCards.get(1));
         } catch (RemoteException ignored ){}
@@ -311,7 +344,7 @@ public class GameViewController extends GUIController implements Initializable {
         ImageView cardImage = new ImageView(getUrlFromCommonType(commonCard.getName()));
         commonGoalInfo.getContent().add(container);
         //container.getStyleClass().add("popupCommonCards");
-        container.setStyle("-fx-background-image: url('"+ GameViewController.class.getResource("/images/misc/base_pagina2.jpg").toString() +"'); -fx-background-repeat: stretch; -fx-background-position: center; -fx-background-size: auto;");
+        container.setStyle("-fx-background-image: url('"+ GameViewController.class.getResource("/images/misc/base_pagina2.jpg").toString() +"'); -fx-background-repeat: stretch; -fx-background-position: center; -fx-background-size: auto; -fx-border-radius: 15px;");
         //container.setMaxHeight(100);
         HBox.setMargin(cardImage, new Insets(10, 10, 10, 10));
         description.setText(commonCard.getDescription());
