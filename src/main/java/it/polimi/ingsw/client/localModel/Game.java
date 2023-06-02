@@ -90,8 +90,11 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
             playerPoints.put(player, 0);
             playerScoringTokens.put(player, new HashSet<>());
         }
-
+        ArrayList<String> playersChat;
+        playersChat = new ArrayList<>(players);
+        playersChat.remove(this.username);
         view.drawLeaderboard(this.playerPoints);
+        view.drawChatPlayersList(playersChat);
         try {
             view.drawBookShelf(new HashMap<>(), player, (this.players.indexOf(player) - this.players.indexOf(this.username) + this.players.size()) % this.players.size());
         } catch (InvalidCoordinatesException e) {
