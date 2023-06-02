@@ -10,6 +10,7 @@ import it.polimi.ingsw.server.model.listeners.BoardListener;
 import it.polimi.ingsw.server.model.exceptions.NotEnoughTilesException;
 import it.polimi.ingsw.remoteInterfaces.BoardSubscriber;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
+import javafx.scene.layout.Pane;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -304,7 +305,7 @@ public class LivingRoomBoard {
      * @return true if the requested move is valid, false otherwise
      * @throws EmptySlotException is thrown if a coordinates results to an empty slot
      */
-    public boolean checkValidRetrieve(ArrayList<Coordinates> coordinates) throws EmptySlotException {
+    public boolean checkValidRetrieveMick(ArrayList<Coordinates> coordinates) throws EmptySlotException {
         if(coordinates == null || coordinates.contains(null))
             throw new NullPointerException("Coordinates list is/contains null");
 
@@ -364,6 +365,37 @@ public class LivingRoomBoard {
                 }
             }
         }
+    }
+    public boolean checkValidRetrieve(ArrayList<Coordinates> coords) throws EmptySlotException{
+        boolean result;
+        switch (coords.size()) {
+            case 1 -> result = checkFreeSide(coords.get(0));
+            case 2 -> result = checkFreeSide(coords.get(0)) && checkFreeSide(coords.get(1)) && checkNeighbors(coords.get(0), coords.get(1)) != -1;
+            case 3 -> {
+                coords.sort((a, b) -> {
+                    if (a.getRow() < b.getRow())
+                        return -1;
+                    if (a.getRow() > b.getRow())
+                        return 1;
+                    if (a.getColumn() < b.getColumn())
+                        return -1;
+                    return 1;
+                });
+                result = this.checkValidRetrieve(new ArrayList<>(coords.subList(0, 2))) &&
+                        this.checkValidRetrieve(new ArrayList<>(coords.subList(1, 3))) &&
+                        checkNeighbors(coords.get(0), coords.get(1)) == checkNeighbors(coords.get(1), coords.get(2));
+            }
+            default -> result = false;
+        }
+        return result;
+    }
+    private int checkNeighbors(Coordinates a, Coordinates b) {
+        //returns the row/column in common between them
+        if(a.getColumn() == b.getColumn() && (a.getRow() == b.getRow()-1 || a.getRow() == b.getRow()+1))
+            return a.getColumn();
+        if (a.getRow() == b.getRow() && (a.getColumn() == b.getColumn()-1 || a.getColumn() == b.getColumn()+1))
+            return a.getRow()*10;
+        return -1;
     }
 
     /**
