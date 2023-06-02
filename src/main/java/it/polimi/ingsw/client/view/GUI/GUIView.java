@@ -36,7 +36,7 @@ public class GUIView extends Application implements ViewInterface {
         if ( args.size() == 1) {
             connectionType = args.get(0).equals("--TCP") ? ConnectionType.TCP : ConnectionType.RMI;
         } else {
-            connectionType = ConnectionType.RMI;
+            connectionType = ConnectionType.TCP;
         }
 
         this.stage = stage;
@@ -62,7 +62,10 @@ public class GUIView extends Application implements ViewInterface {
 
     @Override
     public void drawPersonalCard(Map<Coordinates, ItemTile> tilesMap, Map<Integer, Integer> pointsReference) {
-
+        Platform.runLater(() -> {
+            GameViewController controller = fxmlLoader.getController();
+            //controller.drawPersonalCard()
+        });
     }
 
     @Override
@@ -83,6 +86,10 @@ public class GUIView extends Application implements ViewInterface {
 
     @Override
     public void drawCommonCards(ArrayList<RemoteCommonGoalCard> commonGoalCards) {
+        Platform.runLater(() -> {
+            GameViewController controller = fxmlLoader.getController();
+            controller.drawCommonCards(commonGoalCards);
+        });
 
     }
 
@@ -103,7 +110,6 @@ public class GUIView extends Application implements ViewInterface {
 
     @Override
     public void drawLeaderboard(Map<String, Integer> playerPoints) {
-
     }
 
     @Override
@@ -148,6 +154,14 @@ public class GUIView extends Application implements ViewInterface {
         Platform.runLater(() -> {
             GameViewController controller = fxmlLoader.getController();
             controller.drawPlayerInTurn(userInTurn, thisUser);
+        });
+    }
+
+    @Override
+    public void drawChatPlayersList(ArrayList<String> players) {
+        Platform.runLater(() -> {
+            GameViewController controller = fxmlLoader.getController();
+            controller.drawChatPlayerList(players);
         });
     }
 }

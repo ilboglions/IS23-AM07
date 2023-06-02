@@ -585,6 +585,11 @@ public class CliView implements ViewInterface {
     }
 
     @Override
+    public void drawChatPlayersList(ArrayList<String> players) {
+        //ONLY THE GUI USES THIS METHOD
+    }
+
+    @Override
     public void postNotification(String title, String description) {
         clearBox(START_R_BOX_NOTIFICATION, START_C_BOX_NOTIFICATION, START_R_BOX_NOTIFICATION + LENGTH_R_BOX_NOTIFICATION, START_C_BOX_NOTIFICATION + LENGTH_C_BOX_NOTIFICATION);
         int spaceNeeded = printTruncateText(title.toUpperCase(),START_R_BOX_NOTIFICATION + FIXED_V_MARGIN,START_C_BOX_NOTIFICATION+FIXED_H_MARGIN, START_C_BOX_NOTIFICATION + LENGTH_C_BOX_NOTIFICATION - FIXED_H_MARGIN, Color.RED_BOLD.escape());

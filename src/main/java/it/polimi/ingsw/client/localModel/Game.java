@@ -189,7 +189,7 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
      * @throws RemoteException
      */
     @Override
-    public void receiveMessage(String from, String recipient, String msg) throws RemoteException {
+    public synchronized void receiveMessage(String from, String recipient, String msg) throws RemoteException {
         this.addMessage(new Message(from, recipient, msg));
     }
 
@@ -198,7 +198,7 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
      * @throws RemoteException
      */
     @Override
-    public void receiveMessage(String from, String msg) throws RemoteException {
+    public synchronized void receiveMessage(String from, String msg) throws RemoteException {
         this.addMessage(new Message(from, msg));
     }
 
@@ -346,8 +346,18 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
         }
     }
 
+
+    /**
+     * @param newState
+     * @throws RemoteException
+     */
+
+    public synchronized void notifyChangeGameStatus(GameState newState) throws RemoteException {
+        view.postNotification("Game is" + newState.toString(), "");
+    }
+
     @Override
-    public void notifyAlreadyJoinedPlayers(Set<String> alreadyJoinedPlayers) throws RemoteException {
+    public synchronized void notifyAlreadyJoinedPlayers(Set<String> alreadyJoinedPlayers) throws RemoteException {
         for(String p : alreadyJoinedPlayers){
             this.joinPlayer(p);
         }

@@ -187,8 +187,8 @@ public class ClientSocket implements ConnectionHandler{
      * @param recipient recipient of the message
      */
 
-    public void sendMessage(String content, String recipient){
-        PostMessage message = new PostMessage(content, recipient);
+    public void sendMessage(String recipient, String content){
+        PostMessage message = new PostMessage(recipient, content);
         this.sendUpdate(message);
     }
 

@@ -23,4 +23,5 @@ public interface ViewInterface {
     void drawChat(List<String> outputMessages);
     void drawScene(SceneType scene);
     void drawPlayerInTurn(String userInTurn, String thisUser);
+    void drawChatPlayersList(ArrayList<String> players);
 }

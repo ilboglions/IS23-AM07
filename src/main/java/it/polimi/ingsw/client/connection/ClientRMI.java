@@ -301,9 +301,9 @@ public class ClientRMI implements ConnectionHandler{
      * @param recipient recipient of the message
      */
 
-    public void sendMessage(String content, String recipient){
+    public void sendMessage(String recipient, String content){
         try {
-            gameController.postDirectMessage(this.username,content,recipient);
+            gameController.postDirectMessage(this.username,recipient,content);
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         } catch (InvalidPlayerException ignored) {
