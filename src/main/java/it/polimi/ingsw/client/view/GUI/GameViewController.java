@@ -7,6 +7,8 @@ import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 import it.polimi.ingsw.server.model.tokens.ScoringToken;
 import javafx.beans.binding.Bindings;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -20,10 +22,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
+import javafx.scene.text.*;
 import javafx.stage.Popup;
 
 import java.net.URL;
@@ -288,7 +287,7 @@ public class GameViewController extends GUIController implements Initializable {
     public void drawCommonCards(ArrayList<RemoteCommonGoalCard> commonGoalCards) {
         Stack<ScoringToken> tokensStack;
         ImageView tokenImage;
-        HBox tokensBox1,tokensBox2;
+        StackPane tokensBox1,tokensBox2;
         cardsGrid.setManaged(true);
         cardsGrid.setVisible(true);
         commonGoal1Pane.getChildren().clear();
@@ -307,48 +306,50 @@ public class GameViewController extends GUIController implements Initializable {
             common1.fitWidthProperty().bind(Bindings.min(leftvbox.widthProperty().divide(3.5).subtract(15),leftvbox.heightProperty().divide(4)));
             common2.setPreserveRatio(true);
             common2.fitWidthProperty().bind(Bindings.min(leftvbox.widthProperty().divide(3.5).subtract(15), leftvbox.heightProperty().divide(4)));
-            tokensBox1 = new HBox();
-            tokensBox2 = new HBox();
+            tokensBox1 = new StackPane();
+            tokensBox2 = new StackPane();//HBox();
             tokensStack = commonGoalCards.get(0).getTokenStack();
-            commonGoal1Pane.getChildren().add(tokensBox1);
-            tokensBox1.setAlignment(Pos.BOTTOM_CENTER);
-            for (ScoringToken t : tokensStack) {
-                try {
-                    tokenImage = new ImageView(GameViewController.class.getResource("/images/scoringTokens/scoring_" + t.getScoreValue().getValue() + ".jpg").toString());
-                    tokensBox1.getChildren().add(tokenImage);
-                    tokenImage.setPreserveRatio(true);
-                    tokenImage.fitWidthProperty().bind(cardsGrid.widthProperty().divide(20));
-                } catch (NullPointerException ignored) {
-                }
-            }
+            drawTokensBox(tokensStack, tokensBox1, commonGoal1Pane);
             tokensStack = commonGoalCards.get(1).getTokenStack();
-            commonGoal2Pane.getChildren().add(tokensBox2);
-            tokensBox2.setAlignment(Pos.BOTTOM_CENTER);
-            for (ScoringToken t : tokensStack) {
-                try {
-                    tokenImage = new ImageView(GameViewController.class.getResource("/images/scoringTokens/scoring_" + t.getScoreValue().getValue() + ".jpg").toString());
-                    tokensBox2.getChildren().add(tokenImage);
-                    tokenImage.setPreserveRatio(true);
-                    tokenImage.fitWidthProperty().bind(cardsGrid.widthProperty().divide(20));
-                } catch (NullPointerException ignored) {
-                }
-            }
+            drawTokensBox(tokensStack, tokensBox2, commonGoal2Pane);
             this.drawCommonGoalPopup(commonGoalInfo1, commonGoalCards.get(0));
             this.drawCommonGoalPopup(commonGoalInfo2, commonGoalCards.get(1));
         } catch (RemoteException ignored ){}
     }
 
+    private void drawTokensBox(Stack<ScoringToken> tokensStack, StackPane tokensBox, StackPane commonGoalPane) {
+        ImageView tokenImage;
+        commonGoalPane.getChildren().add(tokensBox);
+        tokensBox.setRotate(-8);
+        tokensBox.setAlignment(Pos.CENTER_RIGHT);
+        for (ScoringToken t : tokensStack) {
+            try {
+                tokenImage = new ImageView(GameViewController.class.getResource("/images/scoringTokens/scoring_" + t.getScoreValue().getValue() + ".jpg").toString());
+                tokensBox.getChildren().add(tokenImage);
+                tokenImage.setPreserveRatio(true);
+                tokenImage.fitWidthProperty().bind(cardsGrid.widthProperty().divide(20));
+            } catch (NullPointerException ignored) {
+            }
+        }
+        //StackPane.setMargin(tokensBox, new Insets(10,55,0,0));
+        commonGoalPane.widthProperty().addListener((observable, oldValue, newValue) -> {
+            double margin = newValue.doubleValue() * 0.25;
+            StackPane.setMargin(tokensBox, new Insets(margin / 5, margin, 0, 0));
+        });
+
+    }
     private void drawCommonGoalPopup(Popup commonGoalInfo, RemoteCommonGoalCard commonCard) throws RemoteException {
         Text description = new Text();
         HBox container = new HBox();
         ImageView cardImage = new ImageView(getUrlFromCommonType(commonCard.getName()));
         commonGoalInfo.getContent().add(container);
-        //container.getStyleClass().add("popupCommonCards");
-        container.setStyle("-fx-background-image: url('"+ GameViewController.class.getResource("/images/misc/base_pagina2.jpg").toString() +"'); -fx-background-repeat: stretch; -fx-background-position: center; -fx-background-size: auto; -fx-border-radius: 15px;");
-        //container.setMaxHeight(100);
+        container.setStyle("-fx-background-image: url('"+ GameViewController.class.getResource("/images/misc/base_pagina2.jpg").toString() +"'); " +
+                "           -fx-background-repeat: stretch; -fx-background-position: center; " +
+                "           -fx-background-size: auto; -fx-border-radius: 15px;");
         HBox.setMargin(cardImage, new Insets(10, 10, 10, 10));
         description.setText(commonCard.getDescription());
         description.setFill(Color.WHITE);
+        description.setTextAlignment(TextAlignment.CENTER);
         description.setFont(Font.font("Arial", FontWeight.NORMAL, FontPosture.REGULAR, 15));
         description.wrappingWidthProperty().bind(container.heightProperty());
         container.setAlignment(Pos.CENTER);
@@ -356,6 +357,16 @@ public class GameViewController extends GUIController implements Initializable {
         cardImage.setPreserveRatio(true);
         cardImage.fitHeightProperty().bind(stage.heightProperty().divide(3));
         container.getChildren().add(description);
+        commonGoalInfo.setX(stage.getX()+stage.getWidth()/2 - commonGoalInfo.getWidth()/2);
+        commonGoalInfo.setY(stage.getY() + stage.getHeight()/2 - commonGoalInfo.getHeight()/2);
+        stage.widthProperty().addListener((observable, oldValue, newValue) -> {
+            double centerX = stage.getX() + stage.getWidth()/2 - commonGoalInfo.getWidth()/2;
+            commonGoalInfo.setX(centerX);
+        });
+        stage.heightProperty().addListener((observable, oldValue, newValue) -> {
+            double centerY = stage.getY() + stage.getHeight()/2 - commonGoalInfo.getHeight()/2;
+            commonGoalInfo.setY(centerY);
+        });
     }
 
     private String getUrlFromCommonType(CommonCardType type) {
@@ -386,7 +397,11 @@ public class GameViewController extends GUIController implements Initializable {
 
     public void clickCommon1(MouseEvent mouseEvent) {
         if(!commonGoalInfo1.isShowing()){
+            commonGoalInfo2.hide();
             commonGoalInfo1.show(this.stage);
+            commonGoalInfo1.setX(stage.getX()+stage.getWidth()/2 - commonGoalInfo1.getWidth()/2);
+            commonGoalInfo1.setY(stage.getY() + stage.getHeight()/2 - commonGoalInfo1.getHeight()/2);
+
         }
         else
             commonGoalInfo1.hide();
@@ -394,7 +409,10 @@ public class GameViewController extends GUIController implements Initializable {
 
     public void clickCommon2(MouseEvent mouseEvent)  {
         if(!commonGoalInfo2.isShowing()){
+            commonGoalInfo1.hide();
             commonGoalInfo2.show(this.stage);
+            commonGoalInfo2.setX(stage.getX()+stage.getWidth()/2 - commonGoalInfo2.getWidth()/2);
+            commonGoalInfo2.setY(stage.getY() + stage.getHeight()/2 - commonGoalInfo2.getHeight()/2);
         }
         else
             commonGoalInfo2.hide();
