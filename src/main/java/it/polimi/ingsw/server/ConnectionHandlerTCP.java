@@ -7,11 +7,9 @@ import it.polimi.ingsw.remoteInterfaces.*;
 import it.polimi.ingsw.server.controller.LobbyController;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.*;
-import it.polimi.ingsw.server.model.game.GameModelInterface;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 import it.polimi.ingsw.server.model.tokens.ScoringToken;
 
-import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -482,14 +480,18 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
      *
      * @param update
      */
-    private void sendUpdate(NetMessage update) {
+    private void sendUpdate(NetMessage update){
         synchronized (outputStream) {
             try {
                 logger.info("SENDING..." + update.getMessageType()+ " to "+this.username );
                 outputStream.writeObject(update);
                 outputStream.flush();
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                try {
+                    socket.close();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         }
     }

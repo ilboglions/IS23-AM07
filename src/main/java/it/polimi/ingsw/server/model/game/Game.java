@@ -595,7 +595,7 @@ public class Game implements GameModelInterface {
         else
             throw new PlayerNotFoundException("The player with this username has not been found in the game");
 
-        if(crashedPlayers.size() == numPlayers - 1) {
+        if(this.isStarted() && crashedPlayers.size() == numPlayers - 1) {
             this.changeState(GameState.PAUSED);
             this.crashTimer = new ReschedulableTimer();
             this.crashTimer.schedule(this::endGame, this.crashTimerDelay);
@@ -671,6 +671,7 @@ public class Game implements GameModelInterface {
 
             this.gameListener.notifyTurnOrder(tmp);
             this.gameListener.notifyPlayerInTurn(players.get(playerTurn).getUsername());
+            this.gameListener.notifyChangedGameState(GameState.STARTED);
         }
 
     }

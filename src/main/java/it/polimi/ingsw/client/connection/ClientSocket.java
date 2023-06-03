@@ -315,7 +315,7 @@ public class ClientSocket implements ConnectionHandler{
                     throw new RuntimeException(e);
                 }
                 this.sendReceivedGame(false);
-                view.postNotification(Notifications.GAME_RECONNECTION_SUCCEFFULLY);
+                view.postNotification(Notifications.GAME_RECONNECTION_SUCCESSFULLY);
             }else {
                 view.drawScene(SceneType.LOBBY);
                 view.postNotification(Notifications.JOINED_LOBBY_SUCCESSFULLY);

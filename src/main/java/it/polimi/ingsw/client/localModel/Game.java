@@ -6,7 +6,6 @@ import it.polimi.ingsw.remoteInterfaces.*;
 import it.polimi.ingsw.server.model.chat.Message;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
-import it.polimi.ingsw.server.model.game.GameModelInterface;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 import it.polimi.ingsw.server.model.tokens.ScoringToken;
 
@@ -370,6 +369,6 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
      */
     @Override
     public void notifyChangedGameState(GameState newState) throws RemoteException {
-        view.postNotification("Game is" + newState.toString(), "");
+        view.postNotification("Game is " + newState.toString(), "");
     }
 }

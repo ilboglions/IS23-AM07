@@ -12,7 +12,7 @@ public enum Notifications {
     ERR_INVALID_USERNAME("Invalid username selected!","You can't use this username!"),
     GAME_JOINED_SUCCESSFULLY("Game joined successfully","Waiting the game to start..."),
     GAME_CREATED_SUCCESSFULLY("Game created successfully!","Waiting for others player to join!"),
-    GAME_RECONNECTION_SUCCEFFULLY("Welcome back!","Reconnected to your previous game"),
+    GAME_RECONNECTION_SUCCESSFULLY("Welcome back!","Reconnected to your previous game"),
     ERR_GAME_NO_AVAILABLE("No game is available!","Wait for a new game, or create a new one!"),
     ERR_GAME_N_PLAYER_OUT_OF_RANGE("The number of player is out of range!","The game can be played from 2 to 4 players!"),
 
