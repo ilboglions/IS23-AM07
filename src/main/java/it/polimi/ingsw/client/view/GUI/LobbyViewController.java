@@ -1,5 +1,6 @@
 package it.polimi.ingsw.client.view.GUI;
 
+import it.polimi.ingsw.server.model.utilities.UtilityFunctions;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -51,7 +52,12 @@ public class LobbyViewController extends GUIController {
 
     public void onConfirmCreateButtonClick(ActionEvent actionEvent){
         try {
-            getClientController().CreateGame(Integer.parseInt(nPlayerField.getText()));
+            if(UtilityFunctions.isNumeric(nPlayerField.getText())){
+                getClientController().CreateGame(Integer.parseInt(nPlayerField.getText()));
+            } else {
+                this.postNotification("ERROR!","please, insert a number!");
+            }
+
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
