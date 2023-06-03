@@ -93,11 +93,11 @@ public class ClientRMI implements ConnectionHandler{
                 lobbyController.triggerHeartBeat(this.username);
             } else {
                 view.drawScene(SceneType.GAME);
-                view.postNotification(Notifications.GAME_RECONNECTION_SUCCEFFULLY);
                 gameController.triggerHeartBeat(this.username);
                 this.gameModel = new Game(this.view,this.username);
                 this.subscribeListeners();
                 gameController.triggerAllListeners(this.username);
+                view.postNotification(Notifications.GAME_RECONNECTION_SUCCESSFULLY);
             }
         } catch (NicknameAlreadyUsedException e) {
             view.postNotification(Notifications.ERR_USERNAME_ALREADY_TAKEN);
@@ -162,8 +162,8 @@ public class ClientRMI implements ConnectionHandler{
             gameController.triggerHeartBeat(this.username);
             this.gameModel = new Game(this.view,this.username);
             this.subscribeListeners();
-            gameController.triggerAllListeners(this.username);
             view.postNotification(Notifications.GAME_JOINED_SUCCESSFULLY);
+            gameController.triggerAllListeners(this.username);
         } catch (NicknameAlreadyUsedException e) {
             throw new RuntimeException(e);
         } catch (NoAvailableGameException e) {
