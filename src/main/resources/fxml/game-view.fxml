@@ -8,7 +8,6 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
@@ -17,7 +16,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<GridPane alignment="CENTER" hgap="20.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" styleClass="anchor" stylesheets="@css/game-view.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.view.GUI.GameViewController">
+<GridPane alignment="CENTER" hgap="20.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" styleClass="anchor" stylesheets="@css/game-view.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.view.GUI.GameViewController">
   <columnConstraints>
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="70.0" />
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="30.0" />
@@ -26,9 +25,16 @@
     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-      <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1">
+      <GridPane alignment="TOP_CENTER" GridPane.columnIndex="1">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints maxHeight="551.0" minHeight="10.0" prefHeight="546.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="375.0" minHeight="10.0" prefHeight="214.0" vgrow="SOMETIMES" />
+        </rowConstraints>
          <children>
-            <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0" spacing="80.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <HBox alignment="TOP_CENTER" fillHeight="false" onMouseClicked="#printClick" prefHeight="100.0" prefWidth="200.0" spacing="80.0">
                <children>
                   <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="25.0">
                      <children>
@@ -85,7 +91,7 @@
                         </VBox>
                      </children>
                   </VBox>
-                  <VBox fx:id="personalBookshelf" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
+                  <VBox fx:id="personalBookshelf" alignment="TOP_CENTER" onMouseClicked="#printClick" prefHeight="200.0" prefWidth="100.0">
                      <children>
                         <Label fx:id="personalBookshelfLabel" alignment="CENTER" prefHeight="32.0" prefWidth="155.0" textAlignment="CENTER">
                            <font>
@@ -101,23 +107,29 @@
                            </image>
                         </ImageView>
                      </children>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
                   </VBox>
                </children>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
             </HBox>
-             <VBox alignment="BOTTOM_CENTER" maxHeight="200.0" prefHeight="380.0" prefWidth="300.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                 <children>
-                     <TextArea fx:id="textAreaChat" editable="false" maxHeight="200.0" minHeight="100.0" prefHeight="350.0" prefWidth="300.0" wrapText="true" />
-                     <HBox prefHeight="30.0" prefWidth="300.0">
-                         <children>
+            <VBox alignment="BOTTOM_CENTER" maxHeight="200.0" prefHeight="380.0" prefWidth="300.0" GridPane.rowIndex="1">
+               <children>
+                  <TextArea fx:id="textAreaChat" editable="false" maxHeight="200.0" minHeight="100.0" prefHeight="140.0" prefWidth="550.0" wrapText="true" />
+                  <HBox prefHeight="30.0" prefWidth="300.0">
+                     <children>
                         <ComboBox fx:id="chatRecipientSelector" prefHeight="26.0" prefWidth="90.0" />
-                             <TextField fx:id="textFieldChat" prefHeight="30.0" prefWidth="240.0" HBox.hgrow="ALWAYS" />
-                             <Button fx:id="buttonChatSend" mnemonicParsing="false" onAction="#sendMessage" prefHeight="25.0" prefWidth="75.0" text="Send" />
-                         </children>
-                     </HBox>
-                 </children>
-             </VBox>
+                        <TextField fx:id="textFieldChat" prefHeight="30.0" prefWidth="240.0" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="buttonChatSend" mnemonicParsing="false" onAction="#sendMessage" prefHeight="25.0" prefWidth="75.0" text="Send" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
          </children>
-      </AnchorPane>
+      </GridPane>
       <VBox prefHeight="200.0" prefWidth="100.0" />
       <VBox prefHeight="200.0" prefWidth="100.0" />
       <VBox fx:id="leftvbox" prefHeight="200.0" prefWidth="100.0">
@@ -153,7 +165,7 @@
                         <Font name="Arial" size="16.0" />
                     </font>
                  </Label>
-                 <StackPane fx:id="personalGoalPane" prefHeight="150.0" prefWidth="200.0" GridPane.hgrow="NEVER" GridPane.rowIndex="1" GridPane.vgrow="NEVER">
+                 <StackPane fx:id="personalGoalPane" onMouseClicked="#printClick" prefHeight="150.0" prefWidth="200.0" GridPane.hgrow="NEVER" GridPane.rowIndex="1" GridPane.vgrow="NEVER">
                   <children>
                      <ImageView fx:id="personalCard" fitHeight="150.0" fitWidth="200.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" />
                   </children></StackPane>

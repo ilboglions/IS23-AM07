@@ -254,7 +254,7 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
      */
     @Override
     public synchronized void notifyPlayerCrashed(String userCrashed) throws RemoteException {
-        view.postNotification(userCrashed + "crashed!", "Will skip his turn until he reconnects");
+        view.postNotification(userCrashed + " crashed!", "Will skip his turn until he reconnects");
     }
 
     @Override

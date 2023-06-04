@@ -7,8 +7,6 @@ import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 import it.polimi.ingsw.server.model.tokens.ScoringToken;
 import javafx.beans.binding.Bindings;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -416,5 +414,9 @@ public class GameViewController extends GUIController implements Initializable {
         }
         else
             commonGoalInfo2.hide();
+    }
+
+    public void printClick(MouseEvent mouseEvent) {
+        System.out.println("Clicked");
     }
 }
