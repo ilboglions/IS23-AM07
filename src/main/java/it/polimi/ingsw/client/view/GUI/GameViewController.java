@@ -29,7 +29,9 @@ import java.util.*;
 
 
 public class GameViewController extends GUIController implements Initializable {
-    public static final int SIZE = 9;
+    private static final int SIZE = 9;
+    private static final int bookShelfRows = 6;
+    private static final int bookshelfCols = 5;
     public VBox firstPlayerBookshelf;
     public VBox secondPlayerBookshelf;
     public VBox thirdPlayerBookshelf;
@@ -54,6 +56,7 @@ public class GameViewController extends GUIController implements Initializable {
     public ImageView personalCard;
     public ImageView common1;
     public ImageView common2;
+    public GridPane personalBookshelfGrid;
 
     private Popup commonGoalInfo1, commonGoalInfo2;
 
@@ -66,7 +69,6 @@ public class GameViewController extends GUIController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         livingroom_grid.setAlignment(Pos.CENTER);
-        //livingroom_grid_container.setPrefSize(SIZE*50, SIZE*50);
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
                 Pane pane = new Pane();
@@ -78,6 +80,13 @@ public class GameViewController extends GUIController implements Initializable {
                         livingroom_grid_container.heightProperty().divide(SIZE+1)));
                 //GridPane.setColumnIndex(pane, i);
                 //GridPane.setRowIndex(pane,j);
+            }
+        }
+
+        for (int i = 0; i < bookshelfCols; i++) {
+            for (int j = 0; j < bookShelfRows; j++) {
+                Pane pane = new Pane();
+                personalBookshelfGrid.add(pane, i,j);
             }
         }
         cardsGrid.setManaged(false);
@@ -139,20 +148,23 @@ public class GameViewController extends GUIController implements Initializable {
     public void drawLivingRoom(Map<Coordinates, ItemTile> livingRoomMap) {
         for(Map.Entry<Coordinates, ItemTile> entry : livingRoomMap.entrySet()){
             Node cell = getNodeFromGridPane(livingroom_grid,entry.getKey().getColumn() ,entry.getKey().getRow());
+            System.out.println("Coordinate row:" + entry.getKey().getRow() + " column: " + entry.getKey().getColumn() + " TILE:" + entry.getValue() );
             if(cell != null){
                 Pane paneCell = (Pane)cell;
                 Optional<ImageView> imageOptional = getImageFromTile(entry.getValue());
-                if(imageOptional.isPresent()) {
+                if(/*paneCell.getChildren().isEmpty() &&*/ imageOptional.isPresent()) {
                     ImageView image = imageOptional.get();
                     paneCell.getChildren().add(image);
                     image.fitWidthProperty().bind((paneCell.widthProperty()));
                     image.fitHeightProperty().bind((paneCell.heightProperty()));//paneCell.setCenter(img);
                 }
                 else{
-                    paneCell.getChildren().removeAll();
+                    System.out.println("Cancello riga " + entry.getKey().getRow() + " colonna " + entry.getKey().getColumn());
+                    paneCell.getChildren().clear();
                 }
             }
         }
+        System.out.println("FINITO CANCELLARE\n");
     }
 
     private Optional<ImageView> getImageFromTile(ItemTile value) {
@@ -387,7 +399,7 @@ public class GameViewController extends GUIController implements Initializable {
     }
 
     public void drawPersonalCard(int card){
-        personalCard.setImage(new Image(Objects.requireNonNull(GameViewController.class.getResource("/images/personalGoalCards/Personal_Goals"+ card +".png").toString())));
+        personalCard.setImage(new Image(Objects.requireNonNull(GameViewController.class.getResource("/images/personalGoalCards/Personal_Goals"+ (card+1) +".png").toString())));
         personalGoalPane.setAlignment(Pos.CENTER);
         personalCard.setPreserveRatio(true);
         personalCard.fitHeightProperty().bind(Bindings.min(leftvbox.widthProperty().divide(5), leftvbox.heightProperty().divide(3.5)));
@@ -418,5 +430,35 @@ public class GameViewController extends GUIController implements Initializable {
 
     public void printClick(MouseEvent mouseEvent) {
         System.out.println("Clicked");
+    }
+
+
+    public void onClickPersonalBookshelf(MouseEvent event) {
+        Node clickedNode = event.getPickResult().getIntersectedNode(); //clickedNode
+        if (clickedNode != personalBookshelfGrid) { //find the grid pane
+            Node parent = clickedNode.getParent();
+            while (parent != personalBookshelfGrid) {
+                clickedNode = parent;
+                parent = clickedNode.getParent();
+            }
+        }
+        Integer colIndex = GridPane.getColumnIndex(clickedNode);
+        if(selectedCells.size() > 0){
+            livingroom_grid.setDisable(true);
+            try {
+                this.getClientController().checkValidRetrieve(new ArrayList<>(selectedCells));
+                Popup tilesOrderPopup = new Popup();
+                tilesOrderPopup.getContent().add(new Label("amiciii"));
+                //tilesOrderPopup.show(stage);
+                this.getClientController().moveTiles(new ArrayList<>(selectedCells), colIndex);
+                for(Coordinates c:selectedCells){
+                    Objects.requireNonNull(getNodeFromGridPane(livingroom_grid, c.getColumn(), c.getRow())).getStyleClass().clear();
+                }
+                selectedCells.clear();
+            } catch (RemoteException ignored) {}
+
+
+            livingroom_grid.setDisable(false);
+        }
     }
 }
