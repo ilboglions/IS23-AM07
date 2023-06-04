@@ -13,6 +13,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 
+import static it.polimi.ingsw.server.ServerMain.logger;
 import static it.polimi.ingsw.server.model.utilities.UtilityFunctions.MAX_PLAYERS;
 
 /**
