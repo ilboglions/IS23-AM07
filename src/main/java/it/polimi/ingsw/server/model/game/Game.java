@@ -290,6 +290,9 @@ public class Game implements GameModelInterface {
             throw new InvalidCoordinatesException("Selected column is out of range");
         }
 
+
+        if( currPlayer.getBookshelf().checkFreeSpace(column) < source.size()) throw new NotEnoughSpaceException("not enough space in the bookshelf!");
+
         for(int i=0; i<source.size(); i++) {
             tile = livingRoom.getTile(source.get(i));
             if(tile.isEmpty())
@@ -299,6 +302,7 @@ public class Game implements GameModelInterface {
                 livingRoom.removeTile(source.get(i));
             }
         }
+
         /*
             now we should have validated the source coordinates
             and have the requested tiles in the temp list

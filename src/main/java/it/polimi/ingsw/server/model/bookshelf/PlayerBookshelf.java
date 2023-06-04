@@ -71,7 +71,7 @@ public class PlayerBookshelf extends Bookshelf{
      * @param column the column to be checked
      * @return the free space in that column
      */
-    private int checkFreeSpace(int column) {
+    public int checkFreeSpace(int column) {
         int count = 0;
 
         for(int i=0; i<this.getRows(); i++) {
