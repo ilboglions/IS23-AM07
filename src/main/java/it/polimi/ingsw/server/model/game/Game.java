@@ -209,18 +209,23 @@ public class Game implements GameModelInterface {
      * @throws GameNotStartedException if the game is not started yet
      */
     public void updatePlayerPoints(String username) throws InvalidPlayerException, NotEnoughSpaceException, GameNotStartedException {
+        boolean toupdate = false;
         if (!this.isStarted()) throw new GameNotStartedException("the game has not started yet!");
         Optional<Player> player = searchPlayer(username);
 
         if(player.isEmpty())
             throw new InvalidPlayerException("Player is null");
         Player p = player.get();
-        for ( CommonGoalCard c : this.commonGoalCards) {
-            if( c.verifyConstraint(player.get().getBookshelf()) ){
+
+        for ( int i = 0; i <  this.commonGoalCards.size(); i++) {
+            if( this.commonGoalCards.get(i).verifyConstraint(player.get().getBookshelf()) ){
                 try{
-                    p.addToken(c.popTokenTo(p.getUsername()));
-                    ArrayList<RemoteCommonGoalCard> remoteCards = new ArrayList<>(this.commonGoalCards);
-                    this.gameListener.onCommonCardStateChange(remoteCards);
+                    p.addToken(this.commonGoalCards.get(i).popTokenTo(p.getUsername()));
+                    toupdate = true;
+                    //logger.info("UPDATE STACK");
+                    for(ScoringToken t: this.commonGoalCards.get(i).getTokenStack()){
+                        //logger.info(String.valueOf(t.getScoreValue()));
+                    }
                 } catch (TokenAlreadyGivenException ignored){
 
                 } catch (RemoteException e) {
@@ -228,6 +233,10 @@ public class Game implements GameModelInterface {
                 }
 
             }
+        }
+        if(toupdate){
+            ArrayList<RemoteCommonGoalCard> remoteCards = new ArrayList<>(this.commonGoalCards);
+            this.gameListener.onCommonCardStateChange(remoteCards);
         }
 
         try {

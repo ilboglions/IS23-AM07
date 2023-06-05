@@ -437,7 +437,7 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
     }
 
     @Override
-    public void notifyCommonGoalCards(ArrayList<RemoteCommonGoalCard> commonGoalCards) {
+    public void notifyCommonGoalCards(ArrayList<RemoteCommonGoalCard> commonGoalCards){
         CommonGoalCardsUpdateMessage update = new CommonGoalCardsUpdateMessage(commonGoalCards);
         this.sendUpdate(update);
     }

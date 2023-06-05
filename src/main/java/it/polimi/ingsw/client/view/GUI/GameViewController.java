@@ -25,11 +25,14 @@ import javafx.stage.Popup;
 
 import java.net.URL;
 import java.rmi.RemoteException;
+import java.sql.SQLOutput;
 import java.util.*;
 
 
 public class GameViewController extends GUIController implements Initializable {
-    public static final int SIZE = 9;
+    private static final int SIZE = 9;
+    private static final int bookShelfRows = 6;
+    private static final int bookshelfCols = 5;
     public VBox firstPlayerBookshelf;
     public VBox secondPlayerBookshelf;
     public VBox thirdPlayerBookshelf;
@@ -54,6 +57,10 @@ public class GameViewController extends GUIController implements Initializable {
     public ImageView personalCard;
     public ImageView common1;
     public ImageView common2;
+    public GridPane personalBookshelfGrid;
+    public GridPane firstPlayerBookshelfGrid;
+    public GridPane secondPlayerBookshelfGrid;
+    public GridPane thirdPlayerBookshelfGrid;
 
     private Popup commonGoalInfo1, commonGoalInfo2;
 
@@ -66,7 +73,6 @@ public class GameViewController extends GUIController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         livingroom_grid.setAlignment(Pos.CENTER);
-        //livingroom_grid_container.setPrefSize(SIZE*50, SIZE*50);
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
                 Pane pane = new Pane();
@@ -80,6 +86,19 @@ public class GameViewController extends GUIController implements Initializable {
                 //GridPane.setRowIndex(pane,j);
             }
         }
+
+        for (int i = 0; i < bookshelfCols; i++) {
+            for (int j = 0; j < bookShelfRows; j++) {
+                Pane pane0 = new Pane();
+                Pane pane1 = new Pane();
+                Pane pane2 = new Pane();
+                Pane pane3 = new Pane();
+                personalBookshelfGrid.add(pane0, i,j);
+                firstPlayerBookshelfGrid.add(pane1, i,j);
+                secondPlayerBookshelfGrid.add(pane2, i,j);
+                thirdPlayerBookshelfGrid.add(pane3, i,j);
+            }
+        }
         cardsGrid.setManaged(false);
         cardsGrid.setVisible(false);
         commonGoalInfo1 = new Popup();
@@ -88,26 +107,45 @@ public class GameViewController extends GUIController implements Initializable {
 
     public void drawBookshelf(Map<Coordinates, ItemTile> tilesMap, String playerUsername, int order) {
         VBox currentBookshelf;
+        GridPane currentBookshelfGrid;
 
         if(order == 0){
             currentBookshelf = personalBookshelf;
+            currentBookshelfGrid = personalBookshelfGrid;
             personalBookshelfLabel.setText(playerUsername);
         }
         else if(order == 1) {
             currentBookshelf = firstPlayerBookshelf;
+            currentBookshelfGrid = firstPlayerBookshelfGrid;
             firstPlayerLabel.setText(playerUsername);
         }
         else if(order == 2) {
             currentBookshelf = secondPlayerBookshelf;
+            currentBookshelfGrid = secondPlayerBookshelfGrid;
             secondPlayerLabel.setText(playerUsername);
         }
         else {
             currentBookshelf = thirdPlayerBookshelf;
+            currentBookshelfGrid = thirdPlayerBookshelfGrid;
             thirdPlayerLabel.setText(playerUsername);
         }
 
         if(!currentBookshelf.isVisible()){
             currentBookshelf.setVisible(true);
+        }
+
+        for(Map.Entry<Coordinates, ItemTile> entry : tilesMap.entrySet()) {
+            Node cell = getNodeFromGridPane(currentBookshelfGrid, entry.getKey().getColumn(),5- entry.getKey().getRow());
+            if(cell != null){
+                Pane paneCell = (Pane)cell;
+                Optional<ImageView> imageOptional = getImageFromTile(entry.getValue());
+                if(/*paneCell.getChildren().isEmpty() &&*/ imageOptional.isPresent()) {
+                    ImageView image = imageOptional.get();
+                    paneCell.getChildren().add(image);
+                    image.fitWidthProperty().bind((paneCell.widthProperty()));
+                    image.fitHeightProperty().bind((paneCell.heightProperty()));//paneCell.setCenter(img);
+                }
+            }
         }
 
         //TODO: display the tilesMap on the currentBookshelf
@@ -139,20 +177,23 @@ public class GameViewController extends GUIController implements Initializable {
     public void drawLivingRoom(Map<Coordinates, ItemTile> livingRoomMap) {
         for(Map.Entry<Coordinates, ItemTile> entry : livingRoomMap.entrySet()){
             Node cell = getNodeFromGridPane(livingroom_grid,entry.getKey().getColumn() ,entry.getKey().getRow());
+            //System.out.println("Coordinate row:" + entry.getKey().getRow() + " column: " + entry.getKey().getColumn() + " TILE:" + entry.getValue() );
             if(cell != null){
                 Pane paneCell = (Pane)cell;
                 Optional<ImageView> imageOptional = getImageFromTile(entry.getValue());
-                if(imageOptional.isPresent()) {
+                if(/*paneCell.getChildren().isEmpty() &&*/ imageOptional.isPresent()) {
                     ImageView image = imageOptional.get();
                     paneCell.getChildren().add(image);
                     image.fitWidthProperty().bind((paneCell.widthProperty()));
                     image.fitHeightProperty().bind((paneCell.heightProperty()));//paneCell.setCenter(img);
                 }
                 else{
-                    paneCell.getChildren().removeAll();
+                    //System.out.println("Cancello riga " + entry.getKey().getRow() + " colonna " + entry.getKey().getColumn());
+                    paneCell.getChildren().clear();
                 }
             }
         }
+        //System.out.println("FINITO CANCELLARE\n");
     }
 
     private Optional<ImageView> getImageFromTile(ItemTile value) {
@@ -320,8 +361,10 @@ public class GameViewController extends GUIController implements Initializable {
         commonGoalPane.getChildren().add(tokensBox);
         tokensBox.setRotate(-8);
         tokensBox.setAlignment(Pos.CENTER_RIGHT);
+        //System.out.println("Card stack Update");
         for (ScoringToken t : tokensStack) {
             try {
+                //System.out.println(t.getScoreValue());
                 tokenImage = new ImageView(GameViewController.class.getResource("/images/scoringTokens/scoring_" + t.getScoreValue().getValue() + ".jpg").toString());
                 tokensBox.getChildren().add(tokenImage);
                 tokenImage.setPreserveRatio(true);
@@ -387,7 +430,7 @@ public class GameViewController extends GUIController implements Initializable {
     }
 
     public void drawPersonalCard(int card){
-        personalCard.setImage(new Image(Objects.requireNonNull(GameViewController.class.getResource("/images/personalGoalCards/Personal_Goals"+ card +".png").toString())));
+        personalCard.setImage(new Image(Objects.requireNonNull(GameViewController.class.getResource("/images/personalGoalCards/Personal_Goals"+ (card+1) +".png").toString())));
         personalGoalPane.setAlignment(Pos.CENTER);
         personalCard.setPreserveRatio(true);
         personalCard.fitHeightProperty().bind(Bindings.min(leftvbox.widthProperty().divide(5), leftvbox.heightProperty().divide(3.5)));
@@ -416,7 +459,33 @@ public class GameViewController extends GUIController implements Initializable {
             commonGoalInfo2.hide();
     }
 
-    public void printClick(MouseEvent mouseEvent) {
-        System.out.println("Clicked");
+    @FXML
+    public void onClickPersonalBookshelf(MouseEvent event) {
+        Node clickedNode = event.getPickResult().getIntersectedNode(); //clickedNode
+        if (clickedNode != personalBookshelfGrid) { //find the grid pane
+            Node parent = clickedNode.getParent();
+            while (parent != personalBookshelfGrid) {
+                clickedNode = parent;
+                parent = clickedNode.getParent();
+            }
+        }
+        Integer colIndex = GridPane.getColumnIndex(clickedNode);
+        if(selectedCells.size() > 0 && colIndex !=null){
+            livingroom_grid.setDisable(true);
+            try {
+                this.getClientController().checkValidRetrieve(new ArrayList<>(selectedCells));
+                Popup tilesOrderPopup = new Popup();
+                tilesOrderPopup.getContent().add(new Label("amiciii"));
+                //tilesOrderPopup.show(stage);
+                this.getClientController().moveTiles(new ArrayList<>(selectedCells), colIndex);
+                for(Coordinates c:selectedCells){
+                    Objects.requireNonNull(getNodeFromGridPane(livingroom_grid, c.getColumn(), c.getRow())).getStyleClass().clear();
+                }
+                selectedCells.clear();
+            } catch (RemoteException ignored) {}
+
+
+            livingroom_grid.setDisable(false);
+        }
     }
 }
