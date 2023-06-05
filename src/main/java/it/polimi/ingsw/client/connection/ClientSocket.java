@@ -6,6 +6,7 @@ import it.polimi.ingsw.client.view.SceneType;
 import it.polimi.ingsw.client.view.ViewInterface;
 import it.polimi.ingsw.messages.*;
 import it.polimi.ingsw.remoteInterfaces.RemoteCommonGoalCard;
+import it.polimi.ingsw.remoteInterfaces.RemotePersonalGoalCard;
 import it.polimi.ingsw.server.ReschedulableTimer;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.tokens.ScoringToken;

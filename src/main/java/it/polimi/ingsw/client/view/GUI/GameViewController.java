@@ -6,7 +6,10 @@ import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 import it.polimi.ingsw.server.model.tokens.ScoringToken;
+import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -20,6 +23,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.*;
 import javafx.stage.Popup;
 
@@ -372,7 +376,6 @@ public class GameViewController extends GUIController implements Initializable {
             } catch (NullPointerException ignored) {
             }
         }
-        //StackPane.setMargin(tokensBox, new Insets(10,55,0,0));
         commonGoalPane.widthProperty().addListener((observable, oldValue, newValue) -> {
             double margin = newValue.doubleValue() * 0.25;
             StackPane.setMargin(tokensBox, new Insets(margin / 5, margin, 0, 0));
@@ -400,14 +403,16 @@ public class GameViewController extends GUIController implements Initializable {
         container.getChildren().add(description);
         commonGoalInfo.setX(stage.getX()+stage.getWidth()/2 - commonGoalInfo.getWidth()/2);
         commonGoalInfo.setY(stage.getY() + stage.getHeight()/2 - commonGoalInfo.getHeight()/2);
-        stage.widthProperty().addListener((observable, oldValue, newValue) -> {
+        ChangeListener<Number> reCenter = (observable, oldValue, newValue)->{
             double centerX = stage.getX() + stage.getWidth()/2 - commonGoalInfo.getWidth()/2;
-            commonGoalInfo.setX(centerX);
-        });
-        stage.heightProperty().addListener((observable, oldValue, newValue) -> {
             double centerY = stage.getY() + stage.getHeight()/2 - commonGoalInfo.getHeight()/2;
+            commonGoalInfo.setX(centerX);
             commonGoalInfo.setY(centerY);
-        });
+        };
+        stage.widthProperty().addListener(reCenter);
+        stage.heightProperty().addListener(reCenter);
+        stage.xProperty().addListener(reCenter);
+        stage.yProperty().addListener(reCenter);
     }
 
     private String getUrlFromCommonType(CommonCardType type) {
@@ -462,6 +467,7 @@ public class GameViewController extends GUIController implements Initializable {
     @FXML
     public void onClickPersonalBookshelf(MouseEvent event) {
         Node clickedNode = event.getPickResult().getIntersectedNode(); //clickedNode
+        int i;
         if (clickedNode != personalBookshelfGrid) { //find the grid pane
             Node parent = clickedNode.getParent();
             while (parent != personalBookshelfGrid) {
@@ -472,20 +478,64 @@ public class GameViewController extends GUIController implements Initializable {
         Integer colIndex = GridPane.getColumnIndex(clickedNode);
         if(selectedCells.size() > 0 && colIndex !=null){
             livingroom_grid.setDisable(true);
-            try {
-                this.getClientController().checkValidRetrieve(new ArrayList<>(selectedCells));
-                Popup tilesOrderPopup = new Popup();
-                tilesOrderPopup.getContent().add(new Label("amiciii"));
-                //tilesOrderPopup.show(stage);
-                this.getClientController().moveTiles(new ArrayList<>(selectedCells), colIndex);
+            Popup tilesOrderPopup = new Popup();
+            GridPane popupContainer = new GridPane();
+            popupContainer.setAlignment(Pos.CENTER);
+            popupContainer.setStyle("-fx-background-color: rgb(192,96,0)");
+            for(i=0; i< selectedCells.size(); i++){
+                Coordinates c = selectedCells.get(i);
+                Node n = ((Pane)Objects.requireNonNull(getNodeFromGridPane(livingroom_grid, c.getColumn(), c.getRow()))).getChildren().get(0);
+                ImageView tileImage = new ImageView(((ImageView)n).getImage());
+                Text tileNumber = new Text(String.valueOf(i+1));
+                tileNumber.setFill(Color.WHITE);
+                tileNumber.setTextAlignment(TextAlignment.CENTER);
+                popupContainer.add(tileImage,i,1);
+                popupContainer.add(new StackPane(tileNumber),i,0);
+                tileImage.setPreserveRatio(true);
+                tileImage.fitHeightProperty().bind(stage.heightProperty().divide(5));
+            }
+            Button confirmButton, cancelButton;
+            confirmButton = new Button("Confirm");
+            cancelButton = new Button("Cancel");
+            VBox buttonBox = new VBox(confirmButton, cancelButton);
+            buttonBox.setAlignment(Pos.CENTER);
+            cancelButton.setOnMouseClicked((MouseEvent ev)->{
                 for(Coordinates c:selectedCells){
                     Objects.requireNonNull(getNodeFromGridPane(livingroom_grid, c.getColumn(), c.getRow())).getStyleClass().clear();
                 }
                 selectedCells.clear();
-            } catch (RemoteException ignored) {}
+                livingroom_grid.setDisable(false);
+                tilesOrderPopup.hide();
+            });
+            confirmButton.setOnMouseClicked((MouseEvent ev)->{
+                for(Coordinates c:selectedCells){
+                    Objects.requireNonNull(getNodeFromGridPane(livingroom_grid, c.getColumn(), c.getRow())).getStyleClass().clear();
+                }
+                try {
+                    this.getClientController().checkValidRetrieve(new ArrayList<>(selectedCells));
+                    this.getClientController().moveTiles(new ArrayList<>(selectedCells), colIndex);
+                } catch (RemoteException ignored) {}
+                selectedCells.clear();
+                livingroom_grid.setDisable(false);
+                tilesOrderPopup.hide();
+            });
 
+            ChangeListener<Number> reCenter = (observable, oldValue, newValue)->{
+                double centerX = stage.getX() + stage.getWidth()/2 - tilesOrderPopup.getWidth()/2;
+                double centerY = stage.getY() + stage.getHeight()/2 - tilesOrderPopup.getHeight()/2;
+                tilesOrderPopup.setX(centerX);
+                tilesOrderPopup.setY(centerY);
+            };
+            stage.widthProperty().addListener(reCenter);
+            stage.heightProperty().addListener(reCenter);
+            stage.xProperty().addListener(reCenter);
+            stage.yProperty().addListener(reCenter);
 
-            livingroom_grid.setDisable(false);
+            popupContainer.add(buttonBox, i, 1);
+            tilesOrderPopup.getContent().add(popupContainer);
+            tilesOrderPopup.setX(stage.getX() + stage.getWidth()/2 - tilesOrderPopup.getWidth()/2);
+            tilesOrderPopup.setY(stage.getY() + stage.getHeight()/2 - tilesOrderPopup.getHeight()/2);
+            tilesOrderPopup.show(stage);
         }
     }
 }
