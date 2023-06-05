@@ -548,6 +548,7 @@ public class ClientSocket implements ConnectionHandler{
             try {
                 outputStream.writeObject(update);
                 outputStream.flush();
+                outputStream.reset();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

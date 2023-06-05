@@ -486,6 +486,7 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
                 logger.info("SENDING..." + update.getMessageType()+ " to "+this.username );
                 outputStream.writeObject(update);
                 outputStream.flush();
+                outputStream.reset();
             } catch (IOException e) {
                 try {
                     socket.close();
