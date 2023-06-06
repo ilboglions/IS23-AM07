@@ -4,7 +4,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -15,8 +15,9 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.text.TextFlow?>
 
-<GridPane alignment="CENTER" hgap="20.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" styleClass="anchor" stylesheets="@css/game-view.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.view.GUI.GameViewController">
+<GridPane alignment="CENTER" hgap="20.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" styleClass="anchor" stylesheets="@css/game-view.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.view.GUI.GameViewController">
   <columnConstraints>
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="70.0" />
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="30.0" />
@@ -25,18 +26,18 @@
     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-      <GridPane alignment="TOP_CENTER" GridPane.columnIndex="1">
+      <GridPane alignment="CENTER" GridPane.columnIndex="1" GridPane.vgrow="ALWAYS">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
         </columnConstraints>
         <rowConstraints>
-          <RowConstraints maxHeight="551.0" minHeight="10.0" prefHeight="546.0" vgrow="SOMETIMES" />
-          <RowConstraints maxHeight="375.0" minHeight="10.0" prefHeight="214.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="1.7976931348623157E308" minHeight="150.0" percentHeight="80.0" vgrow="ALWAYS" />
+          <RowConstraints minHeight="50.0" percentHeight="20.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
             <HBox alignment="CENTER" fillHeight="false" prefHeight="100.0" prefWidth="200.0" spacing="80.0">
                <children>
-                  <VBox fx:id="personalBookshelf" alignment="BOTTOM_CENTER" prefHeight="557.0" prefWidth="105.0">
+                  <VBox fx:id="personalBookshelf" alignment="CENTER" prefHeight="557.0" prefWidth="105.0">
                      <children>
                         <Label fx:id="personalBookshelfLabel" alignment="CENTER" prefHeight="32.0" prefWidth="155.0" textAlignment="CENTER">
                            <font>
@@ -53,7 +54,7 @@
                                     <Image url="@../images/boards/bookshelf_orth.png" />
                                  </image>
                               </ImageView>
-                              <GridPane fx:id="personalBookshelfGrid" alignment="CENTER" hgap="12.0" onMouseClicked="#onClickPersonalBookshelf" prefHeight="131.0" prefWidth="113.0" vgap="5.5" StackPane.alignment="CENTER">
+                              <GridPane fx:id="personalBookshelfGrid" alignment="CENTER" hgap="12.0" onMouseClicked="#onClickPersonalBookshelf" prefHeight="131.0" prefWidth="113.0" vgap="5.0" StackPane.alignment="CENTER">
                                 <columnConstraints>
                                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -80,7 +81,7 @@
                         <Insets />
                      </opaqueInsets>
                      <HBox.margin>
-                        <Insets />
+                        <Insets right="20.0" />
                      </HBox.margin>
                   </VBox>
                   <VBox alignment="CENTER" prefHeight="200.0" prefWidth="166.0" spacing="25.0">
@@ -217,27 +218,37 @@
             </HBox>
             <VBox alignment="BOTTOM_CENTER" maxHeight="200.0" prefHeight="380.0" prefWidth="300.0" GridPane.rowIndex="1">
                <children>
-                  <TextArea fx:id="textAreaChat" editable="false" maxHeight="200.0" minHeight="100.0" prefHeight="140.0" prefWidth="550.0" wrapText="true" />
+                  <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="200.0" prefHeight="140.0" prefWidth="550.0">
+                     <content>
+                        <TextFlow fx:id="textFlowChat" lineSpacing="1.0" maxHeight="300.0" prefHeight="140.0" prefWidth="550.0">
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                           <padding>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </padding></TextFlow>
+                     </content>
+                  </ScrollPane>
                   <HBox prefHeight="30.0" prefWidth="300.0">
                      <children>
-                        <ComboBox fx:id="chatRecipientSelector" prefHeight="26.0" prefWidth="90.0" />
+                        <ComboBox fx:id="chatRecipientSelector" prefHeight="30.0" prefWidth="90.0" />
                         <TextField fx:id="textFieldChat" prefHeight="30.0" prefWidth="240.0" HBox.hgrow="ALWAYS" />
-                        <Button fx:id="buttonChatSend" mnemonicParsing="false" onAction="#sendMessage" prefHeight="25.0" prefWidth="75.0" text="Send" />
+                        <Button fx:id="buttonChatSend" mnemonicParsing="false" onAction="#sendMessage" prefHeight="30.0" prefWidth="75.0" text="Send" />
                      </children>
                   </HBox>
                </children>
             </VBox>
          </children>
       </GridPane>
-      <VBox fx:id="leftvbox" prefHeight="200.0" prefWidth="100.0">
+      <VBox fx:id="leftvbox" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="30.0">
          <children>
-            <StackPane fx:id="livingroom_grid_container" prefHeight="569.0" prefWidth="590.0" styleClass="livingRoom">
+            <StackPane fx:id="livingroom_grid_container" prefHeight="569.0" prefWidth="590.0" styleClass="livingRoom" VBox.vgrow="ALWAYS">
                <children>
                   <GridPane fx:id="livingroom_grid" alignment="CENTER" onMouseClicked="#clickGrid" prefHeight="461.0" prefWidth="590.0">
             </GridPane>
                </children>
             </StackPane>
-             <GridPane fx:id="cardsGrid" alignment="CENTER" prefWidth="590.0" visible="false">
+             <GridPane fx:id="cardsGrid" alignment="BOTTOM_CENTER" prefWidth="590.0" visible="false" VBox.vgrow="ALWAYS">
                  <columnConstraints>
                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />

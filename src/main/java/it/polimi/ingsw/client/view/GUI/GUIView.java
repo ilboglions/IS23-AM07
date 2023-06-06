@@ -9,7 +9,6 @@ import it.polimi.ingsw.client.view.ViewInterface;
 import it.polimi.ingsw.remoteInterfaces.RemoteCommonGoalCard;
 import it.polimi.ingsw.remoteInterfaces.RemotePersonalGoalCard;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
-import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -47,6 +46,8 @@ public class GUIView extends Application implements ViewInterface {
         fxmlLoader = new FXMLLoader(GUIView.class.getResource("/fxml/login-view.fxml"));
 
         scene = new Scene(fxmlLoader.load(), 1500, 750);
+        scene.getStylesheets().add(GUIView.class.getResource("/fxml/css/game-view.css").toExternalForm());
+        scene.getStylesheets().add(GUIView.class.getResource("/fxml/css/lobby-view.css").toExternalForm());
 
         ConnectionHandlerFactory factory = new ConnectionHandlerFactory();
         controller = factory.createConnection(connectionType, this);

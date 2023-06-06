@@ -6,10 +6,8 @@ import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 import it.polimi.ingsw.server.model.tokens.ScoringToken;
-import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -24,14 +22,11 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.*;
 import javafx.stage.Popup;
-import org.controlsfx.control.spreadsheet.Grid;
 
 import java.net.URL;
 import java.rmi.RemoteException;
-import java.sql.SQLOutput;
 import java.util.*;
 
 
@@ -47,14 +42,13 @@ public class GameViewController extends GUIController implements Initializable {
     public Label firstPlayerLabel;
     public Label secondPlayerLabel;
     public Label thirdPlayerLabel;
-    public TextArea textAreaChat;
+    public TextFlow textFlowChat;
     public TextField textFieldChat;
     public Button buttonChatSend;
     public GridPane livingroom_grid;
     public StackPane livingroom_grid_container;
     public ComboBox chatRecipientSelector;
     private final ArrayList<Coordinates> selectedCells = new ArrayList<>();
-    public HBox cardsPane;
     public StackPane commonGoal1Pane;
     public StackPane personalGoalPane;
     public StackPane commonGoal2Pane;
@@ -73,7 +67,17 @@ public class GameViewController extends GUIController implements Initializable {
 
     @Override
     public void postNotification(String title, String desc) {
+        Text textTitle = new Text("[SERVER] " + title.toUpperCase() + "\n");
+        textTitle.setFill(Color.RED);
 
+        textFlowChat.getChildren().add(textTitle);
+
+        if(!desc.isBlank()){
+            Text textDescription = new Text("[SERVER] " + desc + "\n");
+            textDescription.setFill(Color.RED);
+
+            textFlowChat.getChildren().add(textDescription);
+        }
     }
 
     @Override
@@ -169,15 +173,7 @@ public class GameViewController extends GUIController implements Initializable {
     }
 
     public void drawChat(List<String> outputMessages) {
-        ArrayList<String> messages = new ArrayList<>(outputMessages);
-        Collections.reverse(messages);
-        StringBuilder chatContent = new StringBuilder("");
-
-        for(String message : messages){
-            chatContent.append(message + "\n");
-        }
-
-        textAreaChat.setText(String.valueOf(chatContent));
+        textFlowChat.getChildren().add(new Text(outputMessages.get(0) + "\n"));
     }
 
     public void drawLivingRoom(Map<Coordinates, ItemTile> livingRoomMap) {
@@ -389,28 +385,32 @@ public class GameViewController extends GUIController implements Initializable {
         HBox container = new HBox();
         ImageView cardImage = new ImageView(getUrlFromCommonType(commonCard.getName()));
         commonGoalInfo.getContent().add(container);
-        container.setStyle("-fx-background-image: url('"+ GameViewController.class.getResource("/images/misc/base_pagina2.jpg").toString() +"'); " +
-                "           -fx-background-repeat: stretch; -fx-background-position: center; " +
-                "           -fx-background-size: auto; -fx-border-radius: 15px;");
+
+        container.getStyleClass().add("containerCommonCard");
         HBox.setMargin(cardImage, new Insets(10, 10, 10, 10));
+
         description.setText(commonCard.getDescription());
         description.setFill(Color.WHITE);
         description.setTextAlignment(TextAlignment.CENTER);
         description.setFont(Font.font("Arial", FontWeight.NORMAL, FontPosture.REGULAR, 15));
         description.wrappingWidthProperty().bind(container.heightProperty());
+
         container.setAlignment(Pos.CENTER);
         container.getChildren().add(cardImage);
         cardImage.setPreserveRatio(true);
         cardImage.fitHeightProperty().bind(stage.heightProperty().divide(3));
         container.getChildren().add(description);
-        commonGoalInfo.setX(stage.getX()+stage.getWidth()/2 - commonGoalInfo.getWidth()/2);
+
+        commonGoalInfo.setX(stage.getX() + stage.getWidth()/2 - commonGoalInfo.getWidth()/2);
         commonGoalInfo.setY(stage.getY() + stage.getHeight()/2 - commonGoalInfo.getHeight()/2);
+
         ChangeListener<Number> reCenter = (observable, oldValue, newValue)->{
             double centerX = stage.getX() + stage.getWidth()/2 - commonGoalInfo.getWidth()/2;
             double centerY = stage.getY() + stage.getHeight()/2 - commonGoalInfo.getHeight()/2;
             commonGoalInfo.setX(centerX);
             commonGoalInfo.setY(centerY);
         };
+
         stage.widthProperty().addListener(reCenter);
         stage.heightProperty().addListener(reCenter);
         stage.xProperty().addListener(reCenter);
@@ -449,7 +449,6 @@ public class GameViewController extends GUIController implements Initializable {
             commonGoalInfo1.show(this.stage);
             commonGoalInfo1.setX(stage.getX()+stage.getWidth()/2 - commonGoalInfo1.getWidth()/2);
             commonGoalInfo1.setY(stage.getY() + stage.getHeight()/2 - commonGoalInfo1.getHeight()/2);
-
         }
         else
             commonGoalInfo1.hide();
@@ -470,6 +469,7 @@ public class GameViewController extends GUIController implements Initializable {
     public void onClickPersonalBookshelf(MouseEvent event) {
         Node clickedNode = event.getPickResult().getIntersectedNode(); //clickedNode
         int i;
+
         if (clickedNode != personalBookshelfGrid) { //find the grid pane
             Node parent = clickedNode.getParent();
             while (parent != personalBookshelfGrid) {
@@ -477,13 +477,17 @@ public class GameViewController extends GUIController implements Initializable {
                 parent = clickedNode.getParent();
             }
         }
+
         Integer colIndex = GridPane.getColumnIndex(clickedNode);
+
         if(selectedCells.size() > 0 && colIndex !=null){
             livingroom_grid.setDisable(true);
             Popup tilesOrderPopup = new Popup();
             GridPane popupContainer = new GridPane();
+
             popupContainer.setAlignment(Pos.CENTER);
-            popupContainer.setStyle("-fx-background-color: rgb(192,96,0)");
+            popupContainer.getStyleClass().add("containerSelectedTiles");
+
             for(i=0; i< selectedCells.size(); i++){
                 Coordinates c = selectedCells.get(i);
                 Node n = ((Pane)Objects.requireNonNull(getNodeFromGridPane(livingroom_grid, c.getColumn(), c.getRow()))).getChildren().get(0);
@@ -497,11 +501,14 @@ public class GameViewController extends GUIController implements Initializable {
                 tileImage.setPreserveRatio(true);
                 tileImage.fitHeightProperty().bind(stage.heightProperty().divide(5));
             }
+
             Button confirmButton, cancelButton;
             confirmButton = new Button("Confirm");
             cancelButton = new Button("Cancel");
             VBox buttonBox = new VBox(confirmButton, cancelButton);
             buttonBox.setAlignment(Pos.CENTER);
+            buttonBox.setSpacing(30);
+
             cancelButton.setOnMouseClicked((MouseEvent ev)->{
                 for(Coordinates c:selectedCells){
                     Objects.requireNonNull(getNodeFromGridPane(livingroom_grid, c.getColumn(), c.getRow())).getStyleClass().clear();
@@ -510,6 +517,7 @@ public class GameViewController extends GUIController implements Initializable {
                 livingroom_grid.setDisable(false);
                 tilesOrderPopup.hide();
             });
+
             confirmButton.setOnMouseClicked((MouseEvent ev)->{
                 for(Coordinates c:selectedCells){
                     Objects.requireNonNull(getNodeFromGridPane(livingroom_grid, c.getColumn(), c.getRow())).getStyleClass().clear();
@@ -529,10 +537,12 @@ public class GameViewController extends GUIController implements Initializable {
                 tilesOrderPopup.setX(centerX);
                 tilesOrderPopup.setY(centerY);
             };
+
             stage.widthProperty().addListener(reCenter);
             stage.heightProperty().addListener(reCenter);
             stage.xProperty().addListener(reCenter);
             stage.yProperty().addListener(reCenter);
+
             popupContainer.add(buttonBox, i, 1);
             tilesOrderPopup.getContent().add(popupContainer);
             tilesOrderPopup.setX(stage.getX() + stage.getWidth()/2 - tilesOrderPopup.getWidth()/2);
