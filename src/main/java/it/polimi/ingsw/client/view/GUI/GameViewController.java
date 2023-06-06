@@ -12,6 +12,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -20,12 +21,13 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.*;
 import javafx.stage.Popup;
+import org.controlsfx.control.spreadsheet.Grid;
 
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -486,6 +488,7 @@ public class GameViewController extends GUIController implements Initializable {
                 Coordinates c = selectedCells.get(i);
                 Node n = ((Pane)Objects.requireNonNull(getNodeFromGridPane(livingroom_grid, c.getColumn(), c.getRow()))).getChildren().get(0);
                 ImageView tileImage = new ImageView(((ImageView)n).getImage());
+                this.addDragAndDrop(tileImage);
                 Text tileNumber = new Text(String.valueOf(i+1));
                 tileNumber.setFill(Color.WHITE);
                 tileNumber.setTextAlignment(TextAlignment.CENTER);
@@ -530,12 +533,67 @@ public class GameViewController extends GUIController implements Initializable {
             stage.heightProperty().addListener(reCenter);
             stage.xProperty().addListener(reCenter);
             stage.yProperty().addListener(reCenter);
-
             popupContainer.add(buttonBox, i, 1);
             tilesOrderPopup.getContent().add(popupContainer);
             tilesOrderPopup.setX(stage.getX() + stage.getWidth()/2 - tilesOrderPopup.getWidth()/2);
             tilesOrderPopup.setY(stage.getY() + stage.getHeight()/2 - tilesOrderPopup.getHeight()/2);
             tilesOrderPopup.show(stage);
         }
+    }
+
+
+    private void addDragAndDrop(ImageView imageCell) {
+        imageCell.setOnDragDetected(new EventHandler<MouseEvent>() {
+            public void handle(MouseEvent event) {
+                Dragboard db = imageCell.startDragAndDrop(TransferMode.MOVE);
+                ClipboardContent content = new ClipboardContent();
+                content.putImage(imageCell.getImage());
+                db.setContent(content);
+                event.consume();
+            }
+        });
+        imageCell.setOnDragOver(new EventHandler<DragEvent>() {
+            public void handle(DragEvent event) {
+
+                if (event.getGestureSource() != imageCell &&
+                        event.getDragboard().hasImage()) {
+                    event.acceptTransferModes(TransferMode.MOVE);
+                }
+                event.consume();
+            }
+        });
+        imageCell.setOnDragDropped(new EventHandler<DragEvent>() {
+            public void handle(DragEvent event) {
+                Dragboard db = event.getDragboard();
+                boolean success = false;
+                this.arraySwitchPos(selectedCells, GridPane.getColumnIndex(imageCell).intValue(), GridPane.getColumnIndex((Node)event.getGestureSource()).intValue());
+                if (db.hasImage()) {
+                    Image oldImage = imageCell.getImage();
+                    imageCell.setImage(db.getImage());
+                    ((ImageView)event.getGestureSource()).setImage(oldImage);
+                    success = true;
+                }
+                event.setDropCompleted(success);
+                event.consume();
+            }
+
+            private void arraySwitchPos(ArrayList<Coordinates> selectedCells, int col0, int col1) {
+                int low, high;
+                Coordinates temp;
+                if(col0 < col1){
+                   low = col0;
+                   high = col1;
+                }
+                else{
+                    low = col1;
+                    high = col0;
+                }
+                temp = selectedCells.get(low);
+                selectedCells.remove(low);
+                selectedCells.add(low, selectedCells.get(high-1));
+                selectedCells.remove(high);
+                selectedCells.add(high, temp);
+            }
+        });
     }
 }
