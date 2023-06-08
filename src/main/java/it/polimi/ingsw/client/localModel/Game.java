@@ -30,7 +30,7 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
     /**
      * Map to contain the scoring tokens of each player
      */
-    private final Map<String, Set<ScoringToken>> playerScoringTokens;
+    private final Map<String, ArrayList<ScoringToken>> playerScoringTokens;
     /**
      * Map to contain the current points of each player
      */
@@ -53,7 +53,7 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
         this.players = new ArrayList<>();
         this.players.add(username);
         this.gameStarted = false;
-        this.playerScoringTokens.put(username, new HashSet<>());
+        this.playerScoringTokens.put(username, new ArrayList<>());
         this.playerPoints.put(username, 0);
 
         try {
@@ -73,9 +73,12 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
         List<String> outputMessages = this.playerChat
                                             .stream()
                                             .map(
-                                                    m ->  m.getRecipient().isPresent() ?
+                                                    /*m ->  m.getRecipient().isPresent() ?
                                                             "<" + m.getSender() + " -> " + m.getRecipient().get() + "> " + m.getContent()
-                                                            :"<" + m.getSender() + "> " + m.getContent()
+                                                            :"<" + m.getSender() + "> " + m.getContent()*/
+                                                    m -> m.getRecipient().isPresent() ?
+                                                            m.getSender() + " (privately to " + m.getRecipient().get() +"): " + m.getContent() :
+                                                            m.getSender() + ": " + m.getContent()
                                             ).toList();
         view.drawChat(outputMessages);
     }
@@ -87,7 +90,7 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
         if(!players.contains(player)){
             players.add(player);
             playerPoints.put(player, 0);
-            playerScoringTokens.put(player, new HashSet<>());
+            playerScoringTokens.put(player, new ArrayList<>());
         }
         ArrayList<String> playersChat;
         playersChat = new ArrayList<>(players);
@@ -148,8 +151,8 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
      * @param player the username of the owner of the scoring tokens we want to retrieve
      * @return the list of the scoring tokens of a player
      */
-    public Set<ScoringToken> getPlayerScoringToken(String player) {
-        return new HashSet<>(playerScoringTokens.get(player));
+    public ArrayList<ScoringToken> getPlayerScoringToken(String player) {
+        return new ArrayList<>(playerScoringTokens.get(player));
     }
 
     /**
@@ -168,6 +171,7 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
      */
     public void addScoringTokenToPlayer(String player, ScoringToken scoringToken) {
         playerScoringTokens.get(player).add(scoringToken);
+        view.drawScoringTokens(new HashMap<>(playerScoringTokens));
     }
 
     public Map<String, Integer> getMapPlayerPoints() {
@@ -295,6 +299,7 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
 
     @Override
     public synchronized void updateTokens(String player, ArrayList<ScoringToken> tokenPoints) throws RemoteException {
+        playerScoringTokens.replace(player, new ArrayList<>());
         for(ScoringToken token : tokenPoints){
             this.addScoringTokenToPlayer(player, token);
         }

@@ -6,6 +6,7 @@ import it.polimi.ingsw.remoteInterfaces.RemotePersonalGoalCard;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
+import it.polimi.ingsw.server.model.tokens.ScoringToken;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -25,4 +26,6 @@ public interface ViewInterface {
     void drawScene(SceneType scene);
     void drawPlayerInTurn(String userInTurn, String thisUser);
     void drawChatPlayersList(ArrayList<String> players);
+
+    void drawScoringTokens(Map<String, ArrayList<ScoringToken>> playerScoringTokens);
 }

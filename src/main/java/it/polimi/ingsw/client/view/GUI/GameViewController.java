@@ -6,9 +6,11 @@ import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 import it.polimi.ingsw.server.model.tokens.ScoringToken;
+import it.polimi.ingsw.Notifications;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -28,6 +30,7 @@ import javafx.stage.Popup;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class GameViewController extends GUIController implements Initializable {
@@ -49,6 +52,11 @@ public class GameViewController extends GUIController implements Initializable {
     public StackPane livingroom_grid_container;
     public ComboBox chatRecipientSelector;
     private final ArrayList<Coordinates> selectedCells = new ArrayList<>();
+    private final ArrayList<Label> playersLabels = new ArrayList<>();
+
+    private ArrayList<String> playersRank = new ArrayList<>();
+    private final HashMap<String,ArrayList<ScoringToken>> playerScoringTokens = new HashMap<>();
+
     public StackPane commonGoal1Pane;
     public StackPane personalGoalPane;
     public StackPane commonGoal2Pane;
@@ -61,6 +69,8 @@ public class GameViewController extends GUIController implements Initializable {
     public GridPane firstPlayerBookshelfGrid;
     public GridPane secondPlayerBookshelfGrid;
     public GridPane thirdPlayerBookshelfGrid;
+    public ScrollPane textFlowChatScroll;
+    public GridPane leaderBoardGrid;
 
     private Popup commonGoalInfo1, commonGoalInfo2;
 
@@ -68,6 +78,7 @@ public class GameViewController extends GUIController implements Initializable {
     @Override
     public void postNotification(String title, String desc) {
         Text textTitle = new Text("[SERVER] " + title.toUpperCase() + "\n");
+        textTitle.setFont(Font.font("Arial",FontWeight.BOLD, 11));
         textTitle.setFill(Color.RED);
 
         textFlowChat.getChildren().add(textTitle);
@@ -75,6 +86,7 @@ public class GameViewController extends GUIController implements Initializable {
         if(!desc.isBlank()){
             Text textDescription = new Text("[SERVER] " + desc + "\n");
             textDescription.setFill(Color.RED);
+            textDescription.setFont(Font.font("Arial",FontWeight.NORMAL, 11));
 
             textFlowChat.getChildren().add(textDescription);
         }
@@ -82,6 +94,10 @@ public class GameViewController extends GUIController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        playersLabels.add(personalBookshelfLabel);
+        playersLabels.add(firstPlayerLabel);
+        playersLabels.add(secondPlayerLabel);
+        playersLabels.add(thirdPlayerLabel);
         livingroom_grid.setAlignment(Pos.CENTER);
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
@@ -113,6 +129,20 @@ public class GameViewController extends GUIController implements Initializable {
         cardsGrid.setVisible(false);
         commonGoalInfo1 = new Popup();
         commonGoalInfo2 = new Popup();
+        textFlowChat.getChildren().addListener(
+                (ListChangeListener<Node>) ((change) -> {
+                    textFlowChat.layout();
+                    textFlowChatScroll.layout();
+                    textFlowChatScroll.setVvalue(1.0f);
+                }));
+
+        /*ColumnConstraints colNames = new ColumnConstraints();
+        ColumnConstraints colPoints = new ColumnConstraints();
+        colNames.setHgrow( Priority.NEVER);
+        colPoints.setHgrow(Priority.NEVER);
+        leaderBoardGrid.getColumnConstraints().removeAll();
+        leaderBoardGrid.getColumnConstraints().addAll(colNames, colPoints);
+        leaderBoardGrid.setAlignment(Pos.CENTER_RIGHT);*/
     }
 
     public void drawBookshelf(Map<Coordinates, ItemTile> tilesMap, String playerUsername, int order) {
@@ -149,16 +179,16 @@ public class GameViewController extends GUIController implements Initializable {
             if(cell != null){
                 Pane paneCell = (Pane)cell;
                 Optional<ImageView> imageOptional = getImageFromTile(entry.getValue());
-                if(/*paneCell.getChildren().isEmpty() &&*/ imageOptional.isPresent()) {
-                    ImageView image = imageOptional.get();
-                    paneCell.getChildren().add(image);
-                    image.fitWidthProperty().bind((paneCell.widthProperty()));
-                    image.fitHeightProperty().bind((paneCell.heightProperty()));//paneCell.setCenter(img);
+                if(imageOptional.isPresent()) {
+                    if(paneCell.getChildren().isEmpty()) {
+                        ImageView image = imageOptional.get();
+                        paneCell.getChildren().add(image);
+                        image.fitWidthProperty().bind((paneCell.widthProperty()));
+                        image.fitHeightProperty().bind((paneCell.heightProperty()));
+                    }
                 }
             }
         }
-
-        //TODO: display the tilesMap on the currentBookshelf
     }
 
 
@@ -173,29 +203,30 @@ public class GameViewController extends GUIController implements Initializable {
     }
 
     public void drawChat(List<String> outputMessages) {
-        textFlowChat.getChildren().add(new Text(outputMessages.get(0) + "\n"));
+        Text newMessage = new Text(outputMessages.get(0) + "\n");
+        newMessage.setFont(Font.font("Arial", FontWeight.NORMAL, 11));
+        textFlowChat.getChildren().add(newMessage);
     }
 
     public void drawLivingRoom(Map<Coordinates, ItemTile> livingRoomMap) {
         for(Map.Entry<Coordinates, ItemTile> entry : livingRoomMap.entrySet()){
             Node cell = getNodeFromGridPane(livingroom_grid,entry.getKey().getColumn() ,entry.getKey().getRow());
-            //System.out.println("Coordinate row:" + entry.getKey().getRow() + " column: " + entry.getKey().getColumn() + " TILE:" + entry.getValue() );
             if(cell != null){
                 Pane paneCell = (Pane)cell;
                 Optional<ImageView> imageOptional = getImageFromTile(entry.getValue());
-                if(/*paneCell.getChildren().isEmpty() &&*/ imageOptional.isPresent()) {
-                    ImageView image = imageOptional.get();
-                    paneCell.getChildren().add(image);
-                    image.fitWidthProperty().bind((paneCell.widthProperty()));
-                    image.fitHeightProperty().bind((paneCell.heightProperty()));//paneCell.setCenter(img);
+                if(imageOptional.isPresent()) {
+                    if(paneCell.getChildren().isEmpty()){
+                        ImageView image = imageOptional.get();
+                        paneCell.getChildren().add(image);
+                        image.fitWidthProperty().bind((paneCell.widthProperty()));
+                        image.fitHeightProperty().bind((paneCell.heightProperty()));
+                    }
                 }
                 else{
-                    //System.out.println("Cancello riga " + entry.getKey().getRow() + " colonna " + entry.getKey().getColumn());
                     paneCell.getChildren().clear();
                 }
             }
         }
-        //System.out.println("FINITO CANCELLARE\n");
     }
 
     private Optional<ImageView> getImageFromTile(ItemTile value) {
@@ -315,6 +346,23 @@ public class GameViewController extends GUIController implements Initializable {
 
 
     public void drawPlayerInTurn(String userInTurn, String thisUser) {
+        String newTurnTitle, newTurnDescription;
+        playersLabels.forEach(label -> {
+            if (label.getText().equals(userInTurn))
+                label.setTextFill(Color.GREEN);
+            else
+                label.setTextFill(Color.BLACK);
+        });
+        if(userInTurn.equals(thisUser)){
+            newTurnTitle = "It's your turn!";
+            newTurnDescription = "Select the tiles and click on the column you want to insert them in!";
+        }
+        else {
+            newTurnTitle = "It's " + userInTurn + "'s turn";
+            newTurnDescription = "Please, wait for your turn!";
+        }
+
+        this.postNotification(newTurnTitle, newTurnDescription);
         livingroom_grid.setDisable(!userInTurn.equals(thisUser));
     }
 
@@ -355,6 +403,7 @@ public class GameViewController extends GUIController implements Initializable {
             drawTokensBox(tokensStack, tokensBox2, commonGoal2Pane);
             this.drawCommonGoalPopup(commonGoalInfo1, commonGoalCards.get(0));
             this.drawCommonGoalPopup(commonGoalInfo2, commonGoalCards.get(1));
+
         } catch (RemoteException ignored ){}
     }
 
@@ -363,14 +412,14 @@ public class GameViewController extends GUIController implements Initializable {
         commonGoalPane.getChildren().add(tokensBox);
         tokensBox.setRotate(-8);
         tokensBox.setAlignment(Pos.CENTER_RIGHT);
-        //System.out.println("Card stack Update");
         for (ScoringToken t : tokensStack) {
             try {
-                //System.out.println(t.getScoreValue());
-                tokenImage = new ImageView(GameViewController.class.getResource("/images/scoringTokens/scoring_" + t.getScoreValue().getValue() + ".jpg").toString());
+                tokenImage = new ImageView(Objects.requireNonNull(GameViewController.class.getResource("/images/scoringTokens/scoring_" + t.getScoreValue().getValue() + ".jpg")).toString());
                 tokensBox.getChildren().add(tokenImage);
                 tokenImage.setPreserveRatio(true);
                 tokenImage.fitWidthProperty().bind(cardsGrid.widthProperty().divide(20));
+                double margin = commonGoalPane.getWidth() * 0.25;
+                StackPane.setMargin(tokensBox, new Insets(margin / 5, margin,0,0));
             } catch (NullPointerException ignored) {
             }
         }
@@ -384,33 +433,33 @@ public class GameViewController extends GUIController implements Initializable {
         Text description = new Text();
         HBox container = new HBox();
         ImageView cardImage = new ImageView(getUrlFromCommonType(commonCard.getName()));
-        commonGoalInfo.getContent().add(container);
 
         container.getStyleClass().add("containerCommonCard");
-        HBox.setMargin(cardImage, new Insets(10, 10, 10, 10));
+        container.setAlignment(Pos.CENTER);
 
         description.setText(commonCard.getDescription());
         description.setFill(Color.WHITE);
         description.setTextAlignment(TextAlignment.CENTER);
         description.setFont(Font.font("Arial", FontWeight.NORMAL, FontPosture.REGULAR, 15));
-        description.wrappingWidthProperty().bind(container.heightProperty());
 
-        container.setAlignment(Pos.CENTER);
-        container.getChildren().add(cardImage);
+
+
+
         cardImage.setPreserveRatio(true);
         cardImage.fitHeightProperty().bind(stage.heightProperty().divide(3));
+        description.wrappingWidthProperty().bind(container.heightProperty());
+
+        container.getChildren().add(cardImage);
+        HBox.setMargin(cardImage, new Insets(10, 10, 10, 10));
         container.getChildren().add(description);
 
-        commonGoalInfo.setX(stage.getX() + stage.getWidth()/2 - commonGoalInfo.getWidth()/2);
-        commonGoalInfo.setY(stage.getY() + stage.getHeight()/2 - commonGoalInfo.getHeight()/2);
-
+        commonGoalInfo.getContent().add(container);
         ChangeListener<Number> reCenter = (observable, oldValue, newValue)->{
-            double centerX = stage.getX() + stage.getWidth()/2 - commonGoalInfo.getWidth()/2;
-            double centerY = stage.getY() + stage.getHeight()/2 - commonGoalInfo.getHeight()/2;
+            double centerX = stage.getX() + stage.getWidth()/2 - container.getWidth()/2;
+            double centerY = stage.getY() + stage.getHeight()/2 - container.getHeight()/2;
             commonGoalInfo.setX(centerX);
             commonGoalInfo.setY(centerY);
         };
-
         stage.widthProperty().addListener(reCenter);
         stage.heightProperty().addListener(reCenter);
         stage.xProperty().addListener(reCenter);
@@ -447,8 +496,6 @@ public class GameViewController extends GUIController implements Initializable {
         if(!commonGoalInfo1.isShowing()){
             commonGoalInfo2.hide();
             commonGoalInfo1.show(this.stage);
-            commonGoalInfo1.setX(stage.getX()+stage.getWidth()/2 - commonGoalInfo1.getWidth()/2);
-            commonGoalInfo1.setY(stage.getY() + stage.getHeight()/2 - commonGoalInfo1.getHeight()/2);
         }
         else
             commonGoalInfo1.hide();
@@ -458,8 +505,6 @@ public class GameViewController extends GUIController implements Initializable {
         if(!commonGoalInfo2.isShowing()){
             commonGoalInfo1.hide();
             commonGoalInfo2.show(this.stage);
-            commonGoalInfo2.setX(stage.getX()+stage.getWidth()/2 - commonGoalInfo2.getWidth()/2);
-            commonGoalInfo2.setY(stage.getY() + stage.getHeight()/2 - commonGoalInfo2.getHeight()/2);
         }
         else
             commonGoalInfo2.hide();
@@ -479,8 +524,7 @@ public class GameViewController extends GUIController implements Initializable {
         }
 
         Integer colIndex = GridPane.getColumnIndex(clickedNode);
-
-        if(selectedCells.size() > 0 && colIndex !=null){
+        if(selectedCells.size() > 0 && colIndex !=null && checkColumnSpace(colIndex, selectedCells.size())){
             livingroom_grid.setDisable(true);
             Popup tilesOrderPopup = new Popup();
             GridPane popupContainer = new GridPane();
@@ -551,6 +595,14 @@ public class GameViewController extends GUIController implements Initializable {
         }
     }
 
+    private boolean checkColumnSpace(int colIndex, int size) {
+        if (((Pane) getNodeFromGridPane(personalBookshelfGrid, colIndex, size-1)).getChildren().isEmpty()) {
+            return true;
+        }
+        this.postNotification(Notifications.NO_SPACE_IN_BOOKSHELF_COLUMN.getTitle(), Notifications.NO_SPACE_IN_BOOKSHELF_COLUMN.getDescription());
+        return false;
+    }
+
 
     private void addDragAndDrop(ImageView imageCell) {
         imageCell.setOnDragDetected(new EventHandler<MouseEvent>() {
@@ -605,5 +657,64 @@ public class GameViewController extends GUIController implements Initializable {
                 selectedCells.add(high, temp);
             }
         });
+    }
+
+    public void drawLeaderboard(Map<String, Integer> playerPoints) {
+        playersRank =
+                playerPoints.entrySet().stream()
+                        .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                        .map(m-> m.getKey())
+                        .collect(Collectors.toCollection(ArrayList::new));
+
+        leaderBoardGrid.getChildren().clear();
+        for(int i=0; i < playerPoints.size(); i++){
+            Text username = new Text((i + 1) + " " + playersRank.get(i));
+            Text points = new Text(String.valueOf(playerPoints.get(playersRank.get(i))));
+            StackPane usernamePane = new StackPane();
+            StackPane pointsPane = new StackPane();
+
+            usernamePane.getChildren().add(username);
+            usernamePane.setAlignment(Pos.CENTER_LEFT);
+
+            pointsPane.getChildren().add(points);
+            pointsPane.setAlignment(Pos.CENTER_RIGHT);
+
+
+
+            username.setTextAlignment(TextAlignment.LEFT);
+            points.setTextAlignment(TextAlignment.RIGHT);
+            username.setFont(Font.font("Arial", FontWeight.BOLD, 16));
+            points.setFont(Font.font("Arial", FontWeight.NORMAL, 16));
+
+            leaderBoardGrid.add(usernamePane, 0, i);
+            leaderBoardGrid.add(pointsPane, 1, i);
+        }
+        this.drawScoringTokensGrid();
+
+    }
+
+    public void drawScoringTokens(Map<String, ArrayList<ScoringToken>> playerScoringTokens){
+        this.playerScoringTokens.clear();
+        this.playerScoringTokens.putAll(playerScoringTokens);
+    }
+
+    public void drawScoringTokensGrid() {
+        ArrayList<ScoringToken> playerTokens;
+        for(int i=0; i< playersRank.size(); i++){
+            playerTokens = playerScoringTokens.get(playersRank.get(i));
+
+            HBox tokensContainer= new HBox();
+            tokensContainer.setAlignment(Pos.CENTER_LEFT);
+            ImageView tokenImage;
+            if(playerTokens != null) {
+                for (ScoringToken t : playerTokens) {
+                    tokenImage = new ImageView(Objects.requireNonNull(GameViewController.class.getResource("/images/scoringTokens/scoring_" + t.getScoreValue().getValue() + ".jpg")).toString());
+                    tokenImage.setPreserveRatio(true);
+                    tokenImage.setFitHeight(20);
+                    tokensContainer.getChildren().add(tokenImage);
+                }
+            }
+            leaderBoardGrid.add(tokensContainer, 2,i);
+        }
     }
 }

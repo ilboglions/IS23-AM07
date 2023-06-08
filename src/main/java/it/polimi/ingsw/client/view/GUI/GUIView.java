@@ -10,6 +10,7 @@ import it.polimi.ingsw.remoteInterfaces.RemoteCommonGoalCard;
 import it.polimi.ingsw.remoteInterfaces.RemotePersonalGoalCard;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
+import it.polimi.ingsw.server.model.tokens.ScoringToken;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -19,9 +20,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class GUIView extends Application implements ViewInterface {
     private ConnectionHandler controller;
@@ -38,7 +37,7 @@ public class GUIView extends Application implements ViewInterface {
         if ( args.size() == 1) {
             connectionType = args.get(0).equals("--TCP") ? ConnectionType.TCP : ConnectionType.RMI;
         } else {
-            connectionType = ConnectionType.TCP;
+            connectionType = ConnectionType.RMI;
         }
 
         this.stage = stage;
@@ -115,6 +114,10 @@ public class GUIView extends Application implements ViewInterface {
 
     @Override
     public void drawLeaderboard(Map<String, Integer> playerPoints) {
+        Platform.runLater(() -> {
+            GameViewController controller = fxmlLoader.getController();
+            controller.drawLeaderboard(playerPoints);
+        });
     }
 
     @Override
@@ -167,6 +170,14 @@ public class GUIView extends Application implements ViewInterface {
         Platform.runLater(() -> {
             GameViewController controller = fxmlLoader.getController();
             controller.drawChatPlayerList(players);
+        });
+    }
+
+    @Override
+    public void drawScoringTokens(Map<String, ArrayList<ScoringToken>> playerScoringTokens) {
+        Platform.runLater(() -> {
+            GameViewController controller = fxmlLoader.getController();
+            controller.drawScoringTokens(new HashMap<>(playerScoringTokens));
         });
     }
 }

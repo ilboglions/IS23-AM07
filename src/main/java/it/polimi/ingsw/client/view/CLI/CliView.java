@@ -9,6 +9,7 @@ import it.polimi.ingsw.remoteInterfaces.RemotePersonalGoalCard;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
+import it.polimi.ingsw.server.model.tokens.ScoringToken;
 
 import java.rmi.RemoteException;
 import java.util.*;
@@ -589,6 +590,11 @@ public class CliView implements ViewInterface {
 
     @Override
     public void drawChatPlayersList(ArrayList<String> players) {
+        //ONLY THE GUI USES THIS METHOD
+    }
+
+    @Override
+    public void drawScoringTokens(Map<String, ArrayList<ScoringToken>> playerScoringTokens) {
         //ONLY THE GUI USES THIS METHOD
     }
 

@@ -4,6 +4,7 @@ import it.polimi.ingsw.server.model.bookshelf.Bookshelf;
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.server.model.exceptions.PlayersNumberOutOfRange;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
+import it.polimi.ingsw.server.model.tiles.ItemTile;
 
 import java.rmi.RemoteException;
 
@@ -22,14 +23,7 @@ public class MarioPyramid extends CommonGoalCard{
 
 
     public boolean verifyConstraint(Bookshelf bookshelf) {
-
-
-        boolean found = checkPyramid(false,bookshelf);
-        if(found)
-            return true;
-        return checkPyramid(true,bookshelf);
-
-
+        return checkPyramid(true,bookshelf) || checkPyramid(false,bookshelf);
 }
 
     /**
@@ -44,13 +38,14 @@ public class MarioPyramid extends CommonGoalCard{
         int c;
         int startColumn;
 
-        if(reverse) startColumn = bookshelf.getColumns() - 1;
+        if(reverse) startColumn = bookshelf.getColumns() - 1; //choosing column to start with
         else startColumn = 0;
         int startingOffset;
 
         try{
-            while(r < bookshelf.getRows() && bookshelf.getItemTile(new Coordinates(r,startColumn)).isPresent()) r++;
-            if(r==0)
+            while(r < bookshelf.getRows() && bookshelf.getItemTile(new Coordinates(r,startColumn)).isPresent() && !bookshelf.getItemTile(new Coordinates(r,startColumn)).get().equals(ItemTile.EMPTY))
+                r++;
+            if(r < bookshelf.getRows() - 1)
                 return false;
             else if(r==bookshelf.getRows()) {
                 refRow = bookshelf.getRows() - 1;
