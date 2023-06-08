@@ -44,3 +44,11 @@
 .textFlow {
     -fx-background-color: rgba(0, 0, 0, 0.1);
 }
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane {
+    -fx-background-color: transparent;
+}

@@ -18,7 +18,7 @@
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.text.TextFlow?>
 
-<GridPane alignment="CENTER" hgap="20.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" styleClass="anchor" stylesheets="@css/game-view.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.view.GUI.GameViewController">
+<GridPane alignment="CENTER" hgap="20.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" styleClass="anchor" stylesheets="@css/game-view.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.view.GUI.GameViewController">
   <columnConstraints>
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="70.0" />
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="30.0" />
@@ -36,7 +36,7 @@
           <RowConstraints minHeight="50.0" percentHeight="20.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <HBox alignment="BOTTOM_CENTER" fillHeight="false" prefHeight="100.0" prefWidth="200.0" spacing="80.0">
+            <HBox alignment="CENTER" fillHeight="false" prefHeight="100.0" prefWidth="200.0" spacing="80.0">
                <children>
                   <VBox alignment="TOP_CENTER" prefHeight="618.0" prefWidth="294.0">
                      <children>
@@ -44,13 +44,16 @@
                            <image>
                               <Image url="@../images/PublisherMaterial/Title_2000x618px.png" />
                            </image>
+                           <VBox.margin>
+                              <Insets bottom="10.0" />
+                           </VBox.margin>
                         </ImageView>
                         <Text boundsType="VISUAL" strokeType="OUTSIDE" strokeWidth="0.0" text="LEADERBOARD" wrappingWidth="174.724609375" VBox.vgrow="SOMETIMES">
                            <font>
                               <Font name="Arial Bold" size="18.0" />
                            </font>
                            <VBox.margin>
-                              <Insets bottom="10.0" />
+                              <Insets bottom="15.0" />
                            </VBox.margin>
                         </Text>
                         <GridPane fx:id="leaderBoardGrid" prefHeight="68.0" prefWidth="294.0">
@@ -109,6 +112,9 @@
                            <opaqueInsets>
                               <Insets />
                            </opaqueInsets>
+                           <padding>
+                              <Insets bottom="20.0" />
+                           </padding>
                         </VBox>
                      </children>
                   </VBox>
@@ -248,7 +254,7 @@
                <children>
                   <ScrollPane fx:id="textFlowChatScroll" fitToHeight="true" fitToWidth="true" maxHeight="200.0" prefHeight="140.0" prefWidth="550.0">
                      <content>
-                        <TextFlow fx:id="textFlowChat" lineSpacing="1.0" maxHeight="300.0" prefHeight="140.0" prefWidth="550.0">
+                        <TextFlow fx:id="textFlowChat" lineSpacing="1.0" maxHeight="300.0" prefHeight="140.0" prefWidth="550.0" styleClass="textFlow">
                            <opaqueInsets>
                               <Insets />
                            </opaqueInsets>

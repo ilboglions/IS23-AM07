@@ -680,7 +680,6 @@ public class GameViewController extends GUIController implements Initializable {
             pointsPane.setAlignment(Pos.CENTER_RIGHT);
 
 
-
             username.setTextAlignment(TextAlignment.LEFT);
             points.setTextAlignment(TextAlignment.RIGHT);
             username.setFont(Font.font("Arial", FontWeight.BOLD, 16));

@@ -505,6 +505,7 @@ public class Game implements GameModelInterface {
         if(this.isLastTurn && this.playerTurn == this.players.size() - 1){
             try {
                 this.getWinner();
+                this.endGame();
             } catch (GameNotEndedException | GameNotStartedException ignored) {
             }
             return false;
