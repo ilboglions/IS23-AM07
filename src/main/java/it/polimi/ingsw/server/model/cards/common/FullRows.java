@@ -31,14 +31,16 @@ public class FullRows extends CommonGoalCard{
     private final int numDifferent;
 
     /**
-     * the constructor of the card
-     * @param nPlayers the number of player, used for the stack of points
-     * @param description the description of the card
-     * @param nRows the number of rows to be found
-     * @param sameTiles if true, the constraint require a minimum of bookshelf.getRows - maxTilesFRule equal tiles, otherwise all the tiles should be different
-     * @param numDifferent the maximum of possible different tiles in a single row
-     * @throws PlayersNumberOutOfRange if the number of player is out of the permitted range
-     * @throws NegativeFieldException if some field is negative
+     * Creates a FullRows Card
+     * @param nPlayers number of players of the game
+     * @param description description of the card
+     * @param name type of the card
+     * @param nRows number of columns
+     * @param sameTiles true if the tiles have to be of the same type, false otherwise
+     * @param numDifferent minimum/maximum value of different tiles if sameTiles is respectively false/true
+     * @throws PlayersNumberOutOfRange if the number of players is <2 or >4
+     * @throws NegativeFieldException if nCols <= 0 or numDifferent <= 0
+     * @throws RemoteException RMI Exception
      */
     public FullRows(int nPlayers,  String description, CommonCardType name,int nRows, boolean sameTiles, int numDifferent) throws PlayersNumberOutOfRange, NegativeFieldException, RemoteException {
         super(nPlayers, description, name);

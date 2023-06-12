@@ -1,5 +1,8 @@
 package it.polimi.ingsw.server.model.cards.common;
 
+/**
+ * Different types of CommonGoalCard
+ */
 public enum CommonCardType {
     TWO_TILES,
     FOUR_TILES,

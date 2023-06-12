@@ -45,6 +45,15 @@
     -fx-background-color: rgba(0, 0, 0, 0.1);
 }
 
+.popupEndOfGame{
+    -fx-background-image: url("../../images/misc/base_pagina2.jpg");
+    -fx-background-repeat: stretch;
+    -fx-background-position: center;
+    -fx-background-size: auto;
+    -fx-background-radius: 10 10 10 10;
+    -fx-padding: 10;
+}
+
 .scroll-pane > .viewport {
     -fx-background-color: transparent;
 }

@@ -48,6 +48,7 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
     /**
      * creates the controller of the lobby
      * @param lobbyModel the model of the lobby
+     * @throws RemoteException RMI Exception
      */
     public LobbyController(Lobby lobbyModel) throws RemoteException {
         super();
@@ -63,7 +64,8 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
      * @param player the username of the player to be added
      * @return a RemoteGameController, if the player was crashed, null if the player is correctly logged in the  lobby
      * @throws NicknameAlreadyUsedException if the player is already inside a game
-     * @throws RemoteException              in case of a network error occurs
+     * @throws RemoteException RMI Exception
+     * @throws InvalidPlayerException the username used is invalid
      */
     public RemoteGameController enterInLobby(String player) throws RemoteException, NicknameAlreadyUsedException, InvalidPlayerException {
         synchronized (lobbyLock) {
@@ -97,6 +99,15 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
      * @param player the nickname of the player to be added
      * @return an optional of GameController, if no game is in the lobby, an empty value will be filled
      */
+    /**
+     * add a logged player to a game
+     * @param player the nickname of the player to be added
+     * @return remote game controller instance reference
+     * @throws RemoteException RMI Exception
+     * @throws NicknameAlreadyUsedException the nickname used by the player is already taken
+     * @throws NoAvailableGameException no game is available
+     * @throws InvalidPlayerException the nickname is invalid
+     */
     public RemoteGameController addPlayerToGame(String player) throws RemoteException, NicknameAlreadyUsedException, NoAvailableGameException, InvalidPlayerException {
         synchronized (lobbyLock) {
             if(player == null) throw new InvalidPlayerException("Player is null");
@@ -124,11 +135,21 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
 
 
     /**
-     * creates a game for a certain number of players
+     * s
      *
      * @param player   the username of the player
+     * @param nPlayers
+     * @return the GameController, if the game creation is not possible, an empty value will be returned
+     */
+
+    /**
+     * creates a game for a certain number of player
+     * @param player the username of the player
      * @param nPlayers the number of players for the game
      * @return the GameController, if the game creation is not possible, an empty value will be returned
+     * @throws RemoteException RMI Exception
+     * @throws InvalidPlayerException the nickname is invalid
+     * @throws PlayersNumberOutOfRange the number of player is not valid ( < 2 or > 4 )
      */
     public RemoteGameController createGame(String player, int nPlayers) throws RemoteException, InvalidPlayerException, PlayersNumberOutOfRange {
         synchronized (lobbyLock) {
@@ -153,7 +174,7 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
      * used to handle the crash of the player, it removes the player from the waiting list
      * @param username the username of the player
      * @throws PlayerNotFoundException if the player doesn't exist in the lobby
-     * @throws RemoteException
+     * @throws RemoteException RMI Exception
      */
     public void handleCrashedPlayer(String username) throws PlayerNotFoundException, RemoteException {
         synchronized (timers) {
@@ -195,7 +216,7 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
      * method used in RMI for triggering the heartbeat of the client,
      * if a client doesn't trigger this method for a too long period, the client will be considered crashed
      * @param username the username of the player
-     * @throws RemoteException
+     * @throws RemoteException RMI Exception
      */
     public void triggerHeartBeat(String username) throws RemoteException{
         synchronized (this.timers){
@@ -207,18 +228,15 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
         }
     }
 
-    /**
-     * @return
-     * @throws RemoteException
-     */
     @Override
     public String getSubscriberUsername() throws RemoteException {
         return ID.toString();
     }
 
     /**
-     * @param newState
-     * @param gameModelInterface
+     * When a game ends this method removes that reference from the list of games
+     * @param newState new state of the game
+     * @param gameModelInterface reference to the game model
      */
     @Override
     public void notifyChangedGameStatus(GameState newState, GameModelInterface gameModelInterface) {
@@ -226,6 +244,7 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
         if(newState == GameState.ENDED) {
             gameControllers.remove(gameModelInterface);
         }
+
 
         // handle exit players from the game
     }

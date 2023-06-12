@@ -62,6 +62,7 @@ public class Game implements GameModelInterface {
      * Store if there is a player that have completed the bookshelf, so if it is the last round of the game
      */
     private boolean isLastTurn;
+    private boolean lastRoundDone;
     /**
      * The reference to the DeckPersonal to draw PersonalGoalCard for each player
      */
@@ -106,6 +107,7 @@ public class Game implements GameModelInterface {
         this.bagHolder = new BagHolder();
         this.state = GameState.CREATED;
         this.isLastTurn = false;
+        this.lastRoundDone = false;
         this.playerTurn = -1; //game not started
         this.stdPointsReference = new HashMap<>();
 
@@ -262,9 +264,9 @@ public class Game implements GameModelInterface {
      * @throws GameNotStartedException if the game has not started yet
      */
     public String getPlayerInTurn() throws GameEndedException, GameNotStartedException {
-        if(isLastTurn && this.playerTurn == this.players.size() - 1) throw new GameEndedException();
+        if(lastRoundDone)
+            throw new GameEndedException();
         if(!this.isStarted()) throw new GameNotStartedException("The game has not started yet");
-
         return players.get(playerTurn).getUsername();
     }
 
@@ -412,6 +414,8 @@ public class Game implements GameModelInterface {
         }
         gameListener.onPlayerWins(winner.getUsername(), winner.getPoints(), scoreboard);
 
+        this.endGame();
+
         return winner.getUsername();
     }
 
@@ -504,8 +508,9 @@ public class Game implements GameModelInterface {
 
         if(this.isLastTurn && this.playerTurn == this.players.size() - 1){
             try {
+                this.lastRoundDone = true;
                 this.getWinner();
-                this.endGame();
+
             } catch (GameNotEndedException | GameNotStartedException ignored) {
             }
             return false;

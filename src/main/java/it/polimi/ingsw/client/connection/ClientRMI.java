@@ -5,6 +5,7 @@ import it.polimi.ingsw.client.localModel.Game;
 import it.polimi.ingsw.Notifications;
 import it.polimi.ingsw.client.view.SceneType;
 import it.polimi.ingsw.client.view.ViewInterface;
+import it.polimi.ingsw.messages.CloseConnectionMessage;
 import it.polimi.ingsw.remoteInterfaces.*;
 import it.polimi.ingsw.server.ReschedulableTimer;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
@@ -70,6 +71,8 @@ public class ClientRMI implements ConnectionHandler{
      */
     @Override
     public void close() {
+        heartBeatManager.shutdownNow();
+        gameController = null;
         System.out.println("timer expired");
     }
 

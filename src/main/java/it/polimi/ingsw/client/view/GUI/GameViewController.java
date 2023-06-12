@@ -27,6 +27,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.*;
 import javafx.stage.Popup;
 
+import java.io.IOException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.*;
@@ -108,8 +109,6 @@ public class GameViewController extends GUIController implements Initializable {
                         livingroom_grid_container.heightProperty().divide(SIZE+1)));
                 pane.prefHeightProperty().bind(Bindings.min(livingroom_grid_container.widthProperty().divide(SIZE+1),
                         livingroom_grid_container.heightProperty().divide(SIZE+1)));
-                //GridPane.setColumnIndex(pane, i);
-                //GridPane.setRowIndex(pane,j);
             }
         }
 
@@ -135,14 +134,6 @@ public class GameViewController extends GUIController implements Initializable {
                     textFlowChatScroll.layout();
                     textFlowChatScroll.setVvalue(1.0f);
                 }));
-
-        /*ColumnConstraints colNames = new ColumnConstraints();
-        ColumnConstraints colPoints = new ColumnConstraints();
-        colNames.setHgrow( Priority.NEVER);
-        colPoints.setHgrow(Priority.NEVER);
-        leaderBoardGrid.getColumnConstraints().removeAll();
-        leaderBoardGrid.getColumnConstraints().addAll(colNames, colPoints);
-        leaderBoardGrid.setAlignment(Pos.CENTER_RIGHT);*/
     }
 
     public void drawBookshelf(Map<Coordinates, ItemTile> tilesMap, String playerUsername, int order) {
@@ -200,6 +191,7 @@ public class GameViewController extends GUIController implements Initializable {
             this.getClientController().sendMessage(recipient,textFieldChat.getText());
 
         this.textFieldChat.clear();
+        actionEvent.consume();
     }
 
     public void drawChat(List<String> outputMessages) {
@@ -310,6 +302,8 @@ public class GameViewController extends GUIController implements Initializable {
                         return 1;
                     if (a.getColumn() < b.getColumn())
                         return -1;
+                    if(a.getColumn() == b.getColumn() && a.getRow() == b.getColumn())
+                        return 0;
                     return 1;
                 });
                 result = this.checkValidRetrieve(new ArrayList<>(coords.subList(0, 2))) &&
@@ -375,7 +369,6 @@ public class GameViewController extends GUIController implements Initializable {
 
     public void drawCommonCards(ArrayList<RemoteCommonGoalCard> commonGoalCards) {
         Stack<ScoringToken> tokensStack;
-        ImageView tokenImage;
         StackPane tokensBox1,tokensBox2;
         cardsGrid.setManaged(true);
         cardsGrid.setVisible(true);
@@ -469,24 +462,24 @@ public class GameViewController extends GUIController implements Initializable {
     private String getUrlFromCommonType(CommonCardType type) {
         String url;
         switch (type) {
-            case CORNERS -> url = GameViewController.class.getResource("/images/commonGoalCards/corners.jpg").toString();
-            case SAME_TYPE -> url = GameViewController.class.getResource("/images/commonGoalCards/sametype.jpg").toString();
-            case X_TILES -> url = GameViewController.class.getResource("/images/commonGoalCards/xtiles.jpg").toString();
-            case TWO_TILES -> url = GameViewController.class.getResource("/images/commonGoalCards/twotiles.jpg").toString();
-            case FOUR_LINES -> url = GameViewController.class.getResource("/images/commonGoalCards/fourlines.jpg").toString();
-            case FOUR_TILES -> url = GameViewController.class.getResource("/images/commonGoalCards/fourtiles.jpg").toString();
-            case FIVE_DIAGONAL -> url = GameViewController.class.getResource("/images/commonGoalCards/fivediagonal.jpg").toString();
-            case MARIO_PYRAMID -> url = GameViewController.class.getResource("/images/commonGoalCards/pyramid.jpg").toString();
-            case SIX_COLUMN_TILES -> url = GameViewController.class.getResource("/images/commonGoalCards/sixcolumntiles.jpg").toString();
-            case FOUR_TILES_SQUARE -> url = GameViewController.class.getResource("/images/commonGoalCards/fourtilessquare.jpg").toString();
-            case TWO_LINES_DIFFERENT -> url = GameViewController.class.getResource("/images/commonGoalCards/twolinesdifferent.jpg").toString();
-            default -> url = GameViewController.class.getResource("/images/commonGoalCards/twocolumndifferent.jpg").toString();
+            case CORNERS -> url = Objects.requireNonNull(GameViewController.class.getResource("/images/commonGoalCards/corners.jpg")).toString();
+            case SAME_TYPE -> url = Objects.requireNonNull(GameViewController.class.getResource("/images/commonGoalCards/sametype.jpg")).toString();
+            case X_TILES -> url = Objects.requireNonNull(GameViewController.class.getResource("/images/commonGoalCards/xtiles.jpg")).toString();
+            case TWO_TILES -> url = Objects.requireNonNull(GameViewController.class.getResource("/images/commonGoalCards/twotiles.jpg")).toString();
+            case FOUR_LINES -> url = Objects.requireNonNull(GameViewController.class.getResource("/images/commonGoalCards/fourlines.jpg")).toString();
+            case FOUR_TILES -> url = Objects.requireNonNull(GameViewController.class.getResource("/images/commonGoalCards/fourtiles.jpg")).toString();
+            case FIVE_DIAGONAL -> url = Objects.requireNonNull(GameViewController.class.getResource("/images/commonGoalCards/fivediagonal.jpg")).toString();
+            case MARIO_PYRAMID -> url = Objects.requireNonNull(GameViewController.class.getResource("/images/commonGoalCards/pyramid.jpg")).toString();
+            case SIX_COLUMN_TILES -> url = Objects.requireNonNull(GameViewController.class.getResource("/images/commonGoalCards/sixcolumntiles.jpg")).toString();
+            case FOUR_TILES_SQUARE -> url = Objects.requireNonNull(GameViewController.class.getResource("/images/commonGoalCards/fourtilessquare.jpg")).toString();
+            case TWO_LINES_DIFFERENT -> url = Objects.requireNonNull(GameViewController.class.getResource("/images/commonGoalCards/twolinesdifferent.jpg")).toString();
+            default -> url = Objects.requireNonNull(GameViewController.class.getResource("/images/commonGoalCards/twocolumndifferent.jpg")).toString();
         }
         return url;
     }
 
     public void drawPersonalCard(int card){
-        personalCard.setImage(new Image(Objects.requireNonNull(GameViewController.class.getResource("/images/personalGoalCards/Personal_Goals"+ (card+1) +".png").toString())));
+        personalCard.setImage(new Image(Objects.requireNonNull(Objects.requireNonNull(GameViewController.class.getResource("/images/personalGoalCards/Personal_Goals" + (card + 1) + ".png")).toString())));
         personalGoalPane.setAlignment(Pos.CENTER);
         personalCard.setPreserveRatio(true);
         personalCard.fitHeightProperty().bind(Bindings.min(leftvbox.widthProperty().divide(5), leftvbox.heightProperty().divide(3.5)));
@@ -499,6 +492,8 @@ public class GameViewController extends GUIController implements Initializable {
         }
         else
             commonGoalInfo1.hide();
+
+        mouseEvent.consume();
     }
 
     public void clickCommon2(MouseEvent mouseEvent)  {
@@ -508,6 +503,7 @@ public class GameViewController extends GUIController implements Initializable {
         }
         else
             commonGoalInfo2.hide();
+        mouseEvent.consume();
     }
 
     @FXML
@@ -582,6 +578,9 @@ public class GameViewController extends GUIController implements Initializable {
                 tilesOrderPopup.setY(centerY);
             };
 
+
+
+
             stage.widthProperty().addListener(reCenter);
             stage.heightProperty().addListener(reCenter);
             stage.xProperty().addListener(reCenter);
@@ -596,7 +595,7 @@ public class GameViewController extends GUIController implements Initializable {
     }
 
     private boolean checkColumnSpace(int colIndex, int size) {
-        if (((Pane) getNodeFromGridPane(personalBookshelfGrid, colIndex, size-1)).getChildren().isEmpty()) {
+        if (((Pane) Objects.requireNonNull(getNodeFromGridPane(personalBookshelfGrid, colIndex, size - 1))).getChildren().isEmpty()) {
             return true;
         }
         this.postNotification(Notifications.NO_SPACE_IN_BOOKSHELF_COLUMN.getTitle(), Notifications.NO_SPACE_IN_BOOKSHELF_COLUMN.getDescription());
@@ -605,34 +604,29 @@ public class GameViewController extends GUIController implements Initializable {
 
 
     private void addDragAndDrop(ImageView imageCell) {
-        imageCell.setOnDragDetected(new EventHandler<MouseEvent>() {
-            public void handle(MouseEvent event) {
-                Dragboard db = imageCell.startDragAndDrop(TransferMode.MOVE);
-                ClipboardContent content = new ClipboardContent();
-                content.putImage(imageCell.getImage());
-                db.setContent(content);
-                event.consume();
-            }
+        imageCell.setOnDragDetected(event -> {
+            Dragboard db = imageCell.startDragAndDrop(TransferMode.MOVE);
+            ClipboardContent content = new ClipboardContent();
+            content.putImage(imageCell.getImage());
+            db.setContent(content);
+            event.consume();
         });
-        imageCell.setOnDragOver(new EventHandler<DragEvent>() {
-            public void handle(DragEvent event) {
-
-                if (event.getGestureSource() != imageCell &&
-                        event.getDragboard().hasImage()) {
-                    event.acceptTransferModes(TransferMode.MOVE);
-                }
-                event.consume();
+        imageCell.setOnDragOver(event -> {
+            if (event.getGestureSource() != imageCell &&
+                    event.getDragboard().hasImage()) {
+                event.acceptTransferModes(TransferMode.MOVE);
             }
+            event.consume();
         });
-        imageCell.setOnDragDropped(new EventHandler<DragEvent>() {
+        imageCell.setOnDragDropped(new EventHandler<>() {
             public void handle(DragEvent event) {
                 Dragboard db = event.getDragboard();
                 boolean success = false;
-                this.arraySwitchPos(selectedCells, GridPane.getColumnIndex(imageCell).intValue(), GridPane.getColumnIndex((Node)event.getGestureSource()).intValue());
+                this.arraySwitchPos(selectedCells, GridPane.getColumnIndex(imageCell), GridPane.getColumnIndex((Node) event.getGestureSource()));
                 if (db.hasImage()) {
                     Image oldImage = imageCell.getImage();
                     imageCell.setImage(db.getImage());
-                    ((ImageView)event.getGestureSource()).setImage(oldImage);
+                    ((ImageView) event.getGestureSource()).setImage(oldImage);
                     success = true;
                 }
                 event.setDropCompleted(success);
@@ -642,17 +636,16 @@ public class GameViewController extends GUIController implements Initializable {
             private void arraySwitchPos(ArrayList<Coordinates> selectedCells, int col0, int col1) {
                 int low, high;
                 Coordinates temp;
-                if(col0 < col1){
-                   low = col0;
-                   high = col1;
-                }
-                else{
+                if (col0 < col1) {
+                    low = col0;
+                    high = col1;
+                } else {
                     low = col1;
                     high = col0;
                 }
                 temp = selectedCells.get(low);
                 selectedCells.remove(low);
-                selectedCells.add(low, selectedCells.get(high-1));
+                selectedCells.add(low, selectedCells.get(high - 1));
                 selectedCells.remove(high);
                 selectedCells.add(high, temp);
             }
@@ -660,11 +653,7 @@ public class GameViewController extends GUIController implements Initializable {
     }
 
     public void drawLeaderboard(Map<String, Integer> playerPoints) {
-        playersRank =
-                playerPoints.entrySet().stream()
-                        .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
-                        .map(m-> m.getKey())
-                        .collect(Collectors.toCollection(ArrayList::new));
+        playersRank = createRank(playerPoints);
 
         leaderBoardGrid.getChildren().clear();
         for(int i=0; i < playerPoints.size(); i++){
@@ -715,5 +704,58 @@ public class GameViewController extends GUIController implements Initializable {
             }
             leaderBoardGrid.add(tokensContainer, 2,i);
         }
+    }
+
+    public void drawWinnerLeaderboard(Map<String, Integer> playerPoints) {
+        Popup winnerPopup = new Popup();
+        VBox popupContainer = new VBox();
+        Text winnerText = new Text();
+        HBox buttonContainer = new HBox();
+        Button exitGame = new Button();
+        Button newGame = new Button();
+        popupContainer.setAlignment(Pos.CENTER);
+        winnerPopup.getContent().add(popupContainer);
+
+        playersRank = createRank(playerPoints);
+        winnerText.setText(playersRank.get(0) + " won the game! Congratulations");
+        winnerText.setTextAlignment(TextAlignment.CENTER);
+        winnerText.setFill(Color.WHITE);
+        winnerText.setFont(Font.font("Arial", FontWeight.BOLD, 15));
+        popupContainer.getChildren().add(winnerText);
+
+        newGame.setText("Back to Lobby");
+        exitGame.setText("Exit");
+
+        newGame.setOnMouseClicked((MouseEvent e) ->{
+            this.getManager().backToLobby();
+            winnerPopup.hide();
+            e.consume();
+        });
+
+        exitGame.setOnMouseClicked((MouseEvent e)->{
+            try {
+                this.getClientController().close();
+            } catch (IOException ignore) {}
+            this.stage.close();
+        });
+
+        buttonContainer.setAlignment(Pos.CENTER);
+        buttonContainer.getChildren().add(newGame);
+        buttonContainer.getChildren().add(exitGame);
+        popupContainer.getChildren().add(buttonContainer);
+        popupContainer.getStyleClass().add("popupEndOfGame");
+        commonGoal1Pane.setDisable(true);
+        commonGoal2Pane.setDisable(true);
+        livingroom_grid.setDisable(true);
+        textFieldChat.setDisable(true);
+        winnerPopup.show(stage);
+
+    }
+
+    private ArrayList<String> createRank (Map<String, Integer> playerPoints){
+        return playerPoints.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 }

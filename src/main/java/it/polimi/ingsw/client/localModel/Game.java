@@ -224,7 +224,8 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
     @Override
     public synchronized void notifyWinningPlayer(String username, int points, Map<String, Integer> scoreboard) throws RemoteException {
         view.postNotification("Game ended!",username+" won the game!");
-        view.drawLeaderboard(scoreboard);
+        //view.drawLeaderboard(scoreboard);
+        view.drawWinnerLeaderboard(scoreboard);
     }
 
     /**

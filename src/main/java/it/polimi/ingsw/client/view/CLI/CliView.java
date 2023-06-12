@@ -594,6 +594,11 @@ public class CliView implements ViewInterface {
     }
 
     @Override
+    public void drawWinnerLeaderboard(Map<String, Integer> playerPoints) {
+        //ONLY THE GUI USES THIS METHOD
+    }
+
+    @Override
     public void drawScoringTokens(Map<String, ArrayList<ScoringToken>> playerScoringTokens) {
         //ONLY THE GUI USES THIS METHOD
     }

@@ -37,6 +37,7 @@ public class PersonalGoalCard extends UnicastRemoteObject implements RemotePerso
      * @param pattern is the pattern to be load in the card bookshelf assigned to the card
      * @param pointsReference is the parameter to be assigned to the point reference attribute
      * @param id the identifier of the card
+     * @throws RemoteException RMI Exception
      */
     public PersonalGoalCard(Map<Coordinates, ItemTile> pattern, Map<Integer,Integer> pointsReference, int id) throws RemoteException {
         super();
@@ -71,6 +72,11 @@ public class PersonalGoalCard extends UnicastRemoteObject implements RemotePerso
         return new CardBookshelf(tempPattern);
     }
 
+    /**
+     *
+     * @return the pattern associated to this card
+     * @throws RemoteException RMI Exception
+     */
     public Map<Coordinates, ItemTile> getCardPattern() throws RemoteException{
         Map<Coordinates, ItemTile> itemTileMap = new HashMap<>();
         for( int r = 0; r < bookshelf.getRows(); r++){
@@ -87,6 +93,11 @@ public class PersonalGoalCard extends UnicastRemoteObject implements RemotePerso
         return itemTileMap;
     }
 
+    /**
+     *
+     * @return the serial ID of this card
+     * @throws RemoteException
+     */
     @Override
     public int getID() throws RemoteException {
         return this.id;
@@ -95,6 +106,7 @@ public class PersonalGoalCard extends UnicastRemoteObject implements RemotePerso
     /**
      * a simple getter method that returns the point reference of the card
      * @return the points reference used to evaluate the points acquired
+     * @throws RemoteException RMI Exception
      */
     public Map<Integer, Integer> getPointsReference() throws RemoteException {
         return new HashMap<>(pointsReference);

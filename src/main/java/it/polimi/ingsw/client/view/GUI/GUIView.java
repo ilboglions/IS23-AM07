@@ -29,15 +29,15 @@ public class GUIView extends Application implements ViewInterface {
     private Scene scene;
     private Stage stage;
 
+    private ConnectionType connectionType;
     @Override
     public void start(Stage stage) throws Exception {
         Parameters parameters = getParameters();
         List<String> args = parameters.getRaw();
-        ConnectionType connectionType;
         if ( args.size() == 1) {
-            connectionType = args.get(0).equals("--TCP") ? ConnectionType.TCP : ConnectionType.RMI;
+            this.connectionType = args.get(0).equals("--TCP") ? ConnectionType.TCP : ConnectionType.RMI;
         } else {
-            connectionType = ConnectionType.RMI;
+            this.connectionType = ConnectionType.RMI;
         }
 
         this.stage = stage;
@@ -58,6 +58,8 @@ public class GUIView extends Application implements ViewInterface {
         this.stage.setScene(scene);
         this.stage.show();
     }
+
+
 
     public static void main(String[] args) {
         launch(args);
@@ -174,10 +176,41 @@ public class GUIView extends Application implements ViewInterface {
     }
 
     @Override
+    public void drawWinnerLeaderboard(Map<String, Integer> playerPoints) {
+        Platform.runLater(() -> {
+            GameViewController controller = fxmlLoader.getController();
+            guiController.setManager(this);
+            controller.drawWinnerLeaderboard(playerPoints);
+        });
+    }
+
+    @Override
     public void drawScoringTokens(Map<String, ArrayList<ScoringToken>> playerScoringTokens) {
         Platform.runLater(() -> {
             GameViewController controller = fxmlLoader.getController();
             controller.drawScoringTokens(new HashMap<>(playerScoringTokens));
         });
+    }
+
+    public void backToLobby(){
+
+        fxmlLoader = new FXMLLoader(GUIView.class.getResource("/fxml/login-view.fxml"));
+        try {
+            scene = new Scene(fxmlLoader.load(), 1500, 750);
+            scene.getStylesheets().add(GUIView.class.getResource("/fxml/css/game-view.css").toExternalForm());
+            scene.getStylesheets().add(GUIView.class.getResource("/fxml/css/lobby-view.css").toExternalForm());
+            controller.close();
+            ConnectionHandlerFactory factory = new ConnectionHandlerFactory();
+            controller = factory.createConnection(connectionType, this);
+            guiController = fxmlLoader.getController();
+            guiController.setConnectionHandler(controller);
+            guiController.setManager(this);
+
+            this.stage.setTitle("MyShelfie");
+            this.stage.setScene(scene);
+            this.stage.show();
+        } catch (IOException e) {
+            this.stage.close();
+        }
     }
 }

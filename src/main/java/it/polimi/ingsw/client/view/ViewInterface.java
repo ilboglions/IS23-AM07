@@ -26,6 +26,7 @@ public interface ViewInterface {
     void drawScene(SceneType scene);
     void drawPlayerInTurn(String userInTurn, String thisUser);
     void drawChatPlayersList(ArrayList<String> players);
+    void drawWinnerLeaderboard(Map<String, Integer> playerPoints);
 
     void drawScoringTokens(Map<String, ArrayList<ScoringToken>> playerScoringTokens);
 }

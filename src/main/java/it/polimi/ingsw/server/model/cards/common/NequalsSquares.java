@@ -15,6 +15,18 @@ public class NequalsSquares extends CommonGoalCard{
 
     private final int nSquares;
     private final int squareDim;
+
+    /**
+     * Creates a NequalsSquares Card
+     * @param nPlayers number of players of the game
+     * @param description description of the card
+     * @param name type of the card
+     * @param nSquares number of squares
+     * @param squareDim size of the square
+     * @throws PlayersNumberOutOfRange if the number of players is <2 or >4
+     * @throws NegativeFieldException if nSquares <= 0 or squareDim <= 0
+     * @throws RemoteException RMI Exception
+     */
     public NequalsSquares(int nPlayers, String description, CommonCardType name, int nSquares, int squareDim) throws PlayersNumberOutOfRange, NegativeFieldException, RemoteException {
         super(nPlayers, description, name);
         if(nSquares <= 0 || squareDim <= 0) throw new NegativeFieldException("can't assign negative parameters!");
@@ -23,6 +35,12 @@ public class NequalsSquares extends CommonGoalCard{
     }
 
 
+    /**
+     * Verifies if the bookshelf containes nSquares squares of dimensions SquareDim x SquareDim of tiles of the same type
+     * @param bookshelf the player bookshelf to verify
+     * @return true if the constraint is verified, false otherwise.
+     * @throws NotEnoughSpaceException if nSquares * squareDim > size of the bookshelf
+     */
     public boolean verifyConstraint(Bookshelf bookshelf) throws NotEnoughSpaceException {
 
         ArrayList<ItemTile> parentTiles= new ArrayList<>();
