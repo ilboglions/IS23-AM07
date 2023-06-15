@@ -20,6 +20,9 @@ import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
 
+/**
+ * This is the main class of the Server, it launches both RMI and TCP Services to accept clients' requests.
+ */
 public class ServerMain {
     public final static Logger logger = Logger.getLogger(ServerMain.class.getName());
     private final int port;

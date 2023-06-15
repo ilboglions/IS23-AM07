@@ -119,15 +119,13 @@ public class Player {
                 if(count >= Collections.max(personalCard.getPointsReference().keySet())) {
                     count = Collections.max(personalCard.getPointsReference().keySet());
                 }
-            } catch (RemoteException e) {
-                throw new RuntimeException(e);
-            }
+            } catch (RemoteException ignored) {}
         }
 
         try {
             return personalCard.getPointsReference().get(count);
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
+        } catch (RemoteException ignored) {
+            return 0;
         }
     }
 
@@ -245,6 +243,10 @@ public class Player {
         return Objects.equals(username, player.username);
     }
 
+    /**
+     * This method returns the hashCode of a player
+     * @return the hashed values of a player based on his username
+     */
     @Override
     public int hashCode() {
         return Objects.hash(username);
@@ -260,10 +262,18 @@ public class Player {
         this.playerListener.triggerListener(this.username, userToBeUpdated, this.points, new ArrayList<>(this.tokenAcquired), this.personalCard);
     }
 
+    /**
+     * This method removes a player from the list of subscriber to this player's playerListener
+     * @param username username of the player to be removed
+     */
     public void unsubscribeFromListener(String username) {
         this.playerListener.removeSubscriber(username);
     }
 
+    /**
+     *
+     * @return a set of the playerSubscribers to this player's playerListener
+     */
     public Set<PlayerSubscriber> getSubs() {
         return new HashSet<>(this.playerListener.getSubscribers());
     }

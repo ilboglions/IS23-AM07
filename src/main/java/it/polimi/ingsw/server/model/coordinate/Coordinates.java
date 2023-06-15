@@ -89,7 +89,7 @@ public class Coordinates implements Serializable {
     /**
      * override of the classical equals method
      * @param o the object to be compared with
-     * @return true, if elements are the same class and contains the same attributes
+     * @return true, if elements are the same class and have the same row and column
      */
     @Override
     public boolean equals(Object o) {
@@ -99,6 +99,13 @@ public class Coordinates implements Serializable {
         return row == that.row && column == that.column;
     }
 
+
+    /**
+     Returns the hash code value for this object.
+     The hash code is computed based on the values of the "row" and "column"
+     attributes of the object.
+     @return the hash code value for this object.
+     */
     @Override
     public int hashCode() {
         return Objects.hash(row, column);

@@ -33,6 +33,11 @@ public class ScoringToken extends Node implements Serializable {
         return scoreValue;
     }
 
+    /**
+     * This method compares two scoring tokens
+     * @param o another object
+     * @return true if the object o is a scoring token and the score value is the same as this scoring token
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

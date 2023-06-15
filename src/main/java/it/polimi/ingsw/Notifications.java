@@ -30,15 +30,28 @@ public enum Notifications {
     private final String title;
     private final String description;
 
-
+    /**
+     * This is a constructor method for a Notificatio
+     * @param title title of the notification
+     * @param description description of the notification
+     */
     Notifications(String title, String description) {
         this.title = title;
         this.description = description;
     }
 
+    /**
+     *
+     * @return the title of the notification
+     */
     public String getTitle(){
         return this.title;
     }
+
+    /**
+     *
+     * @return the description of the notification
+     */
     public String getDescription(){
         return this.description;
     }

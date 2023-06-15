@@ -23,8 +23,8 @@ public class NequalsSquares extends CommonGoalCard{
      * @param name type of the card
      * @param nSquares number of squares
      * @param squareDim size of the square
-     * @throws PlayersNumberOutOfRange if the number of players is <2 or >4
-     * @throws NegativeFieldException if nSquares <= 0 or squareDim <= 0
+     * @throws PlayersNumberOutOfRange if the number of players is less than 2 or greater than 4
+     * @throws NegativeFieldException if nSquares is less or equal to 0 or squareDim is less or equal to 0
      * @throws RemoteException RMI Exception
      */
     public NequalsSquares(int nPlayers, String description, CommonCardType name, int nSquares, int squareDim) throws PlayersNumberOutOfRange, NegativeFieldException, RemoteException {

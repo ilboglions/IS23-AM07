@@ -138,8 +138,8 @@ public class LivingRoomBoard {
     /**
      * Custom fill the livingroomboard for testing purposes
      * @param tilesMap contains the coordinates and tiles to fill the board with.
-     * @throws InvalidCoordinatesException
-     * @throws SlotFullException
+     * @throws InvalidCoordinatesException if one of the coordinates of the map is invalid
+     * @throws SlotFullException if one of the slots has already a tile in it
      */
     protected void customRefill(Map<Coordinates,ItemTile> tilesMap) throws InvalidCoordinatesException, SlotFullException {
        emptyBoard();
@@ -179,6 +179,10 @@ public class LivingRoomBoard {
         return true;
     }
 
+    /**
+     * This method removes all the tiles from the Board
+     * @return a list of all the tiles removed
+     */
     public ArrayList<ItemTile> emptyBoard() {
         Slot curr;
         ArrayList<ItemTile> removed = new ArrayList<>();
@@ -286,6 +290,10 @@ public class LivingRoomBoard {
         return numCells;
     }
 
+    /**
+     * Unsubscribes a player from the boardListener
+     * @param username username of the player to be removed
+     */
     public void unsubscribeFromListener(String username) {
         boardListener.removeSubscriber(username);
     }
@@ -298,13 +306,7 @@ public class LivingRoomBoard {
         public SlotType slotType;
 
     }
-
-    /**
-     * Check if the given retrieve from the board is valid
-     * @param coordinates the coordinates of the tiles that the caller wants to retrieve from the board
-     * @return true if the requested move is valid, false otherwise
-     * @throws EmptySlotException is thrown if a coordinates results to an empty slot
-     */
+    /*
     public boolean checkValidRetrieveMick(ArrayList<Coordinates> coordinates) throws EmptySlotException {
         if(coordinates == null || coordinates.contains(null))
             throw new NullPointerException("Coordinates list is/contains null");
@@ -365,7 +367,13 @@ public class LivingRoomBoard {
                 }
             }
         }
-    }
+    }*/
+    /**
+     * Check if the given retrieve from the board is valid
+     * @param coords the coordinates of the tiles that the caller wants to retrieve from the board
+     * @return true if the requested move is valid, false otherwise
+     * @throws EmptySlotException is thrown if a coordinates results to an empty slot
+     */
     public boolean checkValidRetrieve(ArrayList<Coordinates> coords) throws EmptySlotException{
         boolean result;
         switch (coords.size()) {
@@ -398,11 +406,7 @@ public class LivingRoomBoard {
         return -1;
     }
 
-    /**
-     * Check if the series of coordinates creates a segment parallel to X
-     * @param coo series of coordinates (MUST BE SORTED BY X FROM LEFT TO RIGHT)
-     * @return true if the series of coordinates creates a segment parallel to X, false otherwise
-     */
+    /*
     private boolean checkParallelX(ArrayList<Coordinates> coo) {
         if(coo == null || coo.contains(null))
             throw new NullPointerException("Coordinates list is/contains null");
@@ -420,11 +424,6 @@ public class LivingRoomBoard {
         }
         return true;
     }
-    /**
-     * Check if the series of coordinates creates a segment parallel to Y
-     * @param coo series of coordinates (MUST BE SORTED BY Y FROM TOP TO BOTTOM)
-     * @return true if the series of coordinates creates a segment parallel to Y, false otherwise
-     */
     private boolean checkParallelY(ArrayList<Coordinates> coo) {
         if(coo == null || coo.contains(null))
             throw new NullPointerException("Coordinates list is/contains null");
@@ -441,6 +440,7 @@ public class LivingRoomBoard {
         }
         return true;
     }
+    */
 
     /**
      * Check if a tile has a free side
@@ -481,6 +481,10 @@ public class LivingRoomBoard {
 
     }
 
+    /**
+     * Trigger the subscriber related the boardListener of a specified player
+     * @param userToBeUpdated username of the player to be updated
+     */
     public void triggerListener(String userToBeUpdated){
         Objects.requireNonNull(userToBeUpdated);
 

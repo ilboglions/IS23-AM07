@@ -23,6 +23,7 @@ public interface Distributable<T> {
      * insert, this exception will be thrown
      * @throws PlayersNumberOutOfRange as NegativeField exception, this is thrown if some configurations of the game are not permitted, because of the number of players exceeded
      * @throws NotEnoughCardsException if the number of cards read from the JSON is not enough to draw the nElements cards
+     * @throws RemoteException RMI Exception
      */
     ArrayList<T> draw(int nElements) throws FileNotFoundException, PlayersNumberOutOfRange, NotEnoughCardsException, NegativeFieldException, RemoteException;
 

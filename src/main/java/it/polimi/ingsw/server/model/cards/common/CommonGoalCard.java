@@ -46,7 +46,7 @@ public abstract class CommonGoalCard extends UnicastRemoteObject implements Remo
      * @param nPlayers represents the numbers of players that are playing the game, necessary for the tokens to be assigned at the card
      * @param description it is used for explain the card's constraint
      * @param name type of the common goal card
-     * @throws PlayersNumberOutOfRange if nPlayers < 2 or >4
+     * @throws PlayersNumberOutOfRange if nPlayers less than 2 or  greater than 4
      * @throws RemoteException RMI Exception
      */
     public CommonGoalCard(int nPlayers , String description, CommonCardType name) throws PlayersNumberOutOfRange, RemoteException {

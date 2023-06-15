@@ -19,12 +19,14 @@ public class PlayerListener extends Listener<PlayerSubscriber> {
      * @param overallPoints the overall points of a player
      * @param addedPoints the added points of the player
      */
-    public void onPointsUpdate(String player, int overallPoints, int addedPoints) throws RemoteException {
+    public void onPointsUpdate(String player, int overallPoints, int addedPoints){
 
         Set<PlayerSubscriber> subscribers = this.getSubscribers();
 
         for (PlayerSubscriber sub : subscribers) {
-            sub.updatePoints(player, overallPoints, addedPoints);
+            try {
+                sub.updatePoints(player, overallPoints, addedPoints);
+            } catch (RemoteException ignored) {}
         }
     }
 
@@ -33,11 +35,13 @@ public class PlayerListener extends Listener<PlayerSubscriber> {
      * @param player the username of the player
      * @param tokens the current tokens of the player
      */
-    public void onTokenPointAcquired(String player, ArrayList<ScoringToken> tokens) throws RemoteException {
+    public void onTokenPointAcquired(String player, ArrayList<ScoringToken> tokens){
         Set<PlayerSubscriber> subscribers = this.getSubscribers();
 
         for (PlayerSubscriber sub : subscribers) {
-            sub.updateTokens(player, tokens);
+            try {
+                sub.updateTokens(player, tokens);
+            } catch (RemoteException ignored) {}
         }
     }
 
@@ -46,13 +50,15 @@ public class PlayerListener extends Listener<PlayerSubscriber> {
      * @param player the username of the player
      * @param personalGoalCard the RemotePersonalGoalCard that was assigned to the player
      */
-    public void onPersonalGoalCardAssigned(String player, RemotePersonalGoalCard personalGoalCard) throws RemoteException {
+    public void onPersonalGoalCardAssigned(String player, RemotePersonalGoalCard personalGoalCard){
         Set<PlayerSubscriber> subscribers = this.getSubscribers();
 
         for (PlayerSubscriber sub : subscribers) {
-            if(sub.getSubscriberUsername().equals(player)){
-                sub.updatePersonalGoalCard(player, personalGoalCard);
-            }
+            try {
+                if(sub.getSubscriberUsername().equals(player)){
+                    sub.updatePersonalGoalCard(player, personalGoalCard);
+                }
+            } catch (RemoteException ignored) {}
         }
     }
 
@@ -63,17 +69,19 @@ public class PlayerListener extends Listener<PlayerSubscriber> {
      * @param points the current points of the player
      * @param tokens the current tokens of the player
      */
-    public void triggerListener(String username, String userToBeUpdated, int points, ArrayList<ScoringToken> tokens, RemotePersonalGoalCard personalGoalCard) throws RemoteException {
+    public void triggerListener(String username, String userToBeUpdated, int points, ArrayList<ScoringToken> tokens, RemotePersonalGoalCard personalGoalCard){
         Set<PlayerSubscriber> subscribers = this.getSubscribers();
 
         for (PlayerSubscriber sub : subscribers) {
-            if(sub.getSubscriberUsername().equals(userToBeUpdated)){
-                sub.updatePoints(username, points, 0);
-                sub.updateTokens(username, tokens);
+            try {
+                if(sub.getSubscriberUsername().equals(userToBeUpdated)){
+                    sub.updatePoints(username, points, 0);
+                    sub.updateTokens(username, tokens);
 
-                if(personalGoalCard != null && sub.getSubscriberUsername().equals(username))
-                    sub.updatePersonalGoalCard(username,personalGoalCard);
-            }
+                    if(personalGoalCard != null && sub.getSubscriberUsername().equals(username))
+                        sub.updatePersonalGoalCard(username,personalGoalCard);
+                }
+            }  catch (RemoteException ignored) {}
         }
     }
 }

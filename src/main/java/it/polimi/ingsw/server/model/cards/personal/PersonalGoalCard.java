@@ -96,7 +96,7 @@ public class PersonalGoalCard extends UnicastRemoteObject implements RemotePerso
     /**
      *
      * @return the serial ID of this card
-     * @throws RemoteException
+     * @throws RemoteException RMI Exception
      */
     @Override
     public int getID() throws RemoteException {

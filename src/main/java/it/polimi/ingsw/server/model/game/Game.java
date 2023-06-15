@@ -86,12 +86,15 @@ public class Game implements GameModelInterface {
     private final long crashTimerDelay = 60000;
 
     /**
-     * Constructor of the Game objects, it initializes all the attributes, set stdPointsReference, draw the CommonGoalCard, add the host to the game and assign to him a PersonalGoalCard
+     * Constructor of the Game objects, it initializes all the attributes,
+     * set stdPointsReference, draw the CommonGoalCard, add the host to the game
+     * and assign to him a PersonalGoalCard
      * @param numPlayers is the total number of the players for the game, the initialization of the board changes based on this
      * @param host is the Player that have created the game
      * @throws NegativeFieldException if the number of cards to draw is negative
      * @throws PlayersNumberOutOfRange if the numPlayers is less than 2 or more than 4
      * @throws NotEnoughCardsException if the cards to be drawn are more than the number of cards loaded with the JSON file configuration
+     * @throws IllegalFilePathException if the configuration file path is invalid
      */
     public Game(int numPlayers, Player host) throws NegativeFieldException, PlayersNumberOutOfRange, NotEnoughCardsException, IllegalFilePathException {
         Objects.requireNonNull(host);
@@ -124,37 +127,61 @@ public class Game implements GameModelInterface {
 
     }
 
+    /**
+     * Add a new BoardSubscriber to the listener for livingRoom updates
+     * @param subscriber the BoardSubscriber to be added
+     */
     @Override
     public void subscribeToListener(BoardSubscriber subscriber){
         livingRoom.subscribeToListener(subscriber);
     }
 
+    /**
+     * Add a new BookshelfSubscriber to the listener for all the players' bookshelf
+     * @param subscriber the BookshelfSubscriber to be added
+     */
     @Override
     public void subscribeToListener(BookshelfSubscriber subscriber){
         players.forEach(p -> p.getBookshelf().subscribeToListener( subscriber));
     }
 
+    /**
+     * Add a new ChatSubscriber to the chatListener
+     * @param subscriber the ChatSubscriber to be added
+     */
     @Override
     public void subscribeToListener(ChatSubscriber subscriber){
         chat.subscribeToListener(subscriber);
     }
 
+    /**
+     * Add a new PlayerSubscriber to each player's listener
+     * @param subscriber the PlayerSubscriber to be added
+     */
     @Override
     public void subscribeToListener(PlayerSubscriber subscriber){
         players.forEach(p -> p.subscribeToListener(subscriber));
     }
 
+    /**
+     * Add a new GameSubscriber to the gameListener
+     * @param subscriber the GameSubscriber to be added
+     */
     @Override
     public void subscribeToListener(GameSubscriber subscriber) {
         this.gameListener.addSubscriber(subscriber);
     }
 
+    /**
+     * Add a new GameStateSubscriber to the gameStateListener
+     * @param subscriber the GameStateSubscriber to be added
+     */
     @Override
     public void subscribeToListener(GameStateSubscriber subscriber) {
         this.gameStateListener.addSubscriber(subscriber);
     }
     /**
-     * check if the game can be started
+     * check if the game can start
      * @return true, if the game have the right conditions to start, false otherwise
      */
     public boolean canStart() {
@@ -228,12 +255,7 @@ public class Game implements GameModelInterface {
                     for(ScoringToken t: this.commonGoalCards.get(i).getTokenStack()){
                         //logger.info(String.valueOf(t.getScoreValue()));
                     }
-                } catch (TokenAlreadyGivenException ignored){
-
-                } catch (RemoteException e) {
-                    throw new RuntimeException(e);
-                }
-
+                } catch (TokenAlreadyGivenException | RemoteException ignored){}
             }
         }
         if(toupdate){
@@ -247,15 +269,6 @@ public class Game implements GameModelInterface {
             throw new RuntimeException(e);
         }
     }
-
-
-    /*public ArrayList<ScoringToken> getPlayerTokens(String player) throws InvalidPlayerException {
-        Optional<Player> current = searchPlayer(player);
-        if(current.isEmpty())
-            throw new InvalidPlayerException();
-
-        return new ArrayList<>(current.get().getTokenAcquired());
-    }*/
 
     /**
      * gets the player that is in the turn
@@ -326,6 +339,7 @@ public class Game implements GameModelInterface {
      * @param coords the coordinates in the livingroomboard containing the interested tiles
      * @return true, if is possible to get that tiles, false otherwise
      * @throws EmptySlotException if one of the  coordinates referes to an empty slot
+     * @throws GameNotStartedException if the game hasn't started yet
      */
     public boolean checkValidRetrieve(ArrayList<Coordinates> coords) throws EmptySlotException, GameNotStartedException {
         if(!this.isRunning()) throw new GameNotStartedException("the game is not running!");
@@ -630,11 +644,7 @@ public class Game implements GameModelInterface {
         this.state = gameState;
         logger.info("GAME "+this+": GAME STATE CHANGED TO "+this.state);
         this.gameListener.notifyChangedGameState(this.state);
-        try {
-            this.gameStateListener.notifyChangedGameState(this.state, this);
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        }
+        this.gameStateListener.notifyChangedGameState(this.state, this);
     }
 
     /**

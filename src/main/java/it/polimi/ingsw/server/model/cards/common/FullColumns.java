@@ -36,8 +36,8 @@ public class FullColumns extends CommonGoalCard{
      * @param nCols number of columns
      * @param sameTiles true if the tiles have to be of the same type, false otherwise
      * @param numDifferent minimum/maximum value of different tiles if sameTiles is respectively false/true
-     * @throws PlayersNumberOutOfRange if the number of players is <2 or >4
-     * @throws NegativeFieldException if nCols <= 0 or numDifferent <= 0
+     * @throws PlayersNumberOutOfRange if the number of players is less than 2 or greater than 4
+     * @throws NegativeFieldException if nCols less or equal to 0 or numDifferent less or equal to 0
      * @throws RemoteException RMI Exception
      */
     public FullColumns(int nPlayers, String description, CommonCardType name, int nCols, boolean sameTiles, int numDifferent) throws PlayersNumberOutOfRange, NegativeFieldException, RemoteException {

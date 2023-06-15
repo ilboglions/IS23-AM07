@@ -17,8 +17,8 @@ public class NsameTiles extends  CommonGoalCard{
      * @param description description of the card
      * @param name type of the card
      * @param nTiles number of tiles of the same type
-     * @throws PlayersNumberOutOfRange  if the number of players is <2 or >4
-     * @throws NegativeFieldException if nTiles<=0
+     * @throws PlayersNumberOutOfRange  if the number of players is less than 2 or  greater than 4
+     * @throws NegativeFieldException if nTiles is less or equal to 0
      * @throws RemoteException RMI Exception
      */
     public NsameTiles(int nPlayers, String description, CommonCardType name, int nTiles) throws PlayersNumberOutOfRange, NegativeFieldException, RemoteException {

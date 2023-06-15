@@ -29,8 +29,8 @@ public class NadjacentElements extends CommonGoalCard{
      * @param name type of the card
      * @param nGroups number of groups
      * @param nElems number of elements for each group
-     * @throws PlayersNumberOutOfRange if the number of players is <2 or >4
-     * @throws NegativeFieldException if nGroups <= 0 or nElems <= 0
+     * @throws PlayersNumberOutOfRange if the number of players is less than 2 or greater than 4
+     * @throws NegativeFieldException if nGroups is less or equal to 0 or nElems is less or equal to 0
      * @throws RemoteException RMI Exception
      */
     public NadjacentElements(int nPlayers, String description, CommonCardType name,int nGroups, int nElems) throws PlayersNumberOutOfRange, NegativeFieldException, RemoteException {

@@ -149,7 +149,7 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
      * @return the GameController, if the game creation is not possible, an empty value will be returned
      * @throws RemoteException RMI Exception
      * @throws InvalidPlayerException the nickname is invalid
-     * @throws PlayersNumberOutOfRange the number of player is not valid ( < 2 or > 4 )
+     * @throws PlayersNumberOutOfRange the number of player is not valid ( less than 2 or greater than 4 )
      */
     public RemoteGameController createGame(String player, int nPlayers) throws RemoteException, InvalidPlayerException, PlayersNumberOutOfRange {
         synchronized (lobbyLock) {
