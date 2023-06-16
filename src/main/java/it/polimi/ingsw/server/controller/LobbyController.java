@@ -97,11 +97,6 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
     /**
      * add a logged player to a game
      * @param player the nickname of the player to be added
-     * @return an optional of GameController, if no game is in the lobby, an empty value will be filled
-     */
-    /**
-     * add a logged player to a game
-     * @param player the nickname of the player to be added
      * @return remote game controller instance reference
      * @throws RemoteException RMI Exception
      * @throws NicknameAlreadyUsedException the nickname used by the player is already taken
@@ -132,16 +127,6 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
             return gameController;
         }
     }
-
-
-    /**
-     * s
-     *
-     * @param player   the username of the player
-     * @param nPlayers
-     * @return the GameController, if the game creation is not possible, an empty value will be returned
-     */
-
     /**
      * creates a game for a certain number of player
      * @param player the username of the player

@@ -135,10 +135,12 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
 
     /**
      * used to create a message to a certain player in the same game
-     *
      * @param player   the player that want to send the message
      * @param receiver the player that will receive the message
      * @param message  the message to be sent
+     * @throws RemoteException RMI Exception
+     * @throws InvalidPlayerException if there isn't any player with that username inside the game
+     * @throws SenderEqualsRecipientException if the string player and receiver are the same
      */
     public void postDirectMessage(String player, String receiver, String message) throws RemoteException, InvalidPlayerException, SenderEqualsRecipientException {
         synchronized (chatLock) {

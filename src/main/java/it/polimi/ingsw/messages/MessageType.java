@@ -1,5 +1,8 @@
 package it.polimi.ingsw.messages;
 
+/**
+ * Enum representing all the type of messages sent over the network
+ */
 public enum MessageType {
     JOIN_LOBBY,
     LOGIN_RETURN,

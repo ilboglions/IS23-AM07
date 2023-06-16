@@ -13,6 +13,7 @@ public interface ListenerSubscriber extends Remote, Serializable {
      * it is necessary to identify the username of the
      * observer that the client refers to
      * @return the username of the player that is observing the chat
+     * @throws RemoteException RMI Exception
      */
     String getSubscriberUsername() throws RemoteException;
 
