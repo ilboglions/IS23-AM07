@@ -19,6 +19,9 @@ import java.util.stream.Collectors;
 
 import static it.polimi.ingsw.server.model.utilities.UtilityFunctions.isNumeric;
 
+/**
+ * Main class for managing the client over CLI
+ */
 public class CliView implements ViewInterface {
 
     /**
@@ -84,10 +87,14 @@ public class CliView implements ViewInterface {
 
     private Scenario scenario;
 
+    /**
+     * Main method of the CliView, this method launches the client connection and displays the interface over CLI
+     * @param args network connection preference (--TCP for TCP Connection, everything else will be interpreted as RMI
+     */
     public static void main(String[] args){
         ConnectionType c;
         ViewInterface view;
-        if (args.length == 1) {
+        if (args.length >= 1) {
 
             c = args[0].equals("--TCP") ? ConnectionType.TCP : ConnectionType.RMI;
 
@@ -101,6 +108,10 @@ public class CliView implements ViewInterface {
         }
     }
 
+    /**
+     * Constructor of the CliView
+     * @param connectionType type of the connection preferred
+     */
     public CliView(ConnectionType connectionType){
         this.setScenario(Scenario.LOBBY);
         ConnectionHandlerFactory factory = new ConnectionHandlerFactory();
@@ -233,6 +244,9 @@ public class CliView implements ViewInterface {
         return coordinatesList;
     }
 
+    /**
+     * Prints the tile of the game as AsciiArt
+     */
     public void printAsciiArtTitle(){
         printTruncateText( "███╗   ███╗██╗   ██╗    ███████╗██╗  ██╗███████╗██╗     ███████╗██╗███████╗", FIXED_V_MARGIN, 10, MAX_HORIZ_TILES - FIXED_H_MARGIN - 10, Color.YELLOW.escape());
         printTruncateText( "███╗   ███╗██╗   ██╗    ███████╗██╗  ██╗███████╗██╗     ███████╗██╗███████╗",FIXED_V_MARGIN + 1, 10, MAX_HORIZ_TILES - FIXED_H_MARGIN - 10, Color.YELLOW.escape());
@@ -273,6 +287,12 @@ public class CliView implements ViewInterface {
 
     }
 
+    /**
+     * This method is used to draw the player's personalGoalCard
+     * @param card reference to a RemotePersonalGoalCard
+     * @throws InvalidCoordinatesException if the coordinates given in the card are invalid
+     * @throws RemoteException RMI Exception
+     */
     public void drawPersonalCard(RemotePersonalGoalCard card) throws InvalidCoordinatesException, RemoteException{
         Map <Coordinates,ItemTile> tilesMap = card.getCardPattern();
         Map <Integer, Integer> pointsReference = card.getPointsReference();
@@ -348,6 +368,11 @@ public class CliView implements ViewInterface {
         return nLine;
     }
 
+    /**
+     * Draws the commonGoal cards
+     * @param commonGoalCards list of all the commonGoalCards
+     * @throws RemoteException RMI Exception
+     */
     public void drawCommonCards(ArrayList<RemoteCommonGoalCard> commonGoalCards) throws RemoteException {
         int FIXED_MARGIN = 5;
         int startR = START_R_BOX_CARD + FIXED_MARGIN;
@@ -373,6 +398,13 @@ public class CliView implements ViewInterface {
         this.plot();
     }
 
+    /**
+     * Draws a player's personalBookshelf
+     * @param tilesMap map of the tiles present in the bookshelf (coordinates is the key, tile is the value)
+     * @param playerUsername username of the bookshelf's owner
+     * @param order order of turn for positioning correctly the bookshelf
+     * @throws InvalidCoordinatesException if the coordinates in the tilesMap are invalid
+     */
     public void drawBookShelf(Map<Coordinates,ItemTile> tilesMap, String playerUsername, int order) throws InvalidCoordinatesException {
         int[] startingPoints;
 
@@ -421,6 +453,10 @@ public class CliView implements ViewInterface {
         return startingPoints;
     }
 
+    /**
+     * Draws the game chat
+     * @param chat list of all the messages in the chat
+     */
     public void drawChat(List<String> chat){
         int currentRChat = START_R_CHAT;
         int nLines;
@@ -499,7 +535,11 @@ public class CliView implements ViewInterface {
 
 
     }
-
+    /**
+     * Draws the livingRoom Board
+     * @param livingRoomMap map of the tiles present on the board  (coordinates is the key, tile is the value)
+     * @throws InvalidCoordinatesException if the coordinates in the map are invalid
+     */
     public void drawLivingRoom(Map<Coordinates, ItemTile> livingRoomMap) throws InvalidCoordinatesException {
         Coordinates coord;
         String colorTile;
@@ -541,6 +581,11 @@ public class CliView implements ViewInterface {
             tiles[startR][startC + i] = color + title.charAt(i);
         }
     }
+
+    /**
+     * Draws the updated leaderboard
+     * @param scoreBoard map with the username of the players as the key and the points as value
+     */
     @Override
     public void drawLeaderboard(Map<String, Integer> scoreBoard) {
         String title = "Leaderboard";
@@ -567,6 +612,11 @@ public class CliView implements ViewInterface {
         this.plot();
     }
 
+    /**
+     * Displays a new player in turn
+     * @param userInTurn username of the player in turn
+     * @param thisUser username of the local player
+     */
     public void drawPlayerInTurn(String userInTurn, String thisUser){
         String text;
         int startR = 3;
@@ -588,21 +638,41 @@ public class CliView implements ViewInterface {
         this.plot();
     }
 
+    /**
+     * Not implemented in CLI
+     * Draws the list of players available for private messages on the chat
+     * @param players list of the players
+     */
     @Override
     public void drawChatPlayersList(ArrayList<String> players) {
         //ONLY THE GUI USES THIS METHOD
     }
 
+    /**
+     * Not implemented in CLI
+     * Draws the final leaderboard (after the end of the game)
+     * @param playerPoints map with the username of the players as key, the final score as value
+     */
     @Override
     public void drawWinnerLeaderboard(Map<String, Integer> playerPoints) {
         //ONLY THE GUI USES THIS METHOD
     }
 
+    /**
+     * Not implemented in CLI
+     * Draws the scoring tokens owned by each player
+     * @param playerScoringTokens map with the username of the player as key, a list of the token owned as value
+     */
     @Override
     public void drawScoringTokens(Map<String, ArrayList<ScoringToken>> playerScoringTokens) {
         //ONLY THE GUI USES THIS METHOD
     }
 
+    /**
+     * Posts a Game notification
+     * @param title title of the notification
+     * @param description description of the notification
+     */
     @Override
     public void postNotification(String title, String description) {
         clearBox(START_R_BOX_NOTIFICATION, START_C_BOX_NOTIFICATION, START_R_BOX_NOTIFICATION + LENGTH_R_BOX_NOTIFICATION, START_C_BOX_NOTIFICATION + LENGTH_C_BOX_NOTIFICATION);
@@ -611,6 +681,10 @@ public class CliView implements ViewInterface {
         this.plot();
     }
 
+    /**
+     * Posts a Game notification
+     * @param n notification to be displayed
+     */
     public void postNotification(Notifications n){
         this.postNotification(n.getTitle(),n.getDescription());
     }
@@ -671,6 +745,10 @@ public class CliView implements ViewInterface {
         tiles[startR+lengthR][startC] = color + "└";
         tiles[startR+lengthR][startC+lengthC] = color + "┘";
     }
+
+    /**
+     * Renders the game interface
+     */
     public final void plot() {
 
         for (int r = 0; r < MAX_VERT_TILES; r++) {
@@ -730,6 +808,10 @@ public class CliView implements ViewInterface {
         }
     }
 
+    /**
+     * Draw a scene (changes the scene displayed)
+     * @param scene type of the scene
+     */
     @Override
     public void drawScene(SceneType scene){
         if (scene.equals(SceneType.GAME)) {

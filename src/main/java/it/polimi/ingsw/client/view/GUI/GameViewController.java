@@ -76,6 +76,12 @@ public class GameViewController extends GUIController implements Initializable {
     private Popup commonGoalInfo1, commonGoalInfo2;
 
 
+
+    /**
+     * Posts a Game notification
+     * @param title title of the notification
+     * @param desc description of the notification
+     */
     @Override
     public void postNotification(String title, String desc) {
         Text textTitle = new Text("[SERVER] " + title.toUpperCase() + "\n");
@@ -93,6 +99,11 @@ public class GameViewController extends GUIController implements Initializable {
         }
     }
 
+    /**
+     * This method initializes the Game Scene
+     * @param url the location used to resolve relative paths for the root object, or null if the location is not known.
+     * @param resourceBundle the resources used to localize the root object, or null if the root object was not localized.
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         playersLabels.add(personalBookshelfLabel);
@@ -136,6 +147,12 @@ public class GameViewController extends GUIController implements Initializable {
                 }));
     }
 
+    /**
+     * Draws a player's personalBookshelf
+     * @param tilesMap map of the tiles present in the bookshelf (coordinates is the key, tile is the value)
+     * @param playerUsername username of the bookshelf's owner
+     * @param order order of turn for positioning correctly the bookshelf
+     */
     public void drawBookshelf(Map<Coordinates, ItemTile> tilesMap, String playerUsername, int order) {
         VBox currentBookshelf;
         GridPane currentBookshelfGrid;
@@ -183,6 +200,12 @@ public class GameViewController extends GUIController implements Initializable {
     }
 
 
+    /**
+     * This method called as a callback function on the click of the sendMessage button
+     * It takes the recipient on the selected value on the chatRecipientSelector ComboBox (empty means everyone)
+     * The content of the message is the value contained in the textFieldChat
+     * @param actionEvent click event
+     */
     public void sendMessage(ActionEvent actionEvent) {
         String recipient = (String) chatRecipientSelector.getValue();
         if(recipient == null || recipient.isBlank())
@@ -194,12 +217,20 @@ public class GameViewController extends GUIController implements Initializable {
         actionEvent.consume();
     }
 
+    /**
+     * Draws the game chat
+     * @param outputMessages list of all the messages in the chat
+     */
     public void drawChat(List<String> outputMessages) {
         Text newMessage = new Text(outputMessages.get(0) + "\n");
         newMessage.setFont(Font.font("Arial", FontWeight.NORMAL, 11));
         textFlowChat.getChildren().add(newMessage);
     }
 
+    /**
+     * Draws the livingRoom Board
+     * @param livingRoomMap map of the tiles present on the board  (coordinates is the key, tile is the value)
+     */
     public void drawLivingRoom(Map<Coordinates, ItemTile> livingRoomMap) {
         for(Map.Entry<Coordinates, ItemTile> entry : livingRoomMap.entrySet()){
             Node cell = getNodeFromGridPane(livingroom_grid,entry.getKey().getColumn() ,entry.getKey().getRow());
@@ -339,6 +370,11 @@ public class GameViewController extends GUIController implements Initializable {
     }
 
 
+    /**
+     * Displays a new player in turn
+     * @param userInTurn username of the player in turn
+     * @param thisUser username of the local player
+     */
     public void drawPlayerInTurn(String userInTurn, String thisUser) {
         String newTurnTitle, newTurnDescription;
         playersLabels.forEach(label -> {
@@ -360,13 +396,20 @@ public class GameViewController extends GUIController implements Initializable {
         livingroom_grid.setDisable(!userInTurn.equals(thisUser));
     }
 
-
+    /**
+     * Draws the list of players available for private messages on the chat
+     * @param players list of the players
+     */
     public void drawChatPlayerList(ArrayList<String> players) {
         players.add(0,"");
         chatRecipientSelector.setItems(FXCollections.observableArrayList(players));
         chatRecipientSelector.getSelectionModel().selectFirst();
     }
 
+    /**
+     * Draws the commonGoal cards
+     * @param commonGoalCards list of all the commonGoalCards
+     */
     public void drawCommonCards(ArrayList<RemoteCommonGoalCard> commonGoalCards) {
         Stack<ScoringToken> tokensStack;
         StackPane tokensBox1,tokensBox2;
@@ -478,6 +521,11 @@ public class GameViewController extends GUIController implements Initializable {
         return url;
     }
 
+    /**
+     * This method is used to draw the player's personalGoalCard
+     * @param card reference to a RemotePersonalGoalCard
+     */
+
     public void drawPersonalCard(int card){
         personalCard.setImage(new Image(Objects.requireNonNull(Objects.requireNonNull(GameViewController.class.getResource("/images/personalGoalCards/Personal_Goals" + (card + 1) + ".png")).toString())));
         personalGoalPane.setAlignment(Pos.CENTER);
@@ -485,6 +533,10 @@ public class GameViewController extends GUIController implements Initializable {
         personalCard.fitHeightProperty().bind(Bindings.min(leftvbox.widthProperty().divide(5), leftvbox.heightProperty().divide(3.5)));
     }
 
+    /**
+     * This click on the first common card opens/closes the popup that gives details about that specific card.
+     * @param mouseEvent click event
+     */
     public void clickCommon1(MouseEvent mouseEvent) {
         if(!commonGoalInfo1.isShowing()){
             commonGoalInfo2.hide();
@@ -496,6 +548,10 @@ public class GameViewController extends GUIController implements Initializable {
         mouseEvent.consume();
     }
 
+    /**
+     * This click on the second common card opens/closes the popup that gives details about that specific card.
+     * @param mouseEvent click event
+     */
     public void clickCommon2(MouseEvent mouseEvent)  {
         if(!commonGoalInfo2.isShowing()){
             commonGoalInfo1.hide();
@@ -506,6 +562,12 @@ public class GameViewController extends GUIController implements Initializable {
         mouseEvent.consume();
     }
 
+    /**
+     * Callback function called when a player clicks on their personalBookshelf.
+     * If it's this player's turn and some tiles are selected on the board it will try to insert
+     * those tiles inside the personalBookshelf
+     * @param event
+     */
     @FXML
     public void onClickPersonalBookshelf(MouseEvent event) {
         Node clickedNode = event.getPickResult().getIntersectedNode(); //clickedNode
@@ -619,7 +681,7 @@ public class GameViewController extends GUIController implements Initializable {
             event.consume();
         });
         imageCell.setOnDragDropped(new EventHandler<>() {
-            public void handle(DragEvent event) {
+             public void handle(DragEvent event) {
                 Dragboard db = event.getDragboard();
                 boolean success = false;
                 this.arraySwitchPos(selectedCells, GridPane.getColumnIndex(imageCell), GridPane.getColumnIndex((Node) event.getGestureSource()));
@@ -652,6 +714,10 @@ public class GameViewController extends GUIController implements Initializable {
         });
     }
 
+    /**
+     * Draws the updated leaderboard
+     * @param playerPoints map with the username of the players as the key and the points as value
+     */
     public void drawLeaderboard(Map<String, Integer> playerPoints) {
         playersRank = createRank(playerPoints);
 
@@ -681,12 +747,16 @@ public class GameViewController extends GUIController implements Initializable {
 
     }
 
+    /**
+     * Draws the scoring tokens owned by each player
+     * @param playerScoringTokens map with the username of the player as key, a list of the token owned as value
+     */
     public void drawScoringTokens(Map<String, ArrayList<ScoringToken>> playerScoringTokens){
         this.playerScoringTokens.clear();
         this.playerScoringTokens.putAll(playerScoringTokens);
     }
 
-    public void drawScoringTokensGrid() {
+    private void drawScoringTokensGrid() {
         ArrayList<ScoringToken> playerTokens;
         for(int i=0; i< playersRank.size(); i++){
             playerTokens = playerScoringTokens.get(playersRank.get(i));
@@ -706,6 +776,10 @@ public class GameViewController extends GUIController implements Initializable {
         }
     }
 
+    /**
+     * Draws the final leaderboard (after the end of the game)
+     * @param playerPoints map with the username of the players as key, the final score as value
+     */
     public void drawWinnerLeaderboard(Map<String, Integer> playerPoints) {
         Popup winnerPopup = new Popup();
         VBox popupContainer = new VBox();

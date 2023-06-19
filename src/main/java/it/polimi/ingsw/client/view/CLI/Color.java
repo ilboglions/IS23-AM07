@@ -1,5 +1,8 @@
 package it.polimi.ingsw.client.view.CLI;
 
+/**
+ * Types of color used on the CLI during the game
+ */
 public enum Color {
 
     /**
@@ -84,6 +87,11 @@ public enum Color {
     Color(String escape) {
         this.escape = escape;
     }
+
+    /**
+     *
+     * @return the escape attribute
+     */
     public String escape(){
         return escape;
     }

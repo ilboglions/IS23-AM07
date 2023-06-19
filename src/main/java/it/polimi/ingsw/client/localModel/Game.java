@@ -237,7 +237,7 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
     public synchronized void notifyCommonGoalCards(ArrayList<RemoteCommonGoalCard> commonGoalCards) throws RemoteException {
         try {
             view.drawCommonCards(commonGoalCards);
-        } catch (InvalidCoordinatesException | RemoteException ignored) {
+        } catch (RemoteException ignored) {
 
         }
     }

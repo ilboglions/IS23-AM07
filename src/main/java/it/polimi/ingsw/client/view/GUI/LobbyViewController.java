@@ -10,6 +10,9 @@ import javafx.scene.layout.VBox;
 
 import java.rmi.RemoteException;
 
+/**
+ * Controller class of the GUI
+ */
 public class LobbyViewController extends GUIController {
     public Button createGameBtn;
     public Button joinGameBtn;
@@ -25,7 +28,11 @@ public class LobbyViewController extends GUIController {
     @FXML private Label errorLabelDesc;
 
 
-
+    /**
+     * The click on the LoginButton launches a JoinLobby request is launched by the client
+     * The username is based on the content of the usernameField TextField.
+     * @param actionEvent click event on the button
+     */
     public void onLoginButtonClick(ActionEvent actionEvent) {
         try {
             getClientController().JoinLobby(usernameField.getText());
@@ -34,6 +41,10 @@ public class LobbyViewController extends GUIController {
         }
     }
 
+    /**
+     * The click on the JoinGameButton launches a JoinGame request to the server
+     * @param actionEvent click event on the button
+     */
     public void onJoinGameButtonClick(ActionEvent actionEvent){
         try {
             getClientController().JoinGame();
@@ -42,6 +53,10 @@ public class LobbyViewController extends GUIController {
         }
     }
 
+    /**
+     *  The click on the CreateGameButton enables the fields for the creation of the game
+     * @param actionEvent click event on the button
+     */
     public void onCreateGameButtonClick(ActionEvent actionEvent){
         selectionBox.setManaged(false);
         selectionBox.setVisible(false);
@@ -50,6 +65,10 @@ public class LobbyViewController extends GUIController {
         createGameBox.setVisible(true);
     }
 
+    /**
+     * The click on the ConfirmCreateGameButton launches a CreateGame request to the server
+     * @param actionEvent click event on the button
+     */
     public void onConfirmCreateButtonClick(ActionEvent actionEvent){
         try {
             if(UtilityFunctions.isNumeric(nPlayerField.getText())){
@@ -64,6 +83,11 @@ public class LobbyViewController extends GUIController {
     }
 
 
+    /**
+     * This method displays a notification
+     * @param title title of the notification
+     * @param desc description of the notification
+     */
     @Override
     public void postNotification(String title, String desc) {
         errorLabel.setText(title);
