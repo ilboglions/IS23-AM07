@@ -27,20 +27,26 @@ public class PersonalGoalCard extends UnicastRemoteObject implements RemotePerso
      * the pointsReference attribute map the number of matching elements and the points assigned
      */
     private final Map<Integer,Integer> pointsReference;
+    /**
+     * the card's identifier
+     */
+    private final int id;
 
     /**
      * the personal card is an immutable class, so the constructor is used to assign all the necessary values
      * @param pattern is the pattern to be load in the card bookshelf assigned to the card
      * @param pointsReference is the parameter to be assigned to the point reference attribute
+     * @param id the identifier of the card
+     * @throws RemoteException RMI Exception
      */
-    public PersonalGoalCard(Map<Coordinates, ItemTile> pattern, Map<Integer,Integer> pointsReference) throws RemoteException {
+    public PersonalGoalCard(Map<Coordinates, ItemTile> pattern, Map<Integer,Integer> pointsReference, int id) throws RemoteException {
         super();
         Objects.requireNonNull(pattern, "You passed a null instead of a pattern Map");
         Objects.requireNonNull(pointsReference, "You passed a null instead of a pointsReference Map");
 
         if(pattern.isEmpty() || pointsReference.isEmpty())
             throw new IllegalArgumentException("You passed an empty parameter!");
-
+        this.id = id;
         bookshelf = new CardBookshelf(pattern);
         this.pointsReference = new HashMap<>(pointsReference);
     }
@@ -66,6 +72,11 @@ public class PersonalGoalCard extends UnicastRemoteObject implements RemotePerso
         return new CardBookshelf(tempPattern);
     }
 
+    /**
+     *
+     * @return the pattern associated to this card
+     * @throws RemoteException RMI Exception
+     */
     public Map<Coordinates, ItemTile> getCardPattern() throws RemoteException{
         Map<Coordinates, ItemTile> itemTileMap = new HashMap<>();
         for( int r = 0; r < bookshelf.getRows(); r++){
@@ -83,8 +94,19 @@ public class PersonalGoalCard extends UnicastRemoteObject implements RemotePerso
     }
 
     /**
+     *
+     * @return the serial ID of this card
+     * @throws RemoteException RMI Exception
+     */
+    @Override
+    public int getID() throws RemoteException {
+        return this.id;
+    }
+
+    /**
      * a simple getter method that returns the point reference of the card
      * @return the points reference used to evaluate the points acquired
+     * @throws RemoteException RMI Exception
      */
     public Map<Integer, Integer> getPointsReference() throws RemoteException {
         return new HashMap<>(pointsReference);

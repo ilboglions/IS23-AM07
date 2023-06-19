@@ -278,22 +278,33 @@ public class GameTest {
      */
     @Test
     @DisplayName("Test getItemTile method")
-    void testGetTile() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, InvalidCoordinatesException, RemoteException {
+    void testGetTile() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, InvalidCoordinatesException, RemoteException, NicknameAlreadyUsedException, NotAllPlayersHaveJoinedException, GameNotEndedException {
         Player testPlayer = new Player("Test");
-        Game test = new Game(3, testPlayer);
+        Game test = new Game(2, testPlayer);
+
+        assertThrows(GameNotStartedException.class, ()->{
+            test.moveTiles(new ArrayList<>(), 3);
+        });
+
+        Player secondPlayer = new Player("secondPlayer");
+        test.addPlayer(secondPlayer);
+        test.start();
 
         assertThrows(NullPointerException.class, ()->{
            test.checkValidRetrieve(null);
         });
 
         ArrayList<Coordinates> testList = new ArrayList<>();
+        testList.add(new Coordinates(0,0));
+        ArrayList<Coordinates> finalTestList = testList;
+        assertThrows(EmptySlotException.class, ()-> test.checkValidRetrieve(finalTestList));
+
+        testList = new ArrayList<>();
         testList.add(new Coordinates(3,4));
-        assertThrows(EmptySlotException.class, ()->{
-           test.checkValidRetrieve(testList);
-        });
 
         test.refillLivingRoom();
-        assertDoesNotThrow(()->test.checkValidRetrieve(testList));
+        ArrayList<Coordinates> finalTestList1 = testList;
+        assertDoesNotThrow(()->test.checkValidRetrieve(finalTestList1));
     }
 
     /**
@@ -503,7 +514,7 @@ public class GameTest {
         Player testPlayer = new Player("Test");
         Game test = new Game(3, testPlayer);
 
-        assertFalse(test.getIsStarted());
+        assertFalse(test.isStarted());
 
         Player secondPlayer = new Player("secondPlayer");
         Player thirdPlayer = new Player("thirdPlayer");
@@ -511,7 +522,7 @@ public class GameTest {
         test.addPlayer(thirdPlayer);
         test.start();
 
-        assertTrue(test.getIsStarted());
+        assertTrue(test.isStarted());
     }
 
     /**

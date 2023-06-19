@@ -45,6 +45,11 @@ public class UtilityFunctions {
         return  group.stream().distinct().collect(Collectors.toList());
     }
 
+    /**
+     * This method is used to evaluate whether a string is numeric (can be converted to a number)
+     * @param str string to be evaluated
+     * @return if the string represents a number, false otherwise
+     */
     public static boolean isNumeric(String str) {
         try {
             Integer.parseInt(str);

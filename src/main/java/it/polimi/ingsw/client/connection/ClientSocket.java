@@ -1,10 +1,15 @@
 package it.polimi.ingsw.client.connection;
 
 import it.polimi.ingsw.client.localModel.Game;
+import it.polimi.ingsw.Notifications;
+import it.polimi.ingsw.client.view.SceneType;
 import it.polimi.ingsw.client.view.ViewInterface;
 import it.polimi.ingsw.messages.*;
+import it.polimi.ingsw.remoteInterfaces.RemoteCommonGoalCard;
+import it.polimi.ingsw.remoteInterfaces.RemotePersonalGoalCard;
 import it.polimi.ingsw.server.ReschedulableTimer;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
+import it.polimi.ingsw.server.model.tokens.ScoringToken;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -37,6 +42,12 @@ public class ClientSocket implements ConnectionHandler{
     private final long timerDelay = 15000;
     private Game gameModel;
 
+    /**
+     * Creates an instance of ClientSocket
+     * @param ip ip of the server
+     * @param port port of the server
+     * @param view the view will be notified for updates
+     */
     public ClientSocket(String ip, int port, ViewInterface view) {
         this.ip = ip;
         this.port = port;
@@ -54,10 +65,11 @@ public class ClientSocket implements ConnectionHandler{
             try {
                 tempConnection = new Socket(ip, port);
                 connected = true;
-                view.postNotification("Connected to the server!", "choose your username!");
-                // here we should create some task that listens the server!
+
+                //TODO: This postNotification broke things when using the GUI because they call the GuiController before it is initializated
+                this.view.postNotification(Notifications.CONNECTED_SUCCESSFULLY);
             } catch ( UnknownHostException | ConnectException e) {
-                view.postNotification("Connection error", "Server this address is not reachable, trying again soon...");
+                view.postNotification(Notifications.ERR_CONNECTION_NO_AVAILABLE);
                 try {
                     TimeUnit.SECONDS.sleep(2);
                 } catch (InterruptedException ex) {
@@ -82,13 +94,18 @@ public class ClientSocket implements ConnectionHandler{
         this.startParserAgent();
     }
 
+    /**
+     * Handles connection crash closing the connection
+     */
     private void handleCrash() {
-        view.postNotification("Connection error", "connection with server no longer available!");
-
+        view.postNotification(Notifications.ERR_CONNECTION_NO_LONGER_AVAILABLE);
         this.close();
     }
 
 
+    /**
+     * Closes the client connection to the server
+     */
     @Override
     public void close(){
         synchronized (outputStream) {
@@ -105,6 +122,10 @@ public class ClientSocket implements ConnectionHandler{
         }
     }
 
+    /**
+     * Adds player to the lobby
+     * @param username the username used for joining the lobby
+     */
     @Override
     public void JoinLobby(String username) {
         this.username = username;
@@ -112,17 +133,29 @@ public class ClientSocket implements ConnectionHandler{
         this.sendUpdate(requestMessage);
     }
 
+    /**
+     * Creates a new game
+     * @param nPlayers the number of player for the game
+     */
     @Override
     public void CreateGame(int nPlayers) {
         CreateGameMessage requestMessage = new CreateGameMessage(nPlayers);
         this.sendUpdate(requestMessage);
     }
 
+    /**
+     * Joins a Game
+     */
     @Override
     public void JoinGame() {
         JoinGameMessage requestMessage = new JoinGameMessage();
         this.sendUpdate(requestMessage);
     }
+
+    /**
+     * Checks if a tiles retrieval is admissible
+     * @param tiles the tiles to be selected
+     */
 
     @Override
     public void checkValidRetrieve(ArrayList<Coordinates> tiles) {
@@ -130,19 +163,35 @@ public class ClientSocket implements ConnectionHandler{
         this.sendUpdate(requestMessage);
     }
 
+    /**
+     * Moves tiles in a personal bookshelf
+     * @param tiles the selected tiles
+     * @param column the column of the bookshelf that has been chosen
+     */
+
     @Override
     public void moveTiles(ArrayList<Coordinates> tiles, int column) {
         MoveTilesMessage requestMessage = new MoveTilesMessage(tiles, column);
         this.sendUpdate(requestMessage);
     }
 
+    /**
+     * Sends a broadcast message to the game chat
+     * @param content content of the message
+     */
     public void sendMessage(String content){
         PostMessage message = new PostMessage(content);
         this.sendUpdate(message);
     }
 
-    public void sendMessage(String content, String recipient){
-        PostMessage message = new PostMessage(content, recipient);
+    /**
+     * Sends a private message to a player in the game
+     * @param content content of the message
+     * @param recipient recipient of the message
+     */
+
+    public void sendMessage(String recipient, String content){
+        PostMessage message = new PostMessage(recipient, content);
         this.sendUpdate(message);
     }
 
@@ -151,6 +200,9 @@ public class ClientSocket implements ConnectionHandler{
         this.sendUpdate(message);
     }
 
+    /**
+     * Sends periodic signals to the server for connection checking
+     */
     @Override
     public void sendHeartBeat()  {
         heartBeatManager.scheduleAtFixedRate(
@@ -161,6 +213,10 @@ public class ClientSocket implements ConnectionHandler{
             0, 5, TimeUnit.SECONDS);
     }
 
+
+    /**
+     * Continuously reads from the inputStream for new messages and notifies threads waiting for messages
+     */
     private void messagesHopper()  {
         threadManager.execute( () -> {
 
@@ -216,83 +272,56 @@ public class ClientSocket implements ConnectionHandler{
         return result;
     } */
 
+    /**
+     * Parser of NetMessage, calls specific method for every message type
+     * @param responseMessage message to be parsed
+     */
     private void parse(NetMessage responseMessage){
         if(responseMessage == null) return;
         switch (responseMessage.getMessageType()){
-            case LOGIN_RETURN -> {
-                this.parse((LoginReturnMessage) responseMessage);
-            }
-            case CONFIRM_GAME -> {
-                this.parse((ConfirmGameMessage) responseMessage);
-            }
-            case CONFIRM_SELECTION -> {
-                this.parse((ConfirmSelectionMessage) responseMessage);
-            }
-            case CONFIRM_MOVE -> {
-                this.parse((ConfirmMoveMessage) responseMessage);
-            }
-            case NOTIFY_NEW_CHAT -> {
-                this.parse((NotifyNewChatMessage) responseMessage);
-            }
-            case BOARD_UPDATE -> {
-                this.parse((BoardUpdateMessage) responseMessage);
-            }
-            case BOOKSHELF_UPDATE -> {
-                this.parse((BookshelfUpdateMessage) responseMessage);
-            }
-            case PERSONAL_CARD_UPDATE -> {
-                this.parse((PersonalGoalCardUpdateMessage) responseMessage);
-            }
-            case COMMON_CARDS_UPDATE -> {
-                this.parse((CommonGoalCardsUpdateMessage) responseMessage);
-            }
-            case NOTIFY_PLAYER_CRASHED -> {
-                this.parse((NotifyPlayerCrashedMessage) responseMessage);
-            }
-            case NOTIFY_WINNING_PLAYER -> {
-                this.parse((NotifyWinnerPlayerMessage) responseMessage);
-            }
-            case POINTS_UPDATE -> {
-                this.parse((PointsUpdateMessage) responseMessage);
-            }
-            case CONFIRM_CHAT -> {
-                this.parse((ConfirmChatMessage) responseMessage);
-            }
-            case TOKEN_UPDATE -> {
-                this.parse((TokenUpdateMessage) responseMessage);
-            }
-            case NEW_PLAYER -> {
-                this.parse((NewPlayerInGame) responseMessage);
-            }
-            case NOTIFY_PLAYER_IN_TURN -> {
-                this.parse((NotifyPlayerInTurnMessage) responseMessage);
-            }
-            case NOTIFY_TURN_ORDER -> {
-                this.parse((NotifyTurnOrder) responseMessage);
-            }
-            case GAME_STATUS -> {
-                this.parse((GameStatusMessage) responseMessage);
-            }
+            case LOGIN_RETURN -> this.parse((LoginReturnMessage) responseMessage);
+            case CONFIRM_GAME -> this.parse((ConfirmGameMessage) responseMessage);
+            case CONFIRM_SELECTION -> this.parse((ConfirmSelectionMessage) responseMessage);
+            case CONFIRM_MOVE -> this.parse((ConfirmMoveMessage) responseMessage);
+            case NOTIFY_NEW_CHAT -> this.parse((NotifyNewChatMessage) responseMessage);
+            case BOARD_UPDATE -> this.parse((BoardUpdateMessage) responseMessage);
+            case BOOKSHELF_UPDATE -> this.parse((BookshelfUpdateMessage) responseMessage);
+            case PERSONAL_CARD_UPDATE -> this.parse((PersonalGoalCardUpdateMessage) responseMessage);
+            case COMMON_CARDS_UPDATE -> this.parse((CommonGoalCardsUpdateMessage) responseMessage);
+            case NOTIFY_PLAYER_CRASHED -> this.parse((NotifyPlayerCrashedMessage) responseMessage);
+            case NOTIFY_WINNING_PLAYER -> this.parse((NotifyWinnerPlayerMessage) responseMessage);
+            case POINTS_UPDATE -> this.parse((PointsUpdateMessage) responseMessage);
+            case CONFIRM_CHAT -> this.parse((ConfirmChatMessage) responseMessage);
+            case TOKEN_UPDATE -> this.parse((TokenUpdateMessage) responseMessage);
+            case NEW_PLAYER -> this.parse((NewPlayerInGame) responseMessage);
+            case NOTIFY_PLAYER_IN_TURN -> this.parse((NotifyPlayerInTurnMessage) responseMessage);
+            case NOTIFY_TURN_ORDER -> this.parse((NotifyTurnOrder) responseMessage);
+            case GAME_STATUS -> this.parse((GameStatusMessage) responseMessage);
+            case ALREADY_JOINED_PLAYERS -> this.parse((AlreadyJoinedPlayersMessage) responseMessage);
             default -> {
             }
         }
     }
 
+    /**
+     * Manages the login return message notifying the view
+     * @param message response message
+     */
     private void parse(LoginReturnMessage message){
         if(message.getConfirmLogin()){
+
             if (message.getConfirmRejoined()) {
+                view.drawScene(SceneType.GAME);
                 try {
                     this.gameModel = new Game(this.view,this.username);
                 } catch (RemoteException e) {
                     throw new RuntimeException(e);
                 }
                 this.sendReceivedGame(false);
-                view.postNotification("Welcome back " + this.username + "!", "reconnecting to your game...");
-                view.drawGameScene();
-                view.postNotification("Game rejoined successfully!", "");
-
+                view.postNotification(Notifications.GAME_RECONNECTION_SUCCESSFULLY);
             }else {
-                view.postNotification("Logged in as " + this.username + "!", "choose either to create or join a game!");
+                view.drawScene(SceneType.LOBBY);
+                view.postNotification(Notifications.JOINED_LOBBY_SUCCESSFULLY);
             }
         } else {
             /* an error occurred */
@@ -301,28 +330,32 @@ public class ClientSocket implements ConnectionHandler{
         }
     }
 
+    /**
+     * Manages the game confirmation message notifying the view
+     * @param message response message
+     */
     private void parse(ConfirmGameMessage message){
         boolean errorOccurred = false;
 
         if(message.getConfirmGameCreation()){
+            view.drawScene(SceneType.GAME);
             try {
                 this.gameModel = new Game(this.view,this.username);
 
             } catch (RemoteException e) {
                 throw new RuntimeException(e);
             }
-            view.postNotification("Game created successfully","");
-            view.drawGameScene();
-            view.postNotification("Game created successfully","");
+
+            view.postNotification(Notifications.GAME_CREATED_SUCCESSFULLY);
         } else if(message.getConfirmJoinedGame()){
+            view.drawScene(SceneType.GAME);
             try {
                 this.gameModel = new Game(this.view,this.username);
             } catch (RemoteException e) {
                 throw new RuntimeException(e);
             }
 
-            view.drawGameScene();
-            view.postNotification("Game joined successfully","");
+            view.postNotification(Notifications.GAME_JOINED_SUCCESSFULLY);
         }
         else{
             view.postNotification(message.getErrorType(),message.getDetails());
@@ -332,20 +365,32 @@ public class ClientSocket implements ConnectionHandler{
         this.sendReceivedGame(errorOccurred);
     }
 
+    /**
+     * Manages the confirm selection message notifying the view
+     * @param message response message
+     */
     private void parse(ConfirmSelectionMessage message){
         if(message.getConfirmSelection()){
-            view.postNotification("Your Selection has been accepted!","choose the column to fit the selection!");
+            view.postNotification(Notifications.TILES_SELECTION_ACCEPTED);
         } else{
             view.postNotification(message.getErrorType(),message.getDetails());
         }
     }
 
+    /**
+     * Manages the confirm move message notifying the view
+     * @param message response the message
+     */
     private void parse(ConfirmMoveMessage message){
         if(message.getConfirmSelection()){
-            view.postNotification("Move done!","");
+            view.postNotification(Notifications.TILES_MOVED_SUCCESSFULLY);
         }
     }
 
+    /**
+     * Adds a message to the chat notifying the view
+     * @param message chat notification message
+     */
     private void parse(NotifyNewChatMessage message){
         try {
             if(message.getRecipient().isEmpty())
@@ -357,6 +402,10 @@ public class ClientSocket implements ConnectionHandler{
         }
     }
 
+    /**
+     * Manages an update on the board notifying the view
+     * @param message update message
+     */
     private void parse(BoardUpdateMessage message) {
         try {
             gameModel.updateBoardStatus(message.getTilesInBoard());
@@ -365,6 +414,10 @@ public class ClientSocket implements ConnectionHandler{
         }
     }
 
+    /**
+     * Manages an update on the bookshelf notifying the view
+     * @param message update message
+     */
     private void parse(BookshelfUpdateMessage message){
         try {
             gameModel.updateBookshelfStatus(message.getUsername(), message.getInsertedTiles(),message.getColumn(), message.getCurrentMap());
@@ -373,6 +426,10 @@ public class ClientSocket implements ConnectionHandler{
         }
     }
 
+    /**
+     * Manages an update on the personal goal card notifying the view
+     * @param message update message
+     */
     private void parse(PersonalGoalCardUpdateMessage message){
         try {
             gameModel.updatePersonalGoalCard(message.getPlayer(), message.getCard());
@@ -381,6 +438,10 @@ public class ClientSocket implements ConnectionHandler{
         }
     }
 
+    /**
+     * Manages an update on the common goal card notifying the view
+     * @param message update message
+     */
     private void parse(CommonGoalCardsUpdateMessage message){
         try {
             gameModel.notifyCommonGoalCards(message.getCommonGoalCards());
@@ -389,10 +450,22 @@ public class ClientSocket implements ConnectionHandler{
         }
     }
 
+    /**
+     * Notifies the view that another player crashed
+     * @param message notification message
+     */
     private void parse(NotifyPlayerCrashedMessage message){
-        view.postNotification(message.getUserCrashed() + " has crashed", "Will skip his turn until he reconnects");
+        try {
+            this.gameModel.notifyPlayerCrashed(message.getUserCrashed());
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
     }
 
+    /**
+     * Notifies the view that a player won the game
+     * @param message notification message
+     */
     private void parse(NotifyWinnerPlayerMessage message){
         try {
             gameModel.notifyWinningPlayer(message.getWinnerUser(),message.getWinnerPoints(),message.getScoreboard());
@@ -401,6 +474,10 @@ public class ClientSocket implements ConnectionHandler{
         }
     }
 
+    /**
+     * Manages an update in the points
+     * @param message update message
+     */
     private  void parse(PointsUpdateMessage message){
         try {
             gameModel.updatePoints(message.getUsername(), message.getTotalPoints(), message.getAddedPoints());
@@ -409,6 +486,10 @@ public class ClientSocket implements ConnectionHandler{
         }
     }
 
+    /**
+     * Manages a confirmchat message
+     * @param message notification message
+     */
     private void parse(ConfirmChatMessage message){
         if(!message.getResult())
             view.postNotification("Error while posting your message", "Your message was not posted in the chat due to an error, please retry.");
@@ -432,6 +513,14 @@ public class ClientSocket implements ConnectionHandler{
         }
     }
 
+    private void parse(AlreadyJoinedPlayersMessage message){
+        try {
+            gameModel.notifyAlreadyJoinedPlayers(message.getAlreadyJoinedPlayers());
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private void parse(NotifyPlayerInTurnMessage message){
         try {
             gameModel.notifyPlayerInTurn(message.getUserInTurn());
@@ -450,7 +539,7 @@ public class ClientSocket implements ConnectionHandler{
 
     private void parse(GameStatusMessage message) {
         try {
-            gameModel.notifyGameStatus(message.getState(), message.getDetails());
+            gameModel.notifyChangedGameState(message.getState());
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
@@ -462,6 +551,7 @@ public class ClientSocket implements ConnectionHandler{
             try {
                 outputStream.writeObject(update);
                 outputStream.flush();
+                outputStream.reset();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

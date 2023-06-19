@@ -1,5 +1,6 @@
 package it.polimi.ingsw.server.model.game;
 
+import it.polimi.ingsw.GameState;
 import it.polimi.ingsw.remoteInterfaces.*;
 import it.polimi.ingsw.server.ReschedulableTimer;
 import it.polimi.ingsw.server.model.chat.Chat;
@@ -12,6 +13,7 @@ import it.polimi.ingsw.server.model.distributable.BagHolder;
 import it.polimi.ingsw.server.model.distributable.DeckCommon;
 import it.polimi.ingsw.server.model.distributable.DeckPersonal;
 import it.polimi.ingsw.server.model.listeners.GameListener;
+import it.polimi.ingsw.server.model.listeners.GameStateListener;
 import it.polimi.ingsw.server.model.livingRoom.LivingRoomBoard;
 import it.polimi.ingsw.server.model.exceptions.NotEnoughTilesException;
 import it.polimi.ingsw.server.model.player.Player;
@@ -52,19 +54,15 @@ public class Game implements GameModelInterface {
      * The total number of the player for this game
      */
     private final int numPlayers;
-    /**
-     * Store if the game is started or is waiting for players to join
-     */
-    private boolean isStarted;
-    /**
-     * Store the index of the current player in the round
-     */
-    private boolean isPaused;
+
+    private GameState state;
+
     private int playerTurn;
     /**
      * Store if there is a player that have completed the bookshelf, so if it is the last round of the game
      */
     private boolean isLastTurn;
+    private boolean lastRoundDone;
     /**
      * The reference to the DeckPersonal to draw PersonalGoalCard for each player
      */
@@ -83,20 +81,25 @@ public class Game implements GameModelInterface {
      * the listener to the game status
      */
     private final GameListener gameListener;
-    private final ReschedulableTimer crashTimer;
+    private final GameStateListener gameStateListener;
+    private ReschedulableTimer crashTimer;
     private final long crashTimerDelay = 60000;
 
     /**
-     * Constructor of the Game objects, it initializes all the attributes, set stdPointsReference, draw the CommonGoalCard, add the host to the game and assign to him a PersonalGoalCard
+     * Constructor of the Game objects, it initializes all the attributes,
+     * set stdPointsReference, draw the CommonGoalCard, add the host to the game
+     * and assign to him a PersonalGoalCard
      * @param numPlayers is the total number of the players for the game, the initialization of the board changes based on this
      * @param host is the Player that have created the game
      * @throws NegativeFieldException if the number of cards to draw is negative
      * @throws PlayersNumberOutOfRange if the numPlayers is less than 2 or more than 4
      * @throws NotEnoughCardsException if the cards to be drawn are more than the number of cards loaded with the JSON file configuration
+     * @throws IllegalFilePathException if the configuration file path is invalid
      */
     public Game(int numPlayers, Player host) throws NegativeFieldException, PlayersNumberOutOfRange, NotEnoughCardsException, IllegalFilePathException {
         Objects.requireNonNull(host);
         this.gameListener = new GameListener();
+        this.gameStateListener = new GameStateListener();
         this.numPlayers = numPlayers;
         this.chat = new Chat();
         this.players = new ArrayList<>();
@@ -105,9 +108,9 @@ public class Game implements GameModelInterface {
         DeckCommon deckCommon = new DeckCommon(numPlayers, "commonCards.json");
         this.deckPersonal = new DeckPersonal("personalCards.json", "pointsReference.json");
         this.bagHolder = new BagHolder();
-        this.isStarted = false;
-        this.isPaused = false;
+        this.state = GameState.CREATED;
         this.isLastTurn = false;
+        this.lastRoundDone = false;
         this.playerTurn = -1; //game not started
         this.stdPointsReference = new HashMap<>();
 
@@ -122,37 +125,63 @@ public class Game implements GameModelInterface {
         }
         this.players.add(host);
 
-        this.crashTimer = new ReschedulableTimer();
     }
 
+    /**
+     * Add a new BoardSubscriber to the listener for livingRoom updates
+     * @param subscriber the BoardSubscriber to be added
+     */
     @Override
     public void subscribeToListener(BoardSubscriber subscriber){
         livingRoom.subscribeToListener(subscriber);
     }
 
+    /**
+     * Add a new BookshelfSubscriber to the listener for all the players' bookshelf
+     * @param subscriber the BookshelfSubscriber to be added
+     */
     @Override
     public void subscribeToListener(BookshelfSubscriber subscriber){
         players.forEach(p -> p.getBookshelf().subscribeToListener( subscriber));
     }
 
+    /**
+     * Add a new ChatSubscriber to the chatListener
+     * @param subscriber the ChatSubscriber to be added
+     */
     @Override
     public void subscribeToListener(ChatSubscriber subscriber){
         chat.subscribeToListener(subscriber);
     }
 
+    /**
+     * Add a new PlayerSubscriber to each player's listener
+     * @param subscriber the PlayerSubscriber to be added
+     */
     @Override
     public void subscribeToListener(PlayerSubscriber subscriber){
         players.forEach(p -> p.subscribeToListener(subscriber));
     }
 
+    /**
+     * Add a new GameSubscriber to the gameListener
+     * @param subscriber the GameSubscriber to be added
+     */
     @Override
     public void subscribeToListener(GameSubscriber subscriber) {
         this.gameListener.addSubscriber(subscriber);
     }
 
-
     /**
-     * check if the game can be started
+     * Add a new GameStateSubscriber to the gameStateListener
+     * @param subscriber the GameStateSubscriber to be added
+     */
+    @Override
+    public void subscribeToListener(GameStateSubscriber subscriber) {
+        this.gameStateListener.addSubscriber(subscriber);
+    }
+    /**
+     * check if the game can start
      * @return true, if the game have the right conditions to start, false otherwise
      */
     public boolean canStart() {
@@ -166,7 +195,7 @@ public class Game implements GameModelInterface {
      */
     public void start() throws NotAllPlayersHaveJoinedException, GameNotEndedException {
         if(players.size() < numPlayers) throw new NotAllPlayersHaveJoinedException("player connected: "+players.size()+" players required: "+numPlayers);
-        if(this.isStarted) throw new GameNotEndedException("The game has already started");
+        if(this.isStarted()) throw new GameNotEndedException("The game has already started");
 
         Random random = new Random();
         int firstPlayerIndex = random.nextInt(this.numPlayers);
@@ -190,7 +219,7 @@ public class Game implements GameModelInterface {
         );
 
 
-        this.isStarted = true;
+        this.changeState(GameState.STARTED);
         this.playerTurn = 0;
         this.refillLivingRoom();
         ArrayList<String> tmp = new ArrayList<>();
@@ -209,23 +238,29 @@ public class Game implements GameModelInterface {
      * @throws GameNotStartedException if the game is not started yet
      */
     public void updatePlayerPoints(String username) throws InvalidPlayerException, NotEnoughSpaceException, GameNotStartedException {
-        if (!this.isStarted) throw new GameNotStartedException("the game has not started yet!");
+        boolean toupdate = false;
+        if (!this.isStarted()) throw new GameNotStartedException("the game has not started yet!");
         Optional<Player> player = searchPlayer(username);
 
         if(player.isEmpty())
             throw new InvalidPlayerException("Player is null");
         Player p = player.get();
-        for ( CommonGoalCard c : this.commonGoalCards) {
-            if( c.verifyConstraint(player.get().getBookshelf()) ){
+
+        for ( int i = 0; i <  this.commonGoalCards.size(); i++) {
+            if( this.commonGoalCards.get(i).verifyConstraint(player.get().getBookshelf()) ){
                 try{
-                    p.addToken(c.popTokenTo(p.getUsername()));
-                } catch (TokenAlreadyGivenException ignored){
-
-                } catch (RemoteException e) {
-                    throw new RuntimeException(e);
-                }
-
+                    p.addToken(this.commonGoalCards.get(i).popTokenTo(p.getUsername()));
+                    toupdate = true;
+                    //logger.info("UPDATE STACK");
+                    for(ScoringToken t: this.commonGoalCards.get(i).getTokenStack()){
+                        //logger.info(String.valueOf(t.getScoreValue()));
+                    }
+                } catch (TokenAlreadyGivenException | RemoteException ignored){}
             }
+        }
+        if(toupdate){
+            ArrayList<RemoteCommonGoalCard> remoteCards = new ArrayList<>(this.commonGoalCards);
+            this.gameListener.onCommonCardStateChange(remoteCards);
         }
 
         try {
@@ -235,15 +270,6 @@ public class Game implements GameModelInterface {
         }
     }
 
-
-    /*public ArrayList<ScoringToken> getPlayerTokens(String player) throws InvalidPlayerException {
-        Optional<Player> current = searchPlayer(player);
-        if(current.isEmpty())
-            throw new InvalidPlayerException();
-
-        return new ArrayList<>(current.get().getTokenAcquired());
-    }*/
-
     /**
      * gets the player that is in the turn
      * @return a String representing the name of the player
@@ -251,9 +277,9 @@ public class Game implements GameModelInterface {
      * @throws GameNotStartedException if the game has not started yet
      */
     public String getPlayerInTurn() throws GameEndedException, GameNotStartedException {
-        if(isLastTurn && this.playerTurn == this.players.size() - 1) throw new GameEndedException();
-        if(!this.isStarted) throw new GameNotStartedException("The game has not started yet");
-
+        if(lastRoundDone)
+            throw new GameEndedException();
+        if(!this.isStarted()) throw new GameNotStartedException("The game has not started yet");
         return players.get(playerTurn).getUsername();
     }
 
@@ -273,7 +299,7 @@ public class Game implements GameModelInterface {
              - column is in the proper range
              - destination coordinates refer to only a common column
          */
-        if(!this.isStarted)
+        if(!this.isRunning())
             throw new GameNotStartedException("The game has not started yet");
 
         ArrayList<ItemTile> temp = new ArrayList<>(); // tile to be added to the playerBookshelf
@@ -288,6 +314,9 @@ public class Game implements GameModelInterface {
             throw new InvalidCoordinatesException("Selected column is out of range");
         }
 
+
+        if( currPlayer.getBookshelf().checkFreeSpace(column) < source.size()) throw new NotEnoughSpaceException("not enough space in the bookshelf!");
+
         for(int i=0; i<source.size(); i++) {
             tile = livingRoom.getTile(source.get(i));
             if(tile.isEmpty())
@@ -297,6 +326,7 @@ public class Game implements GameModelInterface {
                 livingRoom.removeTile(source.get(i));
             }
         }
+
         /*
             now we should have validated the source coordinates
             and have the requested tiles in the temp list
@@ -309,8 +339,10 @@ public class Game implements GameModelInterface {
      * @param coords the coordinates in the livingroomboard containing the interested tiles
      * @return true, if is possible to get that tiles, false otherwise
      * @throws EmptySlotException if one of the  coordinates referes to an empty slot
+     * @throws GameNotStartedException if the game hasn't started yet
      */
-    public boolean checkValidRetrieve(ArrayList<Coordinates> coords) throws EmptySlotException {
+    public boolean checkValidRetrieve(ArrayList<Coordinates> coords) throws EmptySlotException, GameNotStartedException {
+        if(!this.isRunning()) throw new GameNotStartedException("the game is not running!");
         return  livingRoom.checkValidRetrieve(coords);
     }
 
@@ -347,7 +379,7 @@ public class Game implements GameModelInterface {
      * @return true, if the bookshelf is full, false otherwise
      */
     public boolean checkBookshelfComplete() {
-        if(!this.isStarted) return false;
+        if(!this.isStarted()) return false;
 
         if ( isLastTurn ) return true;
 
@@ -370,7 +402,7 @@ public class Game implements GameModelInterface {
      * @throws GameNotStartedException if the game has not started yet
      */
     public String getWinner() throws GameNotEndedException, GameNotStartedException {
-        if(!this.isStarted)
+        if(!this.isStarted())
             throw new GameNotStartedException("The game has not started yet");
 
         if(!this.isLastTurn)
@@ -396,6 +428,8 @@ public class Game implements GameModelInterface {
         }
         gameListener.onPlayerWins(winner.getUsername(), winner.getPoints(), scoreboard);
 
+        this.endGame();
+
         return winner.getUsername();
     }
 
@@ -417,18 +451,6 @@ public class Game implements GameModelInterface {
 
                 gameListener.onPlayerJoinGame(newPlayer.getUsername());
                 this.updateListenerSubscriptions();
-
-               /* try {
-                    try {
-                        newPlayer.assignPersonalCard(deckPersonal.draw(1).get(0));
-                    } catch (RemoteException e) {
-                        throw new RuntimeException(e);
-                    }
-                } catch (NotEnoughCardsException e) {
-                    throw new RuntimeException(e);
-                } catch (NegativeFieldException e) {
-                    throw new RuntimeException(e);
-                } */
             } else {
                 throw new NicknameAlreadyUsedException("A player with the same nickname is already present in the game");
             }
@@ -484,8 +506,12 @@ public class Game implements GameModelInterface {
      * get if the game is already started
      * @return true, if the game is started
      */
-    public boolean getIsStarted() {
-        return isStarted;
+    public boolean isStarted() {
+        return this.state != GameState.CREATED;
+    }
+
+    private boolean isRunning(){
+        return this.state == GameState.STARTED || this.state == GameState.RESUMED;
     }
 
     /**
@@ -496,7 +522,9 @@ public class Game implements GameModelInterface {
 
         if(this.isLastTurn && this.playerTurn == this.players.size() - 1){
             try {
+                this.lastRoundDone = true;
                 this.getWinner();
+
             } catch (GameNotEndedException | GameNotStartedException ignored) {
             }
             return false;
@@ -594,16 +622,29 @@ public class Game implements GameModelInterface {
 
             crashedPlayers.add(tmpPlayer.get());
             this.gameListener.notifyPlayerCrashed(tmpPlayer.get().getUsername());
+
             logger.info(username+" crashed!");
         }
         else
             throw new PlayerNotFoundException("The player with this username has not been found in the game");
 
-        if(crashedPlayers.size() == numPlayers - 1) {
-            this.isPaused = true;
-            this.crashTimer.schedule(this.gameListener::notifyCrashedGame, this.crashTimerDelay);
-            this.gameListener.notifyPausedGame();
+        if(this.isStarted() && crashedPlayers.size() == numPlayers - 1) {
+            this.changeState(GameState.PAUSED);
+            this.crashTimer = new ReschedulableTimer();
+            this.crashTimer.schedule(this::endGame, this.crashTimerDelay);
+
         }
+    }
+
+    private void endGame() {
+        this.changeState(GameState.ENDED);
+    }
+
+    private void changeState(GameState gameState) {
+        this.state = gameState;
+        logger.info("GAME "+this+": GAME STATE CHANGED TO "+this.state);
+        this.gameListener.notifyChangedGameState(this.state);
+        this.gameStateListener.notifyChangedGameState(this.state, this);
     }
 
     /**
@@ -622,10 +663,9 @@ public class Game implements GameModelInterface {
         else
             throw new PlayerNotFoundException("The player with this username has not been found in the game");
 
-        if(this.isPaused) {
-            isPaused = false;
+        if(this.state.equals(GameState.PAUSED)) {
             this.crashTimer.cancel();
-            this.gameListener.notifyResumedGame();
+            this.changeState(GameState.RESUMED);
         }
     }
 
@@ -634,22 +674,25 @@ public class Game implements GameModelInterface {
      * @param userToBeUpdated the username of the user that needs to receive the updates
      */
     public void triggerAllListeners(String userToBeUpdated) {
+        Set<String> alreadyJoinedPlayers = new HashSet<>();
         for(Player player : players){
             try {
                 player.triggerListener(userToBeUpdated);
                 if(!player.getUsername().equals(userToBeUpdated))
-                    gameListener.onPlayerJoinGame(player.getUsername());
+                    alreadyJoinedPlayers.add(player.getUsername());
+
             } catch (RemoteException e) {
                 throw new RuntimeException(e);
             }
             player.getBookshelf().triggerListener(userToBeUpdated);
         }
+        gameListener.notifyAlreadyJoinedPlayers(alreadyJoinedPlayers, userToBeUpdated);
 
         this.livingRoom.triggerListener(userToBeUpdated);
         ArrayList<RemoteCommonGoalCard> remoteCards = new ArrayList<>(this.commonGoalCards);
         this.gameListener.onCommonCardDraw(userToBeUpdated, remoteCards);
 
-        if(this.isStarted) {
+        if(this.isStarted()) {
             ArrayList<String> tmp = new ArrayList<>();
             for(Player player : this.players){
                 tmp.add(player.getUsername());
@@ -657,6 +700,8 @@ public class Game implements GameModelInterface {
 
             this.gameListener.notifyTurnOrder(tmp);
             this.gameListener.notifyPlayerInTurn(players.get(playerTurn).getUsername());
+            this.gameListener.notifyChangedGameState(GameState.STARTED);
         }
+
     }
 }

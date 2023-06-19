@@ -1,5 +1,7 @@
 package it.polimi.ingsw.server.controller;
 
+import it.polimi.ingsw.GameState;
+import it.polimi.ingsw.remoteInterfaces.GameStateSubscriber;
 import it.polimi.ingsw.server.ReschedulableTimer;
 import it.polimi.ingsw.server.model.exceptions.*;
 import it.polimi.ingsw.server.model.game.GameModelInterface;
@@ -7,6 +9,7 @@ import it.polimi.ingsw.server.model.lobby.Lobby;
 import it.polimi.ingsw.remoteInterfaces.RemoteGameController;
 import it.polimi.ingsw.remoteInterfaces.RemoteLobbyController;
 
+import java.io.Serial;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,9 +19,10 @@ import java.rmi.server.*;
 /**
  * the lobby controller ensures the communication through client controller and server model
  */
-public class LobbyController extends UnicastRemoteObject implements RemoteLobbyController {
+public class LobbyController extends UnicastRemoteObject implements RemoteLobbyController, GameStateSubscriber {
 
 
+    private static final Long ID = -8605724040966311592L;
     /**
      * the reference to the lobby model
      */
@@ -44,6 +48,7 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
     /**
      * creates the controller of the lobby
      * @param lobbyModel the model of the lobby
+     * @throws RemoteException RMI Exception
      */
     public LobbyController(Lobby lobbyModel) throws RemoteException {
         super();
@@ -59,10 +64,13 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
      * @param player the username of the player to be added
      * @return a RemoteGameController, if the player was crashed, null if the player is correctly logged in the  lobby
      * @throws NicknameAlreadyUsedException if the player is already inside a game
-     * @throws RemoteException              in case of a network error occurs
+     * @throws RemoteException RMI Exception
+     * @throws InvalidPlayerException the username used is invalid
      */
     public RemoteGameController enterInLobby(String player) throws RemoteException, NicknameAlreadyUsedException, InvalidPlayerException {
         synchronized (lobbyLock) {
+            if(player.equals(ID.toString()))
+                throw new InvalidPlayerException("Invalid username");
             try {
                 lobbyModel.createPlayer(player);
                 return null;
@@ -89,7 +97,11 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
     /**
      * add a logged player to a game
      * @param player the nickname of the player to be added
-     * @return an optional of GameController, if no game is in the lobby, an empty value will be filled
+     * @return remote game controller instance reference
+     * @throws RemoteException RMI Exception
+     * @throws NicknameAlreadyUsedException the nickname used by the player is already taken
+     * @throws NoAvailableGameException no game is available
+     * @throws InvalidPlayerException the nickname is invalid
      */
     public RemoteGameController addPlayerToGame(String player) throws RemoteException, NicknameAlreadyUsedException, NoAvailableGameException, InvalidPlayerException {
         synchronized (lobbyLock) {
@@ -115,14 +127,14 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
             return gameController;
         }
     }
-
-
     /**
-     * creates a game for a certain number of players
-     *
-     * @param player   the username of the player
+     * creates a game for a certain number of player
+     * @param player the username of the player
      * @param nPlayers the number of players for the game
      * @return the GameController, if the game creation is not possible, an empty value will be returned
+     * @throws RemoteException RMI Exception
+     * @throws InvalidPlayerException the nickname is invalid
+     * @throws PlayersNumberOutOfRange the number of player is not valid ( less than 2 or greater than 4 )
      */
     public RemoteGameController createGame(String player, int nPlayers) throws RemoteException, InvalidPlayerException, PlayersNumberOutOfRange {
         synchronized (lobbyLock) {
@@ -135,18 +147,19 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
                 throw new RuntimeException(e);
             }
             gameController = new GameController(gameModel);
+            gameController.subscribeToListener((GameStateSubscriber) this);
             this.gameControllers.put(gameModel, gameController);
-
             this.stopTimer(player);
             return gameController;
         }
     }
 
+
     /**
      * used to handle the crash of the player, it removes the player from the waiting list
      * @param username the username of the player
      * @throws PlayerNotFoundException if the player doesn't exist in the lobby
-     * @throws RemoteException
+     * @throws RemoteException RMI Exception
      */
     public void handleCrashedPlayer(String username) throws PlayerNotFoundException, RemoteException {
         synchronized (timers) {
@@ -188,7 +201,7 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
      * method used in RMI for triggering the heartbeat of the client,
      * if a client doesn't trigger this method for a too long period, the client will be considered crashed
      * @param username the username of the player
-     * @throws RemoteException
+     * @throws RemoteException RMI Exception
      */
     public void triggerHeartBeat(String username) throws RemoteException{
         synchronized (this.timers){
@@ -200,4 +213,24 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
         }
     }
 
+    @Override
+    public String getSubscriberUsername() throws RemoteException {
+        return ID.toString();
+    }
+
+    /**
+     * When a game ends this method removes that reference from the list of games
+     * @param newState new state of the game
+     * @param gameModelInterface reference to the game model
+     */
+    @Override
+    public void notifyChangedGameStatus(GameState newState, GameModelInterface gameModelInterface) {
+        //if the game is ended delete the record of the game from the map
+        if(newState == GameState.ENDED) {
+            gameControllers.remove(gameModelInterface);
+        }
+
+
+        // handle exit players from the game
+    }
 }

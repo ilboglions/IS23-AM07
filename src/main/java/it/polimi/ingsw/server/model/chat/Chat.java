@@ -27,6 +27,10 @@ public class Chat {
         chatListener = new ChatListener();
     }
 
+    /**
+     * Add a ChatSubscriber to the chatListener
+     * @param subscriber new ChatSubscriber to be added
+     */
     public void subscribeToListener(ChatSubscriber subscriber){
         chatListener.addSubscriber(subscriber);
     }
@@ -69,6 +73,10 @@ public class Chat {
     }
 
 
+    /**
+     * Remove a user from the ChatListener's list
+     * @param username username of the player to be removed
+     */
     public void unsubscribeFromListener(String username) {
         this.chatListener.removeSubscriber(username);
     }

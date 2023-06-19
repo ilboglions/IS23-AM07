@@ -161,5 +161,13 @@ public class MarioPyramidTest {
         testtiles.put(new Coordinates(4,3), ItemTile.CAT);
         testingbookshelf = new CardBookshelf(testtiles);
         assertFalse(card.verifyConstraint(testingbookshelf));
+
+
+
+        testtiles = new HashMap<>();
+        testtiles.put(new Coordinates(0,4), ItemTile.CAT);
+        testingbookshelf = new CardBookshelf(testtiles);
+        assertFalse(card.verifyConstraint(testingbookshelf));
+
     }
 }

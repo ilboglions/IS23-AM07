@@ -66,7 +66,7 @@ public class Message {
     }
 
     /**
-     * The method used to retrive the recipient of the message, if present
+     * The method used to retrieve the recipient of the message, if present
      * @return an Optional String containing the username of the recipient if the message is a private message, an empty optional otherwise
      */
     public Optional<String> getRecipient() {

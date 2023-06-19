@@ -36,6 +36,7 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
      * @param nPlayers the number of players of the actual game
      * @param configuration the path to the json configuration file
      * @throws PlayersNumberOutOfRange if the nPlayers is less than 2 and grater than 4
+     * @throws IllegalFilePathException if the configuration string is empty
      */
     public DeckCommon(int nPlayers, String configuration) throws PlayersNumberOutOfRange, IllegalFilePathException {
         Objects.requireNonNull(configuration, "You passed a null instead of a String for the configuration file");
@@ -56,6 +57,7 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
      * @throws NegativeFieldException if the nElements is negative
      * @throws PlayersNumberOutOfRange if the number of players is less than 2 or grater than 4
      * @throws NotEnoughCardsException if the number of the cards read from the JSON file is less than the required cards with nElements
+     * @throws RemoteException RMI Exception
      */
     public ArrayList<CommonGoalCard> draw(int nElements) throws NegativeFieldException, PlayersNumberOutOfRange, NotEnoughCardsException, RemoteException {
         ArrayList<CommonGoalCard> selected = new ArrayList<>();
@@ -93,6 +95,7 @@ public class DeckCommon implements Distributable<CommonGoalCard>{
      * @throws PlayersNumberOutOfRange if the number of players exceed the limit, this exception will be thrown
      * @throws NegativeFieldException if the JsonObject contains a negative field, NegativeFieldException will be thrown
      * @throws IllegalArgumentException if the JsonObject doesn't match the right pattern, an IllegalArgumentException will be thrown
+     * @throws RemoteException RMI Exception
      */
     private CommonGoalCard createCard(JsonObject cardConfiguration, int nPlayers) throws PlayersNumberOutOfRange, NegativeFieldException, IllegalArgumentException, RemoteException {
         Objects.requireNonNull(cardConfiguration, "You passed a null instead of a JsonObject");

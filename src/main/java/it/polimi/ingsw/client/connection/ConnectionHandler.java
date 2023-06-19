@@ -55,7 +55,18 @@ public interface ConnectionHandler {
      * @throws RemoteException if a connection problem occurs
      */
     void sendHeartBeat() throws RemoteException;
+
+    /**
+     * used to send a broadcast chat message
+     * @param content content of the message
+     */
     void sendMessage(String content);
-    void sendMessage(String content, String recipient);
+
+    /**
+     * used to send a private chat message
+     * @param recipient recipient of the message
+     * @param content content of the message
+     */
+    void sendMessage( String recipient, String content);
 
 }

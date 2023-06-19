@@ -4,6 +4,7 @@ import it.polimi.ingsw.server.model.bookshelf.Bookshelf;
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.server.model.exceptions.PlayersNumberOutOfRange;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
+import it.polimi.ingsw.server.model.tiles.ItemTile;
 
 import java.rmi.RemoteException;
 
@@ -15,6 +16,7 @@ public class MarioPyramid extends CommonGoalCard{
      * @param nPlayers    represents the numbers of players that are playing the game, necessary for the tokens to be assigned at the card
      * @param description it is used for explain the card's constraint
      * @throws PlayersNumberOutOfRange when nPlayers exceed the numbers of the tile, tooManyPlayersException will be thrown
+     * @throws RemoteException RMI Exception
      */
     public MarioPyramid(int nPlayers, String description, CommonCardType name) throws PlayersNumberOutOfRange, RemoteException {
         super(nPlayers, description, name);
@@ -22,14 +24,7 @@ public class MarioPyramid extends CommonGoalCard{
 
 
     public boolean verifyConstraint(Bookshelf bookshelf) {
-
-
-        boolean found = checkPyramid(false,bookshelf);
-        if(found)
-            return true;
-        return checkPyramid(true,bookshelf);
-
-
+        return checkPyramid(true,bookshelf) || checkPyramid(false,bookshelf);
 }
 
     /**
@@ -44,13 +39,14 @@ public class MarioPyramid extends CommonGoalCard{
         int c;
         int startColumn;
 
-        if(reverse) startColumn = bookshelf.getColumns() - 1;
+        if(reverse) startColumn = bookshelf.getColumns() - 1; //choosing column to start with
         else startColumn = 0;
         int startingOffset;
 
         try{
-            while(r < bookshelf.getRows() && bookshelf.getItemTile(new Coordinates(r,startColumn)).isPresent()) r++;
-            if(r==0)
+            while(r < bookshelf.getRows() && bookshelf.getItemTile(new Coordinates(r,startColumn)).isPresent() && !bookshelf.getItemTile(new Coordinates(r,startColumn)).get().equals(ItemTile.EMPTY))
+                r++;
+            if(r < bookshelf.getRows() - 1)
                 return false;
             else if(r==bookshelf.getRows()) {
                 refRow = bookshelf.getRows() - 1;

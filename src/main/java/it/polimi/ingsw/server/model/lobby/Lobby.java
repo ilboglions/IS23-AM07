@@ -45,7 +45,7 @@ public class Lobby {
         Optional<Player> op =  waitingPlayers.stream().filter(p -> p.getUsername().equals(playerName)).findFirst();
         if ( op.isPresent() ){
             Game result = games.stream()
-                    .filter(tmp -> !tmp.getIsStarted())
+                    .filter(tmp -> !tmp.isStarted())
                     .findFirst()
                     .orElseThrow(()-> new NoAvailableGameException("All the games have already started"));
 
@@ -93,6 +93,7 @@ public class Lobby {
      * create a new player
      * @param nickname the nickname to be assigned to the player
      * @throws NicknameAlreadyUsedException if the nickname has been already chosen by another player
+     * @throws InvalidPlayerException if the username string is null, empty or longer than 15 characters
      */
     public void createPlayer(String nickname) throws NicknameAlreadyUsedException, InvalidPlayerException  {
         if(nickname == null)
@@ -117,6 +118,11 @@ public class Lobby {
     }
 
 
+    /**
+     * This method removes a crashed player from the waitingPlayers list if it's present
+     * @param username username of the crashed player
+     * @throws PlayerNotFoundException if the player is not present in the lobby
+     */
     public void handleCrashedPlayer(String username) throws PlayerNotFoundException {
         Objects.requireNonNull(username);
 

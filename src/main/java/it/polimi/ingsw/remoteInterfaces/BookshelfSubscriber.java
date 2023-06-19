@@ -16,6 +16,7 @@ public interface BookshelfSubscriber extends ListenerSubscriber {
      * @param player the username of the players that owns the bookshelf
      * @param tilesInserted the tile inserted by the player
      * @param colChosen the column chosen for the insertion
+     * @throws RemoteException RMI Exception
      */
     void updateBookshelfStatus(String player, ArrayList<ItemTile> tilesInserted, int colChosen, Map<Coordinates, ItemTile> currentTilesMap) throws RemoteException;
 }

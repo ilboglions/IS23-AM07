@@ -22,6 +22,17 @@ public class NadjacentElements extends CommonGoalCard{
     private final int nGroups;
     private final int nElems;
 
+    /**
+     * Creates a NadjacentElements Card
+     * @param nPlayers number of players of the game
+     * @param description description of the card
+     * @param name type of the card
+     * @param nGroups number of groups
+     * @param nElems number of elements for each group
+     * @throws PlayersNumberOutOfRange if the number of players is less than 2 or greater than 4
+     * @throws NegativeFieldException if nGroups is less or equal to 0 or nElems is less or equal to 0
+     * @throws RemoteException RMI Exception
+     */
     public NadjacentElements(int nPlayers, String description, CommonCardType name,int nGroups, int nElems) throws PlayersNumberOutOfRange, NegativeFieldException, RemoteException {
         super(nPlayers, description, name);
         if( nGroups <= 0 || nElems <= 0 ) throw new NegativeFieldException("can't assign negative paramaters!");
@@ -29,6 +40,12 @@ public class NadjacentElements extends CommonGoalCard{
         this.nElems = nElems;
     }
 
+    /**
+     * verifies if in the bookshelf there's at least nGroups of nElems adjacent tiles.
+     * @param bookshelf the player bookshelf to verify
+     * @return true if the constraint is verified, false otherwise.
+     * @throws NotEnoughSpaceException if nGroups * nElems > size of the bookshelf
+     */
     public boolean verifyConstraint(Bookshelf bookshelf) throws NotEnoughSpaceException{
 
 

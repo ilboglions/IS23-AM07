@@ -24,25 +24,25 @@ class PersonalGoalCardTest {
     @DisplayName("Test all the exceptions")
     void exceptionTest() {
         assertThrows(NullPointerException.class, ()->{
-           PersonalGoalCard test = new PersonalGoalCard(null, new HashMap<>());
+           PersonalGoalCard test = new PersonalGoalCard(null, new HashMap<>(), 0);
         });
 
         assertThrows(NullPointerException.class, ()->{
-            PersonalGoalCard test = new PersonalGoalCard(new HashMap<>(), null);
+            PersonalGoalCard test = new PersonalGoalCard(new HashMap<>(), null, 1);
         });
 
         assertThrows(IllegalArgumentException.class, ()->{
             Map<Integer,Integer> testPointsReference = new HashMap<>();
             testPointsReference.put(1,1);
 
-            PersonalGoalCard test = new PersonalGoalCard(new HashMap<>(), testPointsReference);
+            PersonalGoalCard test = new PersonalGoalCard(new HashMap<>(), testPointsReference, 1);
         });
 
         assertThrows(IllegalArgumentException.class, ()->{
             Map<Coordinates, ItemTile> testPattern = new HashMap<>();
             testPattern.put(new Coordinates(1,1), ItemTile.BOOK);
 
-            PersonalGoalCard test = new PersonalGoalCard(testPattern, new HashMap<>());
+            PersonalGoalCard test = new PersonalGoalCard(testPattern, new HashMap<>(), 1);
         });
     }
 
@@ -69,7 +69,7 @@ class PersonalGoalCardTest {
         testStdPoints.put(5,9);
         testStdPoints.put(6,12);
 
-        PersonalGoalCard test = new PersonalGoalCard(testPattern, testStdPoints);
+        PersonalGoalCard test = new PersonalGoalCard(testPattern, testStdPoints, 0);
 
         for(Map.Entry<Coordinates, ItemTile> entry : testPattern.entrySet()) {
             assertTrue(test.getBookshelf().getItemTile(entry.getKey()).isPresent() &&

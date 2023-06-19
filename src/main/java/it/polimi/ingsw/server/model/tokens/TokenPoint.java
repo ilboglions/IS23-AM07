@@ -1,9 +1,11 @@
 package it.polimi.ingsw.server.model.tokens;
 
+import java.io.Serializable;
+
 /**
  * the tokenPoint enums represent the possible values of the tokens placed on the common cards
  */
-public enum TokenPoint {
+public enum TokenPoint implements Serializable {
 
     FIRSTPLAYER(1),
     TWO(2),

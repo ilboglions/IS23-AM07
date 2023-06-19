@@ -1,5 +1,8 @@
 package it.polimi.ingsw.messages;
 
+/**
+ * Enum representing all the type of messages sent over the network
+ */
 public enum MessageType {
     JOIN_LOBBY,
     LOGIN_RETURN,
@@ -27,6 +30,7 @@ public enum MessageType {
     NOTIFY_PLAYER_CRASHED,
     NOTIFY_TURN_ORDER,
     GAME_RECEIVED_MESSAGE,
-    GAME_STATUS
+    GAME_STATUS,
+    ALREADY_JOINED_PLAYERS
 
 }

@@ -108,7 +108,7 @@ public class CLITest {
         testPointsReference.put(4,6);
         testPointsReference.put(6,8);
 
-        cli.drawPersonalCard(testPattern, testPointsReference);
+        //cli.drawPersonalCard(testPattern, testPointsReference);
 
         String description1 = "Two columns each formed by 6 different types of tiles.";
         String description2 = "Two lines each formed by 5 different types of tiles. One line can show the same or a different combination of the other line.";

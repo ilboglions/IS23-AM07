@@ -30,6 +30,7 @@ public class CheckPattern extends CommonGoalCard{
      * @param pattern the possible patterns to verify
      * @param sameTiles true, if the tiles should be the same for all the pattern
      * @throws PlayersNumberOutOfRange if the players number do not respect the specific
+     * @throws RemoteException RMI Exception
      */
     public CheckPattern(int nPlayers, String description, CommonCardType name, ArrayList<ArrayList<Coordinates>> pattern, boolean sameTiles) throws PlayersNumberOutOfRange, RemoteException {
 
@@ -42,6 +43,12 @@ public class CheckPattern extends CommonGoalCard{
 
     }
 
+    /**
+     * This method checks if a bookshelf satisfies the card constraint
+     * @param bookshelf the bookshelf to verify
+     * @return true if the constraint is satisfied
+     * @throws NotEnoughSpaceException if the pattern is not satisfiable by the bookshelf (coordinates out of bookshelf size)
+     */
     public boolean verifyConstraint(Bookshelf bookshelf) throws NotEnoughSpaceException {
 
         if ( pattern.stream().anyMatch( el -> el.stream().anyMatch( e -> e.getRow() >= bookshelf.getRows() || e.getColumn() >= bookshelf.getColumns()) ) )

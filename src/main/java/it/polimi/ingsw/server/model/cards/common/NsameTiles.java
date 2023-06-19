@@ -10,12 +10,29 @@ import java.rmi.RemoteException;
 
 public class NsameTiles extends  CommonGoalCard{
     private final int nTiles;
+
+    /**
+     * Creates a NsameTiles Card
+     * @param nPlayers number of players of the game
+     * @param description description of the card
+     * @param name type of the card
+     * @param nTiles number of tiles of the same type
+     * @throws PlayersNumberOutOfRange  if the number of players is less than 2 or  greater than 4
+     * @throws NegativeFieldException if nTiles is less or equal to 0
+     * @throws RemoteException RMI Exception
+     */
     public NsameTiles(int nPlayers, String description, CommonCardType name, int nTiles) throws PlayersNumberOutOfRange, NegativeFieldException, RemoteException {
         super(nPlayers, description, name);
         if( nTiles <= 0) throw new NegativeFieldException("can't assign negative parameters!");
         this.nTiles = nTiles;
     }
 
+    /**
+     * Verifies if there's nTiles tiles of the same type in the bookshelf
+     * @param bookshelf the player bookshelf to verify
+     * @return true if the constraint is verified, false otherwise.
+     * @throws NotEnoughSpaceException nTiles > size of thebookshelf
+     */
     public boolean verifyConstraint(Bookshelf bookshelf) throws NotEnoughSpaceException {
 
         if(nTiles > bookshelf.getRows()*bookshelf.getColumns()) throw new NotEnoughSpaceException(nTiles+" required, but only "+bookshelf.getRows()*bookshelf.getColumns()+" available!");

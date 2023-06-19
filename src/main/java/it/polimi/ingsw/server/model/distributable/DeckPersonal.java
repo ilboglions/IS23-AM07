@@ -35,6 +35,7 @@ public class DeckPersonal implements Distributable<PersonalGoalCard> {
      * The deckPersonal constructor assign the configurations parameters in order to create the cards.
      * @param configurationFile used for the card pattern
      * @param pointsReferenceFile used to create a reference for the points
+     * @throws IllegalFilePathException one of the argument is an empty string
      */
     public DeckPersonal(String configurationFile, String pointsReferenceFile) throws IllegalFilePathException {
         Objects.requireNonNull(configurationFile, "You passed a null instead of a String for the configuration file");
@@ -46,16 +47,16 @@ public class DeckPersonal implements Distributable<PersonalGoalCard> {
         this.pointsReferenceFile = pointsReferenceFile;
         this.generatedCardsIndex = new HashSet<>();
     }
-
     /**
      * Draw method consents to draw a number of PersonalGoalCard elements
      * @param nElements the number of elements to draw
      * @return an ArrayList that contains the drawn elements
      * @throws NotEnoughCardsException if the number of cards read from the JSON is less than the nElements required
+     * @throws NegativeFieldException if nElements less or equal to 0
      */
     @Override
     public ArrayList<PersonalGoalCard> draw(int nElements) throws NotEnoughCardsException, NegativeFieldException {
-        if(nElements < 0)
+        if(nElements <= 0)
             throw new NegativeFieldException("You can't draw a negative number of cards");
 
         ArrayList<PersonalGoalCard> selected = new ArrayList<>();
@@ -83,12 +84,9 @@ public class DeckPersonal implements Distributable<PersonalGoalCard> {
             Map<Coordinates, ItemTile> pattern = gson.fromJson(extractedCard, mapType);
 
             try {
-                selected.add(new PersonalGoalCard(pattern, pointsReference));
-            } catch (RemoteException e) {
-                throw new RuntimeException(e);
-            }
+                selected.add(new PersonalGoalCard(pattern, pointsReference, extractedCardIndex));
+            } catch (RemoteException ignored) {}
         }
-
         return selected;
     }
 

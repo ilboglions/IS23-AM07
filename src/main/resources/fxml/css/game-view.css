@@ -4,6 +4,60 @@
     -fx-background-position: center;
 }
 
+.livingRoom{
+    -fx-background-image: url("../../images/boards/livingroom.png");
+    -fx-background-repeat: stretch;
+    -fx-background-position: center;
+    -fx-background-size: contain;
+}
+
+.containerCommonCard{
+    -fx-background-image: url("../../images/misc/base_pagina2.jpg");
+    -fx-background-repeat: stretch;
+    -fx-background-position: center;
+    -fx-background-size: auto;
+    -fx-background-radius: 10 10 10 10;
+    -fx-padding: 10;
+}
+
+.containerSelectedTiles{
+    -fx-background-image: url("../../images/misc/base_pagina2.jpg");
+    -fx-background-repeat: stretch;
+    -fx-background-position: center;
+    -fx-background-size: auto;
+    -fx-padding: 10;
+    -fx-hgap: 10;
+    -fx-vgap: 10;
+}
+
 .shape_corner{
     -fx-border-radius: 5px;
+}
+
+.selectedImage{
+    -fx-opacity: 0.5;
+    -fx-border-color: red;
+    -fx-border-width: 2;
+    -fx-border-style: solid;
+}
+
+.textFlow {
+    -fx-background-color: rgba(0, 0, 0, 0.1);
+}
+
+.popupEndOfGame{
+    -fx-background-image: url("../../images/misc/base_pagina2.jpg");
+    -fx-background-repeat: stretch;
+    -fx-background-position: center;
+    -fx-background-size: auto;
+    -fx-background-radius: 10 10 10 10;
+    -fx-padding: 10;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane {
+    -fx-background-color: transparent;
 }

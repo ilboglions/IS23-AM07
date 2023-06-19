@@ -2,6 +2,9 @@ package it.polimi.ingsw.client.view.CLI;
 
 import static it.polimi.ingsw.client.view.CLI.CliView.*;
 
+/**
+ * enum with the types of scene with the rendering attributes (dimensions).
+ */
 public enum Scenario {
     LOBBY(100,15, 8, 15, 5, 65),
     GAME( MAX_HORIZ_TILES,MAX_VERT_TILES, START_R_BOX_NOTIFICATION, START_C_BOX_NOTIFICATION,LENGTH_R_BOX_NOTIFICATION,LENGTH_C_BOX_NOTIFICATION);
@@ -24,25 +27,51 @@ public enum Scenario {
         this.lengthCNotifications = lengthCNotifications;
     }
 
+    /**
+     *
+     * @return the number of rows of this scenario
+     */
     public int getRows(){
         return this.rows;
     }
+
+    /**
+     *
+     * @return the number of columns of this scenario
+     */
     public int getCols(){
         return this.cols;
     }
 
+    /**
+     *
+     * @return the starting column for the notifications
+     */
     public int getStartCNotifications() {
         return startCNotifications;
     }
 
+    /**
+     *
+     * @return the starting row for the notifications
+     */
     public int getStartRNotifications() {
         return startRNotifications;
     }
+
+    /**
+     *
+     * @return the length (in row units ) of the notifications
+     */
 
     public int getLengthRNotifications() {
         return lengthRNotifications;
     }
 
+    /**
+     *
+     * @return the length (in column units) of the notifications
+     */
     public int getLengthCNotifications() {
         return this.lengthCNotifications;
     }

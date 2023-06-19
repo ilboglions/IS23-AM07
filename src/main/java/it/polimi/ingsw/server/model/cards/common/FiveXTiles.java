@@ -18,6 +18,16 @@ public class FiveXTiles extends  CommonGoalCard{
      * if true, the constraint will verify that all the tiles following it are of the same type
      */
     private final boolean sameTiles;
+
+    /**
+     * Creates a FixeXTiles Card
+     * @param nPlayers number of players of the game
+     * @param description description of the card
+     * @param name type of the card
+     * @param sameTiles true if the tiles have to be of the same type, false otherwise
+     * @throws PlayersNumberOutOfRange if the number of players is less than 2 or greater than 4
+     * @throws RemoteException RMI Exception
+     */
     public FiveXTiles(int nPlayers, String description, CommonCardType name,boolean sameTiles) throws PlayersNumberOutOfRange, RemoteException {
         super(nPlayers, description, name);
         this.sameTiles = sameTiles;
