@@ -56,10 +56,6 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
         closeConnectionFlag = false;
         try {
             this.outputStream = new ObjectOutputStream(socket.getOutputStream());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        try {
             this.inputStream = new ObjectInputStream(socket.getInputStream());
         } catch (IOException e) {
             throw new RuntimeException(e);

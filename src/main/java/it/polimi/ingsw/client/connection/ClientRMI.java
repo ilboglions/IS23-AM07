@@ -146,9 +146,7 @@ public class ClientRMI implements ConnectionHandler{
             gameController.subscribeToListener((PlayerSubscriber) this.gameModel);
             gameController.subscribeToListener((BookshelfSubscriber) this.gameModel);
             gameController.subscribeToListener((BoardSubscriber) this.gameModel);
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        }
+        } catch (RemoteException ignored) {}
 
     }
 

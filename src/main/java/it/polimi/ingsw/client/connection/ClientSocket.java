@@ -392,14 +392,10 @@ public class ClientSocket implements ConnectionHandler{
      * @param message chat notification message
      */
     private void parse(NotifyNewChatMessage message){
-        try {
-            if(message.getRecipient().isEmpty())
-                gameModel.receiveMessage(message.getSender(),message.getContent());
-            else
-                gameModel.receiveMessage(message.getSender(), message.getRecipient(), message.getContent());
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        }
+        if(message.getRecipient().isEmpty())
+            gameModel.receiveMessage(message.getSender(),message.getContent());
+        else
+            gameModel.receiveMessage(message.getSender(), message.getRecipient(), message.getContent());
     }
 
     /**
@@ -479,11 +475,7 @@ public class ClientSocket implements ConnectionHandler{
      * @param message update message
      */
     private  void parse(PointsUpdateMessage message){
-        try {
-            gameModel.updatePoints(message.getUsername(), message.getTotalPoints(), message.getAddedPoints());
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        }
+        gameModel.updatePoints(message.getUsername(), message.getTotalPoints(), message.getAddedPoints());
     }
 
     /**
@@ -496,29 +488,17 @@ public class ClientSocket implements ConnectionHandler{
     }
 
     private void parse(TokenUpdateMessage message){
-        try {
-            gameModel.updateTokens(message.getPlayer(), message.getTokens());
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        }
+        gameModel.updateTokens(message.getPlayer(), message.getTokens());
 
     }
 
     private void parse(NewPlayerInGame message){
-        try {
-            if(!this.username.equals(message.getNewPlayerUsername()))
-                gameModel.notifyPlayerJoined(message.getNewPlayerUsername());
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        }
+        if(!this.username.equals(message.getNewPlayerUsername()))
+            gameModel.notifyPlayerJoined(message.getNewPlayerUsername());
     }
 
     private void parse(AlreadyJoinedPlayersMessage message){
-        try {
-            gameModel.notifyAlreadyJoinedPlayers(message.getAlreadyJoinedPlayers());
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        }
+        gameModel.notifyAlreadyJoinedPlayers(message.getAlreadyJoinedPlayers());
     }
 
     private void parse(NotifyPlayerInTurnMessage message){
@@ -538,11 +518,7 @@ public class ClientSocket implements ConnectionHandler{
     }
 
     private void parse(GameStatusMessage message) {
-        try {
-            gameModel.notifyChangedGameState(message.getState());
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        }
+        gameModel.notifyChangedGameState(message.getState());
     }
 
 

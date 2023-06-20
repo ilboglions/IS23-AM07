@@ -36,6 +36,7 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
      */
     private final ViewInterface view;
     private final String username;
+
     private Boolean gameStarted;
     private final Map<String, Integer> playerPoints;
     /**
@@ -68,7 +69,7 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
      * Insert a new message inside the local history
      * @param msg the message to put in the local chat
      */
-    public synchronized void addMessage(Message msg) throws RemoteException{
+    public synchronized void addMessage(Message msg){
         playerChat.add(0, msg);
         List<String> outputMessages = this.playerChat
                                             .stream()
@@ -192,24 +193,22 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
      * Parse the message between private & broadcast
      * @param from the sender of the message
      * @param msg the message
-     * @throws RemoteException
      */
     @Override
-    public synchronized void receiveMessage(String from, String recipient, String msg) throws RemoteException {
+    public synchronized void receiveMessage(String from, String recipient, String msg){
         this.addMessage(new Message(from, recipient, msg));
     }
 
     /**
-     * Notifies the local player that a new one joined the game, updating the viewhe username of the player that has joined
-     * @throws RemoteException
+     * Notifies the local player that a new one joined the game
      */
     @Override
-    public synchronized void receiveMessage(String from, String msg) throws RemoteException {
+    public synchronized void receiveMessage(String from, String msg){
         this.addMessage(new Message(from, msg));
     }
 
     @Override
-    public synchronized void notifyPlayerJoined(String username) throws RemoteException {
+    public synchronized void notifyPlayerJoined(String username){
         this.joinPlayer(username);
         view.postNotification("New player joined!",username+" joined the game");
     }
@@ -219,7 +218,7 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
      * @param username the username of the winning player
      * @param points the points of the player that won the game
      * @param scoreboard the total scoreboard, already ordered, the key is the username and the value the points of the user
-     * @throws RemoteException
+     * @throws RemoteException RMI Exception
      */
     @Override
     public synchronized void notifyWinningPlayer(String username, int points, Map<String, Integer> scoreboard) throws RemoteException {
@@ -255,7 +254,7 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
     /**
      * Norifies the player that another player crashed
      * @param userCrashed username of the crashed player
-     * @throws RemoteException
+     * @throws RemoteException RMI Exception
      */
     @Override
     public synchronized void notifyPlayerCrashed(String userCrashed) throws RemoteException {
@@ -270,36 +269,38 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
         for(String player : players){
             try {
                 view.drawBookShelf(new HashMap<>(), player, (this.players.indexOf(player) - this.players.indexOf(this.username) + this.players.size()) % this.players.size());
-            } catch (InvalidCoordinatesException ignored) {
-            }
+            } catch (InvalidCoordinatesException ignored) {}
         }
     }
 
     /**
      * Get the username of the local player
      * @return username of the player
-     * @throws RemoteException
      */
     @Override
-    public String getSubscriberUsername() throws RemoteException {
+    public String getSubscriberUsername(){
         return this.username;
     }
 
     /**
-     * Update the points of a plater
+     * Update the points of a player
      * @param player the player which points are updated
      * @param overallPoints the overall points of the player
      * @param addedPoints the points added on this state change
-     * @throws RemoteException RMI exception
      */
     @Override
-    public synchronized void updatePoints(String player, int overallPoints, int addedPoints) throws RemoteException {
+    public synchronized void updatePoints(String player, int overallPoints, int addedPoints){
         this.updatePlayerPoints(player,overallPoints);
     }
 
 
+    /**
+     * Updates the scoring tokens assigned to a player
+     * @param player the username of the player
+     * @param tokenPoints the updated List of ScoringToken received by the player
+     */
     @Override
-    public synchronized void updateTokens(String player, ArrayList<ScoringToken> tokenPoints) throws RemoteException {
+    public synchronized void updateTokens(String player, ArrayList<ScoringToken> tokenPoints){
         playerScoringTokens.replace(player, new ArrayList<>());
         for(ScoringToken token : tokenPoints){
             this.addScoringTokenToPlayer(player, token);
@@ -310,7 +311,7 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
      * Updates the player's personal goal card
      * @param player player username
      * @param remotePersonal personal goal card
-     * @throws RemoteException
+     * @throws RemoteException RMI Exception
      */
     @Override
     public synchronized void updatePersonalGoalCard(String player, RemotePersonalGoalCard remotePersonal) throws RemoteException {
@@ -320,7 +321,7 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
     }
 
     /**
-     * Updates the personal bookshelf statis
+     * Updates the personal bookshelf status
      * @param player the username of the players that owns the bookshelf
      * @param tilesInserted the tile inserted by the player
      * @param colChosen the column chosen for the insertion
@@ -353,28 +354,22 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
         }
     }
 
-
     /**
-     * @param newState
-     * @throws RemoteException
+     * This method adds all the player that are already in the game in the local list of players
+     * @param alreadyJoinedPlayers set of the players already in the game
      */
-
-    public synchronized void notifyChangeGameStatus(GameState newState) throws RemoteException {
-        view.postNotification("Game is" + newState.toString(), "");
-    }
-
     @Override
-    public synchronized void notifyAlreadyJoinedPlayers(Set<String> alreadyJoinedPlayers) throws RemoteException {
+    public synchronized void notifyAlreadyJoinedPlayers(Set<String> alreadyJoinedPlayers){
         for(String p : alreadyJoinedPlayers){
             this.joinPlayer(p);
         }
     }
     /**
-     * @param newState
-     * @throws RemoteException
+     * Updates the view about a  gameState change
+     * @param newState new state of the game
      */
     @Override
-    public void notifyChangedGameState(GameState newState) throws RemoteException {
+    public void notifyChangedGameState(GameState newState){
         view.postNotification("Game is " + newState.toString(), "");
     }
 }

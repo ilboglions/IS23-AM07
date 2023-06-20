@@ -83,7 +83,7 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
                             entry.getValue().handleRejoinedPlayer(player);
                             return entry.getValue();
                         } catch (PlayerNotFoundException ee) {
-                            throw new RuntimeException(ee);
+                            throw new RuntimeException(e);
                         }
 
                     }

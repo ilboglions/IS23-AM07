@@ -141,8 +141,16 @@ public class GUIView extends Application implements ViewInterface {
     @Override
     public void postNotification(String title, String description) {
         Platform.runLater(() -> {
-            GUIController controller = fxmlLoader.getController();
-            controller.postNotification(title, description);
+            String desc;
+            if(!title.contains("Move Done!")) {
+                if(title.contains("Your Selection has been accepted!")){
+                    desc = "Drag the tiles in the order you want them to be placed";
+                }
+                else
+                    desc = description;
+                GUIController controller = fxmlLoader.getController();
+                controller.postNotification(title, desc);
+            }
         });
 
     }

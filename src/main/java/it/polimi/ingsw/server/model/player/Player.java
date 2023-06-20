@@ -175,9 +175,7 @@ public class Player {
                                 groups.add(adjacencyGroup);
                             }
                         }
-                    } catch (InvalidCoordinatesException e) {
-                        throw new RuntimeException(e);
-                    }
+                    } catch (InvalidCoordinatesException ignored) {} //EXCEPTION IGNORED SINCE IT WILL NEVER BE THROWN
                 }
             }
             result.put(itemTile, groups);

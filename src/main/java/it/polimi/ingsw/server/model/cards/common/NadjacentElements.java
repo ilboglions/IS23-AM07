@@ -70,9 +70,7 @@ public class NadjacentElements extends CommonGoalCard{
 
                 }
             }
-        } catch (InvalidCoordinatesException e){
-            throw new RuntimeException(e);
-        }
+        } catch (InvalidCoordinatesException ignored){}
 
 
         return false;

@@ -84,18 +84,20 @@ public class GameViewController extends GUIController implements Initializable {
      */
     @Override
     public void postNotification(String title, String desc) {
-        Text textTitle = new Text("[SERVER] " + title.toUpperCase() + "\n");
-        textTitle.setFont(Font.font("Arial",FontWeight.BOLD, 11));
-        textTitle.setFill(Color.RED);
+        if(!title.contains("Move done!")) {
+            Text textTitle = new Text("[SERVER] " + title.toUpperCase() + "\n");
+            textTitle.setFont(Font.font("Arial", FontWeight.BOLD, 11));
+            textTitle.setFill(Color.RED);
 
-        textFlowChat.getChildren().add(textTitle);
+            textFlowChat.getChildren().add(textTitle);
 
-        if(!desc.isBlank()){
-            Text textDescription = new Text("[SERVER] " + desc + "\n");
-            textDescription.setFill(Color.RED);
-            textDescription.setFont(Font.font("Arial",FontWeight.NORMAL, 11));
+            if (!desc.isBlank()) {
+                Text textDescription = new Text("[SERVER] " + desc + "\n");
+                textDescription.setFill(Color.RED);
+                textDescription.setFont(Font.font("Arial", FontWeight.NORMAL, 11));
 
-            textFlowChat.getChildren().add(textDescription);
+                textFlowChat.getChildren().add(textDescription);
+            }
         }
     }
 
@@ -566,7 +568,7 @@ public class GameViewController extends GUIController implements Initializable {
      * Callback function called when a player clicks on their personalBookshelf.
      * If it's this player's turn and some tiles are selected on the board it will try to insert
      * those tiles inside the personalBookshelf
-     * @param event
+     * @param event click event
      */
     @FXML
     public void onClickPersonalBookshelf(MouseEvent event) {
@@ -583,6 +585,9 @@ public class GameViewController extends GUIController implements Initializable {
 
         Integer colIndex = GridPane.getColumnIndex(clickedNode);
         if(selectedCells.size() > 0 && colIndex !=null && checkColumnSpace(colIndex, selectedCells.size())){
+            try {
+                this.getClientController().checkValidRetrieve(new ArrayList<>(selectedCells));
+            } catch (RemoteException ignored) {}
             livingroom_grid.setDisable(true);
             Popup tilesOrderPopup = new Popup();
             GridPane popupContainer = new GridPane();
@@ -625,7 +630,6 @@ public class GameViewController extends GUIController implements Initializable {
                     Objects.requireNonNull(getNodeFromGridPane(livingroom_grid, c.getColumn(), c.getRow())).getStyleClass().clear();
                 }
                 try {
-                    this.getClientController().checkValidRetrieve(new ArrayList<>(selectedCells));
                     this.getClientController().moveTiles(new ArrayList<>(selectedCells), colIndex);
                 } catch (RemoteException ignored) {}
                 selectedCells.clear();
