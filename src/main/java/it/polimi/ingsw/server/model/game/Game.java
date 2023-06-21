@@ -628,7 +628,11 @@ public class Game implements GameModelInterface {
         else
             throw new PlayerNotFoundException("The player with this username has not been found in the game");
 
-        if(this.isStarted() && crashedPlayers.size() == numPlayers - 1) {
+        if( this.state.equals(GameState.ENDED) ){
+            return;
+        }
+
+        if(this.isStarted() && crashedPlayers.size() == numPlayers - 1 ) {
             this.changeState(GameState.PAUSED);
             this.crashTimer = new ReschedulableTimer();
             this.crashTimer.schedule(this::endGame, this.crashTimerDelay);
@@ -681,9 +685,7 @@ public class Game implements GameModelInterface {
                 if(!player.getUsername().equals(userToBeUpdated))
                     alreadyJoinedPlayers.add(player.getUsername());
 
-            } catch (RemoteException e) {
-                throw new RuntimeException(e);
-            }
+            } catch (RemoteException ignored) {}
             player.getBookshelf().triggerListener(userToBeUpdated);
         }
         gameListener.notifyAlreadyJoinedPlayers(alreadyJoinedPlayers, userToBeUpdated);

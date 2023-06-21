@@ -116,9 +116,7 @@ public class LivingRoomBoard {
                           itemTilesmap.put(new Coordinates(i,j), tmpTile.get());
                       else
                           itemTilesmap.put(new Coordinates(i,j), ItemTile.EMPTY);
-                  } catch (InvalidCoordinatesException e) {
-                      throw new RuntimeException(e);
-                  }
+                  } catch (InvalidCoordinatesException ignored) {} //this exception never occurs since the coordinates are always valid
               }
             }
         }
@@ -196,9 +194,7 @@ public class LivingRoomBoard {
                     }
                 }
             }
-        } catch(InvalidCoordinatesException e){
-            throw new RuntimeException(e);
-        }
+        } catch(InvalidCoordinatesException ignored){}
         return removed;
     }
 

@@ -22,9 +22,7 @@ public class GameListener extends Listener<GameSubscriber> {
         for (GameSubscriber sub : subscribers) {
             try {
                 sub.notifyPlayerJoined(username);
-            } catch (RemoteException e) {
-                throw new RuntimeException(e);
-            }
+            } catch (RemoteException ignored) {}
         }
     }
 
@@ -40,9 +38,7 @@ public class GameListener extends Listener<GameSubscriber> {
                 if(sub.getSubscriberUsername().equals(username)){
                     sub.notifyCommonGoalCards(commonGoalCards);
                 }
-            } catch (RemoteException e) {
-                throw new RuntimeException(e);
-            }
+            } catch (RemoteException ignored) {}
         }
     }
 
@@ -71,9 +67,7 @@ public class GameListener extends Listener<GameSubscriber> {
         subscribers.forEach(sub -> {
             try {
                 sub.notifyPlayerInTurn(username);
-            } catch (RemoteException e) {
-                throw new RuntimeException(e);
-            }
+            } catch (RemoteException ignored) {}
         });
     }
 
@@ -87,9 +81,7 @@ public class GameListener extends Listener<GameSubscriber> {
             try {
                 if(!sub.getSubscriberUsername().equals(userCrashed))
                     sub.notifyPlayerCrashed(userCrashed);
-            } catch (RemoteException e) {
-                throw new RuntimeException(e);
-            }
+            } catch (RemoteException ignored){}
         });
     }
 
@@ -131,9 +123,7 @@ public class GameListener extends Listener<GameSubscriber> {
         for(GameSubscriber sub : subscribers){
             try {
                 sub.notifyChangedGameState(newState);
-            } catch (RemoteException e) {
-                throw new RuntimeException(e);
-            }
+            } catch (RemoteException ignored) {}
         }
     }
 

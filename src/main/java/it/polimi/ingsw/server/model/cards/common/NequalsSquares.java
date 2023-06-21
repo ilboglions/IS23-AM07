@@ -110,7 +110,7 @@ public class NequalsSquares extends CommonGoalCard{
                     }
                 }
                 catch (InvalidCoordinatesException e) {
-                    throw new RuntimeException(e);
+                    return false;
                 }
 
                 Optional<ItemTile> brokenItem = parentTiles.stream().filter(tile -> !tile.equals(refTile)).findAny();

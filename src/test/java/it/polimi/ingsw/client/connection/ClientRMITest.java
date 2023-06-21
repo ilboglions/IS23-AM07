@@ -10,7 +10,7 @@ import java.rmi.RemoteException;
 public class ClientRMITest {
     ConnectionHandler client;
     ClientRMITest() throws NotBoundException, RemoteException {
-        client = new ClientRMI(new CliView(ConnectionType.RMI));
+        client = new ClientRMI(new CliView(ConnectionType.RMI),"127.0.0.1",1099);
     }
     @Test
     @DisplayName("Test the connection to the lobby")

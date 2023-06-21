@@ -22,9 +22,7 @@ public class BoardListener extends Listener<BoardSubscriber> {
         for (BoardSubscriber ob : observers) {
             try {
                 ob.updateBoardStatus(tilesInBoard);
-            } catch (RemoteException e) {
-                throw new RuntimeException(e);
-            }
+            } catch (RemoteException ignored) {}
         }
     }
 

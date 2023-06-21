@@ -5,18 +5,13 @@ import it.polimi.ingsw.Notifications;
 import it.polimi.ingsw.client.view.SceneType;
 import it.polimi.ingsw.client.view.ViewInterface;
 import it.polimi.ingsw.messages.*;
-import it.polimi.ingsw.remoteInterfaces.RemoteCommonGoalCard;
-import it.polimi.ingsw.remoteInterfaces.RemotePersonalGoalCard;
 import it.polimi.ingsw.server.ReschedulableTimer;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
-import it.polimi.ingsw.server.model.tokens.ScoringToken;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.ConnectException;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -68,15 +63,13 @@ public class ClientSocket implements ConnectionHandler{
 
                 //TODO: This postNotification broke things when using the GUI because they call the GuiController before it is initializated
                 this.view.postNotification(Notifications.CONNECTED_SUCCESSFULLY);
-            } catch ( UnknownHostException | ConnectException e) {
+            } catch (IOException e) {
                 view.postNotification(Notifications.ERR_CONNECTION_NO_AVAILABLE);
                 try {
                     TimeUnit.SECONDS.sleep(2);
                 } catch (InterruptedException ex) {
                     ex.printStackTrace();
                 }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
             }
         }
 
@@ -116,9 +109,7 @@ public class ClientSocket implements ConnectionHandler{
                 outputStream.close();
                 inputStream.close();
                 connection.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            } catch (IOException ignored) {}
         }
     }
 
@@ -230,7 +221,7 @@ public class ClientSocket implements ConnectionHandler{
                         lastReceivedMessages.notifyAll();
                         lastReceivedMessages.wait(1);
                     } catch (IOException | ClassNotFoundException e) {
-                        throw new RuntimeException(e);
+                        this.close();
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
@@ -300,6 +291,8 @@ public class ClientSocket implements ConnectionHandler{
             case ALREADY_JOINED_PLAYERS -> this.parse((AlreadyJoinedPlayersMessage) responseMessage);
             default -> {
             }
+
+
         }
     }
 
@@ -392,14 +385,10 @@ public class ClientSocket implements ConnectionHandler{
      * @param message chat notification message
      */
     private void parse(NotifyNewChatMessage message){
-        try {
-            if(message.getRecipient().isEmpty())
-                gameModel.receiveMessage(message.getSender(),message.getContent());
-            else
-                gameModel.receiveMessage(message.getSender(), message.getRecipient(), message.getContent());
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        }
+        if(message.getRecipient().isEmpty())
+            gameModel.receiveMessage(message.getSender(),message.getContent());
+        else
+            gameModel.receiveMessage(message.getSender(), message.getRecipient(), message.getContent());
     }
 
     /**
@@ -479,11 +468,7 @@ public class ClientSocket implements ConnectionHandler{
      * @param message update message
      */
     private  void parse(PointsUpdateMessage message){
-        try {
-            gameModel.updatePoints(message.getUsername(), message.getTotalPoints(), message.getAddedPoints());
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        }
+        gameModel.updatePoints(message.getUsername(), message.getTotalPoints(), message.getAddedPoints());
     }
 
     /**
@@ -496,29 +481,17 @@ public class ClientSocket implements ConnectionHandler{
     }
 
     private void parse(TokenUpdateMessage message){
-        try {
-            gameModel.updateTokens(message.getPlayer(), message.getTokens());
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        }
+        gameModel.updateTokens(message.getPlayer(), message.getTokens());
 
     }
 
     private void parse(NewPlayerInGame message){
-        try {
-            if(!this.username.equals(message.getNewPlayerUsername()))
-                gameModel.notifyPlayerJoined(message.getNewPlayerUsername());
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        }
+        if(!this.username.equals(message.getNewPlayerUsername()))
+            gameModel.notifyPlayerJoined(message.getNewPlayerUsername());
     }
 
     private void parse(AlreadyJoinedPlayersMessage message){
-        try {
-            gameModel.notifyAlreadyJoinedPlayers(message.getAlreadyJoinedPlayers());
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        }
+        gameModel.notifyAlreadyJoinedPlayers(message.getAlreadyJoinedPlayers());
     }
 
     private void parse(NotifyPlayerInTurnMessage message){
@@ -538,11 +511,7 @@ public class ClientSocket implements ConnectionHandler{
     }
 
     private void parse(GameStatusMessage message) {
-        try {
-            gameModel.notifyChangedGameState(message.getState());
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        }
+        gameModel.notifyChangedGameState(message.getState());
     }
 
 
@@ -552,8 +521,8 @@ public class ClientSocket implements ConnectionHandler{
                 outputStream.writeObject(update);
                 outputStream.flush();
                 outputStream.reset();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+            } catch (IOException ignored) {
+
             }
         }
     }

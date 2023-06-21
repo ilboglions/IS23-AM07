@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import it.polimi.ingsw.server.controller.LobbyController;
 import it.polimi.ingsw.server.model.lobby.Lobby;
+import it.polimi.ingsw.server.model.utilities.UtilityFunctions;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -25,13 +26,17 @@ import java.util.logging.Logger;
  */
 public class ServerMain {
     public final static Logger logger = Logger.getLogger(ServerMain.class.getName());
+    private final int rmiPortNumber;
+    private final String rmiHostName;
     private final int port;
     private final String hostName;
 
     private final LobbyController lobbyController;
-    public ServerMain(int port, String hostName) throws RemoteException {
+    public ServerMain(int port, String hostName, int rmiPortNumber, String rmiHostName) throws RemoteException {
         this.port = port;
         this.hostName = hostName;
+        this.rmiHostName = rmiHostName;
+        this.rmiPortNumber = rmiPortNumber;
         this.lobbyController = new LobbyController(new Lobby());
     }
     public void startServer() {
@@ -44,7 +49,8 @@ public class ServerMain {
         /* RMI INITIALIZATION */
         Registry registry;
         try {
-            registry = LocateRegistry.createRegistry(1099);
+            System.setProperty("java.rmi.server.hostname",this.rmiHostName);
+            registry = LocateRegistry.createRegistry(rmiPortNumber);
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
@@ -62,7 +68,7 @@ public class ServerMain {
             return;
         }
 
-        logger.info("Server ready on port " + port);
+        logger.info("Server ready! host: "+hostName+ " port (TCP): " + port + " port(RMI): "+rmiPortNumber);
 
         /* SOCKET TCP */
         while (true) {
@@ -78,19 +84,29 @@ public class ServerMain {
     }
     public static void main(String[] args) {
         String hostName;
-        int portNumber;
+        int portNumber = 0;
+        int rmiPortNumber = 0;
+        String rmiHostName;
         try {
-            if (args.length == 2) {
+            if (args.length >= 4) {
                 hostName = args[0];
-                portNumber = Integer.parseInt(args[1]);
+                rmiHostName = args[2];
+                if(UtilityFunctions.isNumeric(args[1]) && UtilityFunctions.isNumeric(args[3])) {
+                    portNumber = Integer.parseInt(args[1]);
+                    rmiPortNumber = Integer.parseInt(args[3]);
+                }else
+                    System.exit(-1);
             } else {
                 Gson gson = new Gson();
                 JsonObject job = gson.fromJson(new InputStreamReader(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("HostAndPort.json"))), JsonObject.class);
                 portNumber = gson.fromJson(job.get("portNumber"), Integer.class);
                 hostName = gson.fromJson(job.get("hostName"), String.class);
+
+                 rmiPortNumber = gson.fromJson(job.get("rmiPortNumber"), Integer.class);
+                 rmiHostName = gson.fromJson(job.get("rmiHostName"), String.class);
             }
 
-            ServerMain echoServer = new ServerMain(portNumber, hostName);
+            ServerMain echoServer = new ServerMain(portNumber, hostName, rmiPortNumber, rmiHostName);
             echoServer.startServer();
         } catch (RemoteException e) {
             throw new RuntimeException(e);

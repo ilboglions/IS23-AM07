@@ -101,4 +101,9 @@ public interface ViewInterface {
      * @param playerScoringTokens map with the username of the player as key, a list of the token owned as value
      */
     void drawScoringTokens(Map<String, ArrayList<ScoringToken>> playerScoringTokens);
+
+    /**
+     * This method enables the client to join back to the lobby after the end of a game
+     */
+    void backToLobby();
 }
