@@ -73,7 +73,8 @@ public class ClientRMI implements ConnectionHandler{
     public void close() {
         heartBeatManager.shutdownNow();
         gameController = null;
-        System.out.println("timer expired");
+        view.drawScene(SceneType.LOBBY);
+        view.postNotification(Notifications.ERR_CONNECTION_NO_AVAILABLE);
     }
 
     /**

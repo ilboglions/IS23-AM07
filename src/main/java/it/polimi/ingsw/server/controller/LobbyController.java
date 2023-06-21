@@ -228,6 +228,7 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
         //if the game is ended delete the record of the game from the map
         if(newState == GameState.ENDED) {
             gameControllers.remove(gameModelInterface);
+            lobbyModel.removeGame(gameModelInterface);
         }
 
 

@@ -5,18 +5,13 @@ import it.polimi.ingsw.Notifications;
 import it.polimi.ingsw.client.view.SceneType;
 import it.polimi.ingsw.client.view.ViewInterface;
 import it.polimi.ingsw.messages.*;
-import it.polimi.ingsw.remoteInterfaces.RemoteCommonGoalCard;
-import it.polimi.ingsw.remoteInterfaces.RemotePersonalGoalCard;
 import it.polimi.ingsw.server.ReschedulableTimer;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
-import it.polimi.ingsw.server.model.tokens.ScoringToken;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.ConnectException;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -114,8 +109,9 @@ public class ClientSocket implements ConnectionHandler{
                 outputStream.close();
                 inputStream.close();
                 connection.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+            } catch (IOException ignored) {
+                view.drawScene(SceneType.LOBBY);
+                view.postNotification(Notifications.ERR_CONNECTION_NO_AVAILABLE);
             }
         }
     }
@@ -228,7 +224,7 @@ public class ClientSocket implements ConnectionHandler{
                         lastReceivedMessages.notifyAll();
                         lastReceivedMessages.wait(1);
                     } catch (IOException | ClassNotFoundException e) {
-                        throw new RuntimeException(e);
+                        this.close();
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
@@ -298,6 +294,8 @@ public class ClientSocket implements ConnectionHandler{
             case ALREADY_JOINED_PLAYERS -> this.parse((AlreadyJoinedPlayersMessage) responseMessage);
             default -> {
             }
+
+
         }
     }
 
@@ -526,8 +524,8 @@ public class ClientSocket implements ConnectionHandler{
                 outputStream.writeObject(update);
                 outputStream.flush();
                 outputStream.reset();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+            } catch (IOException ignored) {
+
             }
         }
     }

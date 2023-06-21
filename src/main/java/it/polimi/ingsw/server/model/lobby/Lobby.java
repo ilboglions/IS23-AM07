@@ -1,6 +1,7 @@
 package it.polimi.ingsw.server.model.lobby;
 
 import it.polimi.ingsw.server.model.game.Game;
+import it.polimi.ingsw.server.model.game.GameModelInterface;
 import it.polimi.ingsw.server.model.player.Player;
 import it.polimi.ingsw.server.model.exceptions.*;
 
@@ -130,5 +131,13 @@ public class Lobby {
             this.waitingPlayers.remove(new Player(username));
         else
             throw new PlayerNotFoundException("There isn't a player with this username in the lobby");
+    }
+
+    /**
+     * removes the game from the list of active games
+     * @param game the game to be removed
+     */
+    public void removeGame(GameModelInterface game) {
+        this.games.remove((Game) game);
     }
 }
