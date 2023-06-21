@@ -74,6 +74,7 @@ public class GameViewController extends GUIController implements Initializable {
     public GridPane leaderBoardGrid;
 
     private Popup commonGoalInfo1, commonGoalInfo2;
+    private ImageView firstToken;
 
 
 
@@ -147,6 +148,22 @@ public class GameViewController extends GUIController implements Initializable {
                     textFlowChatScroll.layout();
                     textFlowChatScroll.setVvalue(1.0f);
                 }));
+
+        firstToken = new ImageView(Objects.requireNonNull(GameViewController.class.getResource("/images/scoringTokens/scoring_1.jpg")).toString());
+        firstToken.setPreserveRatio(true);
+        firstToken.fitHeightProperty().bind(livingroom_grid.heightProperty().divide(11));
+        livingroom_grid_container.maxHeightProperty().bind(leftvbox.widthProperty());
+        livingroom_grid_container.maxWidthProperty().bind(livingroom_grid_container.heightProperty());
+        livingroom_grid.widthProperty().addListener((observable, oldValue, newValue) -> {
+            double margin = livingroom_grid_container.getWidth();
+            StackPane.setMargin(firstToken, new Insets(margin / 2 , 0, 0, margin/1.4));
+        });
+        livingroom_grid.heightProperty().addListener((observable, oldValue, newValue) -> {
+            double margin = livingroom_grid_container.getWidth();
+            StackPane.setMargin(firstToken, new Insets(margin / 2 , 0, 0, margin/1.4));
+        });
+        firstToken.setRotate(8);
+        livingroom_grid_container.getChildren().add(firstToken);
     }
 
     /**
@@ -644,9 +661,6 @@ public class GameViewController extends GUIController implements Initializable {
                 tilesOrderPopup.setY(centerY);
             };
 
-
-
-
             stage.widthProperty().addListener(reCenter);
             stage.heightProperty().addListener(reCenter);
             stage.xProperty().addListener(reCenter);
@@ -785,6 +799,7 @@ public class GameViewController extends GUIController implements Initializable {
      * @param playerPoints map with the username of the players as key, the final score as value
      */
     public void drawWinnerLeaderboard(Map<String, Integer> playerPoints) {
+        this.firstToken.setVisible(false);
         Popup winnerPopup = new Popup();
         VBox popupContainer = new VBox();
         Text winnerText = new Text();

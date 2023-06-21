@@ -18,7 +18,7 @@
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.text.TextFlow?>
 
-<GridPane alignment="CENTER" hgap="20.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" styleClass="anchor" stylesheets="@css/game-view.css" xmlns="http://javafx.com/javafx/20" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.view.GUI.GameViewController">
+<GridPane alignment="CENTER" hgap="20.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" styleClass="anchor" stylesheets="@css/game-view.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.view.GUI.GameViewController">
   <columnConstraints>
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="70.0" />
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="30.0" />
@@ -268,7 +268,7 @@
             </VBox>
          </children>
       </GridPane>
-      <VBox fx:id="leftvbox" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="30.0">
+      <VBox fx:id="leftvbox" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="30.0">
          <children>
             <StackPane fx:id="livingroom_grid_container" prefHeight="569.0" prefWidth="590.0" styleClass="livingRoom" VBox.vgrow="ALWAYS">
                <children>

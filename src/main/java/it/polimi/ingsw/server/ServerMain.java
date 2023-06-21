@@ -49,6 +49,7 @@ public class ServerMain {
         /* RMI INITIALIZATION */
         Registry registry;
         try {
+            System.setProperty("java.rmi.server.hostname",this.rmiHostName);
             registry = LocateRegistry.createRegistry(rmiPortNumber);
         } catch (RemoteException e) {
             throw new RuntimeException(e);
