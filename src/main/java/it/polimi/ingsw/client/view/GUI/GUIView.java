@@ -16,10 +16,14 @@ import it.polimi.ingsw.server.model.tokens.ScoringToken;
 import it.polimi.ingsw.server.model.utilities.UtilityFunctions;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
@@ -70,6 +74,24 @@ public class GUIView extends Application implements ViewInterface {
             this.stage.setTitle("MyShelfie");
             this.stage.setScene(scene);
             this.stage.show();
+            this.stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                @Override
+                public void handle(WindowEvent e) {
+                    e.consume();
+                    Alert closeAlert = new Alert(Alert.AlertType.WARNING);
+                    closeAlert.setTitle("MyShelfie Warning");
+                    closeAlert.setContentText("Are you sure that you want to close the window?");
+                    Optional<ButtonType> result = closeAlert.showAndWait();
+                    if(result.isPresent()){
+                        if(result.get() == ButtonType.OK){
+                            System.exit(0);
+                        }
+                        else{
+                            closeAlert.hide();
+                        }
+                    }
+                }
+            });
         }
         catch (Exception ignored){}
     }
