@@ -36,8 +36,6 @@ public class ClientRMI implements ConnectionHandler{
     /**
      * Creates an instance of ClientRMI
      * @param view the view will be notified for updates
-     * @throws RemoteException RMI remote error
-     * @throws NotBoundException lookup or unbind in the registry a name that has no associated binding
      */
     public ClientRMI(ViewInterface view, String hostName, int portNumber) {
         boolean connected = false;

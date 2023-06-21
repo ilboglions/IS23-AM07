@@ -24,7 +24,7 @@ public class ConnectionHandlerFactory {
 
         if( type.equals(ConnectionType.RMI)) {
                 int rmiPortNumber = gson.fromJson(job.get("rmiPortNumber"), Integer.class);
-                String rmiHostName = gson.fromJson(job.get("rmiPortNumber"), String.class);
+                String rmiHostName = gson.fromJson(job.get("rmiHostName"), String.class);
                 return new ClientRMI(view, rmiHostName,rmiPortNumber);
         }
 
