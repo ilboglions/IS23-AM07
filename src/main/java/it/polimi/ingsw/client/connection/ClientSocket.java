@@ -109,10 +109,7 @@ public class ClientSocket implements ConnectionHandler{
                 outputStream.close();
                 inputStream.close();
                 connection.close();
-            } catch (IOException ignored) {
-                view.drawScene(SceneType.LOBBY);
-                view.postNotification(Notifications.ERR_CONNECTION_NO_AVAILABLE);
-            }
+            } catch (IOException ignored) {}
         }
     }
 

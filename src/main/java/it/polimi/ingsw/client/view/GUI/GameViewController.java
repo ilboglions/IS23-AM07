@@ -813,8 +813,9 @@ public class GameViewController extends GUIController implements Initializable {
         exitGame.setOnMouseClicked((MouseEvent e)->{
             try {
                 this.getClientController().close();
-            } catch (IOException ignore) {}
-            this.stage.close();
+            } catch (IOException ignored) {}
+            //this.stage.close();
+            System.exit(0);
         });
 
         buttonContainer.setAlignment(Pos.CENTER);
