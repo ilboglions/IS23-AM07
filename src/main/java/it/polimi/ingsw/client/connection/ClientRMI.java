@@ -39,7 +39,7 @@ public class ClientRMI implements ConnectionHandler{
      * @throws RemoteException RMI remote error
      * @throws NotBoundException lookup or unbind in the registry a name that has no associated binding
      */
-    public ClientRMI(ViewInterface view) throws RemoteException, NotBoundException {
+    public ClientRMI(ViewInterface view, String hostName, int portNumber) {
         boolean connected = false;
         RemoteLobbyController tempLobbyController = null;
 
@@ -48,11 +48,11 @@ public class ClientRMI implements ConnectionHandler{
         this.view = view;
         while(!connected){
             try{
-                this.registry= LocateRegistry.getRegistry();
+                this.registry= LocateRegistry.getRegistry(hostName, portNumber);
                 String remoteObjectName = "lobby_controller";
-                tempLobbyController =  (RemoteLobbyController) registry.lookup(remoteObjectName);
+                tempLobbyController =  (RemoteLobbyController) registry.lookup(remoteObjectName );
                 connected = true;
-            }catch(ConnectException e){
+            }catch(RemoteException | NotBoundException e){
                 try {
                     this.view.postNotification(Notifications.ERR_CONNECTION_NO_AVAILABLE);
                     TimeUnit.SECONDS.sleep(2);

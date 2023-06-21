@@ -10,6 +10,7 @@ import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 import it.polimi.ingsw.server.model.tokens.ScoringToken;
+import it.polimi.ingsw.server.model.utilities.UtilityFunctions;
 
 import java.rmi.RemoteException;
 import java.util.*;
@@ -86,36 +87,14 @@ public class CliView implements ViewInterface {
     private final String[][] tiles = new String[MAX_VERT_TILES][MAX_HORIZ_TILES];
 
     private Scenario scenario;
+    private boolean gameEnded;
 
-    /**
-     * Main method of the CliView, this method launches the client connection and displays the interface over CLI
-     * @param args network connection preference (--TCP for TCP Connection, everything else will be interpreted as RMI
-     */
-    public static void main(String[] args){
-        ConnectionType c;
-        ViewInterface view;
-        if (args.length >= 1) {
-
-            c = args[0].equals("--TCP") ? ConnectionType.TCP : ConnectionType.RMI;
-
-            //ViewInterface cliView = args[1].equals("CLI") ?  new CliView(c);
-
-            view = new CliView(c);
-
-        } else {
-            view = new CliView(ConnectionType.RMI);
-
-        }
-    }
-
-    /**
-     * Constructor of the CliView
-     * @param connectionType type of the connection preferred
-     */
-    public CliView(ConnectionType connectionType){
+    public CliView(ConnectionType connectionType, String address, int port) {
+        gameEnded = false;
         this.setScenario(Scenario.LOBBY);
         ConnectionHandlerFactory factory = new ConnectionHandlerFactory();
-        controller = factory.createConnection(connectionType, this);
+        controller = factory.createConnection(connectionType, this, address, port);
+
         inputScan =  new Scanner(System.in);
         this.plot();
         inputReaderEx = Executors.newCachedThreadPool();
@@ -131,6 +110,63 @@ public class CliView implements ViewInterface {
 
         } );
     }
+
+    /**
+     * Main method of the CliView, this method launches the client connection and displays the interface over CLI
+     * @param args network connection preference (--TCP for TCP Connection, everything else will be interpreted as RMI
+     */
+    public static void main(String[] args){
+        ConnectionType c;
+        ViewInterface view;
+        if (args.length >= 1) {
+
+            c = args[0].equals("--TCP") ? ConnectionType.TCP : ConnectionType.RMI;
+
+                if(args.length >= 3){
+                    if(UtilityFunctions.isNumeric(args[2]))
+                        view = new CliView(c, args[1], Integer.parseInt(args[2]));
+                    else
+                        view = new CliView(c);
+                } else {
+                    view = new CliView(c);
+                }
+
+
+            //ViewInterface cliView = args[1].equals("CLI") ?  new CliView(c);
+
+
+        } else {
+            view = new CliView(ConnectionType.RMI);
+
+        }
+    }
+
+    /**
+     * Constructor of the CliView
+     * @param connectionType type of the connection preferred
+     */
+    public CliView(ConnectionType connectionType){
+        gameEnded = false;
+        this.setScenario(Scenario.LOBBY);
+        ConnectionHandlerFactory factory = new ConnectionHandlerFactory();
+        controller = factory.createConnection(connectionType, this);
+
+        inputScan =  new Scanner(System.in);
+        this.plot();
+        inputReaderEx = Executors.newCachedThreadPool();
+        inputReaderEx.execute( () -> {
+            String cliInput;
+            synchronized (inputScan){
+                while(true){
+                    cliInput = inputScan.nextLine();
+                    String finalCliInput = cliInput;
+                    inputReaderEx.execute(() -> this.handle(finalCliInput));
+                }
+            }
+
+        } );
+    }
+
 
     private void handle(String cliInput) {
 
@@ -211,7 +247,11 @@ public class CliView implements ViewInterface {
                     throw new RuntimeException(e);
                 }
             }
+            case "exit" ->{
+                if(!this.gameEnded) return;
+                this.backToLobby();
 
+            }
             default -> {
                 this.postNotification("Command not found!","the command inserted is invalid!");
             }
@@ -220,6 +260,7 @@ public class CliView implements ViewInterface {
 
     private void setScenario(Scenario s){
         this.scenario = s;
+        this.gameEnded = false;
         MAX_HORIZ_TILES = s.getCols();
         MAX_VERT_TILES = s.getRows();
         START_R_BOX_NOTIFICATION = s.getStartRNotifications();
@@ -390,7 +431,7 @@ public class CliView implements ViewInterface {
             tiles[currentR][currentC + 1] = " ";
             currentC += 2;
 
-            currentR += printTruncateText(card.getDescription(), currentR, currentC, START_C_BOX_CARD + LENGTH_C_BOX_CARD - FIXED_MARGIN) + 1;
+            currentR += printTruncateText(Color.RED_BACKGROUND.escape()+Color.WHITE_BRIGHT.escape()+card.getTokenStack().pop().getScoreValue().getValue()+Color.RESET.escape()+" "+card.getDescription(), currentR, currentC, START_C_BOX_CARD + LENGTH_C_BOX_CARD - FIXED_MARGIN) + 1;
 
             currentC = startC;
         }
@@ -655,7 +696,8 @@ public class CliView implements ViewInterface {
      */
     @Override
     public void drawWinnerLeaderboard(Map<String, Integer> playerPoints) {
-        //ONLY THE GUI USES THIS METHOD
+        this.gameEnded = true;
+        this.drawLeaderboard(playerPoints);
     }
 
     /**
@@ -666,6 +708,12 @@ public class CliView implements ViewInterface {
     @Override
     public void drawScoringTokens(Map<String, ArrayList<ScoringToken>> playerScoringTokens) {
         //ONLY THE GUI USES THIS METHOD
+    }
+
+    @Override
+    public void backToLobby() {
+        this.setScenario(Scenario.LOBBY);
+
     }
 
     /**

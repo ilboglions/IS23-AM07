@@ -4,6 +4,7 @@ import it.polimi.ingsw.client.connection.ConnectionHandler;
 import it.polimi.ingsw.client.connection.ConnectionHandlerFactory;
 import it.polimi.ingsw.client.connection.ConnectionType;
 import it.polimi.ingsw.Notifications;
+import it.polimi.ingsw.client.view.CLI.CliView;
 import it.polimi.ingsw.client.view.SceneType;
 import it.polimi.ingsw.client.view.ViewInterface;
 import it.polimi.ingsw.remoteInterfaces.RemoteCommonGoalCard;
@@ -12,6 +13,7 @@ import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 import it.polimi.ingsw.server.model.tokens.ScoringToken;
+import it.polimi.ingsw.server.model.utilities.UtilityFunctions;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -43,22 +45,24 @@ public class GUIView extends Application implements ViewInterface {
     public void start(Stage stage) {
         Parameters parameters = getParameters();
         List<String> args = parameters.getRaw();
-        if ( args.size() == 1) {
-            this.connectionType = args.get(0).equals("--TCP") ? ConnectionType.TCP : ConnectionType.RMI;
+        ConnectionHandlerFactory factory = new ConnectionHandlerFactory();
+        if( args.size() >= 1){
+            connectionType = args.get(0).equals("--TCP") ? ConnectionType.TCP : ConnectionType.RMI;
+            if (args.size() >= 3 && UtilityFunctions.isNumeric(args.get(2)))
+                controller = factory.createConnection(this.connectionType, this, args.get(1), Integer.parseInt(args.get(2)));
+            else
+                controller = factory.createConnection(this.connectionType, this);
         } else {
             this.connectionType = ConnectionType.RMI;
+            controller = factory.createConnection(this.connectionType, this);
         }
 
         this.stage = stage;
-
         fxmlLoader = new FXMLLoader(GUIView.class.getResource("/fxml/login-view.fxml"));
         try {
             scene = new Scene(fxmlLoader.load(), 1500, 750);
             scene.getStylesheets().add(GUIView.class.getResource("/fxml/css/game-view.css").toExternalForm());
             scene.getStylesheets().add(GUIView.class.getResource("/fxml/css/lobby-view.css").toExternalForm());
-
-            ConnectionHandlerFactory factory = new ConnectionHandlerFactory();
-            controller = factory.createConnection(connectionType, this);
 
             guiController = fxmlLoader.getController();
             guiController.setConnectionHandler(controller);

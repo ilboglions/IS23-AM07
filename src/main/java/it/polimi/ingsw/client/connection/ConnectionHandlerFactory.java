@@ -2,6 +2,7 @@ package it.polimi.ingsw.client.connection;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import it.polimi.ingsw.client.view.CLI.CliView;
 import it.polimi.ingsw.client.view.ViewInterface;
 
 import java.io.InputStreamReader;
@@ -17,19 +18,26 @@ public class ConnectionHandlerFactory {
      * @return a ConnectionHandler of the desired type
      */
     public ConnectionHandler createConnection(ConnectionType type, ViewInterface view){
-        if( type.equals(ConnectionType.RMI)) {
-            try {
-                return new ClientRMI(view);
-            } catch (RemoteException | NotBoundException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
         Gson gson = new Gson();
         JsonObject job = gson.fromJson(new InputStreamReader(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("HostAndPort.json"))), JsonObject.class);
+
+
+        if( type.equals(ConnectionType.RMI)) {
+                int rmiPortNumber = gson.fromJson(job.get("rmiPortNumber"), Integer.class);
+                String rmiHostName = gson.fromJson(job.get("rmiPortNumber"), String.class);
+                return new ClientRMI(view, rmiHostName,rmiPortNumber);
+        }
+
         int portNumber = gson.fromJson(job.get("portNumber"), Integer.class);
         String hostName = gson.fromJson(job.get("hostName"), String.class);
 
+        return new ClientSocket(hostName,portNumber,view);
+    }
+
+    public ConnectionHandler createConnection(ConnectionType connectionType, ViewInterface view, String hostName, int portNumber) {
+        if(connectionType.equals(ConnectionType.RMI)){
+            return new ClientRMI(view, hostName, portNumber);
+        }
         return new ClientSocket(hostName,portNumber,view);
     }
 }
