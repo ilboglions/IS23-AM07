@@ -14,9 +14,12 @@ public class Launch
 {
     public static void main( String[] args )
     {
-        if (args.length == 2) {
-            String[] newArgs = new String[2];
-            newArgs[0] = args[1];
+        if (args.length >= 2) {
+            String[] newArgs = new String[args.length - 1];
+            for( int j = 0; j < args.length - 1; j++){
+                newArgs[j] = args[j + 1];
+            }
+
             if (args[0].equals("--CLI")) {
                 CliView.main(newArgs);
             } else if (args[0].equals("--GUI")) {

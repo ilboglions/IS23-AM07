@@ -49,7 +49,7 @@ public class ServerMain {
         /* RMI INITIALIZATION */
         Registry registry;
         try {
-            registry = LocateRegistry.createRegistry(1099);
+            registry = LocateRegistry.createRegistry(rmiPortNumber);
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
@@ -67,7 +67,7 @@ public class ServerMain {
             return;
         }
 
-        logger.info("Server ready on port " + port);
+        logger.info("Server ready! host: "+hostName+ " port (TCP): " + port + " port(RMI): "+rmiPortNumber);
 
         /* SOCKET TCP */
         while (true) {
@@ -87,12 +87,12 @@ public class ServerMain {
         int rmiPortNumber = 0;
         String rmiHostName;
         try {
-            if (args.length >= 5) {
-                hostName = args[1];
-                rmiHostName = args[3];
-                if(UtilityFunctions.isNumeric(args[2]) && UtilityFunctions.isNumeric(args[4])) {
-                    portNumber = Integer.parseInt(args[2]);
-                    rmiPortNumber = Integer.parseInt(args[4]);
+            if (args.length >= 4) {
+                hostName = args[0];
+                rmiHostName = args[2];
+                if(UtilityFunctions.isNumeric(args[1]) && UtilityFunctions.isNumeric(args[3])) {
+                    portNumber = Integer.parseInt(args[1]);
+                    rmiPortNumber = Integer.parseInt(args[3]);
                 }else
                     System.exit(-1);
             } else {
