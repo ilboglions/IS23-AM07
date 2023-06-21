@@ -68,15 +68,13 @@ public class ClientSocket implements ConnectionHandler{
 
                 //TODO: This postNotification broke things when using the GUI because they call the GuiController before it is initializated
                 this.view.postNotification(Notifications.CONNECTED_SUCCESSFULLY);
-            } catch ( UnknownHostException | ConnectException e) {
+            } catch (IOException e) {
                 view.postNotification(Notifications.ERR_CONNECTION_NO_AVAILABLE);
                 try {
                     TimeUnit.SECONDS.sleep(2);
                 } catch (InterruptedException ex) {
                     ex.printStackTrace();
                 }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
             }
         }
 

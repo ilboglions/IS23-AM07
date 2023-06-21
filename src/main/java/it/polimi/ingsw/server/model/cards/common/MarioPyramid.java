@@ -71,7 +71,7 @@ public class MarioPyramid extends CommonGoalCard{
                 refRow--;
             }
         }catch (InvalidCoordinatesException e ){
-            throw new RuntimeException(e);
+            return false;
         }
 
        return true;

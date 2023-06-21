@@ -70,14 +70,11 @@ public abstract class Bookshelf implements Serializable {
                                         int val = bookshelfMap.get(el) != null ? bookshelfMap.get(el) : 0;
                                         bookshelfMap.put(el, val+1 );
                                     });
-                } catch (InvalidCoordinatesException e) {
-                    throw new RuntimeException(e);
-                }
+                } catch (InvalidCoordinatesException ignored){} //IGNORED SINCE THIS EXCEPTION IS NEVER THROWN
             }
         }
         for (ItemTile item : ItemTile.values()) {
-            if (bookshelfMap.get(item) == null)
-                bookshelfMap.put(item, 0);
+            bookshelfMap.putIfAbsent(item, 0);
         }
         return bookshelfMap;
     }

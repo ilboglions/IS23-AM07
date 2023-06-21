@@ -63,10 +63,9 @@ public class PersonalGoalCard extends UnicastRemoteObject implements RemotePerso
                 Coordinates tempCoord;
                 try {
                     tempCoord = new Coordinates(r, c);
-                } catch (InvalidCoordinatesException e) {
-                    throw new RuntimeException(e);
+                    this.bookshelf.getItemTile(tempCoord).ifPresent(el -> tempPattern.put(tempCoord, el));
+                } catch (InvalidCoordinatesException ignored) { //THIS EXCEPTION IS NEVER THROWN
                 }
-                this.bookshelf.getItemTile(tempCoord).ifPresent(el -> tempPattern.put(tempCoord, el));
             }
         }
         return new CardBookshelf(tempPattern);

@@ -30,7 +30,7 @@ public class ChatListener extends Listener<ChatSubscriber> {
                                                         try {
                                                             return obs.getSubscriberUsername().equals(recipient) || obs.getSubscriberUsername().equals(sender);
                                                         } catch (RemoteException e) {
-                                                            throw new RuntimeException(e);
+                                                            return false;
                                                         }
                                                     })
                                                     .toList();
@@ -38,9 +38,7 @@ public class ChatListener extends Listener<ChatSubscriber> {
             interestedOb.forEach( ob -> {
                 try {
                     ob.receiveMessage(sender, recipient, msg.getContent());
-                } catch (RemoteException e) {
-                    throw new RuntimeException(e);
-                }
+                } catch (RemoteException ignored) {}
             });
 
 
@@ -48,9 +46,7 @@ public class ChatListener extends Listener<ChatSubscriber> {
             observers.forEach( obs -> {
                         try {
                             obs.receiveMessage(msg.getSender(), msg.getContent());
-                        } catch (RemoteException e) {
-                            throw new RuntimeException(e);
-                        }
+                        } catch (RemoteException ignored) {}
                     });
         }
     }

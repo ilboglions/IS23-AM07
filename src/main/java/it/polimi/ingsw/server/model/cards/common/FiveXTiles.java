@@ -40,10 +40,10 @@ public class FiveXTiles extends  CommonGoalCard{
      */
     public boolean verifyConstraint(Bookshelf bookshelf){
         ArrayList<ItemTile> parentTiles= new ArrayList<>();
-        int rowlimit = bookshelf.getRows()-2;
-        int collimit =bookshelf.getColumns()-2;
-        for( int r  = 0; r < rowlimit; r++){
-            for( int c = 0; c < collimit; c++) {
+        int rowLimit = bookshelf.getRows()-2;
+        int colLimit =bookshelf.getColumns()-2;
+        for( int r  = 0; r < rowLimit; r++){
+            for( int c = 0; c < colLimit; c++) {
                 ItemTile refTile;
                 try {
 
@@ -54,7 +54,7 @@ public class FiveXTiles extends  CommonGoalCard{
                     bookshelf.getItemTile(new Coordinates(r + 1, c + 1)).ifPresent(parentTiles::add);
                     bookshelf.getItemTile(new Coordinates(r + 2, c + 2)).ifPresent(parentTiles::add);
                 } catch (InvalidCoordinatesException e) {
-                    throw new RuntimeException(e);
+                    return false;
                 }
 
                 if (parentTiles.size() != 4) continue;

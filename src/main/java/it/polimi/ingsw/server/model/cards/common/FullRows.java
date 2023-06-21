@@ -86,7 +86,7 @@ public class FullRows extends CommonGoalCard{
                 parentTiles.clear();
             }
         }catch (InvalidCoordinatesException e){
-            throw new RuntimeException(e);
+            return false;
         }
 
         return false;

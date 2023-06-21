@@ -44,6 +44,7 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
      * @param username the  player that is currently in the game
      * @param view the view of the game
      */
+
     public Game(ViewInterface view, String username) throws  RemoteException {
         super();
 

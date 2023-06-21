@@ -26,9 +26,7 @@ public class BookshelfListener extends Listener<BookshelfSubscriber> {
         for (BookshelfSubscriber o : observers) {
             try {
                 o.updateBookshelfStatus(player, insertedTiles, col, currentTilesMap);
-            } catch (RemoteException e) {
-                throw new RuntimeException(e);
-            }
+            } catch (RemoteException ignored) {}
         }
     }
 
@@ -46,9 +44,7 @@ public class BookshelfListener extends Listener<BookshelfSubscriber> {
                 if(sub.getSubscriberUsername().equals(userToBeUpdated)){
                     sub.updateBookshelfStatus(username, new ArrayList<>(), 0, currentTilesMap);
                 }
-            } catch (RemoteException e) {
-                throw new RuntimeException(e);
-            }
+            } catch (RemoteException ignored) {}
         }
     }
 }

@@ -681,9 +681,7 @@ public class Game implements GameModelInterface {
                 if(!player.getUsername().equals(userToBeUpdated))
                     alreadyJoinedPlayers.add(player.getUsername());
 
-            } catch (RemoteException e) {
-                throw new RuntimeException(e);
-            }
+            } catch (RemoteException ignored) {}
             player.getBookshelf().triggerListener(userToBeUpdated);
         }
         gameListener.notifyAlreadyJoinedPlayers(alreadyJoinedPlayers, userToBeUpdated);
