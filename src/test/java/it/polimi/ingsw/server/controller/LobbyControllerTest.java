@@ -1,6 +1,9 @@
 package it.polimi.ingsw.server.controller;
 
+import it.polimi.ingsw.remoteInterfaces.GameStateSubscriber;
+import it.polimi.ingsw.remoteInterfaces.RemoteGameController;
 import it.polimi.ingsw.server.model.exceptions.*;
+import it.polimi.ingsw.server.model.game.GameModelInterface;
 import it.polimi.ingsw.server.model.lobby.Lobby;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -59,6 +62,38 @@ class LobbyControllerTest {
         test.enterInLobby("fourthUser");
         assertEquals(test.addPlayerToGame("thirdUser").getClass(), GameController.class); //Correct adding to available game and game started
         assertThrows(NoAvailableGameException.class, () -> test.addPlayerToGame("fourthUser")); //No game available
+    }
+
+    @Test
+    @DisplayName("initializeTimer, handleCrashedPlayer")
+    void testInitializeTimer() throws RemoteException, InvalidPlayerException, PlayersNumberOutOfRange, InterruptedException, NicknameAlreadyUsedException {
+        Lobby lobby = new Lobby();
+        LobbyController controller = new LobbyController(lobby);
+
+        controller.enterInLobby("host");
+        controller.triggerHeartBeat("host");
+        assertTrue(controller.getTimers().containsKey("host") && controller.getTimers().keySet().size() == 1);
+        assertTrue(controller.getTimers().get("host").isScheduled());
+        controller.triggerHeartBeat("host");
+        Thread.sleep(16000);
+
+        assertThrows(PlayerNotFoundException.class, () -> {
+            controller.handleCrashedPlayer("host");
+        });
+    }
+
+    @Test
+    @DisplayName("notifyChangedGameStatus")
+    void testNotifyChangedGameStatus() throws RemoteException, NicknameAlreadyUsedException, InvalidPlayerException, PlayersNumberOutOfRange, NoAvailableGameException, InterruptedException {
+        Lobby lobby = new Lobby();
+        LobbyController controller = new LobbyController(lobby);
+
+        controller.enterInLobby("host");
+        controller.enterInLobby("x");
+        RemoteGameController game = controller.createGame("host",2);
+        controller.addPlayerToGame("x");
+        game.triggerAllListeners("host");
+        Thread.sleep(16000);
     }
 
 }

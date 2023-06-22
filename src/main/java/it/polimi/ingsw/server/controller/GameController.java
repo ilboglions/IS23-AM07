@@ -331,4 +331,8 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
         return (new HashSet<>(selectedTiles));
     }
 
+    protected Map<String, ReschedulableTimer> getTimers() {
+        return timers;
+    }
+
 }

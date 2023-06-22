@@ -165,4 +165,38 @@ public class GameControllerTest {
         assertThrows( InvalidPlayerException.class, () -> gameController.postDirectMessage("X","Z","HI"));
     }
 
+    @Test
+    @DisplayName("handleRejoinedPlayer")
+    void testHandleRejoinedPlayer() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, RemoteException {
+        Player host = new Player("host"), x = new Player("x");
+        Game game = new Game(2,host);
+        GameController controller = new GameController(game);
+
+        assertThrows(PlayerNotFoundException.class, () -> {
+            controller.handleRejoinedPlayer("x");
+        });
+    }
+    @Test
+    @DisplayName("triggerHeartbeat, handleCrashedPlayer")
+    void testTriggerHeartBeat() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, RemoteException, InterruptedException, NicknameAlreadyUsedException, GameNotStartedException, GameEndedException, InvalidCoordinatesException, EmptySlotException, PlayerNotInTurnException, NotAllPlayersHaveJoinedException, GameNotEndedException {
+        Player host = new Player("host"), x = new Player("x");
+        Game game = new Game(2,host);
+        GameController controller = new GameController(game);
+        ArrayList<Coordinates> coo = new ArrayList<>();
+
+        controller.triggerHeartBeat("host");
+        assertTrue(controller.getTimers().containsKey("host") && controller.getTimers().keySet().size() == 1);
+        assertTrue(controller.getTimers().get("host").isScheduled());
+        controller.triggerHeartBeat("host");
+        assertTrue(controller.getTimers().get("host").isScheduled());
+        game.addPlayer(x);
+        game.start();
+        if(game.getPlayerInTurn().equals("x")) {
+            game.setPlayerTurn();
+        }
+        Thread.sleep(16000);
+        assertTrue(game.getPlayerInTurn().equals("x"));
+
+    }
+
 }

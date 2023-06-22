@@ -23,6 +23,7 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
 
 
     private static final Long ID = -8605724040966311592L;
+
     /**
      * the reference to the lobby model
      */
@@ -233,5 +234,12 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
 
 
         // handle exit players from the game
+    }
+
+    protected Map<String, ReschedulableTimer> getTimers() {
+        return timers;
+    }
+    protected Map<GameModelInterface, GameController> getGameControllers() {
+        return gameControllers;
     }
 }
