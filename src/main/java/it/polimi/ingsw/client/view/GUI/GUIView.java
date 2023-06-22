@@ -302,21 +302,16 @@ public class GUIView extends Application implements ViewInterface {
      */
     public void backToLobby(){
 
-        fxmlLoader = new FXMLLoader(GUIView.class.getResource("/fxml/login-view.fxml"));
         try {
-            scene = new Scene(fxmlLoader.load(), 1500, 750);
-            scene.getStylesheets().add(GUIView.class.getResource("/fxml/css/game-view.css").toExternalForm());
-            scene.getStylesheets().add(GUIView.class.getResource("/fxml/css/lobby-view.css").toExternalForm());
+            this.drawScene(SceneType.LOGIN);
+            String ip = controller.getServerIP();
+            int port = controller.getServerPort();
             controller.close();
             ConnectionHandlerFactory factory = new ConnectionHandlerFactory();
-            controller = factory.createConnection(connectionType, this);
+            controller = factory.createConnection(connectionType, this, ip, port);
             guiController = fxmlLoader.getController();
             guiController.setConnectionHandler(controller);
             guiController.setManager(this);
-
-            this.stage.setTitle("MyShelfie");
-            this.stage.setScene(scene);
-            this.stage.show();
         } catch (IOException e) {
             this.stage.close();
         }

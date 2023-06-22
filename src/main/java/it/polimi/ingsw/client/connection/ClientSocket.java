@@ -186,6 +186,16 @@ public class ClientSocket implements ConnectionHandler{
         this.sendUpdate(message);
     }
 
+    @Override
+    public String getServerIP() {
+        return this.ip;
+    }
+
+    @Override
+    public int getServerPort() {
+        return this.port;
+    }
+
     private void sendReceivedGame(Boolean errorOccurred) {
         GameReceivedMessage message = new GameReceivedMessage(errorOccurred);
         this.sendUpdate(message);

@@ -32,6 +32,8 @@ public class ClientRMI implements ConnectionHandler{
     private final long timerDelay = 15000;
     private final ViewInterface view;
     private Game gameModel;
+    private String ip;
+    private int port;
 
     /**
      * Creates an instance of ClientRMI
@@ -40,6 +42,8 @@ public class ClientRMI implements ConnectionHandler{
     public ClientRMI(ViewInterface view, String hostName, int portNumber) {
         boolean connected = false;
         RemoteLobbyController tempLobbyController = null;
+        this.ip = hostName;
+        this.port = portNumber;
 
         this.timer = new ReschedulableTimer();
         this.heartBeatManager = Executors.newSingleThreadScheduledExecutor();
@@ -310,5 +314,15 @@ public class ClientRMI implements ConnectionHandler{
         } catch (SenderEqualsRecipientException e) {
             view.postNotification(Notifications.CHAT_SENDER_EQUALS_RECIPIENT);
         }
+    }
+
+    @Override
+    public String getServerIP() {
+        return this.ip;
+    }
+
+    @Override
+    public int getServerPort() {
+        return this.port;
     }
 }

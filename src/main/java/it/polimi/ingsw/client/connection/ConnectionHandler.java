@@ -69,4 +69,8 @@ public interface ConnectionHandler {
      */
     void sendMessage( String recipient, String content);
 
+    String getServerIP();
+
+    int getServerPort();
+
 }
