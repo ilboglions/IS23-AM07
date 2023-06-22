@@ -686,7 +686,7 @@ public class Game implements GameModelInterface {
                     alreadyJoinedPlayers.add(player.getUsername());
 
             } catch (RemoteException ignored) {}
-            player.getBookshelf().triggerListener(userToBeUpdated);
+            //player.getBookshelf().triggerListener(userToBeUpdated);
         }
         gameListener.notifyAlreadyJoinedPlayers(alreadyJoinedPlayers, userToBeUpdated);
 
@@ -703,6 +703,10 @@ public class Game implements GameModelInterface {
             this.gameListener.notifyTurnOrder(tmp);
             this.gameListener.notifyPlayerInTurn(players.get(playerTurn).getUsername());
             this.gameListener.notifyChangedGameState(GameState.STARTED);
+        }
+
+        for(Player player : players){
+            player.getBookshelf().triggerListener(userToBeUpdated);
         }
 
     }
