@@ -2,15 +2,21 @@ package it.polimi.ingsw.server.model.game;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import it.polimi.ingsw.GameState;
+import it.polimi.ingsw.remoteInterfaces.*;
+import it.polimi.ingsw.server.controller.GameController;
 import it.polimi.ingsw.server.model.exceptions.*;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.player.Player;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
+import it.polimi.ingsw.server.model.tokens.ScoringToken;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Class used to test Game class
@@ -627,4 +633,62 @@ public class GameTest {
         assertFalse(test.isCrashedPlayer("SecondPlayer"));
     }
 
+
+    @Test
+    @DisplayName("GameController subscribeToListener Game, GameState")
+    void testSubscribeToListener() throws RemoteException, NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange {
+        Player host = new Player("host");
+        Game game = new Game(2,host);
+        SubscriberForTest sub = new SubscriberForTest();
+        GameController controller = new GameController(game);
+        controller.subscribeToListener((GameSubscriber) sub);
+        controller.subscribeToListener((GameStateSubscriber) sub);
+
+        assertTrue(game.getGameListener().getSubscribers().contains(sub) && game.getGameListener().getSubscribers().size() == 1);
+        assertTrue(game.getGameStateListener().getSubscribers().contains(sub) && game.getGameStateListener().getSubscribers().size() == 1);
+
+    }
+
+    private class SubscriberForTest implements GameSubscriber, GameStateSubscriber {
+        @Override
+        public String getSubscriberUsername() throws RemoteException {
+            return "mySubscriberForTest";
+        }
+        @Override
+        public void notifyChangedGameStatus(GameState newState, GameModelInterface gameModelInterface) throws RemoteException {
+
+        }
+        @Override
+        public void notifyPlayerJoined(String username) throws RemoteException {
+
+        }
+        @Override
+        public void notifyWinningPlayer(String username, int points, Map<String, Integer> scoreboard) throws RemoteException {
+
+        }
+        @Override
+        public void notifyCommonGoalCards(ArrayList<RemoteCommonGoalCard> commonGoalCards) throws RemoteException {
+
+        }
+        @Override
+        public void notifyPlayerInTurn(String username) throws RemoteException {
+
+        }
+        @Override
+        public void notifyPlayerCrashed(String userCrashed) throws RemoteException {
+
+        }
+        @Override
+        public void notifyTurnOrder(ArrayList<String> playerOrder) throws RemoteException {
+
+        }
+        @Override
+        public void notifyAlreadyJoinedPlayers(Set<String> alreadyJoinedPlayers) throws RemoteException {
+
+        }
+        @Override
+        public void notifyChangedGameState(GameState newState) throws RemoteException {
+
+        }
+    }
 }

@@ -706,4 +706,11 @@ public class Game implements GameModelInterface {
         }
 
     }
+    protected GameListener getGameListener() {
+        return gameListener;
+    }
+
+    protected GameStateListener getGameStateListener() {
+        return gameStateListener;
+    }
 }

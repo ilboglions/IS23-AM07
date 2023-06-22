@@ -2,18 +2,25 @@ package it.polimi.ingsw.server.model.livingRoom;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import it.polimi.ingsw.server.model.exceptions.PlayersNumberOutOfRange;
+import it.polimi.ingsw.GameState;
+import it.polimi.ingsw.remoteInterfaces.BoardSubscriber;
+import it.polimi.ingsw.remoteInterfaces.GameStateSubscriber;
+import it.polimi.ingsw.remoteInterfaces.GameSubscriber;
+import it.polimi.ingsw.remoteInterfaces.RemoteCommonGoalCard;
+import it.polimi.ingsw.server.controller.GameController;
+import it.polimi.ingsw.server.model.exceptions.*;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
-import it.polimi.ingsw.server.model.exceptions.EmptySlotException;
-import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
-import it.polimi.ingsw.server.model.exceptions.SlotFullException;
-import it.polimi.ingsw.server.model.exceptions.NotEnoughTilesException;
+import it.polimi.ingsw.server.model.game.Game;
+import it.polimi.ingsw.server.model.game.GameModelInterface;
+import it.polimi.ingsw.server.model.game.GameTest;
+import it.polimi.ingsw.server.model.player.Player;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import com.google.gson.Gson;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
+import java.rmi.RemoteException;
 import java.util.*;
 
 public class LivingRoomBoardTest {
@@ -232,7 +239,28 @@ public class LivingRoomBoardTest {
         return list;
     }
 
+    @Test
+    @DisplayName("GameController subscribeToListener LivingRoomBoard")
+    void testSubscribeToListener() throws RemoteException, NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange {
+        LivingRoomBoard board = new LivingRoomBoard(2);
+        SubscriberForTest sub = new SubscriberForTest();
 
+        board.subscribeToListener((BoardSubscriber) sub);
+        assertTrue(board.getBoardListener().getSubscribers().contains(sub) && board.getBoardListener().getSubscribers().size() == 1);
+    }
+
+    private class SubscriberForTest implements BoardSubscriber {
+
+        @Override
+        public String getSubscriberUsername() throws RemoteException {
+            return null;
+        }
+
+        @Override
+        public void updateBoardStatus(Map<Coordinates, ItemTile> tilesInBoard) throws RemoteException {
+
+        }
+    }
 
 
 

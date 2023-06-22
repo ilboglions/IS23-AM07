@@ -1,10 +1,19 @@
 package it.polimi.ingsw.server.model.chat;
 
+import it.polimi.ingsw.remoteInterfaces.BoardSubscriber;
+import it.polimi.ingsw.remoteInterfaces.ChatSubscriber;
 import it.polimi.ingsw.server.model.chat.Chat;
 import it.polimi.ingsw.server.model.chat.Message;
-import it.polimi.ingsw.server.model.exceptions.SenderEqualsRecipientException;
+import it.polimi.ingsw.server.model.coordinate.Coordinates;
+import it.polimi.ingsw.server.model.exceptions.*;
+import it.polimi.ingsw.server.model.livingRoom.LivingRoomBoard;
+import it.polimi.ingsw.server.model.livingRoom.LivingRoomBoardTest;
+import it.polimi.ingsw.server.model.tiles.ItemTile;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.rmi.RemoteException;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -51,5 +60,36 @@ class ChatTest {
         assertEquals(2, test.getPlayerMessages("testUser").size());
         assertEquals(2, test.getPlayerMessages("recipientUser").size());
     }
+
+    @Test
+    @DisplayName("GameController subscribeToListener LivingRoomBoard")
+    void testSubscribeToListener() {
+        Chat chat = new Chat();
+        SubscriberForTest sub = new SubscriberForTest();
+
+        chat.subscribeToListener((ChatSubscriber) sub);
+        assertTrue(chat.getChatListener().getSubscribers().contains(sub) && chat.getChatListener().getSubscribers().size() == 1);
+    }
+
+    private class SubscriberForTest implements ChatSubscriber {
+
+        @Override
+        public String getSubscriberUsername() throws RemoteException {
+            return null;
+        }
+
+        @Override
+        public void receiveMessage(String from, String recipient, String msg) throws RemoteException {
+
+        }
+
+        @Override
+        public void receiveMessage(String from, String msg) throws RemoteException {
+
+        }
+    }
+
+
+
 
 }

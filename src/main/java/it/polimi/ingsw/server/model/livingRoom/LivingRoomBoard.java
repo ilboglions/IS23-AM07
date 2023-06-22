@@ -487,4 +487,7 @@ public class LivingRoomBoard {
         this.boardListener.triggerListener(userToBeUpdated, this.getItemTilesMapFromBoard());
     }
 
+    protected BoardListener getBoardListener() {
+        return boardListener;
+    }
 }

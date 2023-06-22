@@ -64,8 +64,9 @@ class DeckPersonalTest {
         ArrayList<PersonalGoalCard> extracted = test.draw(3);
         assertEquals(3, extracted.size());
 
-        extracted = test.draw(0);
-        assertEquals(0, extracted.size());
+        assertThrows(NegativeFieldException.class, () -> {
+            ArrayList<PersonalGoalCard> forTest = test.draw(0);
+        });
 
         extracted = test.draw(1);
         assertInstanceOf(PersonalGoalCard.class, extracted.get(0));

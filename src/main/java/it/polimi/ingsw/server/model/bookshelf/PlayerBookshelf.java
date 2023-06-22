@@ -119,4 +119,8 @@ public class PlayerBookshelf extends Bookshelf{
     public Set<BookshelfSubscriber> getSubs() {
             return new HashSet<>(this.bookshelfListener.getSubscribers());
     }
+
+    protected BookshelfListener getBookshelfListener() {
+        return bookshelfListener;
+    }
 }

@@ -80,4 +80,8 @@ public class Chat {
     public void unsubscribeFromListener(String username) {
         this.chatListener.removeSubscriber(username);
     }
+
+    protected ChatListener getChatListener() {
+        return chatListener;
+    }
 }
