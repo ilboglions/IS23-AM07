@@ -784,6 +784,9 @@ public class GameViewController extends GUIController implements Initializable {
             ImageView tokenImage;
             if(playerTokens != null) {
                 for (ScoringToken t : playerTokens) {
+                    if(t.getScoreValue().getValue() == 1){
+                        this.firstToken.setVisible(false);
+                    }
                     tokenImage = new ImageView(Objects.requireNonNull(GameViewController.class.getResource("/images/scoringTokens/scoring_" + t.getScoreValue().getValue() + ".jpg")).toString());
                     tokenImage.setPreserveRatio(true);
                     tokenImage.setFitHeight(20);
@@ -799,7 +802,6 @@ public class GameViewController extends GUIController implements Initializable {
      * @param playerPoints map with the username of the players as key, the final score as value
      */
     public void drawWinnerLeaderboard(Map<String, Integer> playerPoints) {
-        this.firstToken.setVisible(false);
         Popup winnerPopup = new Popup();
         VBox popupContainer = new VBox();
         Text winnerText = new Text();
@@ -851,5 +853,12 @@ public class GameViewController extends GUIController implements Initializable {
                 .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    public void freezeGame() {
+        playersLabels.forEach(label -> {
+                label.setTextFill(Color.BLACK);
+        });
+        livingroom_grid.setDisable(true);
     }
 }

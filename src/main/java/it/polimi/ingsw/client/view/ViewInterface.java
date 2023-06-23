@@ -106,4 +106,9 @@ public interface ViewInterface {
      * This method enables the client to join back to the lobby after the end of a game
      */
     void backToLobby();
+
+    /**
+     * This method is called when the game is paused and all the players must be frozen (the chat is not frozen)
+     */
+    void freezeGame();
 }

@@ -27,6 +27,7 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
      * ordered list of usernames in the game. Ordered by turn from fist to last.
      */
     private final ArrayList<String> players;
+    private GameState gameState;
     /**
      * Map to contain the scoring tokens of each player
      */
@@ -249,7 +250,9 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
      */
     @Override
     public synchronized void notifyPlayerInTurn(String username) throws RemoteException {
-        view.drawPlayerInTurn(username, this.username);
+        if(this.gameState != GameState.PAUSED) {
+            view.drawPlayerInTurn(username, this.username);
+        }
     }
 
     /**
@@ -371,6 +374,9 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
      */
     @Override
     public void notifyChangedGameState(GameState newState){
+        this.gameState = newState;
         view.postNotification("Game is " + newState.toString(), "");
+        if(newState == GameState.PAUSED)
+            view.freezeGame();
     }
 }

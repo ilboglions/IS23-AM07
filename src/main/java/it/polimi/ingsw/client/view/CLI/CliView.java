@@ -710,10 +710,22 @@ public class CliView implements ViewInterface {
         //ONLY THE GUI USES THIS METHOD
     }
 
+    /**
+     * This method takes back the player to the Lobby
+     */
     @Override
     public void backToLobby() {
         this.setScenario(Scenario.LOBBY);
 
+    }
+
+
+    /**
+     * This method is called when the game is paused and all the players must be frozen (the chat is not frozen)
+     */
+    @Override
+    public void freezeGame() {
+        //ONLY THE GUI USES THIS METHOD
     }
 
     /**

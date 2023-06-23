@@ -316,4 +316,15 @@ public class GUIView extends Application implements ViewInterface {
             this.stage.close();
         }
     }
+
+    /**
+     * This method is called when the game is paused and all the players must be frozen (the chat is not frozen)
+     */
+    @Override
+    public void freezeGame() {
+        Platform.runLater(() -> {
+            GameViewController controller = fxmlLoader.getController();
+            controller.freezeGame();
+        });
+    }
 }
