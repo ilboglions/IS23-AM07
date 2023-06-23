@@ -193,8 +193,10 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
      */
     private void stopTimer(String username){
         synchronized (this.timers){
-            if(timers.containsKey(username))
+            if(timers.containsKey(username)) {
                 this.timers.get(username).cancel();
+                this.timers.remove(username);
+            }
         }
     }
 

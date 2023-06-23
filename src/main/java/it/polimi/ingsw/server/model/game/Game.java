@@ -631,12 +631,12 @@ public class Game implements GameModelInterface {
         if( this.state.equals(GameState.ENDED) ){
             return;
         }
-
-        if(this.isStarted() && crashedPlayers.size() == numPlayers - 1 ) {
+        if(crashedPlayers.size() == players.size()) {
+            this.changeState(GameState.ENDED);
+        } else if(this.isStarted() && crashedPlayers.size() == numPlayers - 1 ) {
             this.changeState(GameState.PAUSED);
             this.crashTimer = new ReschedulableTimer();
             this.crashTimer.schedule(this::endGame, this.crashTimerDelay);
-
         }
     }
 
