@@ -84,6 +84,9 @@ public class GUIView extends Application implements ViewInterface {
                     Optional<ButtonType> result = closeAlert.showAndWait();
                     if(result.isPresent()){
                         if(result.get() == ButtonType.OK){
+                            try {
+                                controller.close();
+                            } catch (IOException ignored) {}
                             System.exit(0);
                         }
                         else{

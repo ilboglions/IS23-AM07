@@ -248,9 +248,7 @@ public class ClientSocket implements ConnectionHandler{
                     while(lastReceivedMessages.isEmpty()){
                         try {
                             lastReceivedMessages.wait();
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
+                        } catch (InterruptedException ignored) {}
                     }
                     this.parse(lastReceivedMessages.poll());
                 }

@@ -141,6 +141,11 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
             case GAME_RECEIVED_MESSAGE -> outputMessage = this.parse((GameReceivedMessage) inputMessage);
             case STILL_ACTIVE -> outputMessage = new StillActiveMessage();
             default -> {
+                if(this.gameController != null){
+                    try {
+                        gameController.handleCrashedPlayer(this.username);
+                    } catch (PlayerNotFoundException ignored) {}
+                }
                 closeConnectionFlag = true;
                 outputMessage = new CloseConnectionMessage();
             }

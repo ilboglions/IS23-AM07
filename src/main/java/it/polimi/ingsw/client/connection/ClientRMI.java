@@ -74,6 +74,11 @@ public class ClientRMI implements ConnectionHandler{
     @Override
     public void close() {
         heartBeatManager.shutdownNow();
+        if(gameController != null){
+            try {
+                gameController.handleCrashedPlayer(this.username);
+            } catch (RemoteException | PlayerNotFoundException ignored) {}
+        }
         gameController = null;
 
     }
@@ -265,7 +270,7 @@ public class ClientRMI implements ConnectionHandler{
                     System.out.println("ERROR HEARTBEAT!");
                     this.close();
                 } catch ( Exception e){
-                    e.printStackTrace();
+                    //e.printStackTrace();
                 }
             },
             0, 2, TimeUnit.SECONDS);
