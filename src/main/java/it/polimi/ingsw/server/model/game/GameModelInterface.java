@@ -15,6 +15,12 @@ public interface GameModelInterface {
      * @return true, if the game is started
      */
     boolean isStarted();
+
+    /**
+     *
+     * @return true if the game is started or resumed
+     */
+    boolean isRunning();
     /**
      * Add a new BoardSubscriber to the listener for livingRoom updates
      * @param subscriber the BoardSubscriber to be added

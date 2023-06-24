@@ -510,7 +510,11 @@ public class Game implements GameModelInterface {
         return this.state != GameState.CREATED;
     }
 
-    private boolean isRunning(){
+    /**
+     *
+     * @return true if the game is started or resumed
+     */
+    public boolean isRunning(){
         return this.state == GameState.STARTED || this.state == GameState.RESUMED;
     }
 
@@ -636,12 +640,22 @@ public class Game implements GameModelInterface {
         } else if(this.isStarted() && crashedPlayers.size() == numPlayers - 1 ) {
             this.changeState(GameState.PAUSED);
             this.crashTimer = new ReschedulableTimer();
-            this.crashTimer.schedule(this::endGame, this.crashTimerDelay);
+            this.crashTimer.schedule(this::handleCrashedGame, this.crashTimerDelay);
         }
     }
 
     private void endGame() {
         this.changeState(GameState.ENDED);
+    }
+
+    private void handleCrashedGame(){
+        Player winner = this.players.stream().filter(p -> !isCrashedPlayer(p.getUsername())).findFirst().get();
+        Map<String,Integer> scoreboard = new LinkedHashMap<>();
+        for( Player player : this.players){
+            scoreboard.put(player.getUsername(),player.getPoints());
+        }
+        this.gameListener.onPlayerWins(winner.getUsername(), winner.getPoints(),scoreboard);
+        this.endGame();
     }
 
     private void changeState(GameState gameState) {

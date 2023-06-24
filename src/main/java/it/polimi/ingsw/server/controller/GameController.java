@@ -256,7 +256,7 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
                 this.stopTimer(username);
 
             try {
-                if (gameModel.isStarted() && gameModel.getPlayerInTurn().equals(username)) {
+                if (gameModel.isRunning() && gameModel.getPlayerInTurn().equals(username)) {
                     this.selectedTiles.clear();
                     gameModel.setPlayerTurn();
                 }

@@ -180,9 +180,7 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
             this.timers.get(username).schedule(() -> {
                 try {
                     this.handleCrashedPlayer(username);
-                } catch (PlayerNotFoundException | RemoteException e) {
-                    throw new RuntimeException(e);
-                }
+                } catch (PlayerNotFoundException | RemoteException e) {}
             },this.timerDelay);
         }
     }

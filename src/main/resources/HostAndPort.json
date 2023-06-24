@@ -1,6 +1,5 @@
 {
   "portNumber": "4567",
   "hostName": "127.0.0.1",
-  "rmiPortNumber": "1099",
-  "rmiHostName": "127.0.0.1"
+  "rmiPortNumber": "1099"
 }
