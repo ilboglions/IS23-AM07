@@ -88,14 +88,18 @@ public class CliView implements ViewInterface {
 
     private Scenario scenario;
     private boolean gameEnded;
+    private Map<String,String> commands;
+
+    private final String titleColor = Color.YELLOW_BOLD.escape();
 
     public CliView(ConnectionType connectionType, String address, int port) {
         gameEnded = false;
         this.setScenario(Scenario.LOBBY);
         ConnectionHandlerFactory factory = new ConnectionHandlerFactory();
         controller = factory.createConnection(connectionType, this, address, port);
-
         inputScan =  new Scanner(System.in);
+
+
         this.plot();
         inputReaderEx = Executors.newCachedThreadPool();
         inputReaderEx.execute( () -> {
@@ -247,10 +251,17 @@ public class CliView implements ViewInterface {
                     throw new RuntimeException(e);
                 }
             }
-            case "exit" ->{
+            case "Exit" ->{
                 if(!this.gameEnded) return;
                 this.backToLobby();
 
+            }
+
+            case "help" ->{
+                if(commands.containsKey(specific))
+                    this.postNotification(specific,commands.get(specific));
+                else
+                    this.postNotification("No command specified!","specify a command for which you need help!");
             }
             default -> {
                 this.postNotification("Command not found!","the command inserted is invalid!");
@@ -267,6 +278,7 @@ public class CliView implements ViewInterface {
         START_C_BOX_NOTIFICATION = s.getStartCNotifications();
         LENGTH_R_BOX_NOTIFICATION = s.getLengthRNotifications();
         LENGTH_C_BOX_NOTIFICATION = s.getLengthCNotifications();
+        this.commands = s.getCommands();
         this.fillEmpty();
         this.plot();
     }
@@ -353,7 +365,7 @@ public class CliView implements ViewInterface {
                 }
         );
 
-        drawTitle(title, startR, startC, Color.RED_BOLD.escape());
+        drawTitle(title, startR, startC, titleColor);
 
         startCBookshelf = (Math.max(title.length(), nTilesTable.length()) - 14) / 2;
         startCPoints = (Math.max(title.length(), nTilesTable.length()) - nTilesTable.length()) / 2;
@@ -422,16 +434,18 @@ public class CliView implements ViewInterface {
         int currentC;
         String title = "Common Goal Cards";
 
-        drawTitle(title, startR, startC, Color.RED_BOLD.escape());
+        drawTitle(title, startR, startC, titleColor);
 
         currentR = startR + 2;
         currentC = startC;
         for(RemoteCommonGoalCard card : commonGoalCards){
             tiles[currentR][currentC] = Color.WHITE_BOLD.escape() +  "•";
             tiles[currentR][currentC + 1] = " ";
-            currentC += 2;
-
-            currentR += printTruncateText(Color.RED_BACKGROUND.escape()+Color.WHITE_BRIGHT.escape()+card.getTokenStack().pop().getScoreValue().getValue()+Color.RESET.escape()+" "+card.getDescription(), currentR, currentC, START_C_BOX_CARD + LENGTH_C_BOX_CARD - FIXED_MARGIN) + 1;
+            tiles[currentR][currentC + 3] = Color.RED_BACKGROUND.escape()+" ";
+            tiles[currentR][currentC + 4] = String.valueOf(card.getTokenStack().pop().getScoreValue().getValue());
+            tiles[currentR][currentC + 5] = Color.RED_BACKGROUND.escape()+" "+Color.RESET.escape();
+            currentC += 6;
+            currentR += printTruncateText(" "+card.getDescription(), currentR, currentC, START_C_BOX_CARD + LENGTH_C_BOX_CARD - FIXED_MARGIN) + 1;
 
             currentC = startC;
         }
@@ -452,7 +466,7 @@ public class CliView implements ViewInterface {
         startingPoints = getStartsFromTurnOrder(order);
         clearBox(startingPoints[0] - 3, startingPoints[1] - 1, startingPoints[0] + 8, startingPoints[1] + 15);
         for(int i=0; i < playerUsername.length(); i++){
-            tiles[startingPoints[0] - 2][startingPoints[1] + i] = Color.RED_BOLD.escape() + playerUsername.charAt(i) ;
+            tiles[startingPoints[0] - 2][startingPoints[1] + i] = titleColor + playerUsername.charAt(i) ;
         }
 
         this.drawBookShelf(tilesMap, startingPoints[0], startingPoints[1]);
@@ -503,14 +517,14 @@ public class CliView implements ViewInterface {
         int nLines;
 
         this.clearBox(START_R_BOX_CARD, START_C_BOX_CHAT, START_R_BOX_CARD + LENGTH_R_BOX_CARD, START_C_BOX_CHAT + LENGTH_C_BOX_CHAT);
-
+        this.printTruncateText("~~ CHAT ~~",START_R_BOX_CARD + FIXED_V_MARGIN,START_C_BOX_CHAT + FIXED_H_MARGIN,START_C_BOX_CHAT + LENGTH_C_BOX_CHAT - FIXED_H_MARGIN,Color.YELLOW_BRIGHT.escape());
         for (String message : chat) {
 
             nLines = calculateTextLines(message, START_C_BOX_CHAT + FIXED_H_MARGIN, START_C_BOX_CHAT + LENGTH_C_BOX_CHAT - FIXED_H_MARGIN);
 
             currentRChat -= nLines;
 
-            if (currentRChat > START_R_BOX_CARD - FIXED_V_MARGIN)
+            if (currentRChat > START_R_BOX_CARD - FIXED_V_MARGIN + 1 )
                 printTruncateText(message, currentRChat, START_C_BOX_CHAT + FIXED_H_MARGIN, START_C_BOX_CHAT + LENGTH_C_BOX_CHAT - FIXED_H_MARGIN);
             else
                 break;
@@ -638,7 +652,7 @@ public class CliView implements ViewInterface {
 
         this.clearBox(START_R_BOX_LEADERBOARD, START_C_BOX_LEADERBOARD, START_R_BOX_LEADERBOARD + LENGTH_R_BOX_LEADERBOARD, START_C_BOX_LEADERBOARD + LENGTH_C_BOX_LEADERBOARD);
 
-        drawTitle(title, startR, startC, Color.RED_BOLD.escape());
+        drawTitle(title, startR, startC, titleColor);
 
         currR = startR + 2;
         Map<String, Integer> orderedMap = scoreBoard.entrySet().stream()
@@ -671,11 +685,7 @@ public class CliView implements ViewInterface {
         startC = START_C_BOX_LEADERBOARD + ((LENGTH_C_BOX_LEADERBOARD - text.length()) / 2);
 
         clearBox(startR - 1, START_C_BOX_LEADERBOARD - 1, startR + 1, START_C_BOX_LEADERBOARD + LENGTH_C_BOX_LEADERBOARD);
-
-        for(int i = 0; i < text.length(); i++){
-            tiles[startR][startC + i] = Color.RED_BOLD.escape() + text.charAt(i);
-        }
-
+        this.printTruncateText(text,startR,startC,MAX_HORIZ_TILES-FIXED_H_MARGIN-startC, titleColor);
         this.plot();
     }
 
@@ -736,7 +746,7 @@ public class CliView implements ViewInterface {
     @Override
     public void postNotification(String title, String description) {
         clearBox(START_R_BOX_NOTIFICATION, START_C_BOX_NOTIFICATION, START_R_BOX_NOTIFICATION + LENGTH_R_BOX_NOTIFICATION, START_C_BOX_NOTIFICATION + LENGTH_C_BOX_NOTIFICATION);
-        int spaceNeeded = printTruncateText(title.toUpperCase(),START_R_BOX_NOTIFICATION + FIXED_V_MARGIN,START_C_BOX_NOTIFICATION+FIXED_H_MARGIN, START_C_BOX_NOTIFICATION + LENGTH_C_BOX_NOTIFICATION - FIXED_H_MARGIN, Color.RED_BOLD.escape());
+        int spaceNeeded = printTruncateText(title.toUpperCase(),START_R_BOX_NOTIFICATION + FIXED_V_MARGIN,START_C_BOX_NOTIFICATION+FIXED_H_MARGIN, START_C_BOX_NOTIFICATION + LENGTH_C_BOX_NOTIFICATION - FIXED_H_MARGIN, titleColor);
         printTruncateText(description,START_R_BOX_NOTIFICATION + FIXED_V_MARGIN + spaceNeeded,START_C_BOX_NOTIFICATION+FIXED_H_MARGIN, START_C_BOX_NOTIFICATION + LENGTH_C_BOX_NOTIFICATION - FIXED_H_MARGIN );
         this.plot();
     }
@@ -821,7 +831,6 @@ public class CliView implements ViewInterface {
         } else {
             this.plotLobby();
         }
-
         this.clearScreen();
         for (int r = 0; r < MAX_VERT_TILES; r++) {
             System.out.println();
@@ -842,10 +851,30 @@ public class CliView implements ViewInterface {
         this.drawBox(START_R_BOX_NOTIFICATION,START_C_BOX_NOTIFICATION,LENGTH_R_BOX_NOTIFICATION, LENGTH_C_BOX_NOTIFICATION,Color.WHITE_BOLD_BRIGHT.escape() );
         /* leaderboard box */
         this.drawBox(START_R_BOX_LEADERBOARD, START_C_BOX_LEADERBOARD, LENGTH_R_BOX_LEADERBOARD, LENGTH_C_BOX_LEADERBOARD, Color.WHITE_BOLD_BRIGHT.escape());
+        /* help box */
+        this.drawBox(START_R_BOX_NOTIFICATION, START_C_BOX_LEADERBOARD - ( LENGTH_C_BOX_NOTIFICATION + FIXED_H_MARGIN) , LENGTH_R_BOX_NOTIFICATION, LENGTH_C_BOX_NOTIFICATION, Color.WHITE_BOLD_BRIGHT.escape());
+
+        /* chat title */
+        this.printTruncateText("~~ CHAT ~~",START_R_BOX_CARD + FIXED_V_MARGIN,START_C_BOX_CHAT + FIXED_H_MARGIN,START_C_BOX_CHAT + LENGTH_C_BOX_CHAT - FIXED_H_MARGIN,Color.YELLOW_BRIGHT.escape());
+        /* */
+        this.drawCommandsHelp(START_R_BOX_NOTIFICATION+FIXED_V_MARGIN,START_C_BOX_LEADERBOARD - ( LENGTH_C_BOX_NOTIFICATION + FIXED_H_MARGIN)+FIXED_H_MARGIN, LENGTH_C_BOX_NOTIFICATION - FIXED_H_MARGIN);
+
     }
+
+    private void drawCommandsHelp(int startR,int startC,int maxC) {
+        int rowSpacer = 1;
+        this.printTruncateText("~~ COMMAND LIST ~~",startR,startC,maxC, Color.YELLOW_BRIGHT.escape());
+        for( Map.Entry<String,String> c :commands.entrySet())
+            rowSpacer+= this.printTruncateText(c.getKey(),startR + rowSpacer,startC,maxC);
+        ;
+    }
+
     private void plotLobby(){
         /* notification box*/
         this.drawBox(START_R_BOX_NOTIFICATION,START_C_BOX_NOTIFICATION,LENGTH_R_BOX_NOTIFICATION, LENGTH_C_BOX_NOTIFICATION,Color.WHITE_BOLD_BRIGHT.escape() );
+        /* help box */
+        this.drawBox(START_R_BOX_NOTIFICATION,START_C_BOX_NOTIFICATION+LENGTH_C_BOX_NOTIFICATION+FIXED_H_MARGIN,LENGTH_R_BOX_NOTIFICATION, LENGTH_C_BOX_NOTIFICATION,Color.WHITE_BOLD_BRIGHT.escape() );
+        this.drawCommandsHelp(START_R_BOX_NOTIFICATION+FIXED_V_MARGIN,START_C_BOX_NOTIFICATION+FIXED_H_MARGIN+LENGTH_C_BOX_NOTIFICATION+FIXED_H_MARGIN, LENGTH_C_BOX_NOTIFICATION-FIXED_H_MARGIN);
         this.printAsciiArtTitle();
     }
 

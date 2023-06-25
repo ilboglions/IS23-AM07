@@ -1,13 +1,32 @@
 package it.polimi.ingsw.client.view.CLI;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 import static it.polimi.ingsw.client.view.CLI.CliView.*;
 
 /**
  * enum with the types of scene with the rendering attributes (dimensions).
  */
+
 public enum Scenario {
-    LOBBY(100,15, 8, 15, 5, 65),
-    GAME( MAX_HORIZ_TILES,MAX_VERT_TILES, START_R_BOX_NOTIFICATION, START_C_BOX_NOTIFICATION,LENGTH_R_BOX_NOTIFICATION,LENGTH_C_BOX_NOTIFICATION);
+    LOBBY(100,15, 8, 15, 5, 30,
+            new HashMap<String, String>() {{
+            put("JoinLobby","join the lobby with the username declared i.e. JoinLobby>>username");
+            put("JoinGame", "join an available game");
+            put("CreateGame", "create a game i.e. CreateGame>>2 it creates a game for 2 players");
+            }}
+            ),
+    GAME( MAX_HORIZ_TILES,MAX_VERT_TILES, START_R_BOX_NOTIFICATION, START_C_BOX_NOTIFICATION,LENGTH_R_BOX_NOTIFICATION,LENGTH_C_BOX_NOTIFICATION,
+            new HashMap<String, String>() {{
+                put("GetTiles","gets the tiles from the livingroom board i.e. GetTiles>>(2,3);(4,5);(0,1");
+                put("MoveTiles", "after correctly selected the tiles, it moves them in the column of your bookshelf i.e. MoveTiles>>(2,3);(4,5);(0,1)-->3");
+                put("Chat", "post a message in the chat, if you want to send a direct message, specify the name before '--' i.e. chat>>UserRecipient--text or chat>>text");
+                put("Exit", "exit the game (only if it is finished)");
+
+            }}
+    );
 
     private int rows;
     private int cols;
@@ -18,13 +37,16 @@ public enum Scenario {
     private int lengthRNotifications;
     private int lengthCNotifications;
 
-    Scenario(int cols, int rows, int startRNotifications, int startCNotifications, int lengthRNotifications, int lengthCNotifications){
+    private Map<String,String> commands;
+
+    Scenario(int cols, int rows, int startRNotifications, int startCNotifications, int lengthRNotifications, int lengthCNotifications, Map<String, String> commands ){
         this.cols = cols;
         this.rows = rows;
         this.startRNotifications = startRNotifications;
         this.startCNotifications = startCNotifications;
         this.lengthRNotifications = lengthRNotifications;
         this.lengthCNotifications = lengthCNotifications;
+        this.commands = new HashMap<>(commands);
     }
 
     /**
@@ -74,5 +96,13 @@ public enum Scenario {
      */
     public int getLengthCNotifications() {
         return this.lengthCNotifications;
+    }
+
+    /**
+     *
+     * @return the map of the available commands and descriptions
+     */
+    public Map<String,String> getCommands() {
+        return new HashMap<>(commands);
     }
 }
