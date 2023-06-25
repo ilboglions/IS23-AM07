@@ -616,18 +616,20 @@ public class Game implements GameModelInterface {
         Optional<Player> tmpPlayer = this.searchPlayer(username);
 
         if(tmpPlayer.isPresent()){
-            livingRoom.unsubscribeFromListener(username);
-            players.forEach(p -> {
-                p.getBookshelf().unsubscribeFromListener(username);
-                p.unsubscribeFromListener(username);
-            });
-            chat.unsubscribeFromListener(username);
-            this.gameListener.removeSubscriber(username);
+            if(!crashedPlayers.contains(tmpPlayer.get())) {
+                livingRoom.unsubscribeFromListener(username);
+                players.forEach(p -> {
+                    p.getBookshelf().unsubscribeFromListener(username);
+                    p.unsubscribeFromListener(username);
+                });
+                chat.unsubscribeFromListener(username);
+                this.gameListener.removeSubscriber(username);
 
-            crashedPlayers.add(tmpPlayer.get());
-            this.gameListener.notifyPlayerCrashed(tmpPlayer.get().getUsername());
+                crashedPlayers.add(tmpPlayer.get());
+                this.gameListener.notifyPlayerCrashed(tmpPlayer.get().getUsername());
 
-            logger.info(username+" crashed!");
+                logger.info(username + " crashed!");
+            }
         }
         else
             throw new PlayerNotFoundException("The player with this username has not been found in the game");
@@ -636,8 +638,10 @@ public class Game implements GameModelInterface {
             return;
         }
         if(crashedPlayers.size() == players.size()) {
+            if(this.crashTimer != null && this.crashTimer.isScheduled())
+                this.crashTimer.cancel();
             this.changeState(GameState.ENDED);
-        } else if(this.isStarted() && crashedPlayers.size() == numPlayers - 1 ) {
+        } else if(this.isRunning() && crashedPlayers.size() == numPlayers - 1 ) {
             this.changeState(GameState.PAUSED);
             this.crashTimer = new ReschedulableTimer();
             this.crashTimer.schedule(this::handleCrashedGame, this.crashTimerDelay);
@@ -649,12 +653,16 @@ public class Game implements GameModelInterface {
     }
 
     private void handleCrashedGame(){
-        Player winner = this.players.stream().filter(p -> !isCrashedPlayer(p.getUsername())).findFirst().get();
-        Map<String,Integer> scoreboard = new LinkedHashMap<>();
-        for( Player player : this.players){
-            scoreboard.put(player.getUsername(),player.getPoints());
+        try {
+            Player winner = this.players.stream().filter(p -> !isCrashedPlayer(p.getUsername())).findFirst().get();
+            logger.info("Game crashed, last player is the winner");
+            Map<String,Integer> scoreboard = new LinkedHashMap<>();
+            for( Player player : this.players){
+                scoreboard.put(player.getUsername(),player.getPoints());
+            }
+            this.gameListener.onPlayerWins(winner.getUsername(), winner.getPoints(),scoreboard);
         }
-        this.gameListener.onPlayerWins(winner.getUsername(), winner.getPoints(),scoreboard);
+        catch (NoSuchElementException ignored){}
         this.endGame();
     }
 

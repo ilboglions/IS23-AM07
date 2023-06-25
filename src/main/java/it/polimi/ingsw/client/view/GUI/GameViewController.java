@@ -802,6 +802,8 @@ public class GameViewController extends GUIController implements Initializable {
      * @param playerPoints map with the username of the players as key, the final score as value
      */
     public void drawWinnerLeaderboard(Map<String, Integer> playerPoints) {
+
+        this.freezeGame();
         Popup winnerPopup = new Popup();
         VBox popupContainer = new VBox();
         Text winnerText = new Text();
@@ -859,6 +861,7 @@ public class GameViewController extends GUIController implements Initializable {
         playersLabels.forEach(label -> {
                 label.setTextFill(Color.BLACK);
         });
-        livingroom_grid.setDisable(true);
+        this.livingroom_grid.setDisable(true);
+
     }
 }

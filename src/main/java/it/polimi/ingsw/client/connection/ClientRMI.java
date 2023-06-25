@@ -266,11 +266,9 @@ public class ClientRMI implements ConnectionHandler{
 
                         timer.reschedule(this.timerDelay);
                     }
-                } catch (RemoteException e) {
-                    System.out.println("ERROR HEARTBEAT!");
+                } catch (Exception e) {
+                    this.view.postNotification(Notifications.ERR_CONNECTION_NO_LONGER_AVAILABLE);
                     this.close();
-                } catch ( Exception e){
-                    //e.printStackTrace();
                 }
             },
             0, 2, TimeUnit.SECONDS);
