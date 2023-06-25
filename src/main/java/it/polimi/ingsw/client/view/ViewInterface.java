@@ -92,9 +92,10 @@ public interface ViewInterface {
 
     /**
      * Draws the final leaderboard (after the end of the game)
+     * @param username username of the winner
      * @param playerPoints map with the username of the players as key, the final score as value
      */
-    void drawWinnerLeaderboard(Map<String, Integer> playerPoints);
+    void drawWinnerLeaderboard(String username, Map<String, Integer> playerPoints);
 
     /**
      * Draws the scoring tokens owned by each player

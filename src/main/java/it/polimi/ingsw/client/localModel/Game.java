@@ -61,9 +61,7 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
 
         try {
             view.drawBookShelf(new HashMap<>(),username, players.indexOf(username));
-        } catch (InvalidCoordinatesException e) {
-            throw new RuntimeException(e);
-        }
+        } catch (InvalidCoordinatesException ignored) {}
 
         playerChat = new ArrayList<>();
     }
@@ -95,16 +93,13 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
             playerPoints.put(player, 0);
             playerScoringTokens.put(player, new ArrayList<>());
         }
-        ArrayList<String> playersChat;
-        playersChat = new ArrayList<>(players);
-        playersChat.remove(this.username);
+        ArrayList<String> chatPlayers = new ArrayList<>(players);
+        chatPlayers.remove(this.username);
         view.drawLeaderboard(this.playerPoints);
-        view.drawChatPlayersList(playersChat);
+        view.drawChatPlayersList(chatPlayers);
         try {
             view.drawBookShelf(new HashMap<>(), player, (this.players.indexOf(player) - this.players.indexOf(this.username) + this.players.size()) % this.players.size());
-        } catch (InvalidCoordinatesException e) {
-            throw new RuntimeException(e);
-        }
+        } catch (InvalidCoordinatesException ignored) {}
     }
     /**
      * Accept a player inside the game and put it in a certain position. Usually used to handle crashed players
@@ -226,7 +221,7 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
     public synchronized void notifyWinningPlayer(String username, int points, Map<String, Integer> scoreboard) throws RemoteException {
         view.postNotification("Game ended!",username+" won the game!");
         //view.drawLeaderboard(scoreboard);
-        view.drawWinnerLeaderboard(scoreboard);
+        view.drawWinnerLeaderboard(username, scoreboard);
     }
 
     /**

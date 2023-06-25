@@ -277,14 +277,15 @@ public class GUIView extends Application implements ViewInterface {
 
     /**
      * Draws the final leaderboard (after the end of the game)
+     * @param username username of the winning player
      * @param playerPoints map with the username of the players as key, the final score as value
      */
     @Override
-    public void drawWinnerLeaderboard(Map<String, Integer> playerPoints) {
+    public void drawWinnerLeaderboard(String username, Map<String, Integer> playerPoints) {
         Platform.runLater(() -> {
             GameViewController controller = fxmlLoader.getController();
             guiController.setManager(this);
-            controller.drawWinnerLeaderboard(playerPoints);
+            controller.drawWinnerLeaderboard(username, playerPoints);
         });
     }
 

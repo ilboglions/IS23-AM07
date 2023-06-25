@@ -227,10 +227,12 @@ public class GameViewController extends GUIController implements Initializable {
      */
     public void sendMessage(ActionEvent actionEvent) {
         String recipient = (String) chatRecipientSelector.getValue();
-        if(recipient == null || recipient.isBlank())
-            this.getClientController().sendMessage(textFieldChat.getText());
-        else
-            this.getClientController().sendMessage(recipient,textFieldChat.getText());
+        if(!textFieldChat.getText().isBlank()) {
+            if (recipient == null || recipient.isBlank())
+                this.getClientController().sendMessage(textFieldChat.getText());
+            else
+                this.getClientController().sendMessage(recipient, textFieldChat.getText());
+        }
 
         this.textFieldChat.clear();
         actionEvent.consume();
@@ -799,9 +801,10 @@ public class GameViewController extends GUIController implements Initializable {
 
     /**
      * Draws the final leaderboard (after the end of the game)
+     * @param winner username of the winner
      * @param playerPoints map with the username of the players as key, the final score as value
      */
-    public void drawWinnerLeaderboard(Map<String, Integer> playerPoints) {
+    public void drawWinnerLeaderboard(String winner, Map<String, Integer> playerPoints) {
 
         this.freezeGame();
         Popup winnerPopup = new Popup();
@@ -814,7 +817,7 @@ public class GameViewController extends GUIController implements Initializable {
         winnerPopup.getContent().add(popupContainer);
 
         playersRank = createRank(playerPoints);
-        winnerText.setText(playersRank.get(0) + " won the game! Congratulations");
+        winnerText.setText(winner + " won the game! Congratulations");
         winnerText.setTextAlignment(TextAlignment.CENTER);
         winnerText.setFill(Color.WHITE);
         winnerText.setFont(Font.font("Arial", FontWeight.BOLD, 15));
