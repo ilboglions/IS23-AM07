@@ -1,6 +1,5 @@
 package it.polimi.ingsw.client.view.CLI;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,20 +10,19 @@ import static it.polimi.ingsw.client.view.CLI.CliView.*;
  */
 
 public enum Scenario {
-    LOBBY(100,15, 8, 15, 5, 30,
-            new HashMap<String, String>() {{
-            put("JoinLobby","join the lobby with the username declared i.e. JoinLobby>>username");
-            put("JoinGame", "join an available game");
-            put("CreateGame", "create a game i.e. CreateGame>>2 it creates a game for 2 players");
+    LOBBY(MAX_HORIZ_TILES_LOBBY,MAX_VERT_TILES_LOBBY, 9, 15, 5, 65,
+            new HashMap<>() {{
+                put("JoinLobby>>*username*","Join the lobby with the username declared i.e. JoinLobby>>Mariano");
+                put("JoinGame>>", "Join an available game");
+                put("CreateGame>>*number of players*", "Create a game (min 2, max 4 player) i.e. CreateGame>>2 it creates a game for 2 players");
             }}
             ),
-    GAME( MAX_HORIZ_TILES,MAX_VERT_TILES, START_R_BOX_NOTIFICATION, START_C_BOX_NOTIFICATION,LENGTH_R_BOX_NOTIFICATION,LENGTH_C_BOX_NOTIFICATION,
-            new HashMap<String, String>() {{
-                put("GetTiles","gets the tiles from the livingroom board i.e. GetTiles>>(2,3);(4,5);(0,1");
-                put("MoveTiles", "after correctly selected the tiles, it moves them in the column of your bookshelf i.e. MoveTiles>>(2,3);(4,5);(0,1)-->3");
-                put("Chat", "post a message in the chat, if you want to send a direct message, specify the name before '--' i.e. chat>>UserRecipient--text or chat>>text");
-                put("Exit", "exit the game (only if it is finished)");
-
+    GAME(MAX_HORIZ_TILES_GAME, MAX_VERT_TILES_GAME, START_R_BOX_NOTIFICATION, START_C_BOX_NOTIFICATION,LENGTH_R_BOX_NOTIFICATION,LENGTH_C_BOX_NOTIFICATION,
+            new HashMap<>() {{
+                put("GetTiles>>(x,y)","Gets the tiles from the livingroom board (Min 1, Max 3) i.e. GetTiles>>(2,3);(4,5);(0,1)");
+                put("MoveTiles>>(x,y)-->*column number*", "After correctly selected the tiles, it moves them in the column of your bookshelf i.e. MoveTiles>>(2,3);(4,5);(0,1)-->3");
+                put("Chat>>*message*", "Post a message in the chat, if you want to send a direct message, specify the name before '--' i.e. chat>>UserRecipient--text or chat>>text");
+                put("Exit>>", "Exit the game (only if it is finished)");
             }}
     );
 
