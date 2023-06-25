@@ -654,10 +654,11 @@ public class CliView implements ViewInterface {
     /**
      * Not implemented in CLI
      * Draws the final leaderboard (after the end of the game)
+     * @param username username of the winner
      * @param playerPoints map with the username of the players as key, the final score as value
      */
     @Override
-    public void drawWinnerLeaderboard(Map<String, Integer> playerPoints) {
+    public void drawWinnerLeaderboard(String username, Map<String, Integer> playerPoints) {
         this.gameEnded = true;
         this.drawLeaderboard(playerPoints);
     }

@@ -296,7 +296,7 @@ public class ClientRMI implements ConnectionHandler{
         try {
             gameController.postBroadCastMessage(this.username,content);
         } catch (RemoteException e) {
-            throw new RuntimeException(e);
+            this.close();
         } catch (InvalidPlayerException ignored) {
         }
     }
@@ -311,7 +311,7 @@ public class ClientRMI implements ConnectionHandler{
         try {
             gameController.postDirectMessage(this.username,recipient,content);
         } catch (RemoteException e) {
-            throw new RuntimeException(e);
+            this.close();
         } catch (InvalidPlayerException ignored) {
             /* to decide, if the written recipient does not exists, we could just ignore the chat message*/
         } catch (SenderEqualsRecipientException e) {
