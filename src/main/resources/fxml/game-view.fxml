@@ -18,7 +18,7 @@
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.text.TextFlow?>
 
-<GridPane alignment="CENTER" hgap="20.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" styleClass="anchor" stylesheets="@css/game-view.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.view.GUI.GameViewController">
+<GridPane alignment="CENTER" hgap="20.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" styleClass="anchor" stylesheets="@css/game-view.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.view.GUI.GameViewController">
   <columnConstraints>
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="70.0" />
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="30.0" />
@@ -27,7 +27,7 @@
     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-      <GridPane alignment="BOTTOM_CENTER" GridPane.columnIndex="1" GridPane.vgrow="ALWAYS">
+      <GridPane alignment="BOTTOM_CENTER" vgap="25.0" GridPane.columnIndex="1" GridPane.vgrow="ALWAYS">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
         </columnConstraints>
@@ -44,6 +44,9 @@
                            <image>
                               <Image url="@../images/PublisherMaterial/Title_2000x618px.png" />
                            </image>
+                           <VBox.margin>
+                              <Insets bottom="10.0" />
+                           </VBox.margin>
                         </ImageView>
                         <Text boundsType="VISUAL" strokeType="OUTSIDE" strokeWidth="0.0" text="LEADERBOARD" wrappingWidth="174.724609375" VBox.vgrow="SOMETIMES">
                            <font>
@@ -53,7 +56,7 @@
                               <Insets bottom="10.0" />
                            </VBox.margin>
                         </Text>
-                        <GridPane fx:id="leaderBoardGrid" prefHeight="68.0" prefWidth="294.0">
+                        <GridPane fx:id="leaderBoardGrid" prefHeight="68.0" prefWidth="294.0" vgap="10.0">
                           <columnConstraints>
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="189.0" minWidth="10.0" prefWidth="139.0" />
                               <ColumnConstraints hgrow="NEVER" maxWidth="140.0" minWidth="10.0" prefWidth="44.0" />
@@ -61,10 +64,16 @@
                           </columnConstraints>
                            <rowConstraints>
                               <RowConstraints minHeight="10.0" prefHeight="30.0" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" />
                            </rowConstraints>
                            <padding>
                               <Insets left="50.0" right="10.0" />
                            </padding>
+                           <VBox.margin>
+                              <Insets top="5.0" />
+                           </VBox.margin>
                         </GridPane>
                         <VBox fx:id="personalBookshelf" alignment="BOTTOM_CENTER" fillWidth="false" prefHeight="557.0" prefWidth="105.0">
                            <children>
@@ -104,6 +113,9 @@
                                        </StackPane.margin>
                                     </GridPane>
                                  </children>
+                                 <opaqueInsets>
+                                    <Insets />
+                                 </opaqueInsets>
                               </StackPane>
                            </children>
                            <opaqueInsets>
@@ -299,6 +311,12 @@
                   <children>
                      <ImageView fx:id="common2" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
                   </children>
+                  <padding>
+                     <Insets bottom="5.0" />
+                  </padding>
+                  <GridPane.margin>
+                     <Insets />
+                  </GridPane.margin>
                </StackPane>
              </GridPane>
          </children>

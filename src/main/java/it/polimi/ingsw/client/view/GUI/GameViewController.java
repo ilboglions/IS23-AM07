@@ -8,7 +8,6 @@ import it.polimi.ingsw.server.model.tiles.ItemTile;
 import it.polimi.ingsw.server.model.tokens.ScoringToken;
 import it.polimi.ingsw.Notifications;
 import javafx.beans.binding.Bindings;
-import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
@@ -88,13 +87,13 @@ public class GameViewController extends GUIController implements Initializable {
         if(!title.contains("Move done!")) {
             Text textTitle = new Text("[SERVER] " + title.toUpperCase() + "\n");
             textTitle.setFont(Font.font("Arial", FontWeight.BOLD, 11));
-            textTitle.setFill(Color.RED);
+            textTitle.setFill(Color.FIREBRICK);
 
             textFlowChat.getChildren().add(textTitle);
 
             if (!desc.isBlank()) {
                 Text textDescription = new Text("[SERVER] " + desc + "\n");
-                textDescription.setFill(Color.RED);
+                textDescription.setFill(Color.FIREBRICK);
                 textDescription.setFont(Font.font("Arial", FontWeight.NORMAL, 11));
 
                 textFlowChat.getChildren().add(textDescription);
@@ -117,7 +116,7 @@ public class GameViewController extends GUIController implements Initializable {
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
                 Pane pane = new Pane();
-               //pane.setStyle("-fx-background-color:red");
+
                 livingroom_grid.add(pane, i, j);
                 pane.prefWidthProperty().bind(Bindings.min(livingroom_grid_container.widthProperty().divide(SIZE+1),
                         livingroom_grid_container.heightProperty().divide(SIZE+1)));
@@ -147,7 +146,8 @@ public class GameViewController extends GUIController implements Initializable {
                     textFlowChat.layout();
                     textFlowChatScroll.layout();
                     textFlowChatScroll.setVvalue(1.0f);
-                }));
+                })
+        );
 
         firstToken = new ImageView(Objects.requireNonNull(GameViewController.class.getResource("/images/scoringTokens/scoring_1.jpg")).toString());
         firstToken.setPreserveRatio(true);
@@ -461,6 +461,9 @@ public class GameViewController extends GUIController implements Initializable {
             this.drawCommonGoalPopup(commonGoalInfo1, commonGoalCards.get(0));
             this.drawCommonGoalPopup(commonGoalInfo2, commonGoalCards.get(1));
 
+            common1.getStyleClass().add("shadowImage");
+            common2.getStyleClass().add("shadowImage");
+
         } catch (RemoteException ignored ){}
     }
 
@@ -499,9 +502,6 @@ public class GameViewController extends GUIController implements Initializable {
         description.setTextAlignment(TextAlignment.CENTER);
         description.setFont(Font.font("Arial", FontWeight.NORMAL, FontPosture.REGULAR, 15));
 
-
-
-
         cardImage.setPreserveRatio(true);
         cardImage.fitHeightProperty().bind(stage.heightProperty().divide(3));
         description.wrappingWidthProperty().bind(container.heightProperty());
@@ -511,16 +511,21 @@ public class GameViewController extends GUIController implements Initializable {
         container.getChildren().add(description);
 
         commonGoalInfo.getContent().add(container);
-        ChangeListener<Number> reCenter = (observable, oldValue, newValue)->{
+        commonGoalInfo.centerOnScreen();
+
+        /*ChangeListener<Number> reCenter = (observable, oldValue, newValue)->{
             double centerX = stage.getX() + stage.getWidth()/2 - container.getWidth()/2;
             double centerY = stage.getY() + stage.getHeight()/2 - container.getHeight()/2;
             commonGoalInfo.setX(centerX);
             commonGoalInfo.setY(centerY);
         };
+
         stage.widthProperty().addListener(reCenter);
         stage.heightProperty().addListener(reCenter);
         stage.xProperty().addListener(reCenter);
         stage.yProperty().addListener(reCenter);
+
+         */
     }
 
     private String getUrlFromCommonType(CommonCardType type) {
@@ -552,6 +557,7 @@ public class GameViewController extends GUIController implements Initializable {
         personalGoalPane.setAlignment(Pos.CENTER);
         personalCard.setPreserveRatio(true);
         personalCard.fitHeightProperty().bind(Bindings.min(leftvbox.widthProperty().divide(5), leftvbox.heightProperty().divide(3.5)));
+        personalCard.getStyleClass().add("shadowImage");
     }
 
     /**
@@ -656,7 +662,7 @@ public class GameViewController extends GUIController implements Initializable {
                 tilesOrderPopup.hide();
             });
 
-            ChangeListener<Number> reCenter = (observable, oldValue, newValue)->{
+            /*ChangeListener<Number> reCenter = (observable, oldValue, newValue)->{
                 double centerX = stage.getX() + stage.getWidth()/2 - tilesOrderPopup.getWidth()/2;
                 double centerY = stage.getY() + stage.getHeight()/2 - tilesOrderPopup.getHeight()/2;
                 tilesOrderPopup.setX(centerX);
@@ -666,12 +672,15 @@ public class GameViewController extends GUIController implements Initializable {
             stage.widthProperty().addListener(reCenter);
             stage.heightProperty().addListener(reCenter);
             stage.xProperty().addListener(reCenter);
-            stage.yProperty().addListener(reCenter);
+            stage.yProperty().addListener(reCenter);*/
 
             popupContainer.add(buttonBox, i, 1);
             tilesOrderPopup.getContent().add(popupContainer);
-            tilesOrderPopup.setX(stage.getX() + stage.getWidth()/2 - tilesOrderPopup.getWidth()/2);
-            tilesOrderPopup.setY(stage.getY() + stage.getHeight()/2 - tilesOrderPopup.getHeight()/2);
+
+            /*tilesOrderPopup.setX(stage.getX() + stage.getWidth()/2 - tilesOrderPopup.getWidth()/2);
+            tilesOrderPopup.setY(stage.getY() + stage.getHeight()/2 - tilesOrderPopup.getHeight()/2);*/
+
+            tilesOrderPopup.centerOnScreen();
             tilesOrderPopup.show(stage);
         }
     }
@@ -745,26 +754,16 @@ public class GameViewController extends GUIController implements Initializable {
         for(int i=0; i < playerPoints.size(); i++){
             Text username = new Text((i + 1) + " " + playersRank.get(i));
             Text points = new Text(String.valueOf(playerPoints.get(playersRank.get(i))));
-            StackPane usernamePane = new StackPane();
-            StackPane pointsPane = new StackPane();
-
-            usernamePane.getChildren().add(username);
-            usernamePane.setAlignment(Pos.CENTER_LEFT);
-
-            pointsPane.getChildren().add(points);
-            pointsPane.setAlignment(Pos.CENTER_RIGHT);
-
 
             username.setTextAlignment(TextAlignment.LEFT);
             points.setTextAlignment(TextAlignment.RIGHT);
             username.setFont(Font.font("Arial", FontWeight.BOLD, 16));
             points.setFont(Font.font("Arial", FontWeight.NORMAL, 16));
 
-            leaderBoardGrid.add(usernamePane, 0, i);
-            leaderBoardGrid.add(pointsPane, 1, i);
+            leaderBoardGrid.add(username, 0, i);
+            leaderBoardGrid.add(points, 1, i);
         }
         this.drawScoringTokensGrid();
-
     }
 
     /**
@@ -805,7 +804,6 @@ public class GameViewController extends GUIController implements Initializable {
      * @param playerPoints map with the username of the players as key, the final score as value
      */
     public void drawWinnerLeaderboard(String winner, Map<String, Integer> playerPoints) {
-
         this.freezeGame();
         Popup winnerPopup = new Popup();
         VBox popupContainer = new VBox();
@@ -813,6 +811,7 @@ public class GameViewController extends GUIController implements Initializable {
         HBox buttonContainer = new HBox();
         Button exitGame = new Button();
         Button newGame = new Button();
+
         popupContainer.setAlignment(Pos.CENTER);
         winnerPopup.getContent().add(popupContainer);
 
@@ -841,6 +840,7 @@ public class GameViewController extends GUIController implements Initializable {
         });
 
         buttonContainer.setAlignment(Pos.CENTER);
+        buttonContainer.setSpacing(20);
         buttonContainer.getChildren().add(newGame);
         buttonContainer.getChildren().add(exitGame);
         popupContainer.getChildren().add(buttonContainer);
@@ -849,8 +849,8 @@ public class GameViewController extends GUIController implements Initializable {
         commonGoal2Pane.setDisable(true);
         livingroom_grid.setDisable(true);
         textFieldChat.setDisable(true);
+        winnerPopup.centerOnScreen();
         winnerPopup.show(stage);
-
     }
 
     private ArrayList<String> createRank (Map<String, Integer> playerPoints){
