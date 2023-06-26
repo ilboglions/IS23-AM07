@@ -1,27 +1,16 @@
 package it.polimi.ingsw.server.controller;
 
-import it.polimi.ingsw.GameState;
-import it.polimi.ingsw.client.connection.ConnectionType;
-import it.polimi.ingsw.client.view.CLI.CliView;
-import it.polimi.ingsw.client.view.ViewInterface;
-import it.polimi.ingsw.remoteInterfaces.*;
-import it.polimi.ingsw.server.model.chat.Chat;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.*;
 
 import it.polimi.ingsw.server.model.game.Game;
-import it.polimi.ingsw.server.model.game.GameModelInterface;
 import it.polimi.ingsw.server.model.player.Player;
-import it.polimi.ingsw.server.model.tiles.ItemTile;
-import it.polimi.ingsw.server.model.tokens.ScoringToken;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.Set;
 
 public class GameControllerTest {
 
@@ -195,7 +184,7 @@ public class GameControllerTest {
             game.setPlayerTurn();
         }
         Thread.sleep(16000);
-        assertTrue(game.getPlayerInTurn().equals("x"));
+        assertTrue(game.getPlayerInTurn().equals("host"));
 
     }
 
