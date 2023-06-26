@@ -9,7 +9,6 @@ import it.polimi.ingsw.server.model.exceptions.*;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.player.Player;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
-import it.polimi.ingsw.server.model.tokens.ScoringToken;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -608,11 +607,12 @@ public class GameTest {
      */
     @Test
     @DisplayName("Test crashed player")
-    void testCrashedPlayer() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, NicknameAlreadyUsedException, PlayerNotFoundException, RemoteException {
+    void testCrashedPlayer() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, NicknameAlreadyUsedException, PlayerNotFoundException, RemoteException, InterruptedException, NotAllPlayersHaveJoinedException, GameNotEndedException {
         Player testPlayer = new Player("Test");
         Player testPlayer2 = new Player("SecondPlayer");
-        Game test = new Game(3, testPlayer);
+        Game test = new Game(2, testPlayer);
         test.addPlayer(testPlayer2);
+        test.start();
 
         assertThrows(PlayerNotFoundException.class, ()->{
            test.handleCrashedPlayer("noPlayer");
@@ -631,6 +631,26 @@ public class GameTest {
 
         test.handleRejoinedPlayer("SecondPlayer");
         assertFalse(test.isCrashedPlayer("SecondPlayer"));
+
+        test.handleCrashedPlayer("Test");
+        test.handleCrashedPlayer("SecondPlayer");
+        assertFalse(test.isRunning());
+
+        Game test2 = new Game(2, testPlayer);
+        test2.addPlayer(testPlayer2);
+        test2.start();
+
+        test2.handleCrashedPlayer("Test");
+        test2.handleCrashedPlayer("SecondPlayer");
+        assertFalse(test.isRunning());
+
+        Game test3 = new Game(2, testPlayer);
+        test3.addPlayer(testPlayer2);
+        test3.start();
+
+        test3.handleCrashedPlayer("Test");
+        Thread.sleep(60000);
+        assertFalse(test.isRunning());
     }
 
 
@@ -643,13 +663,14 @@ public class GameTest {
         GameController controller = new GameController(game);
         controller.subscribeToListener((GameSubscriber) sub);
         controller.subscribeToListener((GameStateSubscriber) sub);
+        controller.subscribeToListener((BoardSubscriber) sub);
+        controller.subscribeToListener((ChatSubscriber) sub);
 
         assertTrue(game.getGameListener().getSubscribers().contains(sub) && game.getGameListener().getSubscribers().size() == 1);
         assertTrue(game.getGameStateListener().getSubscribers().contains(sub) && game.getGameStateListener().getSubscribers().size() == 1);
-
     }
 
-    private class SubscriberForTest implements GameSubscriber, GameStateSubscriber {
+    private class SubscriberForTest implements GameSubscriber, GameStateSubscriber, BoardSubscriber, ChatSubscriber {
         @Override
         public String getSubscriberUsername() throws RemoteException {
             return "mySubscriberForTest";
@@ -688,6 +709,21 @@ public class GameTest {
         }
         @Override
         public void notifyChangedGameState(GameState newState) throws RemoteException {
+
+        }
+
+        @Override
+        public void updateBoardStatus(Map<Coordinates, ItemTile> tilesInBoard) throws RemoteException {
+
+        }
+
+        @Override
+        public void receiveMessage(String from, String recipient, String msg) throws RemoteException {
+
+        }
+
+        @Override
+        public void receiveMessage(String from, String msg) throws RemoteException {
 
         }
     }

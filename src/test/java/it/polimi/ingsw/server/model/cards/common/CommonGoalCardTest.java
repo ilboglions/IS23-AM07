@@ -86,6 +86,16 @@ public class CommonGoalCardTest {
 
     }
 
+    @Test
+    @DisplayName("Test scoring token")
+    void testToken(){
+        ScoringToken token1 = new ScoringToken(TokenPoint.SIX);
+        ScoringToken token2 = new ScoringToken(TokenPoint.SIX);
+
+        assertFalse(token1.equals(null));
+        assertTrue(token1.equals(token2));
+    }
+
 
 
 }

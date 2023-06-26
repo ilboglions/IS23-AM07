@@ -2,18 +2,9 @@ package it.polimi.ingsw.server.model.livingRoom;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import it.polimi.ingsw.GameState;
 import it.polimi.ingsw.remoteInterfaces.BoardSubscriber;
-import it.polimi.ingsw.remoteInterfaces.GameStateSubscriber;
-import it.polimi.ingsw.remoteInterfaces.GameSubscriber;
-import it.polimi.ingsw.remoteInterfaces.RemoteCommonGoalCard;
-import it.polimi.ingsw.server.controller.GameController;
 import it.polimi.ingsw.server.model.exceptions.*;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
-import it.polimi.ingsw.server.model.game.Game;
-import it.polimi.ingsw.server.model.game.GameModelInterface;
-import it.polimi.ingsw.server.model.game.GameTest;
-import it.polimi.ingsw.server.model.player.Player;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -207,6 +198,28 @@ public class LivingRoomBoardTest {
         final ArrayList<Coordinates> finalcoord = new ArrayList<>();
         finalcoord.add(new Coordinates(4,0));
         assertThrows(EmptySlotException.class, ()->{board.checkValidRetrieve(finalcoord);});
+
+    }
+
+    @Test
+    @DisplayName("Test the exceptions")
+    void testException() throws PlayersNumberOutOfRange, InvalidCoordinatesException, SlotFullException {
+        LivingRoomBoard board = new LivingRoomBoard(4);
+
+        assertThrows(NullPointerException.class, ()->{
+            board.addTile(null, ItemTile.TROPHY);
+        });
+        assertThrows(NullPointerException.class, ()->{
+            board.getTile(null);
+        });
+        assertThrows(NullPointerException.class, ()->{
+            board.removeTile(null);
+        });
+
+        board.addTile(new Coordinates(3,4), ItemTile.TROPHY);
+        assertThrows(SlotFullException.class, ()->{
+            board.addTile(new Coordinates(3,4), ItemTile.CAT);
+        });
 
     }
 

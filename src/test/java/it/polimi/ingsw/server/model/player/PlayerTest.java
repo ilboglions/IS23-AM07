@@ -75,6 +75,7 @@ class PlayerTest {
         Player test = new Player("test");
         test.addToken(testToken);
         test.assignPersonalCard(testCard);
+        test.hashCode();
 
         assertEquals(testCard, test.getPersonalCard());
         assertEquals(test.getTokenAcquired().get(0), testToken);

@@ -1,6 +1,6 @@
 package it.polimi.ingsw.server.controller;
 
-import it.polimi.ingsw.remoteInterfaces.GameStateSubscriber;
+import it.polimi.ingsw.GameState;
 import it.polimi.ingsw.remoteInterfaces.RemoteGameController;
 import it.polimi.ingsw.server.model.exceptions.*;
 import it.polimi.ingsw.server.model.game.GameModelInterface;
@@ -9,7 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.rmi.RemoteException;
-import java.util.Optional;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,6 +19,7 @@ class LobbyControllerTest {
     @DisplayName("Test entering in lobby")
     void testEnter() throws RemoteException, NicknameAlreadyUsedException, InvalidPlayerException {
         LobbyController test = new LobbyController(new Lobby());
+        test.getSubscriberUsername();
 
         assertEquals(null, test.enterInLobby("Test")); //Player added correctly
         assertThrows(NicknameAlreadyUsedException.class, () -> test.enterInLobby("Test")); //Player with the same nickname already joined
@@ -66,7 +67,7 @@ class LobbyControllerTest {
 
     @Test
     @DisplayName("initializeTimer, handleCrashedPlayer")
-    void testInitializeTimer() throws RemoteException, InvalidPlayerException, PlayersNumberOutOfRange, InterruptedException, NicknameAlreadyUsedException {
+    void testInitializeTimer() throws RemoteException, InvalidPlayerException, PlayersNumberOutOfRange, InterruptedException, NicknameAlreadyUsedException, BrokenInternalGameConfigurations, NoAvailableGameException, PlayerNotFoundException {
         Lobby lobby = new Lobby();
         LobbyController controller = new LobbyController(lobby);
 
@@ -79,6 +80,19 @@ class LobbyControllerTest {
 
         assertThrows(PlayerNotFoundException.class, () -> {
             controller.handleCrashedPlayer("host");
+        });
+
+        controller.enterInLobby("host");
+        controller.enterInLobby("test2");
+        controller.createGame("host", 2);
+        controller.addPlayerToGame("test2");
+        Map<GameModelInterface, GameController> map = controller.getGameControllers();
+        for(Map.Entry<GameModelInterface, GameController> entry : map.entrySet()){
+            entry.getValue().handleCrashedPlayer("host");
+        }
+
+        assertDoesNotThrow(()->{
+            controller.enterInLobby("host");
         });
     }
 
@@ -93,7 +107,11 @@ class LobbyControllerTest {
         RemoteGameController game = controller.createGame("host",2);
         controller.addPlayerToGame("x");
         game.triggerAllListeners("host");
-        Thread.sleep(16000);
+
+        Map<GameModelInterface, GameController> map = controller.getGameControllers();
+        for(Map.Entry<GameModelInterface, GameController> entry : map.entrySet()){
+            controller.notifyChangedGameStatus(GameState.ENDED, entry.getKey());
+        }
     }
 
 }
