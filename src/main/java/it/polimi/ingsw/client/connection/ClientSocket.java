@@ -222,8 +222,8 @@ public class ClientSocket implements ConnectionHandler{
      */
     private void messagesHopper()  {
         threadManager.execute( () -> {
-
-            while(true) {
+            boolean active = true;
+            while(active) {
                 synchronized (lastReceivedMessages) {
                     try {
                         NetMessage incomingMessage = (NetMessage) inputStream.readObject();
@@ -232,10 +232,9 @@ public class ClientSocket implements ConnectionHandler{
                         //System.out.println(incomingMessage.getMessageType());
                         lastReceivedMessages.notifyAll();
                         lastReceivedMessages.wait(1);
-                    } catch (IOException | ClassNotFoundException e) {
+                    } catch (IOException | ClassNotFoundException | InterruptedException e ) {
                         this.close();
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
+                        active = false;
                     }
                 }
             }

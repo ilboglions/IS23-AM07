@@ -12,6 +12,7 @@ import it.polimi.ingsw.server.model.tiles.ItemTile;
 import it.polimi.ingsw.server.model.tokens.ScoringToken;
 import it.polimi.ingsw.server.model.utilities.UtilityFunctions;
 
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -52,15 +53,15 @@ public class CliView implements ViewInterface {
     protected static int LENGTH_C_BOX_NOTIFICATION = LENGTH_C_BOX_LEADERBOARD;
     private static final int START_R_MY_BOOKSHELF = 8;
     private static final int START_C_MY_BOOKSHELF = START_C_BOX_LEADERBOARD + (LENGTH_C_BOX_LEADERBOARD - 14) / 2;
-
     private static final String SPACE = " ";
     private static final int BASE_TILE_DIM = 3;
 
     private final ExecutorService inputReaderEx;
-    private final ConnectionHandler controller;
+    private ConnectionHandler controller;
 
     private final Scanner inputScan;
     private final String[][] tiles = new String[MAX_VERT_TILES_GAME][MAX_HORIZ_TILES_GAME];
+    private final ConnectionType connectionType;
 
     private Scenario scenario;
     private boolean gameEnded;
@@ -70,6 +71,7 @@ public class CliView implements ViewInterface {
 
     public CliView(ConnectionType connectionType, String address, int port) {
         gameEnded = false;
+        this.connectionType = connectionType;
         this.setScenario(Scenario.LOBBY);
         ConnectionHandlerFactory factory = new ConnectionHandlerFactory();
         controller = factory.createConnection(connectionType, this, address, port);
@@ -128,6 +130,7 @@ public class CliView implements ViewInterface {
     public CliView(ConnectionType connectionType){
         gameEnded = false;
         this.setScenario(Scenario.LOBBY);
+        this.connectionType = connectionType;
         ConnectionHandlerFactory factory = new ConnectionHandlerFactory();
         controller = factory.createConnection(connectionType, this);
 
@@ -166,9 +169,11 @@ public class CliView implements ViewInterface {
 
                 String[] chatMessageArray = specific.split("--");
                 if( chatMessageArray.length > 1){
-                    controller.sendMessage(chatMessageArray[0],chatMessageArray[1]);
+                    if(chatMessageArray[1].length() > 0)
+                        controller.sendMessage(chatMessageArray[0],chatMessageArray[1]);
                 } else {
-                    controller.sendMessage(specific);
+                    if(specific.length() > 0)
+                        controller.sendMessage(specific);
                 }
             }
             /* createGame>>3*/
@@ -678,8 +683,17 @@ public class CliView implements ViewInterface {
      */
     @Override
     public void backToLobby() {
+        String ip = controller.getServerIP();
+        int port = controller.getServerPort();
+        try {
+            controller.close();
+        } catch (IOException e) {
+            System.exit(0);
+        }
+        ConnectionHandlerFactory factory = new ConnectionHandlerFactory();
+        controller = factory.createConnection(connectionType, this, ip, port);
         this.setScenario(Scenario.LOBBY);
-
+        
     }
 
 
