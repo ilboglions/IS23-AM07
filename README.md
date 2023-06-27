@@ -29,11 +29,11 @@ Politecnico di Miliano - Prof. Margara Section - **Group AM07**
 | GUI             | :green_circle: | |                                                 |
 
 ## Installation
-In order to run My Shelfie, you should clone this repository
+In order to run My Shelfie, you can either clone this repository
 ```
 git clone https://github.com/ilboglions/IS23-AM07.git
 ```
-
+or just [download the jar file](https://github.com/ilboglions/IS23-AM07/blob/298c656a7adecf666d2ce64c71843bea1b84936f/deliverables/AM07-My-Shelfie-1.0-jar-with-dependencies.jar)
 ## Running the game
 The game consists of a single jar file by the name AM07-jar-with-dependencies.jar. It can be found in /target directory after building the project with Maven.
 This file holds both the Server, the CLI and the GUI applications, one of which can be selected when booting.
