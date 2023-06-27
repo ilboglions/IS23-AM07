@@ -2,7 +2,6 @@ package it.polimi.ingsw.server.model.coordinate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,6 +31,12 @@ public class CoordinatesTest {
         });
         assertThrows(InvalidCoordinatesException.class, () -> {
             Coordinates test = new Coordinates("(3;4)");
+        });
+        assertThrows(InvalidCoordinatesException.class, () -> {
+            Coordinates test = new Coordinates("(a,4)");
+        });
+        assertThrows(InvalidCoordinatesException.class, () -> {
+            Coordinates test = new Coordinates("(3,10)");
         });
     }
 

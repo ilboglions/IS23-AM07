@@ -32,6 +32,8 @@ public class ClientRMI implements ConnectionHandler{
     private final long timerDelay = 15000;
     private final ViewInterface view;
     private Game gameModel;
+    private String ip;
+    private int port;
 
     /**
      * Creates an instance of ClientRMI
@@ -40,6 +42,8 @@ public class ClientRMI implements ConnectionHandler{
     public ClientRMI(ViewInterface view, String hostName, int portNumber) {
         boolean connected = false;
         RemoteLobbyController tempLobbyController = null;
+        this.ip = hostName;
+        this.port = portNumber;
 
         this.timer = new ReschedulableTimer();
         this.heartBeatManager = Executors.newSingleThreadScheduledExecutor();
@@ -70,6 +74,11 @@ public class ClientRMI implements ConnectionHandler{
     @Override
     public void close() {
         heartBeatManager.shutdownNow();
+        if(gameController != null){
+            try {
+                gameController.handleCrashedPlayer(this.username);
+            } catch (RemoteException | PlayerNotFoundException ignored) {}
+        }
         gameController = null;
 
     }
@@ -257,11 +266,9 @@ public class ClientRMI implements ConnectionHandler{
 
                         timer.reschedule(this.timerDelay);
                     }
-                } catch (RemoteException e) {
-                    System.out.println("ERROR HEARTBEAT!");
+                } catch (Exception e) {
+                    this.view.postNotification(Notifications.ERR_CONNECTION_NO_LONGER_AVAILABLE);
                     this.close();
-                } catch ( Exception e){
-                    e.printStackTrace();
                 }
             },
             0, 2, TimeUnit.SECONDS);
@@ -289,7 +296,7 @@ public class ClientRMI implements ConnectionHandler{
         try {
             gameController.postBroadCastMessage(this.username,content);
         } catch (RemoteException e) {
-            throw new RuntimeException(e);
+            this.close();
         } catch (InvalidPlayerException ignored) {
         }
     }
@@ -304,11 +311,21 @@ public class ClientRMI implements ConnectionHandler{
         try {
             gameController.postDirectMessage(this.username,recipient,content);
         } catch (RemoteException e) {
-            throw new RuntimeException(e);
+            this.close();
         } catch (InvalidPlayerException ignored) {
             /* to decide, if the written recipient does not exists, we could just ignore the chat message*/
         } catch (SenderEqualsRecipientException e) {
             view.postNotification(Notifications.CHAT_SENDER_EQUALS_RECIPIENT);
         }
+    }
+
+    @Override
+    public String getServerIP() {
+        return this.ip;
+    }
+
+    @Override
+    public int getServerPort() {
+        return this.port;
     }
 }

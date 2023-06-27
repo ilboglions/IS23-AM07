@@ -3,8 +3,8 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>it.polimi.ingsw</groupId>
-  <artifactId>AM07</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <artifactId>AM07-My-Shelfie</artifactId>
+  <version>1.0</version>
   <packaging>jar</packaging>
 
   <name>AM07</name>

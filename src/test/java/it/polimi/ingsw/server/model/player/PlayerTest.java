@@ -1,9 +1,12 @@
 package it.polimi.ingsw.server.model.player;
 
+import it.polimi.ingsw.remoteInterfaces.PlayerSubscriber;
+import it.polimi.ingsw.remoteInterfaces.RemotePersonalGoalCard;
+import it.polimi.ingsw.server.controller.GameController;
 import it.polimi.ingsw.server.model.cards.personal.PersonalGoalCard;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
-import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
-import it.polimi.ingsw.server.model.exceptions.NotEnoughSpaceException;
+import it.polimi.ingsw.server.model.exceptions.*;
+import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 import it.polimi.ingsw.server.model.tokens.ScoringToken;
 import it.polimi.ingsw.server.model.tokens.TokenPoint;
@@ -72,6 +75,7 @@ class PlayerTest {
         Player test = new Player("test");
         test.addToken(testToken);
         test.assignPersonalCard(testCard);
+        test.hashCode();
 
         assertEquals(testCard, test.getPersonalCard());
         assertEquals(test.getTokenAcquired().get(0), testToken);
@@ -261,5 +265,42 @@ class PlayerTest {
         assertEquals(8 + 5, test.updatePoints(testAdjacentPointsReference));
         //8 points for adjacency group of 12 of ItemTile.GAME, 5 points for adjacency group of 5 ItemTile.BOOK, 0 points for adjacency of ItemTile.PLANT and ItemTile.TROPHY
         //because group size is smaller that the minimum group size set by the testAdjacentPointsReference Map
+    }
+
+    @Test
+    @DisplayName("GameController subscribeToListener Player")
+    void testSubscribeToListener() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, RemoteException {
+        Player host = new Player("host");
+        SubscriberForTest sub = new SubscriberForTest();
+        Game game = new Game(2,host);
+        GameController controller = new GameController(game);
+
+        controller.subscribeToListener((PlayerSubscriber) sub);
+
+        assertTrue(host.getSubs().contains(sub) && host.getSubs().size() == 1);
+
+    }
+
+    private class SubscriberForTest implements PlayerSubscriber {
+
+        @Override
+        public String getSubscriberUsername() throws RemoteException {
+            return "mySubscriberForTest";
+        }
+
+        @Override
+        public void updatePoints(String player, int overallPoints, int addedPoints) throws RemoteException {
+
+        }
+
+        @Override
+        public void updateTokens(String player, ArrayList<ScoringToken> tokenPoints) throws RemoteException {
+
+        }
+
+        @Override
+        public void updatePersonalGoalCard(String player, RemotePersonalGoalCard remotePersonal) throws RemoteException {
+
+        }
     }
 }

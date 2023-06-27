@@ -6,13 +6,6 @@ package it.polimi.ingsw.server.model.exceptions;
 public class PlayerNotFoundException extends Exception{
     /**
      * Constructor of a PlayerNotFoundException
-     */
-    public PlayerNotFoundException() {
-        super();
-    }
-
-    /**
-     * Constructor of a PlayerNotFoundException
      * @param msg details of the exception
      */
     public PlayerNotFoundException(String msg) {

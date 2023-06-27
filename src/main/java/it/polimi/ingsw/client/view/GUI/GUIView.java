@@ -84,6 +84,9 @@ public class GUIView extends Application implements ViewInterface {
                     Optional<ButtonType> result = closeAlert.showAndWait();
                     if(result.isPresent()){
                         if(result.get() == ButtonType.OK){
+                            try {
+                                controller.close();
+                            } catch (IOException ignored) {}
                             System.exit(0);
                         }
                         else{
@@ -274,14 +277,15 @@ public class GUIView extends Application implements ViewInterface {
 
     /**
      * Draws the final leaderboard (after the end of the game)
+     * @param username username of the winning player
      * @param playerPoints map with the username of the players as key, the final score as value
      */
     @Override
-    public void drawWinnerLeaderboard(Map<String, Integer> playerPoints) {
+    public void drawWinnerLeaderboard(String username, Map<String, Integer> playerPoints) {
         Platform.runLater(() -> {
             GameViewController controller = fxmlLoader.getController();
             guiController.setManager(this);
-            controller.drawWinnerLeaderboard(playerPoints);
+            controller.drawWinnerLeaderboard(username, playerPoints);
         });
     }
 
@@ -302,23 +306,29 @@ public class GUIView extends Application implements ViewInterface {
      */
     public void backToLobby(){
 
-        fxmlLoader = new FXMLLoader(GUIView.class.getResource("/fxml/login-view.fxml"));
         try {
-            scene = new Scene(fxmlLoader.load(), 1500, 750);
-            scene.getStylesheets().add(GUIView.class.getResource("/fxml/css/game-view.css").toExternalForm());
-            scene.getStylesheets().add(GUIView.class.getResource("/fxml/css/lobby-view.css").toExternalForm());
+            this.drawScene(SceneType.LOGIN);
+            String ip = controller.getServerIP();
+            int port = controller.getServerPort();
             controller.close();
             ConnectionHandlerFactory factory = new ConnectionHandlerFactory();
-            controller = factory.createConnection(connectionType, this);
+            controller = factory.createConnection(connectionType, this, ip, port);
             guiController = fxmlLoader.getController();
             guiController.setConnectionHandler(controller);
             guiController.setManager(this);
-
-            this.stage.setTitle("MyShelfie");
-            this.stage.setScene(scene);
-            this.stage.show();
         } catch (IOException e) {
             this.stage.close();
         }
+    }
+
+    /**
+     * This method is called when the game is paused and all the players must be frozen (the chat is not frozen)
+     */
+    @Override
+    public void freezeGame() {
+        Platform.runLater(() -> {
+            GameViewController controller = fxmlLoader.getController();
+            controller.freezeGame();
+        });
     }
 }

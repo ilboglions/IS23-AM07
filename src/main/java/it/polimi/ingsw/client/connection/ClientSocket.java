@@ -104,6 +104,8 @@ public class ClientSocket implements ConnectionHandler{
         synchronized (outputStream) {
             try {
                 this.sendUpdate(new CloseConnectionMessage());
+                if(timer.isScheduled())
+                    timer.cancel();
                 heartBeatManager.shutdownNow();
                 threadManager.shutdownNow();
                 outputStream.close();
@@ -186,6 +188,16 @@ public class ClientSocket implements ConnectionHandler{
         this.sendUpdate(message);
     }
 
+    @Override
+    public String getServerIP() {
+        return this.ip;
+    }
+
+    @Override
+    public int getServerPort() {
+        return this.port;
+    }
+
     private void sendReceivedGame(Boolean errorOccurred) {
         GameReceivedMessage message = new GameReceivedMessage(errorOccurred);
         this.sendUpdate(message);
@@ -210,8 +222,8 @@ public class ClientSocket implements ConnectionHandler{
      */
     private void messagesHopper()  {
         threadManager.execute( () -> {
-
-            while(true) {
+            boolean active = true;
+            while(active) {
                 synchronized (lastReceivedMessages) {
                     try {
                         NetMessage incomingMessage = (NetMessage) inputStream.readObject();
@@ -220,10 +232,9 @@ public class ClientSocket implements ConnectionHandler{
                         //System.out.println(incomingMessage.getMessageType());
                         lastReceivedMessages.notifyAll();
                         lastReceivedMessages.wait(1);
-                    } catch (IOException | ClassNotFoundException e) {
+                    } catch (IOException | ClassNotFoundException | InterruptedException e ) {
                         this.close();
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
+                        active = false;
                     }
                 }
             }
@@ -238,9 +249,7 @@ public class ClientSocket implements ConnectionHandler{
                     while(lastReceivedMessages.isEmpty()){
                         try {
                             lastReceivedMessages.wait();
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
+                        } catch (InterruptedException ignored) {}
                     }
                     this.parse(lastReceivedMessages.poll());
                 }
@@ -398,9 +407,7 @@ public class ClientSocket implements ConnectionHandler{
     private void parse(BoardUpdateMessage message) {
         try {
             gameModel.updateBoardStatus(message.getTilesInBoard());
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        }
+        } catch (RemoteException ignored) {}
     }
 
     /**
@@ -410,9 +417,7 @@ public class ClientSocket implements ConnectionHandler{
     private void parse(BookshelfUpdateMessage message){
         try {
             gameModel.updateBookshelfStatus(message.getUsername(), message.getInsertedTiles(),message.getColumn(), message.getCurrentMap());
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        }
+        } catch (RemoteException ignored) {}
     }
 
     /**
@@ -422,8 +427,7 @@ public class ClientSocket implements ConnectionHandler{
     private void parse(PersonalGoalCardUpdateMessage message){
         try {
             gameModel.updatePersonalGoalCard(message.getPlayer(), message.getCard());
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
+        } catch (RemoteException ignored) {
         }
     }
 
@@ -434,9 +438,7 @@ public class ClientSocket implements ConnectionHandler{
     private void parse(CommonGoalCardsUpdateMessage message){
         try {
             gameModel.notifyCommonGoalCards(message.getCommonGoalCards());
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        }
+        } catch (RemoteException ignored) {}
     }
 
     /**
@@ -446,9 +448,7 @@ public class ClientSocket implements ConnectionHandler{
     private void parse(NotifyPlayerCrashedMessage message){
         try {
             this.gameModel.notifyPlayerCrashed(message.getUserCrashed());
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        }
+        } catch (RemoteException ignored) {}
     }
 
     /**
@@ -458,9 +458,7 @@ public class ClientSocket implements ConnectionHandler{
     private void parse(NotifyWinnerPlayerMessage message){
         try {
             gameModel.notifyWinningPlayer(message.getWinnerUser(),message.getWinnerPoints(),message.getScoreboard());
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        }
+        } catch (RemoteException ignored) {}
     }
 
     /**
@@ -497,17 +495,13 @@ public class ClientSocket implements ConnectionHandler{
     private void parse(NotifyPlayerInTurnMessage message){
         try {
             gameModel.notifyPlayerInTurn(message.getUserInTurn());
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        }
+        } catch (RemoteException ignored) {}
     }
 
     private void parse(NotifyTurnOrder message){
         try {
             gameModel.notifyTurnOrder(message.getPlayerOrder());
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        }
+        } catch (RemoteException ignored) {}
     }
 
     private void parse(GameStatusMessage message) {
@@ -521,8 +515,8 @@ public class ClientSocket implements ConnectionHandler{
                 outputStream.writeObject(update);
                 outputStream.flush();
                 outputStream.reset();
-            } catch (IOException ignored) {
-
+            } catch (IOException e) {
+                this.view.postNotification(Notifications.ERR_CONNECTION_NO_LONGER_AVAILABLE);
             }
         }
     }

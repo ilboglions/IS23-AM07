@@ -10,11 +10,9 @@ import it.polimi.ingsw.server.model.listeners.BoardListener;
 import it.polimi.ingsw.server.model.exceptions.NotEnoughTilesException;
 import it.polimi.ingsw.remoteInterfaces.BoardSubscriber;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
-import javafx.scene.layout.Pane;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.rmi.RemoteException;
 import java.util.*;
 import java.util.ArrayList;
 import java.util.Map;
@@ -300,7 +298,6 @@ public class LivingRoomBoard {
     protected class JsonLivingBoardCell {
         public int row,col;
         public SlotType slotType;
-
     }
     /*
     public boolean checkValidRetrieveMick(ArrayList<Coordinates> coordinates) throws EmptySlotException {
@@ -487,4 +484,7 @@ public class LivingRoomBoard {
         this.boardListener.triggerListener(userToBeUpdated, this.getItemTilesMapFromBoard());
     }
 
+    protected BoardListener getBoardListener() {
+        return boardListener;
+    }
 }

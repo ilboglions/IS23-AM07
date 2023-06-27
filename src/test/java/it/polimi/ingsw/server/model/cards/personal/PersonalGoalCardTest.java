@@ -70,6 +70,7 @@ class PersonalGoalCardTest {
         testStdPoints.put(6,12);
 
         PersonalGoalCard test = new PersonalGoalCard(testPattern, testStdPoints, 0);
+        test.getID();
 
         for(Map.Entry<Coordinates, ItemTile> entry : testPattern.entrySet()) {
             assertTrue(test.getBookshelf().getItemTile(entry.getKey()).isPresent() &&

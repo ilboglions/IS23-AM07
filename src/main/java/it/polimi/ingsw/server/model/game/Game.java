@@ -510,7 +510,11 @@ public class Game implements GameModelInterface {
         return this.state != GameState.CREATED;
     }
 
-    private boolean isRunning(){
+    /**
+     *
+     * @return true if the game is started or resumed
+     */
+    public boolean isRunning(){
         return this.state == GameState.STARTED || this.state == GameState.RESUMED;
     }
 
@@ -612,18 +616,20 @@ public class Game implements GameModelInterface {
         Optional<Player> tmpPlayer = this.searchPlayer(username);
 
         if(tmpPlayer.isPresent()){
-            livingRoom.unsubscribeFromListener(username);
-            players.forEach(p -> {
-                p.getBookshelf().unsubscribeFromListener(username);
-                p.unsubscribeFromListener(username);
-            });
-            chat.unsubscribeFromListener(username);
-            this.gameListener.removeSubscriber(username);
+            if(!crashedPlayers.contains(tmpPlayer.get())) {
+                livingRoom.unsubscribeFromListener(username);
+                players.forEach(p -> {
+                    p.getBookshelf().unsubscribeFromListener(username);
+                    p.unsubscribeFromListener(username);
+                });
+                chat.unsubscribeFromListener(username);
+                this.gameListener.removeSubscriber(username);
 
-            crashedPlayers.add(tmpPlayer.get());
-            this.gameListener.notifyPlayerCrashed(tmpPlayer.get().getUsername());
+                crashedPlayers.add(tmpPlayer.get());
+                this.gameListener.notifyPlayerCrashed(tmpPlayer.get().getUsername());
 
-            logger.info(username+" crashed!");
+                logger.info(username + " crashed!");
+            }
         }
         else
             throw new PlayerNotFoundException("The player with this username has not been found in the game");
@@ -631,17 +637,33 @@ public class Game implements GameModelInterface {
         if( this.state.equals(GameState.ENDED) ){
             return;
         }
-
-        if(this.isStarted() && crashedPlayers.size() == numPlayers - 1 ) {
+        if(crashedPlayers.size() == players.size()) {
+            if(this.crashTimer != null && this.crashTimer.isScheduled())
+                this.crashTimer.cancel();
+            this.changeState(GameState.ENDED);
+        } else if(this.isRunning() && crashedPlayers.size() == numPlayers - 1 ) {
             this.changeState(GameState.PAUSED);
             this.crashTimer = new ReschedulableTimer();
-            this.crashTimer.schedule(this::endGame, this.crashTimerDelay);
-
+            this.crashTimer.schedule(this::handleCrashedGame, this.crashTimerDelay);
         }
     }
 
     private void endGame() {
         this.changeState(GameState.ENDED);
+    }
+
+    private void handleCrashedGame(){
+        try {
+            Player winner = this.players.stream().filter(p -> !isCrashedPlayer(p.getUsername())).findFirst().get();
+            logger.info("Game crashed, last player is the winner");
+            Map<String,Integer> scoreboard = new LinkedHashMap<>();
+            for( Player player : this.players){
+                scoreboard.put(player.getUsername(),player.getPoints());
+            }
+            this.gameListener.onPlayerWins(winner.getUsername(), winner.getPoints(),scoreboard);
+        }
+        catch (NoSuchElementException ignored){}
+        this.endGame();
     }
 
     private void changeState(GameState gameState) {
@@ -686,7 +708,7 @@ public class Game implements GameModelInterface {
                     alreadyJoinedPlayers.add(player.getUsername());
 
             } catch (RemoteException ignored) {}
-            player.getBookshelf().triggerListener(userToBeUpdated);
+            //player.getBookshelf().triggerListener(userToBeUpdated);
         }
         gameListener.notifyAlreadyJoinedPlayers(alreadyJoinedPlayers, userToBeUpdated);
 
@@ -705,5 +727,16 @@ public class Game implements GameModelInterface {
             this.gameListener.notifyChangedGameState(GameState.STARTED);
         }
 
+        for(Player player : players){
+            player.getBookshelf().triggerListener(userToBeUpdated);
+        }
+
+    }
+    protected GameListener getGameListener() {
+        return gameListener;
+    }
+
+    protected GameStateListener getGameStateListener() {
+        return gameStateListener;
     }
 }

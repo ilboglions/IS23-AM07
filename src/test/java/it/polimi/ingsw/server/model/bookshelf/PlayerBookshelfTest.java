@@ -1,13 +1,16 @@
 package it.polimi.ingsw.server.model.bookshelf;
 
+import it.polimi.ingsw.remoteInterfaces.BookshelfSubscriber;
+import it.polimi.ingsw.server.controller.GameController;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
-import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
-import it.polimi.ingsw.server.model.exceptions.NotEnoughSpaceException;
+import it.polimi.ingsw.server.model.exceptions.*;
+import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.player.Player;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -181,5 +184,32 @@ class PlayerBookshelfTest {
         secondBookshelf.insertItemTile(0, testSingle);
 
         assertEquals(1, test.nElementsOverlapped(secondBookshelf));
+    }
+
+    @Test
+    @DisplayName("GameController subscribeToListener Bookshelf")
+    void testSubscribeToListener() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, RemoteException {
+        Player host = new Player("host");
+        Game game = new Game(2,host);
+        SubscriberForTest sub = new SubscriberForTest();
+        GameController controller = new GameController(game);
+
+        controller.subscribeToListener((BookshelfSubscriber) sub);
+
+        assertTrue(host.getBookshelf().getSubs().contains(sub) && host.getBookshelf().getSubs().size() == 1);
+
+    }
+
+    private class SubscriberForTest implements BookshelfSubscriber {
+
+        @Override
+        public void updateBookshelfStatus(String player, ArrayList<ItemTile> tilesInserted, int colChosen, Map<Coordinates, ItemTile> currentTilesMap) throws RemoteException {
+
+        }
+
+        @Override
+        public String getSubscriberUsername() throws RemoteException {
+            return "mySubscriberForTest";
+        }
     }
 }

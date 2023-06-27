@@ -25,7 +25,7 @@
     -fx-background-repeat: stretch;
     -fx-background-position: center;
     -fx-background-size: auto;
-    -fx-padding: 10;
+    -fx-padding: 20;
     -fx-hgap: 10;
     -fx-vgap: 10;
 }
@@ -43,6 +43,7 @@
 
 .textFlow {
     -fx-background-color: rgba(0, 0, 0, 0.1);
+    -fx-border-radius: 10;
 }
 
 .popupEndOfGame{
@@ -51,13 +52,22 @@
     -fx-background-position: center;
     -fx-background-size: auto;
     -fx-background-radius: 10 10 10 10;
-    -fx-padding: 10;
+    -fx-padding: 20;
+    -fx-spacing: 20;
 }
 
 .scroll-pane > .viewport {
-    -fx-background-color: transparent;
+    -fx-background-color: rgba(0, 0, 0, 0.1);
+    -fx-border-radius: 10;
+    -fx-background-radius: 10 10 0 0;
 }
 
 .scroll-pane {
-    -fx-background-color: transparent;
+    -fx-background-color: rgba(0, 0, 0, 0.1);
+    -fx-border-radius: 10;
+    -fx-background-radius: 10 10 0 0;
+}
+
+.shadowImage{
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }

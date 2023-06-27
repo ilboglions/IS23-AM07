@@ -256,7 +256,7 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
                 this.stopTimer(username);
 
             try {
-                if (gameModel.isStarted() && gameModel.getPlayerInTurn().equals(username)) {
+                if (gameModel.isRunning() && gameModel.getPlayerInTurn().equals(username)) {
                     this.selectedTiles.clear();
                     gameModel.setPlayerTurn();
                 }
@@ -329,6 +329,10 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
      */
     public Set<Coordinates> getSelectedTiles() {
         return (new HashSet<>(selectedTiles));
+    }
+
+    protected Map<String, ReschedulableTimer> getTimers() {
+        return timers;
     }
 
 }

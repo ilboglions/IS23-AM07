@@ -48,6 +48,9 @@ public class LobbyTest {
         assertThrows(InvalidPlayerException.class, ()->{
             test.createPlayer(null);
         });
+        assertThrows(InvalidPlayerException.class, ()->{
+            test.createPlayer("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+        });
 
         assertThrows(PlayersNumberOutOfRange.class, ()->{
             test.createGame(100, "testUser");
@@ -96,6 +99,7 @@ public class LobbyTest {
         test.createPlayer("fourthUser");
         Game testSecondGame = test.createGame(2, "thirdUser");
         assertEquals(testGame, test.addPlayerToGame("fourthUser"));
+        test.removeGame(testGame);
 
         test.createPlayer("crashUser");
         assertDoesNotThrow(()-> test.handleCrashedPlayer("crashUser"));

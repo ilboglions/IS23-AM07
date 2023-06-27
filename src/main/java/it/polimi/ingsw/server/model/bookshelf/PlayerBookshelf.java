@@ -1,6 +1,5 @@
 package it.polimi.ingsw.server.model.bookshelf;
 
-import it.polimi.ingsw.remoteInterfaces.PlayerSubscriber;
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.server.model.exceptions.NotEnoughSpaceException;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
@@ -119,4 +118,5 @@ public class PlayerBookshelf extends Bookshelf{
     public Set<BookshelfSubscriber> getSubs() {
             return new HashSet<>(this.bookshelfListener.getSubscribers());
     }
+
 }
