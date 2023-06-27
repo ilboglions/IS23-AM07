@@ -299,68 +299,6 @@ public class LivingRoomBoard {
         public int row,col;
         public SlotType slotType;
     }
-    /*
-    public boolean checkValidRetrieveMick(ArrayList<Coordinates> coordinates) throws EmptySlotException {
-        if(coordinates == null || coordinates.contains(null))
-            throw new NullPointerException("Coordinates list is/contains null");
-
-        ArrayList<Coordinates> coo = new ArrayList<>(coordinates);
-        int diffRow, diffCol;
-
-        if(coo.isEmpty()) {
-            return false;
-        } else {
-            for(Coordinates curr : coo) {
-                if(slot[curr.getRow()][curr.getColumn()].getItemTile().isEmpty()) {
-                    throw new EmptySlotException("Selected an empty slot");
-                }
-                if( !checkFreeSide(curr) ) {
-                    // the tile does not have a free side, it cannot be retrieved and the move is not valid
-                    return false;
-                }
-            }
-            // if the list contains one coordinate, then the move is valid only if it has a free side, which we previously verified
-            if(coo.size() == 1)
-                return true;
-            else {
-                // if the list is not empty, and it does not contain just one element then the list size is at least two and we need to
-                // verify if the segment is purely horizontal or vertical
-                diffRow = Math.abs(coo.get(0).getRow() - coo.get(1).getRow());
-                diffCol = Math.abs(coo.get(0).getColumn() - coo.get(1).getColumn());
-                if( diffRow == 0 && diffCol == 0 )
-                    return false;
-                else if(diffRow == 0) {
-                    // check parallel to x returns if the coordinates represent a segment parallel to x
-                    // if it's not the case it returns false, otherwise true
-                    // sort based on the x-axis
-                    coo.sort((curr, next) -> {
-                        if (curr.getColumn() <= next.getColumn())
-                            return -1;
-                        else
-                            return 1;
-                    });
-
-
-                    return checkParallelX(coo);
-                } else if(diffCol == 0) {
-                    // check parallel to y
-
-                    // sort based on the y-axis
-                    coo.sort((curr, next) -> {
-                        if (curr.getRow() <= next.getRow())
-                            return -1;
-                        else
-                            return 1;
-                    });
-
-                    return checkParallelY(coo);
-                } else {
-                    // this else is equal to the following: else if(diffRow != 0 && diffCol != 0)
-                    return false;
-                }
-            }
-        }
-    }*/
     /**
      * Check if the given retrieve from the board is valid
      * @param coords the coordinates of the tiles that the caller wants to retrieve from the board
@@ -398,42 +336,6 @@ public class LivingRoomBoard {
             return a.getRow()*10;
         return -1;
     }
-
-    /*
-    private boolean checkParallelX(ArrayList<Coordinates> coo) {
-        if(coo == null || coo.contains(null))
-            throw new NullPointerException("Coordinates list is/contains null");
-
-        for(int i=0; i<coo.size() - 1; i++) {
-            if( coo.get(i).getRow() != coo.get(i+1).getRow() )
-                return false;
-            else {
-                // cannot have same coordinate two times
-                if(coo.get(i).getColumn() == coo.get(i+1).getColumn())
-                    return false;
-                if(coo.get(i).getColumn() != (coo.get(i+1).getColumn() - 1))
-                    return false;
-            }
-        }
-        return true;
-    }
-    private boolean checkParallelY(ArrayList<Coordinates> coo) {
-        if(coo == null || coo.contains(null))
-            throw new NullPointerException("Coordinates list is/contains null");
-
-        for(int i=0; i<coo.size() - 1; i++) {
-            if( coo.get(i).getColumn() != coo.get(i+1).getColumn() )
-                return false;
-            else {
-                if(coo.get(i).getRow() == coo.get(i+1).getRow())
-                    return false;
-                if(coo.get(i).getRow() != (coo.get(i+1).getRow() - 1))
-                    return false;
-            }
-        }
-        return true;
-    }
-    */
 
     /**
      * Check if a tile has a free side

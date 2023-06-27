@@ -26,7 +26,8 @@ public enum Notifications {
     NO_SPACE_IN_BOOKSHELF_COLUMN("No space left in this column!","Choose another column to fill, or select another set of tiles!"),
     PLAYER_NOT_IN_TURN("it's not your turn!","Please, wait until is your turn to perform this move!"),
     CHAT_SENDER_EQUALS_RECIPIENT("Sender equals recipient!","You can not send a message to yourself!"),
-    ERR_PLAYER_NO_JOINED_IN_LOBBY("You have not selected the username!","Please, login before trying to join or create a game" );
+    ERR_PLAYER_NO_JOINED_IN_LOBBY("You have not selected the username!","Please, login before trying to join or create a game" ),
+    ERR_INVALID_ACTION("Oak's words echoed... ","\"There's a time and place for everything, but not now.\"");
     private final String title;
     private final String description;
 

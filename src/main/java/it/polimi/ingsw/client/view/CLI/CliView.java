@@ -166,7 +166,6 @@ public class CliView implements ViewInterface {
         switch (command){
             /*chat>>UserRecipient--ciaooo*/
             case "Chat" ->{
-
                 String[] chatMessageArray = specific.split("--");
                 if( chatMessageArray.length > 1){
                     if(chatMessageArray[1].length() > 0)

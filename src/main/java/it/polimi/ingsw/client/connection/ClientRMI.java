@@ -90,10 +90,12 @@ public class ClientRMI implements ConnectionHandler{
      */
     @Override
     public void JoinLobby(String username) throws RemoteException {
-        if(gameController != null ){
-            view.postNotification(Notifications.ERR_ALREADY_PLAYING_A_GAME);
-            return;
-        }
+        try {
+            if( checkGameIsSet() ){
+                view.postNotification(Notifications.ERR_ALREADY_PLAYING_A_GAME);
+                return;
+            }
+        } catch (NoAvailableGameException ignored) {}
         this.username = username;
         try {
             gameController = lobbyController.enterInLobby(username);
@@ -124,7 +126,12 @@ public class ClientRMI implements ConnectionHandler{
      */
     @Override
     public void CreateGame(int nPlayers) throws RemoteException {
-
+        try {
+            if( checkGameIsSet() ){
+                view.postNotification(Notifications.ERR_ALREADY_PLAYING_A_GAME);
+                return;
+            }
+        } catch (NoAvailableGameException ignored) {}
         try {
             this.gameController = this.lobbyController.createGame(username, nPlayers);
             view.drawScene(SceneType.GAME);
@@ -163,7 +170,12 @@ public class ClientRMI implements ConnectionHandler{
      */
     @Override
     public void JoinGame() throws RemoteException {
-
+        try {
+            if( checkGameIsSet() ){
+                view.postNotification(Notifications.ERR_ALREADY_PLAYING_A_GAME);
+                return;
+            }
+        } catch (NoAvailableGameException ignored) {}
         try {
             this.gameController = this.lobbyController.addPlayerToGame(username);
             view.drawScene(SceneType.GAME);
@@ -192,7 +204,8 @@ public class ClientRMI implements ConnectionHandler{
         try {
             this.checkGameIsSet();
         } catch (NoAvailableGameException e) {
-            throw new RuntimeException(e);
+            view.postNotification(Notifications.ERR_INVALID_ACTION);
+            return;
         }
 
         //here the view will be notified that the action has been executed correctly
@@ -226,7 +239,8 @@ public class ClientRMI implements ConnectionHandler{
         try {
             this.checkGameIsSet();
         } catch (NoAvailableGameException e) {
-            throw new RuntimeException(e);
+            view.postNotification(Notifications.ERR_INVALID_ACTION);
+            return;
         }
 
         try {
@@ -284,8 +298,9 @@ public class ClientRMI implements ConnectionHandler{
      *
      * @throws NoAvailableGameException
      */
-    private void checkGameIsSet() throws NoAvailableGameException {
+    private boolean checkGameIsSet() throws NoAvailableGameException {
         if( gameController == null) throw  new NoAvailableGameException("The client hasn't joined a game!");
+        return true;
     }
 
     /**
@@ -293,6 +308,12 @@ public class ClientRMI implements ConnectionHandler{
      * @param content content of the message
      */
     public void sendMessage(String content){
+        try {
+            this.checkGameIsSet();
+        } catch (NoAvailableGameException e) {
+            view.postNotification(Notifications.ERR_INVALID_ACTION);
+            return;
+        }
         try {
             gameController.postBroadCastMessage(this.username,content);
         } catch (RemoteException e) {
@@ -308,6 +329,12 @@ public class ClientRMI implements ConnectionHandler{
      */
 
     public void sendMessage(String recipient, String content){
+        try {
+            this.checkGameIsSet();
+        } catch (NoAvailableGameException e) {
+            view.postNotification(Notifications.ERR_INVALID_ACTION);
+            return;
+        }
         try {
             gameController.postDirectMessage(this.username,recipient,content);
         } catch (RemoteException e) {
