@@ -6,12 +6,13 @@ This repository contains the digital java implementation of the game **My Shelfi
 My Shelfie is a game where you and your friends have to set up your new library starting from a messy livingroom, following
 specifics rules.
 
+![My Shelfie background](https://github.com/ilboglions/IS23-AM07/blob/5d2d577a53b37d1ba1113b79a8eef3859e802e37/src/main/resources/images/PublisherMaterial/banner%201386x400px.png)
 ## Authors
 Politecnico di Miliano - Prof. Margara Section - **Group AM07** 
 -  **10719101 Filippo Balzarini** ([@filomba01](https://github.com/filomba01)) _filippo.balzarini@mail.polimi.it_
 -  **10787158 Christian Biffi** ([@creix](https://github.com/creix)) _christian.biffi@mail.polimi.it_
--  **10706553 Michele Cavicchioli** ([@trueMaicol](https://github.com/trueMaicol)) _michele.cavicchioli@mail.polimi.it_
 -  **10766461 Matteo Boglioni** ([@ilboglions](https://github.com/ilboglions)) _matteo.boglioni@mail.polimi.it_
+- **10706553 Michele Cavicchioli** ([@trueMaicol](https://github.com/trueMaicol)) _michele.cavicchioli@mail.polimi.it_
 
 # Development State
 
