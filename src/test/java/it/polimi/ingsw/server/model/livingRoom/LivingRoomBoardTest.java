@@ -19,7 +19,6 @@ public class LivingRoomBoardTest {
     /**
      * This test verifies the correctness of the constructor method, exception cases
      * and Board filling
-     * @throws FileNotFoundException
      * @throws PlayersNumberOutOfRange
      */
     @Test
@@ -84,6 +83,14 @@ public class LivingRoomBoardTest {
         inserttiles.put(new Coordinates(4,3), ItemTile.CAT);
         board.customRefill(inserttiles);
         assertFalse(board.checkRefill());
+        removedtiles= board.emptyBoard();
+        inserttiles.clear();
+        inserttiles.put(new Coordinates(4,3), ItemTile.TROPHY);
+        inserttiles.put(new Coordinates(5,3), ItemTile.CAT);
+        inserttiles.put(new Coordinates(6,3), ItemTile.TROPHY);
+        board.customRefill(inserttiles);
+        assertFalse(board.checkRefill());
+
     }
 
 
@@ -198,6 +205,18 @@ public class LivingRoomBoardTest {
         final ArrayList<Coordinates> finalcoord = new ArrayList<>();
         finalcoord.add(new Coordinates(4,0));
         assertThrows(EmptySlotException.class, ()->{board.checkValidRetrieve(finalcoord);});
+
+        coordinates = new ArrayList<>();
+        coordinates.add(new Coordinates(4,3));
+        coordinates.add(new Coordinates(3,3));
+        coordinates.add(new Coordinates(4,4));
+        assertFalse(board.checkValidRetrieve(coordinates));
+
+        coordinates = new ArrayList<>();
+        coordinates.add(new Coordinates(4,4));
+        coordinates.add(new Coordinates(4,3));
+        coordinates.add(new Coordinates(4,5));
+        assertFalse(board.checkValidRetrieve(coordinates));
 
     }
 
