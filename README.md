@@ -35,7 +35,7 @@ git clone https://github.com/ilboglions/IS23-AM07.git
 ```
 or just [download the jar file](https://github.com/ilboglions/IS23-AM07/blob/298c656a7adecf666d2ce64c71843bea1b84936f/deliverables/AM07-My-Shelfie-1.0-jar-with-dependencies.jar)
 ## Running the game
-The game consists of a single jar file by the name AM07-jar-with-dependencies.jar. It can be found in /target directory after building the project with Maven.
+The game consists of a single jar file named ```AM07-jar-with-dependencies.jar```.
 This file holds both the Server, the CLI and the GUI applications, one of which can be selected when booting.
 To run the jar file, use the command
 ```
@@ -67,6 +67,6 @@ below an example of a complete launch configuration:
 ```
 java -jar AM07-jar-with-dependencies.jar --GUI --TCP 10.53.2.4 4567
 ```
-### License
+## License
 All rights to My **Shelfie** are owned by Cranio Games,  which provided the graphical 
 resources to be used for educational purposes only.
