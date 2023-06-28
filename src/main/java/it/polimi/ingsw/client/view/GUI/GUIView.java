@@ -62,6 +62,10 @@ public class GUIView extends Application implements ViewInterface {
         }
 
         this.stage = stage;
+        this.stage.setFullScreen(true);
+        this.stage.setMinWidth(1000);
+        this.stage.setMinHeight(750);
+
         fxmlLoader = new FXMLLoader(GUIView.class.getResource("/fxml/login-view.fxml"));
         try {
             scene = new Scene(fxmlLoader.load(), 1500, 750);

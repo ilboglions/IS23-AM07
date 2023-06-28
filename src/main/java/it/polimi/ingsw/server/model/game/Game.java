@@ -722,7 +722,7 @@ public class Game implements GameModelInterface {
                 tmp.add(player.getUsername());
             }
 
-            this.gameListener.notifyTurnOrder(tmp);
+            this.gameListener.notifyTurnOrder(tmp, userToBeUpdated);
             this.gameListener.notifyPlayerInTurn(players.get(playerTurn).getUsername());
             this.gameListener.notifyChangedGameState(GameState.STARTED);
         }

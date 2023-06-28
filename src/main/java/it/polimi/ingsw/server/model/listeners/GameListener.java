@@ -98,6 +98,21 @@ public class GameListener extends Listener<GameSubscriber> {
         });
     }
 
+    /**
+     * Updates a specific player about the turn order
+     * @param playerOrder ArrayList with each player in order of turn
+     * @param userToBeUpdated username of the player to be updated
+     */
+    public void notifyTurnOrder(ArrayList<String> playerOrder, String userToBeUpdated){
+        Set<GameSubscriber> subscribers = this.getSubscribers();
+        for(GameSubscriber sub : subscribers){
+            try {
+                if( sub.getSubscriberUsername().equals(userToBeUpdated))
+                    sub.notifyTurnOrder(playerOrder);
+            } catch (RemoteException ignored) {}
+        }
+    }
+
 
     /**
      * Notifies a player about the players that already joined the game

@@ -413,15 +413,12 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
      * This method manages a GameReceived Message
      * @param inputMessage request message from the client
      * @return the response message from the server to the request
-     * @throws RemoteException RMI Exception
      */
     private NetMessage parse(GameReceivedMessage inputMessage) {
         if(!inputMessage.getErrorOccurred()) {
             try {
                 gameController.triggerAllListeners(this.username);
-            } catch (RemoteException e) {
-                throw new RuntimeException(e);
-            }
+            } catch (RemoteException ignored) {}
         }
 
         return new StillActiveMessage();
