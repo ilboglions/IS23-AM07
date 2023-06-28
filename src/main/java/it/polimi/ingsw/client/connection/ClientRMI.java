@@ -299,7 +299,7 @@ public class ClientRMI implements ConnectionHandler{
      * @throws NoAvailableGameException
      */
     private boolean checkGameIsSet() throws NoAvailableGameException {
-        if( gameController == null) throw  new NoAvailableGameException("The client hasn't joined a game!");
+        if( gameModel == null)  throw  new NoAvailableGameException("The client hasn't joined a game!");
         return true;
     }
 

@@ -101,11 +101,10 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
             if (gameModel.checkRefill()){
                 gameModel.refillLivingRoom();
             }
+            gameModel.checkBookshelfComplete();
             try {
                 gameModel.updatePlayerPoints(player);
             } catch (InvalidPlayerException | TokenAlreadyGivenException ignored) {}
-
-            gameModel.checkBookshelfComplete();
             gameModel.setPlayerTurn();
         }
     }
