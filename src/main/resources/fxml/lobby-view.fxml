@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="800.0" prefWidth="1200.0" styleClass="anchor" stylesheets="@css/lobby-view.css" xmlns="http://javafx.com/javafx/20" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.view.GUI.LobbyViewController">
+<BorderPane prefHeight="800.0" prefWidth="1200.0" styleClass="anchor" stylesheets="@css/lobby-view.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.view.GUI.LobbyViewController">
    <top>
       <ImageView fitHeight="193.0" fitWidth="534.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
          <image>
@@ -27,12 +27,12 @@
                   <Font name="Arial" size="40.0" />
                </font>
             </Label>
-            <Label fx:id="errorLabel" alignment="CENTER" prefHeight="20.0" prefWidth="300.0" textFill="#eb1e1e">
+            <Label fx:id="errorLabel" alignment="CENTER" prefHeight="27.0" prefWidth="576.0" textFill="#eb1e1e">
                <font>
                   <Font size="18.0" />
                </font>
             </Label>
-            <Label fx:id="errorLabelDesc" alignment="CENTER" prefHeight="20.0" prefWidth="303.0" textFill="#eb1e1e">
+            <Label fx:id="errorLabelDesc" alignment="CENTER" prefHeight="22.0" prefWidth="593.0" textFill="#eb1e1e">
                <font>
                   <Font size="15.0" />
                </font>
@@ -52,12 +52,12 @@
                   </Label>
                   <HBox alignment="CENTER" prefHeight="63.0" prefWidth="461.0" spacing="100.0">
                      <children>
-                        <Button fx:id="joinGameButton" mnemonicParsing="false" onAction="#onJoinGameButtonClick" prefHeight="46.0" prefWidth="128.0" text="Join Game">
+                        <Button fx:id="joinGameButton" minWidth="135.0" mnemonicParsing="false" onAction="#onJoinGameButtonClick" prefHeight="45.0" text="Join Game">
                            <font>
                               <Font name="Arial" size="16.0" />
                            </font>
                         </Button>
-                        <Button fx:id="createGameButton" mnemonicParsing="false" onAction="#onCreateGameButtonClick" prefHeight="46.0" prefWidth="128.0" text="Create Game">
+                        <Button fx:id="createGameButton" minWidth="135.0" mnemonicParsing="false" onAction="#onCreateGameButtonClick" prefHeight="45.0" text="Create Game">
                            <font>
                               <Font name="Arial" size="16.0" />
                            </font>

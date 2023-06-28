@@ -101,20 +101,7 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
             view.drawBookShelf(new HashMap<>(), player, (this.players.indexOf(player) - this.players.indexOf(this.username) + this.players.size()) % this.players.size());
         } catch (InvalidCoordinatesException ignored) {}
     }
-    /**
-     * Accept a player inside the game and put it in a certain position. Usually used to handle crashed players
-     * @param player the username of the joined player
-     */
-    public void joinPlayer(String player, int index) {
-        players.add(index, player);
-    }
-    /**
-     * Remove a crashed player from the game
-     * @param player the username of the crashed player
-     */
-    public void crashPlayer(String player) {
-        players.remove(player);
-    }
+
 
     /**
      * Get the list of the player in the game.
@@ -124,43 +111,6 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
         return new ArrayList<>(players);
     }
 
-    /**
-     * Get the list of the messages in the local chat
-     * @return list of the messages in the local chat
-     */
-    public ArrayList<Message> getPlayerChat() {
-        return new ArrayList<>(playerChat);
-    }
-
-    /**
-     * Get a list of the last N messages from the local history of the chat
-     * @param N number of messages to be retrieved
-     * @return a list of the last N messages from the local history of the chat
-     */
-    public ArrayList<Message> getLastNMessages(int N) {
-        ArrayList<Message> temp = new ArrayList<>();
-        for(int i=0; i<N; i++)
-            temp.add(0, playerChat.get(playerChat.size() - 1 - i));
-        return temp;
-    }
-
-    /**
-     * Get the list of the scoring tokens of a certain player
-     * @param player the username of the owner of the scoring tokens we want to retrieve
-     * @return the list of the scoring tokens of a player
-     */
-    public ArrayList<ScoringToken> getPlayerScoringToken(String player) {
-        return new ArrayList<>(playerScoringTokens.get(player));
-    }
-
-    /**
-     * Retrieve the current points of a player
-     * @param player the username of the player
-     * @return the current points of a player
-     */
-    public int getPlayerPoints(String player) {
-        return playerPoints.get(player);
-    }
 
     /**
      * Add a new scoring token to a player
@@ -170,10 +120,6 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
     public void addScoringTokenToPlayer(String player, ScoringToken scoringToken) {
         playerScoringTokens.get(player).add(scoringToken);
         view.drawScoringTokens(new HashMap<>(playerScoringTokens));
-    }
-
-    public Map<String, Integer> getMapPlayerPoints() {
-        return new HashMap<>(playerPoints);
     }
 
     /**

@@ -69,7 +69,7 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" />
                            </rowConstraints>
                            <padding>
-                              <Insets left="50.0" right="10.0" />
+                              <Insets left="40.0" right="10.0" />
                            </padding>
                            <VBox.margin>
                               <Insets top="5.0" />
