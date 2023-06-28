@@ -72,7 +72,7 @@ public class GameViewController extends GUIController implements Initializable {
     public ScrollPane textFlowChatScroll;
     public GridPane leaderBoardGrid;
 
-    private Popup commonGoalInfo1, commonGoalInfo2;
+    private Popup commonGoalInfo1, commonGoalInfo2, personalGoalInfo;
     private ImageView firstToken;
 
 
@@ -141,6 +141,7 @@ public class GameViewController extends GUIController implements Initializable {
         cardsGrid.setVisible(false);
         commonGoalInfo1 = new Popup();
         commonGoalInfo2 = new Popup();
+        personalGoalInfo = new Popup();
         textFlowChat.getChildren().addListener(
                 (ListChangeListener<Node>) ((change) -> {
                     textFlowChat.layout();
@@ -559,6 +560,25 @@ public class GameViewController extends GUIController implements Initializable {
         personalCard.setPreserveRatio(true);
         personalCard.fitHeightProperty().bind(Bindings.min(leftvbox.widthProperty().divide(5), leftvbox.heightProperty().divide(3.5)));
         personalCard.getStyleClass().add("shadowImage");
+        this.drawPersonalCardPopup(personalGoalInfo, personalCard.getImage());
+        personalCard.setOnMouseClicked((MouseEvent e)->{
+            if(personalGoalInfo.isShowing()){
+                personalGoalInfo.hide();
+            }
+            else{
+                personalGoalInfo.show(this.stage);
+            }
+        });
+    }
+
+    private void drawPersonalCardPopup(Popup personalCardPopup, Image personalCardImage){
+        HBox container = new HBox();
+        ImageView goalImage = new ImageView(personalCardImage);
+        container.getChildren().add(goalImage);
+        personalCardPopup.getContent().add(container);
+        goalImage.setPreserveRatio(true);
+        goalImage.fitHeightProperty().bind(stage.heightProperty().divide(2));
+        personalCardPopup.centerOnScreen();
     }
 
     /**
