@@ -467,6 +467,7 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
 
         try {
             socket.close();
+            parseExecutors.shutdownNow();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -681,9 +682,7 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
             } catch (IOException e) {
                 try {
                     socket.close();
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
+                } catch (IOException ignored) {}
             }
         }
     }
