@@ -299,7 +299,6 @@ public class LivingRoomBoard {
         public int row,col;
         public SlotType slotType;
     }
-
     /**
      * Check if the given retrieve from the board is valid
      * @param coords the coordinates of the tiles that the caller wants to retrieve from the board

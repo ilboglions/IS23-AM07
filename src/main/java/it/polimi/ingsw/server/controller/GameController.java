@@ -275,11 +275,7 @@ public class GameController extends UnicastRemoteObject implements RemoteGameCon
             this.timers.get(username).schedule(() -> {
                 try {
                     this.handleCrashedPlayer(username);
-                } catch (PlayerNotFoundException e) {
-                    throw new RuntimeException(e);
-                } catch (RemoteException e) {
-                    throw new RuntimeException(e);
-                }
+                } catch (PlayerNotFoundException | RemoteException ignored) {}
             }, this.timerDelay);
         }
     }
