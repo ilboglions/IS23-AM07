@@ -143,16 +143,10 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
             case GAME_RECEIVED_MESSAGE -> outputMessage = this.parse((GameReceivedMessage) inputMessage);
             case STILL_ACTIVE -> outputMessage = new StillActiveMessage();
             default -> {
-                if(this.gameController != null){
-                    try {
-                        gameController.handleCrashedPlayer(this.username);
-                    } catch (PlayerNotFoundException ignored) {}
-                }
-                closeConnectionFlag = true;
+                this.handleCrash();
                 outputMessage = new CloseConnectionMessage();
             }
         }
-
         return outputMessage;
     }
 
@@ -448,23 +442,20 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
      * This method manages a connection crash event
      */
     public void handleCrash() {
+        closeConnectionFlag = true;
         logger.info("Connection lost");
         if(username == null || username.isEmpty()) return;
         if (gameController == null) {
             try {
                 lobbyController.handleCrashedPlayer(this.username);
                 logger.info("Handling crash in the lobby... player hasn't join any game!");
-            } catch (PlayerNotFoundException | RemoteException e) {
-                throw new RuntimeException(e);
-            }
+            } catch (PlayerNotFoundException | RemoteException ignored) {}
         }
         else {
             try {
                 gameController.handleCrashedPlayer(this.username);
                 logger.info("Handling crash in the game!");
-            } catch (RemoteException | PlayerNotFoundException e) {
-                throw new RuntimeException(e);
-            }
+            } catch (RemoteException | PlayerNotFoundException ignored) {}
         }
 
         try {
