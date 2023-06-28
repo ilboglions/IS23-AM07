@@ -408,11 +408,18 @@ public class CliView implements ViewInterface {
 
         currentR = startR + 2;
         currentC = startC;
+        String token;
         for(RemoteCommonGoalCard card : commonGoalCards){
+
+            if(!card.getTokenStack().isEmpty()){
+                token = String.valueOf(card.getTokenStack().pop().getScoreValue().getValue());
+            } else {
+                token = " ";
+            }
             tiles[currentR][currentC] = Color.WHITE_BOLD.escape() +  "•";
             tiles[currentR][currentC + 1] = " ";
             tiles[currentR][currentC + 3] = Color.RED_BACKGROUND.escape()+" ";
-            tiles[currentR][currentC + 4] = String.valueOf(card.getTokenStack().pop().getScoreValue().getValue());
+            tiles[currentR][currentC + 4] = token;
             tiles[currentR][currentC + 5] = Color.RED_BACKGROUND.escape()+" "+Color.RESET.escape();
             currentC += 6;
             currentR += printTruncateText(" " + card.getDescription(), currentR, currentC, START_C_BOX_CARD + LENGTH_C_BOX_CARD - FIXED_MARGIN) + 1;
@@ -746,10 +753,10 @@ public class CliView implements ViewInterface {
                     return Color.YELLOW.escape();
                 }
                 case FRAME -> {
-                    return Color.CYAN.escape();
+                    return Color.BLUE.escape();
                 }
                 case TROPHY -> {
-                    return Color.BLUE.escape();
+                    return Color.CYAN.escape();
                 }
                 case PLANT -> {
                     return Color.PURPLE.escape();
