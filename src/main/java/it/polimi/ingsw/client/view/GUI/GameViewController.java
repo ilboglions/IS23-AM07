@@ -75,6 +75,8 @@ public class GameViewController extends GUIController implements Initializable {
     private Popup commonGoalInfo1, commonGoalInfo2, personalGoalInfo;
     private ImageView firstToken;
 
+    private Popup tilesOrderPopup;
+
 
 
     /**
@@ -567,6 +569,8 @@ public class GameViewController extends GUIController implements Initializable {
             }
             else{
                 personalGoalInfo.show(this.stage);
+                commonGoalInfo1.hide();
+                commonGoalInfo2.hide();
             }
         });
     }
@@ -588,6 +592,7 @@ public class GameViewController extends GUIController implements Initializable {
     public void clickCommon1(MouseEvent mouseEvent) {
         if(!commonGoalInfo1.isShowing()){
             commonGoalInfo2.hide();
+            personalGoalInfo.hide();
             commonGoalInfo1.show(this.stage);
         }
         else
@@ -603,6 +608,7 @@ public class GameViewController extends GUIController implements Initializable {
     public void clickCommon2(MouseEvent mouseEvent)  {
         if(!commonGoalInfo2.isShowing()){
             commonGoalInfo1.hide();
+            personalGoalInfo.hide();
             commonGoalInfo2.show(this.stage);
         }
         else
@@ -635,7 +641,7 @@ public class GameViewController extends GUIController implements Initializable {
                 this.getClientController().checkValidRetrieve(new ArrayList<>(selectedCells));
             } catch (RemoteException ignored) {}
             livingroom_grid.setDisable(true);
-            Popup tilesOrderPopup = new Popup();
+            tilesOrderPopup = new Popup();
             GridPane popupContainer = new GridPane();
 
             popupContainer.setAlignment(Pos.CENTER);
@@ -888,6 +894,9 @@ public class GameViewController extends GUIController implements Initializable {
         });
         this.personalBookshelfGrid.setDisable(true);
         this.livingroom_grid.setDisable(true);
+        if(this.tilesOrderPopup != null){
+            tilesOrderPopup.hide();
+        }
 
     }
 }
