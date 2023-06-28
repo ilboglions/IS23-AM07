@@ -68,7 +68,7 @@
             </VBox>
             <VBox fx:id="createGameBox" alignment="TOP_CENTER" fillWidth="false" managed="false" prefHeight="200.0" prefWidth="100.0" visible="false" VBox.vgrow="ALWAYS">
                <children>
-                  <Label alignment="TOP_CENTER" prefHeight="35.0" prefWidth="444.0" text="Insert how many player the game is for">
+                  <Label alignment="TOP_CENTER" prefHeight="35.0" prefWidth="600.0" text="Insert how many player the game is for">
                      <font>
                         <Font size="24.0" />
                      </font>
