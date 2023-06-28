@@ -671,6 +671,7 @@ public class CliView implements ViewInterface {
     @Override
     public void drawWinnerLeaderboard(String username, Map<String, Integer> playerPoints) {
         this.gameEnded = true;
+        this.postNotification(username+" Wins!","congratulation!");
         this.drawLeaderboard(playerPoints);
     }
 

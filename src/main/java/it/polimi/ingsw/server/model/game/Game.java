@@ -426,9 +426,10 @@ public class Game implements GameModelInterface {
         for( Player player : tempPlayers){
             scoreboard.put(player.getUsername(),player.getPoints());
         }
-        gameListener.onPlayerWins(winner.getUsername(), winner.getPoints(), scoreboard);
 
         this.endGame();
+
+        gameListener.onPlayerWins(winner.getUsername(), winner.getPoints(), scoreboard);
 
         return winner.getUsername();
     }
