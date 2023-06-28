@@ -414,7 +414,8 @@ public class GameViewController extends GUIController implements Initializable {
         }
 
         this.postNotification(newTurnTitle, newTurnDescription);
-        livingroom_grid.setDisable(!userInTurn.equals(thisUser));
+        this.livingroom_grid.setDisable(!userInTurn.equals(thisUser));
+        this.personalBookshelfGrid.setDisable(!userInTurn.equals(thisUser));
     }
 
     /**
@@ -848,6 +849,7 @@ public class GameViewController extends GUIController implements Initializable {
         commonGoal1Pane.setDisable(true);
         commonGoal2Pane.setDisable(true);
         livingroom_grid.setDisable(true);
+        personalBookshelfGrid.setDisable(true);
         textFieldChat.setDisable(true);
         winnerPopup.centerOnScreen();
         winnerPopup.show(stage);
@@ -864,6 +866,7 @@ public class GameViewController extends GUIController implements Initializable {
         playersLabels.forEach(label -> {
                 label.setTextFill(Color.BLACK);
         });
+        this.personalBookshelfGrid.setDisable(true);
         this.livingroom_grid.setDisable(true);
 
     }

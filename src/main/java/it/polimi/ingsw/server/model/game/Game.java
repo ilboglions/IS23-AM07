@@ -720,6 +720,9 @@ public class Game implements GameModelInterface {
             ArrayList<String> tmp = new ArrayList<>();
             for(Player player : this.players){
                 tmp.add(player.getUsername());
+                try {
+                    player.triggerListener(userToBeUpdated);
+                } catch (RemoteException ignored) {}
             }
 
             this.gameListener.notifyTurnOrder(tmp, userToBeUpdated);
