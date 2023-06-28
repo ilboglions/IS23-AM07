@@ -246,7 +246,11 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
      */
     @Override
     public synchronized void updateTokens(String player, ArrayList<ScoringToken> tokenPoints){
-        playerScoringTokens.replace(player, new ArrayList<>());
+        if(playerScoringTokens.containsKey(player)) {
+            playerScoringTokens.replace(player, new ArrayList<>());
+        } else {
+            playerScoringTokens.put(player, new ArrayList<>());
+        }
         for(ScoringToken token : tokenPoints){
             this.addScoringTokenToPlayer(player, token);
         }
