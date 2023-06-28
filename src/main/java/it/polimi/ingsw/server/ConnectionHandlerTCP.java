@@ -42,12 +42,15 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
 
     private final ExecutorService parseExecutors = Executors.newCachedThreadPool();
 
+    private ReschedulableTimer timer;
+
     /**
      * Constructor of a ConnectionHandlerTCP
      * @param socket connection socket to the client
      * @param lobbyController actual lobbyController reference
      */
     public ConnectionHandlerTCP(Socket socket, LobbyController lobbyController) {
+        timer = new ReschedulableTimer();
         this.socket = socket;
         this.lobbyController = lobbyController;
         this.username = "";
@@ -76,7 +79,6 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
      */
     private void messagesHopper()  {
         parseExecutors.execute( () -> {
-            ReschedulableTimer timer = new ReschedulableTimer();
             timer.schedule(this::handleCrash, timerDelay);
             while(true) {
                 synchronized (lastReceivedMessages) {
@@ -468,6 +470,7 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
         try {
             socket.close();
             parseExecutors.shutdownNow();
+            timer.cancel();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
