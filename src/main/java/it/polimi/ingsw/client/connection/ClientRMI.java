@@ -184,8 +184,9 @@ public class ClientRMI implements ConnectionHandler{
             this.subscribeListeners();
             view.postNotification(Notifications.GAME_JOINED_SUCCESSFULLY);
             gameController.triggerAllListeners(this.username);
-        } catch (NicknameAlreadyUsedException e) {
-            throw new RuntimeException(e);
+        } catch (NicknameAlreadyUsedException ignored) {
+            //THIS EXCEPTION NEVER HAPPENS, THE PLAYER IN THIS CASE IS
+            //NOT ALLOWED IN THE LOBBY IN THE FIRST PLACE
         } catch (NoAvailableGameException e) {
             view.postNotification(Notifications.ERR_GAME_NO_AVAILABLE);
         } catch (InvalidPlayerException e) {

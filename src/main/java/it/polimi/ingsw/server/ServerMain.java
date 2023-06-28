@@ -51,7 +51,10 @@ public class ServerMain {
             System.setProperty("java.rmi.server.hostname",this.hostName);
             registry = LocateRegistry.createRegistry(rmiPortNumber);
         } catch (RemoteException e) {
-            throw new RuntimeException(e);
+            executor.shutdownNow();
+            logger.info("Server Failed to Launch RMI Server");
+            System.exit(0);
+            return;
         }
         try {
             registry.bind("lobby_controller", lobbyController);
@@ -109,6 +112,7 @@ public class ServerMain {
         }
 
     }
+
 
 
 }
