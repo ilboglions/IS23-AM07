@@ -20,6 +20,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
@@ -61,6 +62,7 @@ public class GUIView extends Application implements ViewInterface {
 
         this.stage = stage;
         this.stage.setFullScreen(true);
+        this.stage.getIcons().add(new Image(GUIView.class.getResource("/images/PublisherMaterial/Box_noshadow_280x280.png").toExternalForm()));
         this.stage.setMinWidth(750);
         this.stage.setMinHeight(750);
 
