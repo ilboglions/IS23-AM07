@@ -714,6 +714,11 @@ public class CliView implements ViewInterface {
      */
     @Override
     public void postNotification(String title, String description) {
+
+
+        if(gameEnded && title.equals(Notifications.TILES_MOVED_SUCCESSFULLY.getTitle()))
+            return;
+
         clearBox(START_R_BOX_NOTIFICATION, START_C_BOX_NOTIFICATION, START_R_BOX_NOTIFICATION + LENGTH_R_BOX_NOTIFICATION, START_C_BOX_NOTIFICATION + LENGTH_C_BOX_NOTIFICATION);
         int spaceNeeded = printTruncateText(title.toUpperCase(),START_R_BOX_NOTIFICATION + FIXED_V_MARGIN,START_C_BOX_NOTIFICATION+FIXED_H_MARGIN, START_C_BOX_NOTIFICATION + LENGTH_C_BOX_NOTIFICATION - FIXED_H_MARGIN, titleColor);
         printTruncateText(description,START_R_BOX_NOTIFICATION + FIXED_V_MARGIN + spaceNeeded,START_C_BOX_NOTIFICATION+FIXED_H_MARGIN, START_C_BOX_NOTIFICATION + LENGTH_C_BOX_NOTIFICATION - FIXED_H_MARGIN );
