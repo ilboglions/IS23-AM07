@@ -83,16 +83,16 @@ public class ClientRMI implements ConnectionHandler{
             } catch (RemoteException | PlayerNotFoundException ignored) {}
         }
         gameController = null;
+        gameModel = null;
 
     }
 
     /**
      * Adds player to the lobby
      * @param username the username used for joining the lobby
-     * @throws RemoteException RMI remote error
      */
     @Override
-    public void JoinLobby(String username) throws RemoteException {
+    public void JoinLobby(String username) {
 
         if( checkGameIsSet() ){
             view.postNotification(Notifications.ERR_ALREADY_PLAYING_A_GAME);
@@ -118,7 +118,7 @@ public class ClientRMI implements ConnectionHandler{
             view.postNotification(Notifications.ERR_USERNAME_ALREADY_TAKEN);
         } catch (InvalidPlayerException e) {
             view.postNotification(Notifications.ERR_INVALID_USERNAME);
-        }
+        } catch (RemoteException ignored){}
     }
 
 
@@ -168,10 +168,9 @@ public class ClientRMI implements ConnectionHandler{
 
     /**
      * Joins a Game
-     * @throws RemoteException RMI remote error
      */
     @Override
-    public void JoinGame() throws RemoteException {
+    public void JoinGame() {
 
         if( checkGameIsSet() ){
             view.postNotification(Notifications.ERR_ALREADY_PLAYING_A_GAME);
@@ -298,7 +297,6 @@ public class ClientRMI implements ConnectionHandler{
 
     /**
      * @return true if the game is set
-     * @throws NoAvailableGameException if the game is not set
      */
     private boolean checkGameIsSet() {
         return gameModel != null;
