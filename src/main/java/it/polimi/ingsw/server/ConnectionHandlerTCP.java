@@ -42,7 +42,7 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
 
     private final ExecutorService parseExecutors = Executors.newCachedThreadPool();
 
-    private ReschedulableTimer timer;
+    private final ReschedulableTimer timer;
 
     /**
      * Constructor of a ConnectionHandlerTCP
@@ -213,11 +213,9 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
         boolean result;
         String errorType = "";
         String desc = "";
-        try {
-            if( checkGameIsSet() ){
-                return new ConfirmGameMessage(false, Notifications.ERR_INVALID_ACTION.getTitle(), Notifications.ERR_INVALID_ACTION.getDescription(), false);
-            }
-        } catch (NoAvailableGameException ignored) {}
+        if( checkGameIsSet() ){
+            return new ConfirmGameMessage(false, Notifications.ERR_INVALID_ACTION.getTitle(), Notifications.ERR_INVALID_ACTION.getDescription(), false);
+        }
         try {
             gameController = lobbyController.createGame(username, createGameMessage.getPlayerNumber());
             result = true;
@@ -247,11 +245,9 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
         String errorType = "";
         String desc = "";
 
-        try {
-            if( checkGameIsSet() ){
-                return new ConfirmGameMessage(false, Notifications.ERR_INVALID_ACTION.getTitle(), Notifications.ERR_INVALID_ACTION.getDescription(), false);
-            }
-        } catch (NoAvailableGameException ignored) {}
+        if( checkGameIsSet() ){
+            return new ConfirmGameMessage(false, Notifications.ERR_INVALID_ACTION.getTitle(), Notifications.ERR_INVALID_ACTION.getDescription(), false);
+        }
         try {
             gameController = lobbyController.addPlayerToGame(username);
             this.subscribeToAllListeners();
@@ -283,11 +279,8 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
         String errorType = "";
         String desc = "";
 
-        try {
-            this.checkGameIsSet();
-        } catch (NoAvailableGameException e) {
+        if(!this.checkGameIsSet())
             return new ConfirmSelectionMessage(false, Notifications.ERR_INVALID_ACTION.getTitle(), Notifications.ERR_INVALID_ACTION.getDescription());
-        }
 
         try {
             result = gameController.checkValidRetrieve(username, tileSelectionMessage.getTiles());
@@ -326,11 +319,10 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
         boolean result;
         String errorType = "";
         String desc = "";
-        try {
-            this.checkGameIsSet();
-        } catch (NoAvailableGameException e) {
+
+        if( !this.checkGameIsSet())
             return new ConfirmSelectionMessage(false, Notifications.ERR_INVALID_ACTION.getTitle(), Notifications.ERR_INVALID_ACTION.getDescription());
-        }
+
         if (!postMessage.getRecipient().equals("")) {
             try {
                 result = true;
@@ -369,11 +361,8 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
         String errorType = "";
         String desc = "";
 
-        try {
-            this.checkGameIsSet();
-        } catch (NoAvailableGameException e) {
+        if(!this.checkGameIsSet())
             return new ConfirmSelectionMessage(false, Notifications.ERR_INVALID_ACTION.getTitle(), Notifications.ERR_INVALID_ACTION.getDescription());
-        }
 
         try {
             gameController.moveTiles(username, moveTilesMessage.getTiles(), moveTilesMessage.getColumn());
@@ -424,11 +413,8 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
 
     private void subscribeToAllListeners(){
 
-        try {
-            this.checkGameIsSet();
-        } catch (NoAvailableGameException e) {
+        if(!this.checkGameIsSet())
             return;
-        }
         try {
             gameController.subscribeToListener((PlayerSubscriber) this);
             gameController.subscribeToListener((ChatSubscriber) this);
@@ -680,9 +666,8 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
         }
     }
 
-    private boolean checkGameIsSet() throws NoAvailableGameException {
-        if( gameController == null) throw  new NoAvailableGameException("The client hasn't joined a game!");
-        return true;
+    private boolean checkGameIsSet() {
+        return gameController != null;
     }
 
 }

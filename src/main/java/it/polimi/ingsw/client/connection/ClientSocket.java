@@ -7,7 +7,6 @@ import it.polimi.ingsw.client.view.ViewInterface;
 import it.polimi.ingsw.messages.*;
 import it.polimi.ingsw.server.ReschedulableTimer;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
-import it.polimi.ingsw.server.model.exceptions.NoAvailableGameException;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -21,7 +20,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
 public class ClientSocket implements ConnectionHandler{
 
@@ -179,18 +177,10 @@ public class ClientSocket implements ConnectionHandler{
      * @param content content of the message
      */
     public void sendMessage(String content){
-        try {
-            this.checkGameIsSet();
-        } catch (NoAvailableGameException e) {
-            view.postNotification(Notifications.ERR_INVALID_ACTION);
-        }
-        PostMessage message = new PostMessage(content);
-        this.sendUpdate(message);
+        view.postNotification(Notifications.ERR_INVALID_ACTION);
+        this.sendUpdate(new PostMessage(content));
     }
 
-    private void checkGameIsSet() throws NoAvailableGameException {
-        if( gameModel == null) throw  new NoAvailableGameException("The client hasn't joined a game!");
-    }
 
     /**
      * Sends a private message to a player in the game
@@ -199,8 +189,7 @@ public class ClientSocket implements ConnectionHandler{
      */
 
     public void sendMessage(String recipient, String content){
-        PostMessage message = new PostMessage(recipient, content);
-        this.sendUpdate(message);
+        this.sendUpdate(new PostMessage(recipient, content));
     }
 
     @Override
@@ -214,8 +203,7 @@ public class ClientSocket implements ConnectionHandler{
     }
 
     private void sendReceivedGame(Boolean errorOccurred) {
-        GameReceivedMessage message = new GameReceivedMessage(errorOccurred);
-        this.sendUpdate(message);
+        this.sendUpdate(new GameReceivedMessage(errorOccurred));
     }
 
     /**
@@ -225,6 +213,7 @@ public class ClientSocket implements ConnectionHandler{
     public void sendHeartBeat()  {
         heartBeatManager.scheduleAtFixedRate(
             () -> {
+                System.out.println("sending still active...");
                 StillActiveMessage requestMessage = new StillActiveMessage();
                 this.sendUpdate(requestMessage);
             },

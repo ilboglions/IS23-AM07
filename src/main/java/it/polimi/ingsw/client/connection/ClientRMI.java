@@ -93,12 +93,12 @@ public class ClientRMI implements ConnectionHandler{
      */
     @Override
     public void JoinLobby(String username) throws RemoteException {
-        try {
-            if( checkGameIsSet() ){
-                view.postNotification(Notifications.ERR_ALREADY_PLAYING_A_GAME);
-                return;
-            }
-        } catch (NoAvailableGameException ignored) {}
+
+        if( checkGameIsSet() ){
+            view.postNotification(Notifications.ERR_ALREADY_PLAYING_A_GAME);
+            return;
+        }
+
         this.username = username;
         try {
             gameController = lobbyController.enterInLobby(username);
@@ -129,12 +129,11 @@ public class ClientRMI implements ConnectionHandler{
      */
     @Override
     public void CreateGame(int nPlayers) throws RemoteException {
-        try {
-            if( checkGameIsSet() ){
-                view.postNotification(Notifications.ERR_ALREADY_PLAYING_A_GAME);
-                return;
-            }
-        } catch (NoAvailableGameException ignored) {}
+        if( checkGameIsSet() ){
+            view.postNotification(Notifications.ERR_ALREADY_PLAYING_A_GAME);
+            return;
+        }
+
         try {
             this.gameController = this.lobbyController.createGame(username, nPlayers);
             view.drawScene(SceneType.GAME);
@@ -173,12 +172,12 @@ public class ClientRMI implements ConnectionHandler{
      */
     @Override
     public void JoinGame() throws RemoteException {
-        try {
-            if( checkGameIsSet() ){
-                view.postNotification(Notifications.ERR_ALREADY_PLAYING_A_GAME);
-                return;
-            }
-        } catch (NoAvailableGameException ignored) {}
+
+        if( checkGameIsSet() ){
+            view.postNotification(Notifications.ERR_ALREADY_PLAYING_A_GAME);
+            return;
+        }
+
         try {
             this.gameController = this.lobbyController.addPlayerToGame(username);
             view.drawScene(SceneType.GAME);
@@ -205,9 +204,8 @@ public class ClientRMI implements ConnectionHandler{
     @Override
     public void checkValidRetrieve(ArrayList<Coordinates> tiles) {
 
-        try {
-            this.checkGameIsSet();
-        } catch (NoAvailableGameException e) {
+
+        if(!this.checkGameIsSet()) {
             view.postNotification(Notifications.ERR_INVALID_ACTION);
             return;
         }
@@ -239,9 +237,7 @@ public class ClientRMI implements ConnectionHandler{
     @Override
     public void moveTiles(ArrayList<Coordinates> tiles, int column) throws RemoteException {
 
-        try {
-            this.checkGameIsSet();
-        } catch (NoAvailableGameException e) {
+        if(!this.checkGameIsSet()) {
             view.postNotification(Notifications.ERR_INVALID_ACTION);
             return;
         }
@@ -300,9 +296,8 @@ public class ClientRMI implements ConnectionHandler{
      * @return true if the game is set
      * @throws NoAvailableGameException if the game is not set
      */
-    private boolean checkGameIsSet() throws NoAvailableGameException {
-        if( gameModel == null)  throw  new NoAvailableGameException("The client hasn't joined a game!");
-        return true;
+    private boolean checkGameIsSet() {
+        return gameModel != null;
     }
 
     /**
@@ -310,9 +305,8 @@ public class ClientRMI implements ConnectionHandler{
      * @param content content of the message
      */
     public void sendMessage(String content){
-        try {
-            this.checkGameIsSet();
-        } catch (NoAvailableGameException e) {
+
+        if(!this.checkGameIsSet()){
             view.postNotification(Notifications.ERR_INVALID_ACTION);
             return;
         }
@@ -331,9 +325,7 @@ public class ClientRMI implements ConnectionHandler{
      */
 
     public void sendMessage(String recipient, String content){
-        try {
-            this.checkGameIsSet();
-        } catch (NoAvailableGameException e) {
+        if(!this.checkGameIsSet()){
             view.postNotification(Notifications.ERR_INVALID_ACTION);
             return;
         }
