@@ -171,8 +171,8 @@ public class GameControllerTest {
     @Test
     @DisplayName("triggerHeartbeat, handleCrashedPlayer")
     void testTriggerHeartBeat() throws NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, PlayersNumberOutOfRange, RemoteException, InterruptedException, NicknameAlreadyUsedException, GameNotStartedException, GameEndedException, InvalidCoordinatesException, EmptySlotException, PlayerNotInTurnException, NotAllPlayersHaveJoinedException, GameNotEndedException {
-        Player host = new Player("host"), x = new Player("x");
-        Game game = new Game(2,host);
+        Player host = new Player("host"), x = new Player("x"), y = new Player("y");
+        Game game = new Game(3,host);
         GameController controller = new GameController(game);
         ArrayList<Coordinates> coo = new ArrayList<>();
 
@@ -182,12 +182,15 @@ public class GameControllerTest {
         controller.triggerHeartBeat("host");
         assertTrue(controller.getTimers().get("host").isScheduled());
         game.addPlayer(x);
+        game.addPlayer(y);
         game.start();
-        if(game.getPlayerInTurn().equals("x")) {
+        while(!game.getPlayerInTurn().equals("host")) {
             game.setPlayerTurn();
         }
+        coo.add(new Coordinates(4,1));
+        controller.checkValidRetrieve("host",coo);
         Thread.sleep(16000);
-        assertTrue(game.getPlayerInTurn().equals("host"));
+        assertFalse(game.getPlayerInTurn().equals("host"));
 
     }
 

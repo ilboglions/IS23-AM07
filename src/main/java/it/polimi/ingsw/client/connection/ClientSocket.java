@@ -70,7 +70,7 @@ public class ClientSocket implements ConnectionHandler{
             } catch (IOException e) {
                 view.postNotification(Notifications.ERR_CONNECTION_NO_AVAILABLE);
                 try {
-                    TimeUnit.SECONDS.sleep(2);
+                    TimeUnit.SECONDS.sleep(5);
                 } catch (InterruptedException ignored) {
                 }
             }
@@ -95,8 +95,8 @@ public class ClientSocket implements ConnectionHandler{
      * Handles connection crash closing the connection
      */
     private void handleCrash() {
-        this.view.backToLobby();
         view.postNotification(Notifications.ERR_CONNECTION_NO_LONGER_AVAILABLE);
+        this.view.backToLobby();
     }
 
 
@@ -118,6 +118,7 @@ public class ClientSocket implements ConnectionHandler{
                 outputStream.close();
                 inputStream.close();
                 connection.close();
+                gameModel = null;
             } catch (IOException ignored) {}
         }
     }
@@ -180,7 +181,6 @@ public class ClientSocket implements ConnectionHandler{
      * @param content content of the message
      */
     public void sendMessage(String content){
-        view.postNotification(Notifications.ERR_INVALID_ACTION);
         this.sendUpdate(new PostMessage(content));
     }
 
@@ -216,7 +216,6 @@ public class ClientSocket implements ConnectionHandler{
     public void sendHeartBeat()  {
         heartBeatManager.scheduleAtFixedRate(
             () -> {
-                System.out.println("sending still active...");
                 StillActiveMessage requestMessage = new StillActiveMessage();
                 this.sendUpdate(requestMessage);
             },
@@ -240,7 +239,6 @@ public class ClientSocket implements ConnectionHandler{
                         lastReceivedMessages.wait(1);
                     } catch (IOException | ClassNotFoundException | InterruptedException e ) {
                         active = false;
-                        this.close();
                     }
                 }
             }
@@ -502,8 +500,7 @@ public class ClientSocket implements ConnectionHandler{
                 outputStream.writeObject(update);
                 outputStream.flush();
                 outputStream.reset();
-            } catch (IOException e) {
-                this.view.backToLobby();
+            } catch (IOException ignored) {
             }
         }
     }

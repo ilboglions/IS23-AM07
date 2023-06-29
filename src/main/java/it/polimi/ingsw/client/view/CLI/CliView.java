@@ -864,10 +864,7 @@ public class CliView implements ViewInterface {
                 new ProcessBuilder("clear").inheritIO().start().waitFor();
             }
         }
-        catch (final Exception e)
-        {
-            e.printStackTrace();
-        }
+        catch (final Exception ignored) {}
     }
 
     /**
