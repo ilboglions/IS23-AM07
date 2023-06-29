@@ -132,7 +132,7 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
     }
 
     /**
-     * Parse the message between private & broadcast
+     * Parse the message between private and broadcast
      * @param from the sender of the message
      * @param msg the message
      */
