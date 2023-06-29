@@ -779,7 +779,7 @@ public class GameViewController extends GUIController implements Initializable {
 
         leaderBoardGrid.getChildren().clear();
         for(int i=0; i < playerPoints.size(); i++){
-            Text username = new Text((i + 1) + " " + playersRank.get(i));
+            Text username = new Text((i + 1) + "  " + playersRank.get(i));
             Text points = new Text(String.valueOf(playerPoints.get(playersRank.get(i))));
 
             username.setTextAlignment(TextAlignment.LEFT);
