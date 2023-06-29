@@ -305,19 +305,18 @@ public class GUIView extends Application implements ViewInterface {
      */
     public void backToLobby(){
 
+        this.drawScene(SceneType.LOGIN);
+        String ip = controller.getServerIP();
+        int port = controller.getServerPort();
         try {
-            this.drawScene(SceneType.LOGIN);
-            String ip = controller.getServerIP();
-            int port = controller.getServerPort();
             controller.close();
-            ConnectionHandlerFactory factory = new ConnectionHandlerFactory();
-            controller = factory.createConnection(connectionType, this, ip, port);
-            guiController = fxmlLoader.getController();
-            guiController.setConnectionHandler(controller);
-            guiController.setManager(this);
-        } catch (IOException e) {
-            this.stage.close();
         }
+        catch (IOException ignored){}
+        ConnectionHandlerFactory factory = new ConnectionHandlerFactory();
+        controller = factory.createConnection(connectionType, this, ip, port);
+        guiController = fxmlLoader.getController();
+        guiController.setConnectionHandler(controller);
+        guiController.setManager(this);
     }
 
     /**

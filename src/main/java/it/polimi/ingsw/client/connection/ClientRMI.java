@@ -33,12 +33,15 @@ public class ClientRMI implements ConnectionHandler{
     private final String ip;
     private final int port;
 
+    private boolean connectionClosed;
+
     /**
      * Creates an instance of ClientRMI
      * @param view the view will be notified for updates
      */
     public ClientRMI(ViewInterface view, String hostName, int portNumber) {
         boolean connected = false;
+        this.connectionClosed = false;
         RemoteLobbyController tempLobbyController = null;
         this.ip = hostName;
         this.port = portNumber;
@@ -56,8 +59,7 @@ public class ClientRMI implements ConnectionHandler{
                 try {
                     this.view.postNotification(Notifications.ERR_CONNECTION_NO_AVAILABLE);
                     TimeUnit.SECONDS.sleep(2);
-                } catch (InterruptedException ex) {
-                    ex.printStackTrace();
+                } catch (InterruptedException ignored) {
                 }
             }
         }
@@ -71,6 +73,9 @@ public class ClientRMI implements ConnectionHandler{
      */
     @Override
     public void close() {
+        if(connectionClosed)
+            return;
+        connectionClosed = true;
         heartBeatManager.shutdownNow();
         if(gameController != null){
             try {

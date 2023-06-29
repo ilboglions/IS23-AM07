@@ -36,6 +36,8 @@ public class ClientSocket implements ConnectionHandler{
     private String username;
     private final ViewInterface view;
     private final long timerDelay = 15000;
+
+    private boolean connectionClosed;
     private Game gameModel;
 
     /**
@@ -52,6 +54,7 @@ public class ClientSocket implements ConnectionHandler{
         this.threadManager = Executors.newCachedThreadPool();
         this.heartBeatManager = Executors.newSingleThreadScheduledExecutor();
         this.view = view;
+        this.connectionClosed = false;
 
         boolean connected = false;
         Socket tempConnection = null;
@@ -66,8 +69,7 @@ public class ClientSocket implements ConnectionHandler{
                 view.postNotification(Notifications.ERR_CONNECTION_NO_AVAILABLE);
                 try {
                     TimeUnit.SECONDS.sleep(2);
-                } catch (InterruptedException ex) {
-                    ex.printStackTrace();
+                } catch (InterruptedException ignored) {
                 }
             }
         }
@@ -101,6 +103,9 @@ public class ClientSocket implements ConnectionHandler{
      */
     @Override
     public void close(){
+        if(this.connectionClosed)
+           return;
+        connectionClosed = true;
         synchronized (outputStream) {
             try {
                 this.sendUpdate(new CloseConnectionMessage());
@@ -506,6 +511,7 @@ public class ClientSocket implements ConnectionHandler{
                 outputStream.flush();
                 outputStream.reset();
             } catch (IOException e) {
+                this.close();
                 this.view.backToLobby();
             }
         }

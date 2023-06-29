@@ -683,8 +683,7 @@ public class CliView implements ViewInterface {
         int port = controller.getServerPort();
         try {
             controller.close();
-        } catch (IOException e) {
-            System.exit(0);
+        } catch (IOException ignored) {
         }
         ConnectionHandlerFactory factory = new ConnectionHandlerFactory();
         controller = factory.createConnection(connectionType, this, ip, port);
