@@ -284,8 +284,7 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
                 view.drawBookShelf(currentTilesMap, player, (this.players.indexOf(player) - this.players.indexOf(this.username) + this.players.size()) % this.players.size());
             else*/
             view.drawBookShelf(currentTilesMap, player, (this.players.indexOf(player) - this.players.indexOf(this.username) + this.players.size()) % this.players.size());
-        } catch (InvalidCoordinatesException e) {
-            throw new RuntimeException(e);
+        } catch (InvalidCoordinatesException ignored) {
         }
     }
 
@@ -298,8 +297,7 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
     public synchronized void updateBoardStatus(Map<Coordinates, ItemTile> tilesInBoard) throws RemoteException {
         try {
             view.drawLivingRoom(tilesInBoard);
-        } catch (InvalidCoordinatesException e) {
-            throw new RuntimeException(e);
+        } catch (InvalidCoordinatesException ignored) {
         }
     }
 

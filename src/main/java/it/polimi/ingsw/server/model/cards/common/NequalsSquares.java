@@ -67,7 +67,7 @@ public class NequalsSquares extends CommonGoalCard{
                         }
                     }
                 } catch (InvalidCoordinatesException e) {
-                    throw new RuntimeException(e);
+                    return false;
                 }
                 if (parentTiles.size() != this.squareDim * this.squareDim) continue;
                 boolean notCloseSameTiles = true;

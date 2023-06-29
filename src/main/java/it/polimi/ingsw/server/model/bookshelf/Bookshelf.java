@@ -108,11 +108,10 @@ public abstract class Bookshelf implements Serializable {
             for(int j=0; j < this.columns; j++) {
                 try {
                     c = new Coordinates(i,j);
-                } catch (InvalidCoordinatesException e) {
-                    throw new RuntimeException(e);
+                    if(bookshelf.getItemTile(c).isPresent() && this.getItemTile(c).isPresent() && bookshelf.getItemTile(c).get().equals(this.getItemTile(c).get()))
+                        count++;
+                } catch (InvalidCoordinatesException ignored) {
                 }
-                if(bookshelf.getItemTile(c).isPresent() && this.getItemTile(c).isPresent() && bookshelf.getItemTile(c).get().equals(this.getItemTile(c).get()))
-                    count++;
             }
         }
 
@@ -132,8 +131,8 @@ public abstract class Bookshelf implements Serializable {
                     Optional<ItemTile> tmp = this.getItemTile(new Coordinates(i,j));
                     if(tmp.isPresent())
                         bookshelfMap.put(new Coordinates(i,j), tmp.get());
-                } catch (InvalidCoordinatesException e) {
-                    throw new RuntimeException(e);
+                } catch (InvalidCoordinatesException ignored) {
+
                 }
             }
         }

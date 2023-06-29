@@ -92,7 +92,7 @@ public class PlayerBookshelf extends Bookshelf{
             try {
                 c = new Coordinates(this.rows-1,j);
             } catch (InvalidCoordinatesException e) {
-                throw new RuntimeException(e);
+                return false;
             }
             if(this.getItemTile(c).isEmpty())
                 return false;

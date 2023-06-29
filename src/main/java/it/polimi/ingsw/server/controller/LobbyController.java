@@ -145,7 +145,7 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
             try {
                 gameModel = lobbyModel.createGame(nPlayers, player);
             } catch (BrokenInternalGameConfigurations e) {
-                throw new RuntimeException(e);
+                throw new RuntimeException("THE GAME CONFIGURATION IS BROKEN!");
             }
             gameController = new GameController(gameModel);
             gameController.subscribeToListener((GameStateSubscriber) this);

@@ -61,7 +61,7 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
             this.outputStream = new ObjectOutputStream(socket.getOutputStream());
             this.inputStream = new ObjectInputStream(socket.getInputStream());
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Connection with client failed over TCP");
         }
     }
 
@@ -89,7 +89,8 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
                         lastReceivedMessages.notifyAll();
                         lastReceivedMessages.wait(1);
                     } catch ( ClassNotFoundException | InterruptedException e) {
-                        throw new RuntimeException(e);
+                        logger.info("Hopper has been stopped on connection with" + this.username);
+                        break;
                     } catch ( IOException ignored){
 
                     }
@@ -106,13 +107,14 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
     private void startParserAgent(){
         parseExecutors.execute( () -> {
             NetMessage response;
+            parserLoop:
             while (true)
                 synchronized (lastReceivedMessages) {
                     while (lastReceivedMessages.isEmpty()) {
                         try {
                             lastReceivedMessages.wait();
                         } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
+                            break parserLoop;
                         }
                     }
                     try {
@@ -125,7 +127,7 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
 
 
     /**
-     * This method parse a NetMessage forwarding to the specific mathod based on the type of the message
+     * This method parse a NetMessage forwarding to the specific method based on the type of the message
      * @param inputMessage incoming NetMessage
      * @return response message from the server
      * @throws RemoteException RMI Exception
@@ -170,8 +172,7 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
             if (username != null && !username.isEmpty()) {
                 try {
                     lobbyController.handleCrashedPlayer(username);
-                } catch (PlayerNotFoundException e) {
-                    throw new RuntimeException(e);
+                } catch (PlayerNotFoundException ignored) {
                 }
             }
             try {
@@ -462,8 +463,7 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
             socket.close();
             parseExecutors.shutdownNow();
             timer.cancel();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (IOException ignored) {
         }
     }
 
@@ -577,8 +577,7 @@ public class ConnectionHandlerTCP implements Runnable, BoardSubscriber, Bookshel
         try {
             gameController.subscribeToListener((PlayerSubscriber) this);
             gameController.subscribeToListener((BookshelfSubscriber) this);
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
+        } catch (RemoteException ignored) {
         }
 }
 

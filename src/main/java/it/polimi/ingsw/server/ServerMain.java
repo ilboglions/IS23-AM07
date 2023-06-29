@@ -50,23 +50,19 @@ public class ServerMain {
         try {
             System.setProperty("java.rmi.server.hostname",this.hostName);
             registry = LocateRegistry.createRegistry(rmiPortNumber);
-        } catch (RemoteException e) {
+            registry.bind("lobby_controller", lobbyController);
+        } catch (RemoteException | AlreadyBoundException e) {
             executor.shutdownNow();
             logger.info("Server Failed to Launch RMI Server");
             System.exit(0);
             return;
         }
-        try {
-            registry.bind("lobby_controller", lobbyController);
-        } catch (RemoteException | AlreadyBoundException e) {
-            throw new RuntimeException(e);
-        }
-
         /* server socket initialization */
         try {
             serverSocket = new ServerSocket(port);
         } catch (IOException e) {
             System.err.println(e.getMessage()); // Porta non disponibile
+            System.exit(0);
             return;
         }
 
@@ -108,7 +104,8 @@ public class ServerMain {
             ServerMain echoServer = new ServerMain(hostName, portNumber, rmiPortNumber);
             echoServer.startServer();
         } catch (RemoteException e) {
-            throw new RuntimeException(e);
+            logger.info("Server couldn't start! ");
+            System.exit(0);
         }
 
     }

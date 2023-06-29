@@ -121,7 +121,7 @@ public class Game implements GameModelInterface {
         try {
             this.commonGoalCards = deckCommon.draw(2);
         } catch (RemoteException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error in drawing cards");
         }
         this.players.add(host);
 
@@ -206,12 +206,7 @@ public class Game implements GameModelInterface {
                 p -> {
                     try {
                         p.assignPersonalCard(deckPersonal.draw(1).get(0));
-                    } catch (RemoteException e) {
-                        throw new RuntimeException(e);
-                    } catch (NegativeFieldException e) {
-                        throw new RuntimeException(e);
-                    } catch (NotEnoughCardsException e) {
-                        throw new RuntimeException(e);
+                    } catch (RemoteException | NegativeFieldException | NotEnoughCardsException ignored) {
                     }
                     ArrayList<RemoteCommonGoalCard> remoteCards = new ArrayList<>(this.commonGoalCards);
                     this.gameListener.onCommonCardDraw(p.getUsername(), remoteCards);
@@ -265,8 +260,8 @@ public class Game implements GameModelInterface {
 
         try {
             player.get().updatePoints(stdPointsReference);
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
+        } catch (RemoteException ignored) {
+
         }
     }
 
@@ -387,8 +382,7 @@ public class Game implements GameModelInterface {
             this.isLastTurn = true;
             try {
                 players.get(this.playerTurn).addToken(new ScoringToken(TokenPoint.FIRSTPLAYER));
-            } catch (RemoteException e) {
-                throw new RuntimeException(e);
+            } catch (RemoteException ignored) {
             }
             return true;
         }
@@ -415,8 +409,8 @@ public class Game implements GameModelInterface {
         for(Player player : players) {
             try {
                 player.updatePoints(stdPointsReference);
-            } catch (RemoteException e) {
-                throw new RuntimeException(e);
+            } catch (RemoteException ignored) {
+
             }
         }
         Player winner = players.stream().max(Comparator.comparing(Player::getPoints)).get();

@@ -5,13 +5,11 @@ import it.polimi.ingsw.client.localModel.Game;
 import it.polimi.ingsw.Notifications;
 import it.polimi.ingsw.client.view.SceneType;
 import it.polimi.ingsw.client.view.ViewInterface;
-import it.polimi.ingsw.messages.CloseConnectionMessage;
 import it.polimi.ingsw.remoteInterfaces.*;
 import it.polimi.ingsw.server.ReschedulableTimer;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.*;
 
-import java.rmi.ConnectException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -32,8 +30,8 @@ public class ClientRMI implements ConnectionHandler{
     private final long timerDelay = 15000;
     private final ViewInterface view;
     private Game gameModel;
-    private String ip;
-    private int port;
+    private final String ip;
+    private final int port;
 
     /**
      * Creates an instance of ClientRMI
@@ -296,8 +294,8 @@ public class ClientRMI implements ConnectionHandler{
     }
 
     /**
-     *
-     * @throws NoAvailableGameException
+     * @return true if the game is set
+     * @throws NoAvailableGameException if the game is not set
      */
     private boolean checkGameIsSet() throws NoAvailableGameException {
         if( gameModel == null)  throw  new NoAvailableGameException("The client hasn't joined a game!");
@@ -341,7 +339,7 @@ public class ClientRMI implements ConnectionHandler{
         } catch (RemoteException e) {
             this.close();
         } catch (InvalidPlayerException ignored) {
-            /* to decide, if the written recipient does not exists, we could just ignore the chat message*/
+            /* to decide, if the written recipient does not exist, we could just ignore the chat message*/
         } catch (SenderEqualsRecipientException e) {
             view.postNotification(Notifications.CHAT_SENDER_EQUALS_RECIPIENT);
         }

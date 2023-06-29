@@ -8,6 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 
+import java.io.IOException;
 import java.rmi.RemoteException;
 
 /**
@@ -37,7 +38,9 @@ public class LobbyViewController extends GUIController {
         try {
             getClientController().JoinLobby(usernameField.getText());
         } catch (RemoteException e) {
-            throw new RuntimeException(e);
+            try {
+                this.getClientController().close();
+            } catch (IOException ignored) {}
         }
     }
 
@@ -48,8 +51,8 @@ public class LobbyViewController extends GUIController {
     public void onJoinGameButtonClick(ActionEvent actionEvent){
         try {
             getClientController().JoinGame();
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
+        } catch (RemoteException ignored) {
+
         }
     }
 
@@ -78,7 +81,10 @@ public class LobbyViewController extends GUIController {
             }
 
         } catch (RemoteException e) {
-            throw new RuntimeException(e);
+            try {
+                this.getClientController().close();
+            } catch (IOException ignored) {
+            }
         }
     }
 

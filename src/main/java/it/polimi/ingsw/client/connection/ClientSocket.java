@@ -62,7 +62,7 @@ public class ClientSocket implements ConnectionHandler{
                 tempConnection = new Socket(ip, port);
                 connected = true;
 
-                //TODO: This postNotification broke things when using the GUI because they call the GuiController before it is initializated
+                //TODO: This postNotification broke things when using the GUI because they call the GuiController before it is initialized
                 this.view.postNotification(Notifications.CONNECTED_SUCCESSFULLY);
             } catch (IOException e) {
                 view.postNotification(Notifications.ERR_CONNECTION_NO_AVAILABLE);
@@ -79,7 +79,8 @@ public class ClientSocket implements ConnectionHandler{
             this.outputStream = new ObjectOutputStream(connection.getOutputStream());
             this.inputStream = new ObjectInputStream(connection.getInputStream());
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            view.postNotification(Notifications.ERR_CONNECTION_NO_LONGER_AVAILABLE);
+            throw new RuntimeException("Connection Failed! Please restart the game");
         }
 
         timer.schedule(this::handleCrash, this.timerDelay);
@@ -326,8 +327,7 @@ public class ClientSocket implements ConnectionHandler{
                 view.drawScene(SceneType.GAME);
                 try {
                     this.gameModel = new Game(this.view,this.username);
-                } catch (RemoteException e) {
-                    throw new RuntimeException(e);
+                } catch (RemoteException ignored) {
                 }
                 this.sendReceivedGame(false);
                 view.postNotification(Notifications.GAME_RECONNECTION_SUCCESSFULLY);
@@ -354,8 +354,7 @@ public class ClientSocket implements ConnectionHandler{
             try {
                 this.gameModel = new Game(this.view,this.username);
 
-            } catch (RemoteException e) {
-                throw new RuntimeException(e);
+            } catch (RemoteException ignored) {
             }
 
             view.postNotification(Notifications.GAME_CREATED_SUCCESSFULLY);
@@ -363,8 +362,7 @@ public class ClientSocket implements ConnectionHandler{
             view.drawScene(SceneType.GAME);
             try {
                 this.gameModel = new Game(this.view,this.username);
-            } catch (RemoteException e) {
-                throw new RuntimeException(e);
+            } catch (RemoteException ignored) {
             }
 
             view.postNotification(Notifications.GAME_JOINED_SUCCESSFULLY);
@@ -378,7 +376,7 @@ public class ClientSocket implements ConnectionHandler{
     }
 
     /**
-     * Manages the confirm selection message notifying the view
+     * Manages the confirmSelection message notifying the view
      * @param message response message
      */
     private void parse(ConfirmSelectionMessage message){
@@ -390,7 +388,7 @@ public class ClientSocket implements ConnectionHandler{
     }
 
     /**
-     * Manages the confirm move message notifying the view
+     * Manages the confirmMove message notifying the view
      * @param message response the message
      */
     private void parse(ConfirmMoveMessage message){
@@ -480,7 +478,7 @@ public class ClientSocket implements ConnectionHandler{
     }
 
     /**
-     * Manages a confirmchat message
+     * Manages a confirmChat message
      * @param message notification message
      */
     private void parse(ConfirmChatMessage message){

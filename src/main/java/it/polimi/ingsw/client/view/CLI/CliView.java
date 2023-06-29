@@ -180,8 +180,7 @@ public class CliView implements ViewInterface {
                 if(isNumeric(specific)){
                     try {
                         controller.CreateGame(Integer.parseInt(specific));
-                    } catch (RemoteException e) {
-                        throw new RuntimeException(e);
+                    } catch (RemoteException ignored) {
                     }
                 }
             }
@@ -190,8 +189,7 @@ public class CliView implements ViewInterface {
                 try {
                     this.postNotification("Trying to join a game","...");
                     controller.JoinGame();
-                } catch (RemoteException e) {
-                    throw new RuntimeException(e);
+                } catch (RemoteException ignored) {
                 }
             }
             /*GetTiles>>(2,3);(4,5);(0,1);*/
@@ -202,8 +200,7 @@ public class CliView implements ViewInterface {
 
                 try {
                     controller.checkValidRetrieve(coordinatesList);
-                } catch (RemoteException e) {
-                    throw new RuntimeException(e);
+                } catch (RemoteException ignored) {
                 }
 
             }
@@ -217,8 +214,7 @@ public class CliView implements ViewInterface {
                 if(isNumeric(moveInputs[1])){
                     try {
                         controller.moveTiles(coordinatesList,Integer.parseInt(moveInputs[1]));
-                    } catch (RemoteException e) {
-                        throw new RuntimeException(e);
+                    } catch (RemoteException ignored) {
                     }
                 }
 
@@ -227,8 +223,8 @@ public class CliView implements ViewInterface {
             case "JoinLobby" -> {
                 try {
                     controller.JoinLobby(specific);
-                } catch (RemoteException e) {
-                    throw new RuntimeException(e);
+                } catch (RemoteException ignored) {
+
                 }
             }
             case "Exit" ->{
@@ -340,8 +336,9 @@ public class CliView implements ViewInterface {
         startCBookshelf = (Math.max(title.length(), nTilesTable.length()) - 14) / 2;
         startCPoints = (Math.max(title.length(), nTilesTable.length()) - nTilesTable.length()) / 2;
 
-        this.drawBookShelf( tilesMap, startR + 2, startC + startCBookshelf);
-
+        if(tilesMap != null) {
+            this.drawBookShelf(tilesMap, startR + 2, startC + startCBookshelf);
+        }
         for(int i=0; i < nTilesTable.length(); i++){
             tiles[startR + 9][startC + startCPoints + i] = Color.WHITE_BOLD_BRIGHT.escape() + nTilesTable.charAt(i);
             tiles[startR + 11][startC + startCPoints + i] = Color.WHITE_BOLD_BRIGHT.escape() + pointsTable.charAt(i);
