@@ -524,7 +524,7 @@ public class ClientSocket implements ConnectionHandler{
                 outputStream.flush();
                 outputStream.reset();
             } catch (IOException e) {
-                this.view.postNotification(Notifications.ERR_CONNECTION_NO_LONGER_AVAILABLE);
+                this.view.backToLobby();
             }
         }
     }

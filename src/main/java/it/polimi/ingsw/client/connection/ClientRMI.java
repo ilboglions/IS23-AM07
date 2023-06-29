@@ -280,8 +280,7 @@ public class ClientRMI implements ConnectionHandler{
                         timer.reschedule(this.timerDelay);
                     }
                 } catch (Exception e) {
-                    this.view.postNotification(Notifications.ERR_CONNECTION_NO_LONGER_AVAILABLE);
-                    this.close();
+                    this.view.backToLobby();
                 }
             },
             0, 2, TimeUnit.SECONDS);
