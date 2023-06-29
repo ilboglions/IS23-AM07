@@ -67,7 +67,7 @@ public class ClientSocket implements ConnectionHandler{
             } catch (IOException e) {
                 view.postNotification(Notifications.ERR_CONNECTION_NO_AVAILABLE);
                 try {
-                    TimeUnit.SECONDS.sleep(2);
+                    TimeUnit.SECONDS.sleep(10);
                 } catch (InterruptedException ignored) {
                 }
             }
@@ -213,7 +213,6 @@ public class ClientSocket implements ConnectionHandler{
     public void sendHeartBeat()  {
         heartBeatManager.scheduleAtFixedRate(
             () -> {
-                System.out.println("sending still active...");
                 StillActiveMessage requestMessage = new StillActiveMessage();
                 this.sendUpdate(requestMessage);
             },
@@ -237,7 +236,6 @@ public class ClientSocket implements ConnectionHandler{
                         lastReceivedMessages.wait(1);
                     } catch (IOException | ClassNotFoundException | InterruptedException e ) {
                         active = false;
-                        this.close();
                     }
                 }
             }
@@ -500,6 +498,8 @@ public class ClientSocket implements ConnectionHandler{
                 outputStream.flush();
                 outputStream.reset();
             } catch (IOException e) {
+                if(update instanceof CloseConnectionMessage)
+                    return;
                 this.view.backToLobby();
             }
         }

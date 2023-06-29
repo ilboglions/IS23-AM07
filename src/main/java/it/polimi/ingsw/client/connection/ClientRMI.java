@@ -58,7 +58,7 @@ public class ClientRMI implements ConnectionHandler{
             }catch(RemoteException | NotBoundException e){
                 try {
                     this.view.postNotification(Notifications.ERR_CONNECTION_NO_AVAILABLE);
-                    TimeUnit.SECONDS.sleep(2);
+                    TimeUnit.SECONDS.sleep(10);
                 } catch (InterruptedException ignored) {
                 }
             }
