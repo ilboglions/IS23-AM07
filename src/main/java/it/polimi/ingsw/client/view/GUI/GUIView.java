@@ -24,6 +24,10 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
+import java.awt.Taskbar;
+import java.awt.Toolkit;
+import java.awt.Taskbar.Feature;
+
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.*;
@@ -63,6 +67,14 @@ public class GUIView extends Application implements ViewInterface {
         this.stage = stage;
         this.stage.setFullScreen(true);
         this.stage.getIcons().add(new Image(GUIView.class.getResource("/images/PublisherMaterial/Box_noshadow_280x280.png").toExternalForm()));
+        if (Taskbar.isTaskbarSupported()) {
+            var taskbar = Taskbar.getTaskbar();
+            if (taskbar.isSupported(Feature.ICON_IMAGE)) {
+                final Toolkit defaultToolkit = Toolkit.getDefaultToolkit();
+                var dockIcon = defaultToolkit.getImage(getClass().getResource("/images/PublisherMaterial/Box_noshadow_280x280.png"));
+                taskbar.setIconImage(dockIcon);
+            }
+        }
         this.stage.setMinWidth(750);
         this.stage.setMinHeight(750);
 
