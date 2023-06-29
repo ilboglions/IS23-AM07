@@ -49,8 +49,6 @@ public class Chat {
         }
         sentMessages.add(msg);
         chatListener.onNewMessage(msg);
-        // this is to be discussed, we always said we did not want to expose the rep, so should we send a sort of copy?
-        // since we want to maintain a chronological order of the messages, we can use add. add puts the new element at the end of the list
     }
 
     /**

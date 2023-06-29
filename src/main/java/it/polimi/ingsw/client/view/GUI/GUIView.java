@@ -4,13 +4,11 @@ import it.polimi.ingsw.client.connection.ConnectionHandler;
 import it.polimi.ingsw.client.connection.ConnectionHandlerFactory;
 import it.polimi.ingsw.client.connection.ConnectionType;
 import it.polimi.ingsw.Notifications;
-import it.polimi.ingsw.client.view.CLI.CliView;
 import it.polimi.ingsw.client.view.SceneType;
 import it.polimi.ingsw.client.view.ViewInterface;
 import it.polimi.ingsw.remoteInterfaces.RemoteCommonGoalCard;
 import it.polimi.ingsw.remoteInterfaces.RemotePersonalGoalCard;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
-import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 import it.polimi.ingsw.server.model.tokens.ScoringToken;
 import it.polimi.ingsw.server.model.utilities.UtilityFunctions;
@@ -175,7 +173,7 @@ public class GUIView extends Application implements ViewInterface {
     public void postNotification(String title, String description) {
         Platform.runLater(() -> {
             String desc;
-            if(!title.contains("Move Done!")) {
+            if(!title.contains(Notifications.TILES_MOVED_SUCCESSFULLY.getTitle())){
                 if(title.contains("Your Selection has been accepted!")){
                     desc = "Drag the tiles in the order you want them to be placed";
                 }
@@ -240,12 +238,9 @@ public class GUIView extends Application implements ViewInterface {
             fxmlLoader.setLocation(GUIView.class.getResource(fxmlPath));
 
             try {
-                //scene = new Scene(fxmlLoader.load());
                 Parent newRoot = fxmlLoader.load();
                 scene.setRoot(newRoot);
-            } catch (IOException e) {
-                //TODO: add a way to show error in this case
-            }
+            } catch (IOException ignored) {}
 
             guiController = fxmlLoader.getController();
             guiController.setStage(stage);

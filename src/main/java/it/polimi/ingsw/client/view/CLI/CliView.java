@@ -32,7 +32,6 @@ public class CliView implements ViewInterface {
     private static final int FIXED_H_MARGIN = 3;
     private static final int FIXED_V_MARGIN = 1;
     protected static int MAX_VERT_TILES_GAME = 55; //rows.
-    //protected static int MAX_HORIZ_TILES_GAME = 170; //cols.
     protected static int MAX_HORIZ_TILES_GAME = 220; //cols.
     protected static int MAX_VERT_TILES_LOBBY = 17; //rows.
     protected static int MAX_HORIZ_TILES_LOBBY = 150; //cols.
@@ -112,11 +111,6 @@ public class CliView implements ViewInterface {
                 } else {
                     view = new CliView(c);
                 }
-
-
-            //ViewInterface cliView = args[1].equals("CLI") ?  new CliView(c);
-
-
         } else {
             view = new CliView(ConnectionType.RMI);
 
@@ -231,9 +225,7 @@ public class CliView implements ViewInterface {
                 if(!this.gameEnded) return;
                 this.backToLobby();
             }
-            default -> {
-                this.postNotification("Command not found!","the command inserted is invalid!");
-            }
+            default -> this.postNotification("Command not found!","the command inserted is invalid!");
         }
     }
 

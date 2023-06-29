@@ -61,8 +61,6 @@ public class ClientSocket implements ConnectionHandler{
             try {
                 tempConnection = new Socket(ip, port);
                 connected = true;
-
-                //TODO: This postNotification broke things when using the GUI because they call the GuiController before it is initialized
                 this.view.postNotification(Notifications.CONNECTED_SUCCESSFULLY);
             } catch (IOException e) {
                 view.postNotification(Notifications.ERR_CONNECTION_NO_AVAILABLE);
@@ -267,22 +265,6 @@ public class ClientSocket implements ConnectionHandler{
             }
         });
     }
- /*   private NetMessage getMessageFromBuffer(MessageType type){
-        NetMessage result;
-        synchronized (lastReceivedMessages) {
-            while (lastReceivedMessages.stream().noneMatch(message -> message.getMessageType().equals(type))) {
-                try {
-                    lastReceivedMessages.wait();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-            result =  lastReceivedMessages.stream().filter(message -> message.getMessageType().equals(type)).findFirst().get();
-            lastReceivedMessages.remove(result);
-        }
-        return result;
-    } */
-
     /**
      * Parser of NetMessage, calls specific method for every message type
      * @param responseMessage message to be parsed

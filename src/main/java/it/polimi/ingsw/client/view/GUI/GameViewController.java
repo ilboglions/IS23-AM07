@@ -322,7 +322,6 @@ public class GameViewController extends GUIController implements Initializable {
                     if (clickedNode.getStyleClass().isEmpty()) {  //not selected yet
                         selection = new ArrayList<>(selectedCells);
                         selection.add(newCell);//candidate new selection
-                        //System.out.println("Added new Cell: " + newCell.getRow() + " , " + newCell.getColumn());
                         if (checkValidRetrieve(selection)) { //if selection is valid
                             clickedNode.getStyleClass().add("selectedImage"); //select cell
                             selectedCells.add(newCell);
@@ -338,7 +337,6 @@ public class GameViewController extends GUIController implements Initializable {
                         }
                     }//create coordinates
                 } catch (InvalidCoordinatesException ignored) {}
-                //System.out.println("Mouse clicked cell: " + colIndex + " And: " + rowIndex);
             }
         }
     }
@@ -862,7 +860,6 @@ public class GameViewController extends GUIController implements Initializable {
             try {
                 this.getClientController().close();
             } catch (IOException ignored) {}
-            //this.stage.close();
             System.exit(0);
         });
 

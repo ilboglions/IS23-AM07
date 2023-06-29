@@ -207,7 +207,6 @@ public class ClientRMI implements ConnectionHandler{
             return;
         }
 
-        //here the view will be notified that the action has been executed correctly
         try {
             if(gameController.checkValidRetrieve(this.username,tiles))
                 view.postNotification(Notifications.TILES_SELECTION_ACCEPTED);
