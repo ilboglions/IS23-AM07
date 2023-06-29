@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import it.polimi.ingsw.remoteInterfaces.BoardSubscriber;
 import it.polimi.ingsw.server.model.exceptions.*;
 import it.polimi.ingsw.server.model.coordinate.Coordinates;
+import it.polimi.ingsw.server.model.game.Game;
+import it.polimi.ingsw.server.model.player.Player;
 import it.polimi.ingsw.server.model.tiles.ItemTile;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -219,6 +221,43 @@ public class LivingRoomBoardTest {
         assertFalse(board.checkValidRetrieve(coordinates));
 
     }
+
+    @Test
+    @DisplayName("checkValidRetrieve 3 tiles")
+    void testCheckValidRetrieve3X() throws PlayersNumberOutOfRange, NotEnoughTilesException, InvalidCoordinatesException, NegativeFieldException, IllegalFilePathException, NotEnoughCardsException, NicknameAlreadyUsedException, NotAllPlayersHaveJoinedException, GameNotEndedException, GameNotStartedException, EmptySlotException, NotEnoughSpaceException {
+        Player host = new Player("host"), x = new Player("x");
+        Game game = new Game(2,host);
+        game.addPlayer(x);
+        game.start();
+        ArrayList<Coordinates> coordinates = new ArrayList<>();
+        coordinates.add(new Coordinates(4,1));
+        coordinates.add(new Coordinates(5,1));
+
+        game.moveTiles(coordinates,0);
+
+        coordinates = new ArrayList<>();
+        coordinates.add(new Coordinates(5,2));
+        coordinates.add(new Coordinates(3,2));
+        coordinates.add(new Coordinates(4,2));
+
+        assertTrue(game.checkValidRetrieve(coordinates));
+
+        coordinates = new ArrayList<>();
+        coordinates.add(new Coordinates(1,3));
+        coordinates.add(new Coordinates(1,4));
+
+        game.moveTiles(coordinates,0);
+
+        coordinates = new ArrayList<>();
+        coordinates.add(new Coordinates(2,4));
+        coordinates.add(new Coordinates(2,3));
+        coordinates.add(new Coordinates(2,5));
+
+        assertTrue(game.checkValidRetrieve(coordinates));
+
+
+    }
+
 
     @Test
     @DisplayName("Test the exceptions")
