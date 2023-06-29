@@ -36,6 +36,8 @@ public class ClientSocket implements ConnectionHandler{
     private String username;
     private final ViewInterface view;
     private final long timerDelay = 15000;
+
+    private boolean connectionClosed;
     private Game gameModel;
 
     /**
@@ -52,6 +54,7 @@ public class ClientSocket implements ConnectionHandler{
         this.threadManager = Executors.newCachedThreadPool();
         this.heartBeatManager = Executors.newSingleThreadScheduledExecutor();
         this.view = view;
+        this.connectionClosed = false;
 
         boolean connected = false;
         Socket tempConnection = null;
@@ -61,15 +64,12 @@ public class ClientSocket implements ConnectionHandler{
             try {
                 tempConnection = new Socket(ip, port);
                 connected = true;
-
-                //TODO: This postNotification broke things when using the GUI because they call the GuiController before it is initialized
                 this.view.postNotification(Notifications.CONNECTED_SUCCESSFULLY);
             } catch (IOException e) {
                 view.postNotification(Notifications.ERR_CONNECTION_NO_AVAILABLE);
                 try {
                     TimeUnit.SECONDS.sleep(2);
-                } catch (InterruptedException ex) {
-                    ex.printStackTrace();
+                } catch (InterruptedException ignored) {
                 }
             }
         }
@@ -103,6 +103,9 @@ public class ClientSocket implements ConnectionHandler{
      */
     @Override
     public void close(){
+        if(this.connectionClosed)
+           return;
+        connectionClosed = true;
         synchronized (outputStream) {
             try {
                 this.sendUpdate(new CloseConnectionMessage());
@@ -267,22 +270,6 @@ public class ClientSocket implements ConnectionHandler{
             }
         });
     }
- /*   private NetMessage getMessageFromBuffer(MessageType type){
-        NetMessage result;
-        synchronized (lastReceivedMessages) {
-            while (lastReceivedMessages.stream().noneMatch(message -> message.getMessageType().equals(type))) {
-                try {
-                    lastReceivedMessages.wait();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-            result =  lastReceivedMessages.stream().filter(message -> message.getMessageType().equals(type)).findFirst().get();
-            lastReceivedMessages.remove(result);
-        }
-        return result;
-    } */
-
     /**
      * Parser of NetMessage, calls specific method for every message type
      * @param responseMessage message to be parsed
@@ -524,7 +511,8 @@ public class ClientSocket implements ConnectionHandler{
                 outputStream.flush();
                 outputStream.reset();
             } catch (IOException e) {
-                this.view.postNotification(Notifications.ERR_CONNECTION_NO_LONGER_AVAILABLE);
+                this.close();
+                this.view.backToLobby();
             }
         }
     }
