@@ -226,7 +226,7 @@ public class ClientRMI implements ConnectionHandler{
         } catch (PlayerNotInTurnException e) {
             view.postNotification(Notifications.NOT_YOUR_TURN);
         } catch (RemoteException e) {
-            this.close();
+            this.view.backToLobby();
         }
     }
 
@@ -292,7 +292,7 @@ public class ClientRMI implements ConnectionHandler{
 
     private void scheduleTimer() {
         if(!timer.isScheduled()){
-            timer.schedule(this::close,this.timerDelay);
+            timer.schedule(view::backToLobby,this.timerDelay);
         }
     }
 
@@ -319,7 +319,7 @@ public class ClientRMI implements ConnectionHandler{
         try {
             gameController.postBroadCastMessage(this.username,content);
         } catch (RemoteException e) {
-            this.close();
+            this.view.backToLobby();
         } catch (InvalidPlayerException ignored) {
         }
     }
@@ -340,7 +340,7 @@ public class ClientRMI implements ConnectionHandler{
         try {
             gameController.postDirectMessage(this.username,recipient,content);
         } catch (RemoteException e) {
-            this.close();
+            this.view.backToLobby();
         } catch (InvalidPlayerException ignored) {
             /* to decide, if the written recipient does not exist, we could just ignore the chat message*/
         } catch (SenderEqualsRecipientException e) {

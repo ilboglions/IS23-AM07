@@ -2,7 +2,7 @@ package it.polimi.ingsw;
 
 public enum Notifications {
     CONNECTED_SUCCESSFULLY("Connected to the server!", "Choose your username!"),
-    ERR_CONNECTION_NO_AVAILABLE("Connection error", "Server at this address is not reachable, trying again soon..."),
+    ERR_CONNECTION_NO_AVAILABLE("Connection error", "Server at this address is not reachable, trying again soon"),
 
     ERR_ALREADY_PLAYING_A_GAME("You are already playing a game!", "You can not join a lobby during a game!"),
     ERR_CONNECTION_NO_LONGER_AVAILABLE("Connection error", "Connection with server no longer available!"),
@@ -10,7 +10,7 @@ public enum Notifications {
 
     ERR_USERNAME_ALREADY_TAKEN("Nickname already taken!", "Choose another nickname and retry"),
     ERR_INVALID_USERNAME("Invalid username selected!","You can't use this username!"),
-    GAME_JOINED_SUCCESSFULLY("Game joined successfully","Waiting the game to start..."),
+    GAME_JOINED_SUCCESSFULLY("Game joined successfully","Waiting the game to start"),
     GAME_CREATED_SUCCESSFULLY("Game created successfully!","Waiting for others player to join!"),
     GAME_RECONNECTION_SUCCESSFULLY("Welcome back!","Reconnected to your previous game"),
     ERR_GAME_NO_AVAILABLE("No game is available!","Wait for a new game, or create a new one!"),

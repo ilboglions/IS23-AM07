@@ -21,6 +21,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 public class ClientSocket implements ConnectionHandler{
 
@@ -93,8 +94,8 @@ public class ClientSocket implements ConnectionHandler{
      * Handles connection crash closing the connection
      */
     private void handleCrash() {
+        this.view.backToLobby();
         view.postNotification(Notifications.ERR_CONNECTION_NO_LONGER_AVAILABLE);
-        this.close();
     }
 
 
@@ -103,14 +104,14 @@ public class ClientSocket implements ConnectionHandler{
      */
     @Override
     public void close(){
+        if(timer.isScheduled())
+            timer.cancel();
         if(this.connectionClosed)
            return;
         connectionClosed = true;
         synchronized (outputStream) {
             try {
                 this.sendUpdate(new CloseConnectionMessage());
-                if(timer.isScheduled())
-                    timer.cancel();
                 heartBeatManager.shutdownNow();
                 threadManager.shutdownNow();
                 outputStream.close();
@@ -243,12 +244,11 @@ public class ClientSocket implements ConnectionHandler{
                         NetMessage incomingMessage = (NetMessage) inputStream.readObject();
                         lastReceivedMessages.add(incomingMessage);
                         timer.reschedule(this.timerDelay);
-                        //System.out.println(incomingMessage.getMessageType());
                         lastReceivedMessages.notifyAll();
                         lastReceivedMessages.wait(1);
                     } catch (IOException | ClassNotFoundException | InterruptedException e ) {
-                        this.close();
                         active = false;
+                        this.close();
                     }
                 }
             }
@@ -511,7 +511,6 @@ public class ClientSocket implements ConnectionHandler{
                 outputStream.flush();
                 outputStream.reset();
             } catch (IOException e) {
-                this.close();
                 this.view.backToLobby();
             }
         }

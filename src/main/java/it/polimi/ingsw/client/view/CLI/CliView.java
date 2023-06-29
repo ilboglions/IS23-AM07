@@ -685,9 +685,10 @@ public class CliView implements ViewInterface {
             controller.close();
         } catch (IOException ignored) {
         }
+        this.setScenario(Scenario.LOBBY);
         ConnectionHandlerFactory factory = new ConnectionHandlerFactory();
         controller = factory.createConnection(connectionType, this, ip, port);
-        this.setScenario(Scenario.LOBBY);
+
         
     }
 
