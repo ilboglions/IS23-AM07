@@ -12,6 +12,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
+/**
+ * Tests for the GameController class
+ */
 public class GameControllerTest {
 
     @Test

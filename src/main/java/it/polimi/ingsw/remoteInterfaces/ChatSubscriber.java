@@ -18,5 +18,11 @@ public interface ChatSubscriber extends ListenerSubscriber {
      */
     void receiveMessage(String from, String recipient, String msg) throws RemoteException;
 
+    /**
+     * when a global message is posted, the listener will trigger this method
+     * @param from the sender of the message
+     * @param msg the message
+     * @throws RemoteException RMI Exception
+     */
     void receiveMessage(String from, String msg) throws RemoteException;
 }

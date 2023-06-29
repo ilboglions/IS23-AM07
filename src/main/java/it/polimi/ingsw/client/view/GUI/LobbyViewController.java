@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 
 /**
- * Controller class of the GUI
+ * Controller class of the GUI when a user is in the lobby
  */
 public class LobbyViewController extends GUIController {
     public Button createGameBtn;

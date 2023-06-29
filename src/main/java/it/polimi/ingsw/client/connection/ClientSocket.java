@@ -21,6 +21,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * This is the class that implements the communication with the server through TCP
+ */
 public class ClientSocket implements ConnectionHandler{
 
     private final String ip;

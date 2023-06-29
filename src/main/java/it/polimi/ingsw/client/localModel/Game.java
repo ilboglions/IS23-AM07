@@ -15,6 +15,9 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 
 
+/**
+ * This is the class that handles all the logic of the game and its status
+ */
 public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerSubscriber, ChatSubscriber, BookshelfSubscriber, BoardSubscriber {
 
     @Serial
@@ -38,12 +41,12 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
     private final ViewInterface view;
     private final String username;
 
-    private Boolean gameStarted;
     private final Map<String, Integer> playerPoints;
     /**
      * Create a new local game to remember the state of the game for a single client
      * @param username the  player that is currently in the game
      * @param view the view of the game
+     * @throws RemoteException RMI exception
      */
 
     public Game(ViewInterface view, String username) throws  RemoteException {
@@ -55,7 +58,6 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
         this.playerPoints = new HashMap<>();
         this.players = new ArrayList<>();
         this.players.add(username);
-        this.gameStarted = false;
         this.playerScoringTokens.put(username, new ArrayList<>());
         this.playerPoints.put(username, 0);
 
@@ -74,9 +76,6 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
         List<String> outputMessages = this.playerChat
                                             .stream()
                                             .map(
-                                                    /*m ->  m.getRecipient().isPresent() ?
-                                                            "<" + m.getSender() + " -> " + m.getRecipient().get() + "> " + m.getContent()
-                                                            :"<" + m.getSender() + "> " + m.getContent()*/
                                                     m -> m.getRecipient().isPresent() ?
                                                             m.getSender() + " (privately to " + m.getRecipient().get() +"): " + m.getContent() :
                                                             m.getSender() + ": " + m.getContent()
@@ -209,7 +208,6 @@ public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerS
     @Override
     public synchronized void notifyTurnOrder(ArrayList<String> playerOrder) throws RemoteException {
         this.players.sort(Comparator.comparingInt(playerOrder::indexOf));
-        this.gameStarted = true;
 
         for(String player : players){
             try {

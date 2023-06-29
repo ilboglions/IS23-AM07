@@ -7,9 +7,12 @@ import org.junit.jupiter.api.Test;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
+/**
+ * Tests for the ClientRMI class
+ */
 public class ClientRMITest {
     ConnectionHandler client;
-    ClientRMITest() throws NotBoundException, RemoteException {
+    ClientRMITest() {
         client = new ClientRMI(new CliView(ConnectionType.RMI),"127.0.0.1",1099);
     }
     @Test

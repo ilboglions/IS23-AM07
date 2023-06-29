@@ -68,6 +68,12 @@ public class CliView implements ViewInterface {
 
     private final String titleColor = Color.YELLOW_BOLD.escape();
 
+    /**
+     * Create an instance of CliView
+     * @param connectionType the selected type for the connection, either TCP or RMI
+     * @param address the ip address of the server
+     * @param port the port of the server
+     */
     public CliView(ConnectionType connectionType, String address, int port) {
         gameEnded = false;
         this.connectionType = connectionType;

@@ -15,6 +15,9 @@ import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Tests for the FiveXTiles class
+ */
 public class FiveXTilesTest {
     private FiveXTiles card;
     /**

@@ -8,6 +8,9 @@ import it.polimi.ingsw.server.model.tiles.ItemTile;
 
 import java.rmi.RemoteException;
 
+/**
+ * MarioPyramid is a common card type that requires a pattern similar to a pyramid
+ */
 public class MarioPyramid extends CommonGoalCard{
 
     /**
@@ -15,6 +18,7 @@ public class MarioPyramid extends CommonGoalCard{
      *
      * @param nPlayers    represents the numbers of players that are playing the game, necessary for the tokens to be assigned at the card
      * @param description it is used for explain the card's constraint
+     * @param name the name of the card to distinguish the different types
      * @throws PlayersNumberOutOfRange when nPlayers exceed the numbers of the tile, tooManyPlayersException will be thrown
      * @throws RemoteException RMI Exception
      */

@@ -2,8 +2,9 @@ package it.polimi.ingsw.server;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static it.polimi.ingsw.server.ServerMain.logger;
-
+/**
+ * Class used to implement a timer that could be rescheduled before it expires
+ */
 public class ReschedulableTimer extends Timer
 {
     private Runnable  task;

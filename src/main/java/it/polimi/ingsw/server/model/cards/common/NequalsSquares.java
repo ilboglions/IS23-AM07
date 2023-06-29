@@ -11,6 +11,9 @@ import it.polimi.ingsw.server.model.tiles.ItemTile;
 import java.rmi.RemoteException;
 import java.util.*;
 
+/**
+ * NequalsSquares is a common card type that requires that the tiles are arranged in a square
+ */
 public class NequalsSquares extends CommonGoalCard{
 
     private final int nSquares;

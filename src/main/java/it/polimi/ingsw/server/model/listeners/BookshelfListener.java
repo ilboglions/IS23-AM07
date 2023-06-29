@@ -19,6 +19,7 @@ public class BookshelfListener extends Listener<BookshelfSubscriber> {
      * @param player the player that has the bookshelf
      * @param insertedTiles the tiles inserted, the first one is the first to be inserted in the bookshelf
      * @param col the column where the tiles are insert
+     * @param currentTilesMap the map of all the tiles inserted in the bookshelf
      */
     public void onBookshelfChange(String player, ArrayList<ItemTile> insertedTiles, int col, Map<Coordinates, ItemTile> currentTilesMap){
         Set<BookshelfSubscriber> observers = this.getSubscribers();

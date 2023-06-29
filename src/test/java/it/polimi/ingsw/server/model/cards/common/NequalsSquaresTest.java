@@ -17,6 +17,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+/**
+ * Tests for the NequalsSquares class
+ */
 public class NequalsSquaresTest {
 
     private NequalsSquares card;

@@ -17,6 +17,9 @@ import java.util.Set;
 import static it.polimi.ingsw.server.model.utilities.UtilityFunctions.findAdjacentElements;
 
 
+/**
+ * NadjacentElements is a common card type that requires the adjacency of tiles
+ */
 public class NadjacentElements extends CommonGoalCard{
 
     private final int nGroups;

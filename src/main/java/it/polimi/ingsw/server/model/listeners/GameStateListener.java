@@ -2,8 +2,6 @@ package it.polimi.ingsw.server.model.listeners;
 
 import it.polimi.ingsw.GameState;
 import it.polimi.ingsw.remoteInterfaces.GameStateSubscriber;
-import it.polimi.ingsw.remoteInterfaces.GameSubscriber;
-import it.polimi.ingsw.server.controller.LobbyController;
 import it.polimi.ingsw.server.model.game.GameModelInterface;
 
 import java.rmi.RemoteException;

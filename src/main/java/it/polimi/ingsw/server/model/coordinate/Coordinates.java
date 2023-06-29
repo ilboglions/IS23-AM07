@@ -2,7 +2,6 @@ package it.polimi.ingsw.server.model.coordinate;
 
 import it.polimi.ingsw.server.model.exceptions.InvalidCoordinatesException;
 
-import javax.swing.*;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;

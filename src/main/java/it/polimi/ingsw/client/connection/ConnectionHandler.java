@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
+/**
+ * This is the interface that handles all the communication methods, it will be implemented by the two classes that handles the connection with RMI and TCP
+ */
 public interface ConnectionHandler {
     /**
      * the close() method permit to close the connection between client and server
@@ -69,8 +72,16 @@ public interface ConnectionHandler {
      */
     void sendMessage( String recipient, String content);
 
+    /**
+     * Getter for the server ip
+     * @return the server ip
+     */
     String getServerIP();
 
+    /**
+     * Getter for the server port
+     * @return the server port
+     */
     int getServerPort();
 
 }

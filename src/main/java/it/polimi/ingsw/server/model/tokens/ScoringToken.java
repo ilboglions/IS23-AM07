@@ -4,7 +4,6 @@ import javafx.scene.Node;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Objects;
 
 /**
  * scoring token is a class that represent the token placed on common cards

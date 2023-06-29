@@ -21,6 +21,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 
+/**
+ * Tests for the CLI class
+ */
 public class CLITest {
 
 

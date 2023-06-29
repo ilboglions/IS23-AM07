@@ -68,6 +68,7 @@ public class PlayerListener extends Listener<PlayerSubscriber> {
      * @param userToBeUpdated the username of the user that needs to receive the updates
      * @param points the current points of the player
      * @param tokens the current tokens of the player
+     * @param personalGoalCard the PersonalGoalCard of the player
      */
     public void triggerListener(String username, String userToBeUpdated, int points, ArrayList<ScoringToken> tokens, RemotePersonalGoalCard personalGoalCard){
         Set<PlayerSubscriber> subscribers = this.getSubscribers();

@@ -9,6 +9,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 
+/**
+ * Tests for the GameListener class
+ */
 public class GameListenerTest {
     /**
      * Test to call all the methods of the listener

@@ -6,7 +6,9 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-
+/**
+ * Tests for the class BookshelfListener
+ */
 public class BookshelfListenerTest {
     /**
      * Test to call all the methods of the listener

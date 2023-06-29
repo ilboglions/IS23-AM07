@@ -4,7 +4,9 @@ import it.polimi.ingsw.server.model.chat.Message;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-
+/**
+ * Tests for the class ChatListener
+ */
 public class ChatListenerTest {
 
     /**

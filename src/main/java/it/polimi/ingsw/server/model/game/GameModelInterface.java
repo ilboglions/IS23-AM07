@@ -8,6 +8,9 @@ import it.polimi.ingsw.server.model.exceptions.*;
 
 import java.util.ArrayList;
 
+/**
+ * This interface contains all the methods that can be called from the GameController
+ */
 public interface GameModelInterface {
 
     /**
@@ -95,6 +98,7 @@ public interface GameModelInterface {
      * if the game is ended, it returns the username of the winner player
      * @throws GameNotEndedException if the game is not yet ended
      * @throws GameNotStartedException if the game has not started yet
+     * @return the username of the winner
      */
     String getWinner() throws GameNotEndedException, GameNotStartedException;
     /**
@@ -108,6 +112,7 @@ public interface GameModelInterface {
      * @throws InvalidPlayerException if there isn't a player with that username inside the game
      * @throws NotEnoughSpaceException if there was an error with the CommonGoalCard
      * @throws GameNotStartedException if the game is not started yet
+     * @throws TokenAlreadyGivenException if the token was already assigned to another player
      */
     void updatePlayerPoints(String username) throws InvalidPlayerException, NotEnoughSpaceException, TokenAlreadyGivenException, GameNotStartedException;
     /**

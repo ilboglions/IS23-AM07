@@ -13,7 +13,6 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 
-import static it.polimi.ingsw.server.ServerMain.logger;
 import static it.polimi.ingsw.server.model.utilities.UtilityFunctions.MAX_PLAYERS;
 
 /**
@@ -35,12 +34,6 @@ public abstract class CommonGoalCard extends UnicastRemoteObject implements Remo
      */
     private final Stack<ScoringToken> tokenStack;
 
-    /**
-     * The card constructor creates the card and assign the ScoringToken's stack based on the number of players
-     * @param nPlayers represents the numbers of players that are playing the game, necessary for the tokens to be assigned at the card
-     * @param description it is used for explain the card's constraint
-     * @throws PlayersNumberOutOfRange when nPlayers exceed the numbers of the tile, tooManyPlayersException will be thrown
-     */
     /**
      * The card constructor creates the card and assign the ScoringToken's stack based on the number of players
      * @param nPlayers represents the numbers of players that are playing the game, necessary for the tokens to be assigned at the card
@@ -77,13 +70,8 @@ public abstract class CommonGoalCard extends UnicastRemoteObject implements Remo
 
     /**
      * Make it possible to get the first ScoringToken on the stack, and remove it from the card
-     * @return the token point earned by the Player
-     * @throws EmptyStackException if all the tokenPoints have been distributed
-     */
-    /**
-     * Make it possible to get the first ScoringToken on the stack, and remove it from the card
-     * @param Player
-     * @return the token point earned by the Player
+     * @param Player the username of the player
+     * @return the token point earned by the player
      * @throws EmptyStackException all the tokens have already been assigned
      * @throws TokenAlreadyGivenException this player has already been given a token for this card
      */

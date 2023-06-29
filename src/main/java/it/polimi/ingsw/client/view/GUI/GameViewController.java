@@ -32,7 +32,9 @@ import java.rmi.RemoteException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
+/**
+ * Controller for the GUI when a user is in a game
+ */
 public class GameViewController extends GUIController implements Initializable {
     private static final int SIZE = 9;
     private static final int bookShelfRows = 6;
@@ -515,19 +517,6 @@ public class GameViewController extends GUIController implements Initializable {
         commonGoalInfo.getContent().add(container);
         commonGoalInfo.centerOnScreen();
 
-        /*ChangeListener<Number> reCenter = (observable, oldValue, newValue)->{
-            double centerX = stage.getX() + stage.getWidth()/2 - container.getWidth()/2;
-            double centerY = stage.getY() + stage.getHeight()/2 - container.getHeight()/2;
-            commonGoalInfo.setX(centerX);
-            commonGoalInfo.setY(centerY);
-        };
-
-        stage.widthProperty().addListener(reCenter);
-        stage.heightProperty().addListener(reCenter);
-        stage.xProperty().addListener(reCenter);
-        stage.yProperty().addListener(reCenter);
-
-         */
     }
 
     private String getUrlFromCommonType(CommonCardType type) {
@@ -687,23 +676,8 @@ public class GameViewController extends GUIController implements Initializable {
                 tilesOrderPopup.hide();
             });
 
-            /*ChangeListener<Number> reCenter = (observable, oldValue, newValue)->{
-                double centerX = stage.getX() + stage.getWidth()/2 - tilesOrderPopup.getWidth()/2;
-                double centerY = stage.getY() + stage.getHeight()/2 - tilesOrderPopup.getHeight()/2;
-                tilesOrderPopup.setX(centerX);
-                tilesOrderPopup.setY(centerY);
-            };
-
-            stage.widthProperty().addListener(reCenter);
-            stage.heightProperty().addListener(reCenter);
-            stage.xProperty().addListener(reCenter);
-            stage.yProperty().addListener(reCenter);*/
-
             popupContainer.add(buttonBox, i, 1);
             tilesOrderPopup.getContent().add(popupContainer);
-
-            /*tilesOrderPopup.setX(stage.getX() + stage.getWidth()/2 - tilesOrderPopup.getWidth()/2);
-            tilesOrderPopup.setY(stage.getY() + stage.getHeight()/2 - tilesOrderPopup.getHeight()/2);*/
 
             tilesOrderPopup.centerOnScreen();
             tilesOrderPopup.show(stage);

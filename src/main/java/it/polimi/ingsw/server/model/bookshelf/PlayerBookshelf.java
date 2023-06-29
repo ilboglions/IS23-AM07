@@ -24,9 +24,18 @@ public class PlayerBookshelf extends Bookshelf{
     private final BookshelfListener bookshelfListener;
 
 
+    /**
+     * Methods that subscribe a subscriber to the listener of the player's bookshelf
+     * @param subscriber the subscriber that needs to be subscribed to the listener
+     */
     public void subscribeToListener(BookshelfSubscriber subscriber){
         bookshelfListener.addSubscriber(subscriber);
     }
+
+    /**
+     * Constructor method to create an istance of the PlayerBookshelf
+     * @param player the player that owns the bookshelf
+     */
     public PlayerBookshelf(Player player){
         super();
         this.player = player;
@@ -111,10 +120,18 @@ public class PlayerBookshelf extends Bookshelf{
         this.bookshelfListener.triggerListener(userToBeUpdated, this.getItemTileMap(), this.player.getUsername());
     }
 
+    /**
+     * This method remove a subscriber from the bookshelf listener
+     * @param username the username of the subscriber to remove
+     */
     public void unsubscribeFromListener(String username) {
         this.bookshelfListener.removeSubscriber(username);
     }
 
+    /**
+     * Getter for the subscribers list
+     * @return the list of the subscriber to the bookshelf listener
+     */
     public Set<BookshelfSubscriber> getSubs() {
             return new HashSet<>(this.bookshelfListener.getSubscribers());
     }

@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 class GeneralSubscriber implements BoardSubscriber, ChatSubscriber, BookshelfSubscriber, GameSubscriber, GameStateSubscriber, PlayerSubscriber {
-    private String name;
+    private final String name;
 
     public GeneralSubscriber(String name) {
         this.name  = name;

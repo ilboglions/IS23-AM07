@@ -14,6 +14,9 @@ import java.io.InputStreamReader;
 import java.rmi.RemoteException;
 import java.util.*;
 
+/**
+ * Tests for the LivingRoomBoard class
+ */
 public class LivingRoomBoardTest {
 
     /**
@@ -72,7 +75,7 @@ public class LivingRoomBoardTest {
     @DisplayName("CheckRefillTester")
     void checkRefillTest() throws PlayersNumberOutOfRange, InvalidCoordinatesException, SlotFullException {
         LivingRoomBoard board = new LivingRoomBoard(2);
-        ArrayList<ItemTile> removedtiles= board.emptyBoard();
+        board.emptyBoard();
         Map<Coordinates, ItemTile> inserttiles = new HashMap<>();
         inserttiles.put(new Coordinates(3,3), ItemTile.CAT);
         inserttiles.put(new Coordinates(5,3), ItemTile.TROPHY);
@@ -83,7 +86,7 @@ public class LivingRoomBoardTest {
         inserttiles.put(new Coordinates(4,3), ItemTile.CAT);
         board.customRefill(inserttiles);
         assertFalse(board.checkRefill());
-        removedtiles= board.emptyBoard();
+        board.emptyBoard();
         inserttiles.clear();
         inserttiles.put(new Coordinates(4,3), ItemTile.TROPHY);
         inserttiles.put(new Coordinates(5,3), ItemTile.CAT);

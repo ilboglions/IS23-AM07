@@ -23,10 +23,18 @@ public abstract class ConfirmMessage extends NetMessage{
         this.errorType = errorType;
     }
 
+    /**
+     * Getter for the error type
+     * @return the error type
+     */
     public String getErrorType() {
         return errorType;
     }
 
+    /**
+     * Getter for the details
+     * @return the details of the message
+     */
     public String getDetails() {
         return details;
     }

@@ -48,6 +48,10 @@ public class LivingRoomBoard {
 
     private final BoardListener boardListener;
 
+    /**
+     * This method subscribe a subscriber to the listener of the LivingRoomBoard
+     * @param subscriber the subscriber that needs to be subscribed to the listener
+     */
     public void subscribeToListener(BoardSubscriber subscriber){
         boardListener.addSubscriber(subscriber);
     }

@@ -27,6 +27,7 @@ public class CheckPattern extends CommonGoalCard{
      * the constructor of the card
      * @param nPlayers the number of player
      * @param description the description of the card
+     * @param name the name of the card to distinguish all the different types
      * @param pattern the possible patterns to verify
      * @param sameTiles true, if the tiles should be the same for all the pattern
      * @throws PlayersNumberOutOfRange if the players number do not respect the specific

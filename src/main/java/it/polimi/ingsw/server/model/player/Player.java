@@ -188,6 +188,7 @@ public class Player {
      * The method used to calculate the total points scored with PersonalGoalCard, CommonGoalCard and the adjacency inside the PlayerBookshelf
      * @param adjacentPointReference is the Map that represent for each size of group the relative points
      * @return the total points scored by the player
+     * @throws RemoteException RMI exception
      */
     public int updatePoints(Map<Integer, Integer> adjacentPointReference) throws RemoteException {
         int delta;
@@ -212,6 +213,7 @@ public class Player {
     /**
      * Method used to assign a ScoringToken to the player
      * @param token is the token to assign
+     * @throws RemoteException RMI exception
      */
     public void addToken(ScoringToken token) throws RemoteException {
         this.tokenAcquired.add(Objects.requireNonNull(token));
@@ -222,6 +224,7 @@ public class Player {
     /**
      * Method used to assign a PersonalGoalCard to the player
      * @param card is the card to assign
+     * @throws RemoteException RMI exception
      */
     public void assignPersonalCard(PersonalGoalCard card) throws RemoteException {
         this.personalCard = Objects.requireNonNull(card);
@@ -253,6 +256,7 @@ public class Player {
     /**
      * Method used to trigger the listener when a player joins or re-joins a game after a crash, to receive the complete status of the player
      * @param userToBeUpdated the username of the user that needs to receive the updates
+     * @throws RemoteException RMI exception
      */
     public void triggerListener(String userToBeUpdated) throws RemoteException {
         Objects.requireNonNull(userToBeUpdated);

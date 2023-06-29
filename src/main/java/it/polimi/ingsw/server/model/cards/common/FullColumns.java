@@ -11,6 +11,9 @@ import it.polimi.ingsw.server.model.tiles.ItemTile;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
+/**
+ * FullColumns is a common card type that requires a column pattern
+ */
 public class FullColumns extends CommonGoalCard{
     /**
      * the number of columns to be checked

@@ -13,6 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Interface used to define all the possible methods that need a view rendering. It will be implemented by the classes that handle the CLI and the GUI
+ */
 public interface ViewInterface {
 
     /**

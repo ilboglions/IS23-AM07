@@ -13,6 +13,9 @@ import java.rmi.RemoteException;
 import java.util.EmptyStackException;
 import java.util.Stack;
 
+/**
+ * Tests for the CommonGoalCard class
+ */
 public class CommonGoalCardTest {
 
     /**

@@ -32,12 +32,24 @@ public class ServerMain {
     private final String hostName;
 
     private final LobbyController lobbyController;
+
+    /**
+     * Constructor to create an istance of the ServerMain
+     * @param hostName the ip of the server
+     * @param port the port used by the server for TCP
+     * @param rmiPortNumber the port used by the server for RMI
+     * @throws RemoteException RMI exception
+     */
     public ServerMain(String hostName,int port, int rmiPortNumber) throws RemoteException {
         this.port = port;
         this.hostName = hostName;
         this.rmiPortNumber = rmiPortNumber;
         this.lobbyController = new LobbyController(new Lobby());
     }
+
+    /**
+     * Method that starts both the RMI and the TCP server. When it is called it starts to listen and accept all the new connection requested
+     */
     public void startServer() {
         ExecutorService executor = Executors.newCachedThreadPool();
 
@@ -80,6 +92,7 @@ public class ServerMain {
         }
         executor.shutdown();
     }
+
     public static void main(String[] args) {
         String hostName;
         int portNumber = 0;

@@ -4,8 +4,6 @@ import it.polimi.ingsw.client.view.CLI.CliView;
 import it.polimi.ingsw.client.view.GUI.GUILaunch;
 import it.polimi.ingsw.server.ServerMain;
 
-import static java.lang.System.exit;
-
 /**
  * Hello world!
  *

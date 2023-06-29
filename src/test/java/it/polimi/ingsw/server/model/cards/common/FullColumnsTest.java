@@ -16,6 +16,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
+
+/**
+ * Tests for the FullColumn class
+ */
 public class FullColumnsTest {
     private FullColumns card;
     /**
@@ -177,6 +181,7 @@ public class FullColumnsTest {
      * @throws InvalidCoordinatesException
      * @throws NegativeFieldException
      * @throws PlayersNumberOutOfRange
+     * @throws RemoteException
      */
     @Test
     @DisplayName("NotEnoughSpaceException")

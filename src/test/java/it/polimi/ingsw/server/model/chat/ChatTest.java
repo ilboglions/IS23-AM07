@@ -1,19 +1,11 @@
 package it.polimi.ingsw.server.model.chat;
 
-import it.polimi.ingsw.remoteInterfaces.BoardSubscriber;
 import it.polimi.ingsw.remoteInterfaces.ChatSubscriber;
-import it.polimi.ingsw.server.model.chat.Chat;
-import it.polimi.ingsw.server.model.chat.Message;
-import it.polimi.ingsw.server.model.coordinate.Coordinates;
 import it.polimi.ingsw.server.model.exceptions.*;
-import it.polimi.ingsw.server.model.livingRoom.LivingRoomBoard;
-import it.polimi.ingsw.server.model.livingRoom.LivingRoomBoardTest;
-import it.polimi.ingsw.server.model.tiles.ItemTile;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.rmi.RemoteException;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 

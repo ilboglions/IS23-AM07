@@ -9,7 +9,6 @@ import it.polimi.ingsw.server.model.lobby.Lobby;
 import it.polimi.ingsw.remoteInterfaces.RemoteGameController;
 import it.polimi.ingsw.remoteInterfaces.RemoteLobbyController;
 
-import java.io.Serial;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -180,7 +179,7 @@ public class LobbyController extends UnicastRemoteObject implements RemoteLobbyC
             this.timers.get(username).schedule(() -> {
                 try {
                     this.handleCrashedPlayer(username);
-                } catch (PlayerNotFoundException | RemoteException e) {}
+                } catch (PlayerNotFoundException | RemoteException ignored) {}
             },this.timerDelay);
         }
     }

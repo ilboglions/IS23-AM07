@@ -2,14 +2,14 @@ package it.polimi.ingsw.client.connection;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import it.polimi.ingsw.client.view.CLI.CliView;
 import it.polimi.ingsw.client.view.ViewInterface;
 
 import java.io.InputStreamReader;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
 import java.util.Objects;
 
+/**
+ * This is the class that is in charge of creating the desired connection type, either TCP or RMI
+ */
 public class ConnectionHandlerFactory {
     /**
      * Creates a ConnectionHandler of the type specified (RMI/TCP)
@@ -34,6 +34,14 @@ public class ConnectionHandlerFactory {
         return new ClientSocket(hostName,portNumber,view);
     }
 
+    /**
+     * Creates a ConnectionHandler of the type specified (RMI/TCP)
+     * @param connectionType type of the connection
+     * @param view view interface used
+     * @param hostName the ip of the server
+     * @param portNumber the port of the server
+     * @return a ConnectionHandler of the desired type
+     */
     public ConnectionHandler createConnection(ConnectionType connectionType, ViewInterface view, String hostName, int portNumber) {
         if(connectionType.equals(ConnectionType.RMI)){
             return new ClientRMI(view, hostName, portNumber);

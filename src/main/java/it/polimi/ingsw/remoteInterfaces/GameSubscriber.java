@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * the interface that provides the method to be implemented by an observer of the Game
+ */
 public interface GameSubscriber extends ListenerSubscriber {
     /**
      * This is used to notify when a new player has joined the game
@@ -20,7 +23,7 @@ public interface GameSubscriber extends ListenerSubscriber {
      * @param username the username of the winning player
      * @param points the points of the player that have won the game
      * @param scoreboard the total scoreboard, already ordered, the key is the username and the value the points of the user
-     * @throws RemoteException
+     * @throws RemoteException RMI Exception
      */
     void notifyWinningPlayer(String username, int points, Map<String,Integer> scoreboard) throws RemoteException;
 

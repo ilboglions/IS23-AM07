@@ -246,10 +246,6 @@ public class Game implements GameModelInterface {
                 try{
                     p.addToken(this.commonGoalCards.get(i).popTokenTo(p.getUsername()));
                     toupdate = true;
-                    //logger.info("UPDATE STACK");
-                    for(ScoringToken t: this.commonGoalCards.get(i).getTokenStack()){
-                        //logger.info(String.valueOf(t.getScoreValue()));
-                    }
                 } catch (TokenAlreadyGivenException | RemoteException ignored){}
             }
         }

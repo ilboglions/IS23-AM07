@@ -19,6 +19,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * This is the class that implements the communication with the server through RMI
+ */
 public class ClientRMI implements ConnectionHandler{
 
     Registry registry;
@@ -38,6 +41,8 @@ public class ClientRMI implements ConnectionHandler{
     /**
      * Creates an instance of ClientRMI
      * @param view the view will be notified for updates
+     * @param hostName the ip address of the server
+     * @param portNumber the port number of the server
      */
     public ClientRMI(ViewInterface view, String hostName, int portNumber) {
         boolean connected = false;
@@ -294,7 +299,6 @@ public class ClientRMI implements ConnectionHandler{
 
     /**
      * @return true if the game is set
-     * @throws NoAvailableGameException if the game is not set
      */
     private boolean checkGameIsSet() {
         return gameModel != null;

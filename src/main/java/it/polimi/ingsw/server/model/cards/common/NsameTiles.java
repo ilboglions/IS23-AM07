@@ -8,6 +8,9 @@ import it.polimi.ingsw.server.model.tiles.ItemTile;
 
 import java.rmi.RemoteException;
 
+/**
+ * NSameTiles is a common card type that requires a certain number of equals tiles inside the bookshelf
+ */
 public class NsameTiles extends  CommonGoalCard{
     private final int nTiles;
 

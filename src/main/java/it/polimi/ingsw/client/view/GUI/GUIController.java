@@ -1,7 +1,6 @@
 package it.polimi.ingsw.client.view.GUI;
 
 import it.polimi.ingsw.client.connection.ConnectionHandler;
-import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 /**
