@@ -67,7 +67,7 @@ public class ClientSocket implements ConnectionHandler{
             } catch (IOException e) {
                 view.postNotification(Notifications.ERR_CONNECTION_NO_AVAILABLE);
                 try {
-                    TimeUnit.SECONDS.sleep(10);
+                    TimeUnit.SECONDS.sleep(5);
                 } catch (InterruptedException ignored) {
                 }
             }

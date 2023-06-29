@@ -58,7 +58,7 @@ public class ClientRMI implements ConnectionHandler{
             }catch(RemoteException | NotBoundException e){
                 try {
                     this.view.postNotification(Notifications.ERR_CONNECTION_NO_AVAILABLE);
-                    TimeUnit.SECONDS.sleep(10);
+                    TimeUnit.SECONDS.sleep(5);
                 } catch (InterruptedException ignored) {
                 }
             }
@@ -193,6 +193,7 @@ public class ClientRMI implements ConnectionHandler{
             view.postNotification(Notifications.ERR_GAME_NO_AVAILABLE);
         } catch (InvalidPlayerException e) {
             view.postNotification(Notifications.ERR_PLAYER_NO_JOINED_IN_LOBBY);
+        }catch (RemoteException ignored){
         }
 
     }
@@ -223,8 +224,7 @@ public class ClientRMI implements ConnectionHandler{
             view.postNotification(Notifications.ERR_GAME_ENDED);
         } catch (PlayerNotInTurnException e) {
             view.postNotification(Notifications.NOT_YOUR_TURN);
-        } catch (RemoteException e) {
-            this.view.backToLobby();
+        } catch (RemoteException ignored) {
         }
     }
 
@@ -288,7 +288,11 @@ public class ClientRMI implements ConnectionHandler{
 
     private void scheduleTimer() {
         if(!timer.isScheduled()){
-            timer.schedule(view::backToLobby,this.timerDelay);
+            timer.schedule(()->{
+                if(this.connectionClosed)
+                    return;
+                this.view.backToLobby();
+            },this.timerDelay);
         }
     }
 
@@ -312,9 +316,7 @@ public class ClientRMI implements ConnectionHandler{
         }
         try {
             gameController.postBroadCastMessage(this.username,content);
-        } catch (RemoteException e) {
-            this.view.backToLobby();
-        } catch (InvalidPlayerException ignored) {
+        } catch (RemoteException | InvalidPlayerException ignored) {
         }
     }
 
@@ -331,8 +333,7 @@ public class ClientRMI implements ConnectionHandler{
         }
         try {
             gameController.postDirectMessage(this.username,recipient,content);
-        } catch (RemoteException e) {
-            this.view.backToLobby();
+        } catch (RemoteException ignored) {
         } catch (InvalidPlayerException ignored) {
             /* to decide, if the written recipient does not exist, we could just ignore the chat message*/
         } catch (SenderEqualsRecipientException e) {
