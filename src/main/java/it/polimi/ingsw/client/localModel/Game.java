@@ -16,7 +16,7 @@ import java.util.*;
 
 
 /**
- * This is the class that handles all the logic of the game and its status
+ * This is the class that handles all the logic of the game and its status (client side)
  */
 public class Game extends UnicastRemoteObject implements GameSubscriber, PlayerSubscriber, ChatSubscriber, BookshelfSubscriber, BoardSubscriber {
 

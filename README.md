@@ -1,6 +1,15 @@
 ![CranioCreations](https://github.com/ilboglions/IS23-AM07/blob/2f3e05db75b5e77d03d4d1494e3db2e9b8c89dab/src/main/resources/images/PublisherMaterial/Publisher.png)
 # Final project of Software Engineering Group AM07 
 ![My Shelfie](https://github.com/ilboglions/IS23-AM07/blob/66395bdf3670a9df1a04b42146a1f867596e068f/src/main/resources/images/PublisherMaterial/Title_2000x618px.png)
+## Table of Contents
+1. [Overview](#Overview)
+2. [Authors](#Authors)
+3. [Development State](#Development-State)
+4. [Installation](#Installation)
+5. [Running the game](#Running-the-game)
+6. [Rules](#Rules)
+7. [Requirements](#Requirements)
+8. [License](#License)
 ## Overview
 This repository contains the digital java implementation of the game **My Shelfie**, published by **Cranio Games**.
 My Shelfie is a game where you and your friends have to set up your new library starting from a messy livingroom, following
@@ -14,7 +23,7 @@ Politecnico di Miliano - Prof. Margara Section - **Group AM07**
 -  **10766461 Matteo Boglioni** ([@ilboglions](https://github.com/ilboglions)) _matteo.boglioni@mail.polimi.it_
 - **10706553 Michele Cavicchioli** ([@trueMaicol](https://github.com/trueMaicol)) _michele.cavicchioli@mail.polimi.it_
 
-# Development State
+## Development State
 
 | Functionality   | State          |
 |-----------------|----------------|
@@ -74,7 +83,7 @@ the dimension of the terminal itself, just type on the keyboard ```CTRL + "-"```
 terminal > settings > profiles and set the font to a smaller dimension.
 
 ## Rules
-The rules of the game can be found on the [deliverables directory](https://github.com/ilboglions/IS23-AM07/blob/main/deliverables/MyShelfie_Ruleboo_ENG.pdf),
+The rules of the game can be found on the [deliverables directory](https://github.com/ilboglions/IS23-AM07/blob/main/deliverables/MyShelfie_Ruleboo_ENG.pdf).
 
 ## Requirements
 The game runs on ***jre version 19*** or newer, if you need to update your jre just [follow this link](https://www.oracle.com/java/technologies/downloads/).
