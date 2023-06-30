@@ -75,7 +75,7 @@ the dimension of the terminal itself, just type on the keyboard ```CTRL + "-"```
 terminal > settings > profiles and set the font to a smaller dimension.
 
 ## Rules
-The rules of the game can be found on the [deliverables directory](https://github.com/ilboglions/IS23-AM07/blob/26286582b533dd5970e75ba263fd994afa18087e/deliverables/MyShelfie_Ruleboo_ENG.pdf),
+The rules of the game can be found on the [deliverables directory](https://github.com/ilboglions/IS23-AM07/blob/a3e423599256c654bc9c24ab5d347071968e6cba/deliverables/MyShelfie_Ruleboo_ENG.pdf),
 
 ## Requirements
 The game runs on ***jre version 19*** or newer, if you need to update your jre just [follow this link](https://www.oracle.com/java/technologies/downloads/).
