@@ -15,7 +15,6 @@ public enum Notifications {
     GAME_RECONNECTION_SUCCESSFULLY("Welcome back!","Reconnected to your previous game"),
     ERR_GAME_NO_AVAILABLE("No game is available!","Wait for a new game, or create a new one!"),
     ERR_GAME_N_PLAYER_OUT_OF_RANGE("The number of player is out of range!","The game can be played from 2 to 4 players!"),
-
     TILES_SELECTION_ACCEPTED("Your Selection has been accepted!", "Choose the column to fit the selection!"),
     INVALID_TILES_SELECTION("Your selection is not permitted!","Please, select another set of tiles!"),
     ERR_EMPTY_SLOT_SELECTED("One of the slots selected is empty!","Please, select only not empty tiles!"),

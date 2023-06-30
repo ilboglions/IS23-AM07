@@ -371,6 +371,8 @@ public class ClientSocket implements ConnectionHandler{
     private void parse(ConfirmMoveMessage message){
         if(message.getConfirmSelection()){
             view.postNotification(Notifications.TILES_MOVED_SUCCESSFULLY);
+        } else {
+            view.postNotification(message.getErrorType(),message.getDetails());
         }
     }
 
