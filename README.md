@@ -16,18 +16,17 @@ Politecnico di Miliano - Prof. Margara Section - **Group AM07**
 
 # Development State
 
-| Functionality   | State | Current | Comment                                         |
-|-----------------|----| ---- |-------------------------------------------------|
-| Model           | :green_circle: | |                                                 |
-| Controller      | :green_circle: | |                                                 |
-| Chat            | :green_circle: | |                                                 |
-| Multi Game      | :green_circle: | |                                                 |
-| Game Resiliance | :green_circle: | |                       |
-| RMI             | :green_circle: | |                                                 |
-| TCP             | :green_circle: | |                                                 |
-| CLI             | :green_circle: | |  |
-| GUI             | :green_circle: | |                                                 |
-
+| Functionality   | State          |
+|-----------------|----------------|
+| Model           | :green_circle: |
+| Controller      | :green_circle: |
+| Chat            | :green_circle: |
+| Multi Game      | :green_circle: |
+| Game Resiliance | :green_circle: |
+| RMI             | :green_circle: |
+| TCP             | :green_circle: |
+| CLI             | :green_circle: |
+| GUI             | :green_circle: |
 ## Installation
 In order to run My Shelfie, you can either clone this repository
 ```
